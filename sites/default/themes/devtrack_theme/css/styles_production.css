@@ -1,0 +1,522 @@
+/* First, the color scheme:
+
+
+Bright red: #EA0001
+Visited link maroon: #840000
+Logo Grey: #9B9B9A
+
+
+background yellowish: #FEFCEA
+
+*/
+
+/* Let's first start with some good old generic stuff, the html elements, font-sizes & families etc. */
+
+html body{
+	font-family:Tahoma, Geneva, sans-serif;
+	font-size: 12px; /* 0.916666666667em; /* this should be 11px, but it isnt. we need to read the blueprint readme very properly one day */
+}
+
+html a:link {
+	color: #EA0001;
+}
+
+html a:hover {
+	color: #9B9B9A;
+}
+
+html a:visited {
+	color:#840000;
+}
+
+button ,
+input.form-submit
+{
+  border-style:solid;
+  color:#FFFFFF;
+  /*font-weight:bold; */
+  padding:2px 5px;
+  text-align:center;
+  
+  background-image: -moz-linear-gradient(
+    center top,
+    rgb(180,0,0) 33%,
+    rgb(107,0,0) 66%);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.33, rgb(180,0,0)),
+    color-stop(0.66, rgb(107,0,0))
+);
+}
+
+button:hover ,
+input.form-submit:hover {
+  color: #9B9B9A;
+}
+
+
+
+/* This is a temporary fix just not to cluther the page */
+.profile .picture {
+	display: none;
+}
+
+#search-theme-form, #tpblock {
+	float: right;
+}
+
+/*
+
+.footermap {
+  width: 100%;
+  display: block; 
+}
+*/
+
+#footermenubar .block-menu_block,
+#footermenubar .block-menu
+  {
+  /*width: 200px; 
+  float: left;*/
+}
+
+#footermenubar .block-menu_block ul li,
+#footermenubar .block-menu ul li {
+  /*width: 150px;*/
+  display: block;
+  margin-left: 20px;
+}
+
+#footermenubar .block-menu_block ul li.first {
+  /*margin-left: 0px;*/
+}
+
+/*.........................*/
+
+#header .links {
+	float:right;
+	margin-right:10px;
+	margin-top:-20px;
+}
+
+#header {
+	border-bottom:7px solid #ea0001;
+	padding: 20px 0px 0px 30px;
+	margin-bottom:10px;
+	background-image: url(../images/hf_bkgd.jpg);
+	background-repeat: repeat-x;
+	background-color: #000;
+}
+
+#header ul.links li{
+	padding: 0px;
+}
+
+#header li a {
+	background-color: #000;
+	text-decoration: none;
+	margin-left: 6px;
+	padding: 6px 10px 4px;
+	color: #fff;
+	font-weight:bold;
+}
+
+#header li a:hover{
+	background-color: #f2f2f2; /* this will not work, the gradient wins */
+	color: #9B9B9A;
+}
+
+#nav a {
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.10, rgb(0,0,0)),
+    color-stop(0.74, rgb(234,0,0)),
+/*    color-stop(0.87, rgb(234,0,0))*/
+  );
+
+  background-image: -moz-linear-gradient(
+    center top,
+    rgb(107,0,0) 10%,
+    rgb(234,0,0) 74%
+  );
+  -moz-border-radius-topleft: 4px;
+  -moz-border-radius-topright: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  
+}
+
+#logo a{
+  width: 310px;
+  height: 74px;
+  display:block;
+  text-indent: -99999em;
+  background: url("/unicef/sites/default/themes/devtrack_theme/images/devtrac_logo.png") no-repeat left top;
+} 
+
+
+
+
+.view-field-trip-report-items tr td{
+	margin-bottom: 5px;
+}
+.view-field-trip-report-items tr.even,
+.view-field-trip-report-items tr.odd {
+	background: none;
+}
+
+.view-field-trip-report-items td.views-field-nid {
+	float:left;
+	font-size:55px;
+	height:70px;
+	text-align:center;
+	width: 95px;
+	color: #fff;
+	margin-right: 5px;
+}
+.view-field-trip-report-items .views-row-first .views-field-nid {
+	background-color: #ffe680;
+}
+
+.view-field-trip-report-items tr.even td.views-field-nid {
+  background-color: #ffd4d4;
+}
+
+.view-field-trip-report-items .views-row-last .views-field-nid {
+	background-color: #d4e5f6;
+}
+.view-field-trip-report-items .views-field-name {
+	background-color: #fff9eb;
+	float:left;
+	font-size: 20px;
+	height: 70px;
+	width: 180px;
+	line-height: 68px;
+}
+.view-field-trip-report-items .views-row-first .views-field-name a{
+	color: #ffcc00;
+}
+.view-field-trip-report-items .views-field-name a{
+	color: #ff0000;
+	text-decoration: none;
+}
+.view-field-trip-report-items .views-row-last .views-field-name a{
+	color: #0066cc;
+}
+.view-field-trip-report-items tr th{
+	display: none;
+}
+body div.container {
+margin: auto;
+}
+
+#footer-message {
+	background-image:url("../images/footer_shadow.png");
+	background-repeat:repeat-y;
+	border-left:1px solid #000000;
+	color:#CCCCCC;
+	float:right;
+	height:114px;
+	line-height:28px;
+	margin-top:-28px;
+	padding-left:10px;
+	padding-top:16px;
+}
+
+.uniceflogo {background-image:url("../images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.mblogo{ background-image: url("../images/mountbatten.png");  float:left; height:20px; margin-right:10px; width:20px;}
+.uganda{ background-image: url("../images/uganda.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.text-footer{
+	font-size:10px; 
+	line-height:15px;"
+}
+#footer-message a {float:left; line-height: 18px;}
+
+#footermenubar {
+	background-color:#000;
+	background-image: url("../images/footermap_bkgd.jpg");
+	background-repeat: repeat-x;
+	border-top:7px solid #ea0001;
+	height: 210px;
+	margin-top:25px;
+	padding-top:10px;
+}
+
+#footermenubar {
+	width: 100%;
+}
+
+#context-block-region-footer {
+	margin: 0 auto;
+	width: 600px;
+}
+
+#footermenubar li a, 
+#footer-message a {
+	color: #999999;
+	text-decoration:none;
+}
+
+#footermenubar .block-menu li a:hover,
+#footer-message a:hover {
+	color: #fff;
+	text-decoration: none;
+}
+
+/*...temporary...can be pasted in reiniers css file.........*/
+.col-content_layertworight .block h3, 
+.col-content_contentlayerright .block h3 {
+	border-bottom: 2px solid #ea0001;
+	color: #000;
+}
+.block h3 {
+	background-image:  url("../images/h2_bkgd.jpg");
+	color: #000;
+}
+.col-content_layeroneright .block h3 {
+	background-color: #fff;
+	background-image: none;
+	border-bottom: 2px solid #ea0001;
+	color: #000;
+}
+.col-content_layeroneright .item-list ul {
+margin:0;
+}
+#block-views-cac0f8a4b9f539757b67cf65047d5197 table th,
+#block-views-87cfc5888b93ec2b557b2215e685ab74 table th ,
+.view-my-homepage-my-action-items th {
+	background-color: #fff9cd;
+	border:0 none;
+	color:#000000;
+	font-size:11px;
+	line-height: 10px;
+}
+.view-my-homepage-my-action-items .views-table{
+	margin-top: -17px;
+}
+.view-my-homepage-my-action-items th a {
+	color: #990000;
+}
+/* not working yet
+.view-my-homepage-my-action-items .views-field-title td a{
+	color: #000;
+}
+
+*/
+.views-row .picture{
+	border: 1px solid #ffffff;
+	float: left;
+	margin-right: 5px;
+}
+.col-content_layeroneright ul li,
+.col-content_layeroneright .item-list ul li{
+	background-color: #fff9cd;
+	/*float: left;*/
+	height: 53px;
+	list-style:none outside none;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+.col-content_layeroneright .views-field-nothing a {
+	color: #EA0001;
+	float:right;
+	font-size:11px;
+	font-weight:bold;
+	margin-top:-32px;
+}
+.view-field-trip-report-items .views-field-title a,
+.view-field-trip-report-items .views-field-field-ftritem-place-nid{
+	font-size: 15px;
+}
+.view-field-trip-report-items .item-list ul{
+	margin: 0px;
+}
+.view-field-trip-report-items .views-field-body {
+	display:block;
+	float:left;
+	margin-top:10px;
+	width:310px;
+}
+.view-field-trip-report-items .more-link a,
+.view-id-user_report_items_map .more-link a{
+	border-bottom:1px solid #000000;
+	color:#9B9B9A;
+	/*float:left;*/
+	line-height:11px;
+	/*margin-left:4px;*/
+	margin-top:9px;
+	text-decoration:none;
+	text-transform:capitalize;
+}
+.view-field-trip-report-items .more-link a:hover {
+	color: #000000;}
+.view-field-trip-report-items .views-field-title a{
+	font-weight: bold;
+	text-decoration: none;
+}
+.view-field-trip-report-items .views-field-title a:hover{color: #9b9b9a;}
+#header #nav .last a {
+	background:none repeat scroll 0 0 transparent;
+	border:1px solid #EA0000;
+}#header #nav .last a:hover {color: #9b9b9a;}
+#header #search {margin-top: -30px;}
+
+/* this is the tabs above the content, but then as a vertical menu. sweet! */
+
+.tabsaslist ul.primary {
+	 border-bottom: none; 
+	 margin-left: 10px; 
+	 width: 200px;
+}
+
+.tabsaslist ul.primary li a:link,
+.tabsaslist ul.primary li a:visited,
+.tabsaslist ul.primary li a:hover
+ {
+	background-color: transparent;
+	border-color: transparent;
+	border: none;
+	color: #000;
+	line-height: 25px;
+	vertical-align: text-top;
+	display: inline-block;
+	-moz-border-radius-topleft: 0px;
+  -moz-border-radius-topright: 0px;
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-top-right-radius: 0px;
+}
+
+.tabsaslist ul.primary li a:hover {
+	background-color: #9B9B9B;
+}
+
+
+.tabsaslist ul.tabs.primary li a {
+  background-image: none;
+}
+
+.tabsaslist .tabs li {
+	display:list-item;
+	line-height: 14px;
+	list-style-type: square;
+	color: #EA0001;
+  list-style-image: none;
+  font-size: 25px;
+/*  list-style-image:url("../images/listimage.gif");*/
+}
+
+.tabsaslist .tabs li.active {
+  color: #000000;
+}
+
+.tabsaslist .tabs li a{
+	font-size: 12px;
+}
+
+/*.tabsaslist ul.primary {
+	 list-style-type: lower-roman;
+}*/
+
+
+
+.views-table tr.even td {
+	background-color: #fefcea; /*fffce2*/
+}
+
+.col-content_contentlay	erleft ul.tabs.primary li a {
+	background-color:transparent;
+	background-image:none;
+	border:medium none;
+}
+
+/*.view-my-homepage-my-field-trips .views-field-title*/
+
+/* The gradients in the upper menu */
+/* this will only work in modern browser, IE & others will still need background images */
+
+/*
+.col-content_contentlayerleft h2, .block h3 {
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.47, rgb(221,237,245)),
+    color-stop(0.74, rgb(208,228,238)),
+    color-stop(0.87, rgb(201,224,237))
+);
+
+background-image: -moz-linear-gradient(
+    center top,
+    rgb(221,237,245) 47%,
+    rgb(208,228,238) 74%,
+    rgb(201,224,237) 87%
+);
+}
+
+.col-content_layertworight .block h3,
+.col-content_contentlayerright .block h3 {
+  background-color: transparent;
+  background-image: none;
+  border-bottom: 1px solid #01385A;
+  color: #01385A;
+}
+*/
+
+.block-devtrack_module li {
+	list-style-image: none;
+	list-style-type: none;
+}
+
+/* the create report buttons in the Places to Visit block on the Field Trip page */
+.view-field-trip-places-to-visit .views-field-phpcode {
+  list-style-image: none;
+  list-style-type: none;
+}	
+
+
+
+/* Openlayers stuff */
+
+.openlayers-views-map .olPopupCloseBox {
+  background-image: url('../images/close.png');
+}
+.openlayers-popup img {
+	float:left;
+	margin-right:6px;
+	margin-top:4px;
+}
+
+#popup_contentDiv{
+	background-color: orange;
+}
+#popup_GroupDiv{
+	background-color: purple;
+	z-index:10;
+}
+
+#header #username {
+	display:none;
+	float:none;
+	padding:0;
+}/*
+.col-content_contentlayerleft  .context-block-region {
+	background-color: blue;
+	display: block;
+}*/
+
+#footermenubar .block-menu_block ul li {
+  float:left;
+}
+#footermenubar .block-menu_block ul li ul li{
+  float:none;
+}
+.openlayers-popup .imagecache{
+	float: left;
+}

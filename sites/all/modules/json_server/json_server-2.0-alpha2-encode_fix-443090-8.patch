@@ -1,0 +1,81 @@
+--- json_server.orig.module	2010-05-04 20:00:36.000000000 +0000
++++ json_server.module	2010-09-21 22:00:11.000000000 +0000
+@@ -23,7 +23,7 @@ function json_server_server_info() {
+  *  Implementation of hook_server_error().
+  */
+ function json_server_server_error($message) {
+-  return array("#error" => TRUE, "#message" => $message);
++  return array("error" => TRUE, "message" => $message);
+ }
+ 
+ 
+@@ -31,9 +31,9 @@ function json_server_server_error($messa
+  *  Implementation of hook_server().
+  */
+ function json_server_server() {
+-if (!isset($_POST)) {
+-  return drupal_to_js(array('#error' => TRUE, '#data' => "JSON server accepts POST requests only."));
+-}
++  if (!isset($_POST)) {
++    return json_encode(array('#error' => TRUE, '#data' => "JSON server accepts POST requests only."));
++  }
+   
+   $methods = services_get_all();
+   services_strip_hashes($methods);
+@@ -47,10 +47,15 @@ if (!isset($_POST)) {
+       $args = array();
+       foreach($method['args'] as $arg) {
+         if(isset($_POST[$arg['name']])) {
+-          $args[] = drupal_parse_json($_POST[$arg['name']]);
++          if (is_array($_POST[$arg['name']])) {
++            $args[] = $_POST[$arg['name']];
++          }
++          else {
++            $args[] = drupal_parse_json($_POST[$arg['name']]);
++          }
+         }
+         elseif($arg['optional'] == 0) {
+-          return drupal_to_js(array("#error" => TRUE, "#data" => "Argument ". $arg['name'] ." not recieved"));
++          return json_encode(array("#error" => TRUE, "#data" => "Argument ". $arg['name'] ." not recieved"));
+         }
+         else {
+           $args[$arg['name']] = NULL;
+@@ -58,13 +63,13 @@ if (!isset($_POST)) {
+       }
+       $result = services_method_call($method['method'], $args);
+       if (is_array($result) && $result['error'] === TRUE)
+-        return drupal_to_js(array('#error' => TRUE, '#data' => $result['message']));
++        return json_encode(array('#error' => TRUE, '#data' => $result['message']));
+       
+-      return drupal_to_js(array('#error' => FALSE, '#data' => $result));
++      return json_encode(array('#error' => FALSE, '#data' => $result));
+     }
+   }
+ 
+-  return drupal_to_js(array('#error' => TRUE, '#data' => "Invalid method $request"));
++  return json_encode(array('#error' => TRUE, '#data' => "Invalid method $request"));
+ }
+       
+ 
+@@ -81,7 +86,13 @@ function json_load() {
+ function drupal_parse_json($v) {
+   // PHP 5 only
+   if (function_exists('json_decode')) {
+-    return json_decode($v);
++    $decoded = json_decode($v);
++    // On some setups, json_decode() will return nothing if passed a non-json string - which makes sense, since it's not valid json.
++    if (!empty($decoded)) {
++      return $decoded;
++    } else {
++      return $v;
++    }
+   }
+   if ($v{0} == '"') {
+     $v = substr($v, 1, -1);
+@@ -102,4 +113,4 @@ function drupal_parse_json($v) {
+     }
+   }
+   return $v;
+-}
+\ No newline at end of file
++}

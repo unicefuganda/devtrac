@@ -1,0 +1,33 @@
+Index: taxonomy_redirect.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/taxonomy_redirect/taxonomy_redirect.module,v
+retrieving revision 1.7.2.19
+diff -u -p -r1.7.2.19 taxonomy_redirect.module
+--- taxonomy_redirect.module	5 Dec 2010 10:55:33 -0000	1.7.2.19
++++ taxonomy_redirect.module	5 Dec 2010 11:35:25 -0000
+@@ -566,6 +566,25 @@ function taxonomy_redirect_term_path($te
+ }
+ 
+ /**
++ * Implementation of hook_link_alter().
++ */
++function taxonomy_redirect_link_alter(&$links, $node, $comment = NULL) {
++  foreach ($links as $id => $link) {
++    // For taxonomy term paths we need to fix links for paths that
++    // contain queries or fragments.
++    // A better solution would be to fix core's handling of links
++    // in taxonomy_link().  See http://drupal.org/node/632646
++    $id_parts = explode('_', $id);
++    if ($id_parts[0] == 'taxonomy' && $id_parts[1] == 'term' && is_numeric($id_parts[2])) {
++      $url_parts = parse_url($link['href']);
++      $links[$id]['href'] = $url_parts['path'];
++      $links[$id]['query'] = isset($url_parts['query']) ? $url_parts['query'] : '';
++      $links[$id]['fragment'] = isset($url_parts['fragment']) ? $url_parts['fragment'] : '';
++    }
++  }
++}
++
++/**
+  * Builds the default taxonomy_redirect term path.
+  * Can be overridden by the creation of a taxonomy_redirect_custom_term_path function
+  */

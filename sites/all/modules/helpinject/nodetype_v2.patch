@@ -1,0 +1,141 @@
+--- /var/www/hotline/sites/all/modules/helpinject/helpinject.module	2009-05-31 17:06:05.000000000 +0300
++++ helpinject.module	2011-01-11 16:05:12.000000000 +0300
+@@ -17,9 +17,19 @@ function helpinject_help($path, $arg) {
+           $help_link = theme('helpinject_topic', $value['nid']);
+         }
+       }
++      if (arg((0) == 'node' && is_numeric(arg(1)))) {
++        // TODO make special keys for node/%/edit/etcetc
++        // could be advanced like node/%/devel is the same for all nodetypes
++        $node = node_load(arg(1));
++        if ($values = helpinject_get_from_key('nodetype', 'node/['. $node->type . ']')) {
++          foreach ($values as $value) {
++            $help_link .= theme('helpinject_topic', $value['nid']);
++          }
++        }
++      }
+     }
+     // If the user is allowed, show the injection icon.
+-    if (user_access('inject help')) {
++    if ((user_access('inject help')) && ($inject_link == '')) {
+       $inject_link = _helpinject_admin_link('path', $_GET['q'], t('this page'));
+     }
+     return $help_link . $inject_link;
+@@ -201,7 +211,7 @@ function helpinject_injection_form(&$for
+   // Pack the type into the form for later use.
+   $form['type'] = array('#type' => 'value', '#value' => $type);
+ 
+-  if ($type == 'path' && empty($form_state['storage']['helpkey'])) {
++  if ((($type == 'path') || ($type == 'nodetype')) && empty($form_state['storage']['helpkey'])) {
+     // Get the whole rest of the path
+     $q_paths = explode('/', $_GET['q'], 4);
+     $key = $q_paths[3];
+@@ -213,6 +223,24 @@ function helpinject_injection_form(&$for
+         $ancestors[$key] .= ' (' . t('Currently %title [nid !nid]', array('%title' => check_plain($title), '!nid' => $match['nid'])) . ')';
+       }
+     }
++    /* if we are on a node page, we would also like to include the nodetype as an optional 'path'
++     * TODO make special keys for /edit/blabla etc
++     * could be advanced like node/%/devel is the same for all nodetypes
++     */
++    $myargs = explode ('/', $q_paths[3]);
++    if ($myargs[0] == 'node') {
++      $nid = $myargs[1];
++      $node = node_load ($nid);
++      $key = 'node/['. $node->type . ']'; // The format of the key in the database is node/[nodetype] the [ ] are used later to identify this key as a nodetype key
++      $ancestors[$key] = 'node/['. $node->type . ']'; 
++      $existing = helpinject_get_from_key($type, $ancestors);
++      foreach ($ancestors as $key => $value) {
++        if ($match = $existing[$key]) {
++          $title = db_result(db_query("SELECT r.title FROM {node_revisions} r INNER JOIN {node} n ON n.vid = r.vid WHERE r.nid = %d", $match['nid']));
++          $ancestors[$key] .= ' (' . t('Currently %title [nid !nid]', array('%title' => check_plain($title), '!nid' => $match['nid'])) . ')';
++        }
++      }
++    }
+     // This prevents it from going to the theme function for the injection form.
+     $form['#theme'] = 'theme_form';
+     $form['helpkey'] = array(
+@@ -233,14 +261,32 @@ function helpinject_injection_form(&$for
+     if (empty($form_state['storage']['helpkey'])) {
+       // In this case we're injecting into something other than a path, so we
+       // need to get the helpkey from the URL path.
+-
+       // Get the whole rest of the path
+       $q_paths = explode('/', $_GET['q'], 4);
+-      $key = $q_paths[3];
++      $myargs = explode ('/', $q_paths[3]);
++     if ($myargs[0] == 'node') {
++        $nid = $myargs[1];
++        $node = node_load ($nid);
++        $key = 'node/['. $node->type . ']'; // The format of the key in the database is node/[nodetype] the [ ] are used later to identify this key as a nodetype key
++      }
++      else {
++        $key = $q_paths[3];
++      }
+       // Pack the helpkey into the form for later use.
+       $form['helpkey'] = array('#type' => 'value', '#value' => $key);
+     }
+-
++    
++    if ($type == 'path') {
++      if ((!(strpos($form_state['storage']['helpkey'], 'node/', 0) === FALSE) == 1) &&  //holy crap! this looks like Visual Basic where true = -1 
++          (strpos($form_state['storage']['helpkey'], '[') > 0) && 
++          (strpos($form_state['storage']['helpkey'], ']') > 0)
++         ) {
++        // $type has [] set so we are looking at a node path
++        $form['type'] = array('#type' => 'value', '#value' => 'nodetype');
++        $type = 'nodetype';
++        $key = $form_state['storage']['helpkey'];
++      }
++    }
+     // We show every topic (book page) grouped by book title.
+     // Pack the book trees into the form.
+     $trees = array();
+@@ -254,6 +300,7 @@ function helpinject_injection_form(&$for
+ 
+     // Find out if a help topic has already been selected.
+     $defaults = helpinject_get_from_key($type, $key);
++    $default =  $defaults[$key]; // this is very inconsistently used throughout the module it seems, sometimes with a foreach, array_pop is used and now this
+     // Build the options. It's simply a list of nids from the {book} table.
+     $options = array();
+     $result = db_query("SELECT nid FROM {book}");
+@@ -274,7 +321,7 @@ function helpinject_injection_form(&$for
+       '#title' => t('Available book pages'),
+       '#description' => t('Choose the book page that should be used for this item, or !create a new one.', array('!create' => $book_add_link)),
+       '#options' => $options,
+-      '#default_value' => empty($defaults) ? $none : $defaults['nid'],
++      '#default_value' => empty($default) ? $none : $default['nid'] ,  // Ok, this just does not work. Even hardcoding the nid will not set the radio to the right default. Beats me
+     );
+     $form['submit'] = array(
+       '#title' => t('Submit'),
+@@ -289,7 +336,7 @@ function helpinject_injection_form(&$for
+ function helpinject_injection_form_submit($form, &$form_state) {
+   // It's important that we only go into this first block if we're dealing with
+   // 'path' types, and if the helpkey hasn't yet been chosen.
+-  if (empty($form_state['storage']['helpkey']) && $form_state['values']['type'] == 'path') {
++  if (empty($form_state['storage']['helpkey']) && (($form_state['values']['type'] == 'path') || ($form_state['values']['type'] == 'nodetype'))) {
+     $form_state['storage']['helpkey'] = $form_state['values']['helpkey'];
+     $form_state['storage']['type'] = $form_state['values']['type'];
+     $form_state['rebuild'] = TRUE;
+@@ -915,3 +962,20 @@ function theme_helpinject_topic($nid) {
+     );
+   }
+ }
++
++/**
++* Implementation of hook_preprocess_block().
++*/
++function helpinject_preprocess_block(&$variables) {
++  $key = $variables['block']->module . '_' .$variables['block']->delta;
++  if (user_access('inject help')) {
++    $variables['block']->subject .=  _helpinject_admin_link('block',  $key , t($variables['block']->subject));
++  }
++  if (user_access('view advanced help popup')) {
++    if ($values = helpinject_get_from_key('block', $key)) {
++      foreach ($values as $value) {
++        $variables['block']->subject  .= $help_link = theme('helpinject_topic', $value['nid']);
++      }
++    }
++  }
++}
+\ No newline at end of file

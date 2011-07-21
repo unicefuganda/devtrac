@@ -1,0 +1,805 @@
+<?php
+// $Id: questionaire_question.module,v 1.1.2.1 2010/12/21 07:38:27 batje Exp $ 
+
+function questionaire_question_node_info() {
+  return array(
+    'questionaire_question' => array(
+       'name' => t('Question'),
+       'module' => 'questionaire_question',
+       'description' => t('Questions that are part of a question'),
+       'has_title' => TRUE,
+       'title_label' => t('Question'),
+       'has_body' => FALSE,
+    )
+  );
+}
+
+function questionaire_question_hook_info() {
+  return array(
+    'questionaire_question' => array(
+      'questionaire_question' => array(
+        'getcontext' => array(
+          'runs when' => t('When the question module wants to know which questions to show'),
+        ),
+        'getquestions' => array(
+          'runs when' => t('When the question form is generated and we need some questions'),
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_views_api().
+ */
+function questionaire_question_views_api() {
+  return array(
+    'api' => '2.0',
+    'path' => drupal_get_path('module', 'questionaire_question') .'/views',
+  );
+}
+
+/**
+* Implementation of hook_views_plugins().
+*/
+function questionaire_question_views_plugins() {
+  return array(
+    'access' => array(
+      'parent' => array(
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_access',
+        'parent' => '',
+      ),
+      'arguments' => array(
+        'title' => t('Questionaire'),
+        'help' => t('Access will be granted to users with permissions based on Questionaire magic.'),
+        'handler' => 'views_plugin_access_arguments',
+        'uses options' => TRUE,
+        'path' => drupal_get_path('module', 'questionaire_question') . '/views/plugins',
+      ),
+    ),
+  );
+}
+
+function questionaire_question_perm() {
+  return array('view questions', 'submit questions', 'create questionaire_question', 'edit any questionaire_question', 'delete any questionaire_question');
+}
+
+function questionaire_question_access($op, $node, $account) {
+  switch ($op) {
+    case 'create':
+      return user_access('create questionaire_question', $account);
+    case 'update': 
+      return user_access('edit any questionaire_question', $account);
+    case 'delete': 
+      return user_access('delete any questionaire_question', $account); 
+  }
+}
+
+function questionaire_question_menu() {
+  $items['node/%/questions'] = array(
+    'title' => t('Questions'),
+    'description'      => t('View the Questions for this Node.'),
+    'page callback'    => 'questionaire_question_questions',
+    'page arguments'   => array(1),
+    'access callback'  => 'questionaire_question_questions_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['node/%/questions/addsubmission'] = array(
+    'title' => t('Add Submission'),
+    'description'      => t('Add Submission to Questionaire.'),
+    'page callback'    => 'questionaire_question_submission_add',
+    'page arguments'   => array(1),
+    'access callback'  => 'questionaire_question_addsubmission_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['node/%/questions/editsubmission/%'] = array(
+    'title' => t('Edit Submission'),
+    'description'      => t('Edit Submission of Questionaire.'),
+    'page callback'    => 'questionaire_question_submission_edit',
+    'page arguments'   => array(1, 3),
+    'access callback'  => 'questionaire_question_addsubmission_access',
+    'access arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+  $charts = array('Pie', 'Bar', 'Timeline');
+  foreach ($charts as $chart) {
+    $items['node/%/questions/%/'. strtolower($chart)] = array(
+      'title' => t($chart . ' Chart'),
+      'description'      => t('View '. $chart .' Chart.'),
+      'page callback'    => 'questionaire_question_display_view_answers',
+      'page arguments'   => array(1, 3, 4),
+      'access callback' => 'questionaire_question_charts_access',
+      'access arguments' => array(1, 3, strtolower($chart)),
+      'type' => MENU_LOCAL_TASK,
+    );
+  }
+/*  $items['node/%/questions/context'] = array(
+    'access callback'  => 'questionaire_question_contextmenu_access',
+    'access arguments' => array(1),
+  );
+  */
+  /*
+  $items['node/%/addreview'] = array(
+    'title' => t('Add review'),
+    'page callback' => 'node_add',
+    'page arguments' => array('nodereview'),
+    'access callback' => 'addreview_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+  );
+*/
+  return $items;
+}
+
+function questionaire_question_contextmenu_access($nid) {
+  return FALSE;
+}
+
+function questionaire_question_ourviews_access($arguments) {
+  global $user;
+  $viewpath = explode("/", $arguments);
+  $node = node_load(arg(1));
+//      drupal_set_message("coount ". $count);
+//      drupal_set_message("arg 3 ". arg(3));
+//      drupal_set_message("vp 3 ". $viewpath[3]);
+  switch ($viewpath[3]) {
+    case 'questionaire':
+    case 'submissions_questionaire':
+      return (((arg(3) == 'questionaire') | (arg(3) == 'submissions_questionaire')) && questionaire_question_isquestionaire($node->type));
+      break;
+    case 'context':
+    case 'submissions_context':
+      $sql = 'SELECT COUNT(qa.context) FROM {questionaire_answer} qa WHERE qa.context = %d';
+      $count = db_result(db_query($sql, $node->nid));
+      
+      return (((arg(3) == 'context') | (arg(3) == 'submissions_context')) && ($count > 0) ); // TODO or there are no answers yet, so getquestions > 0
+      break;
+  }
+}
+
+function questionaire_question_charts_title($context, $qid) {
+  $contextnode = node_load($context);
+  $question = node_load($qid);
+  return ($question->title . t(' for ') . $contextnode->title);
+}
+
+function questionaire_question_charts_access($context, $qid, $chart) {
+  // only show the menu if there is at least anwser
+  $sql = 'SELECT COUNT(qa.context) FROM {questionaire_answer} qa WHERE qa.context = %d';
+  $count = db_result(db_query($sql, $context));
+  if ($count == 0 ) { 
+    return FALSE; 
+  }
+  if (!(is_numeric($context) && is_numeric($qid))) { 
+    return FALSE;
+  };
+  switch ($chart) {
+    case 'answers':
+      return TRUE;
+//      return (in_array('administrator', array_values($user->roles)));
+      break;
+    case 'bar':
+      return TRUE;
+//      return (in_array('administrator', array_values($user->roles)));
+      break;
+    case 'pie':
+      return TRUE;
+//      return (in_array('administrator', array_values($user->roles)));
+      break;
+    case 'timeline':
+      return FALSE;
+//      return (in_array('administrator', array_values($user->roles)));
+      break;
+  }
+  
+}
+
+function questionaire_question_display_view_answers($context, $qid, $charttype) {
+  $view = views_get_view('Answers');
+ /* This section is for overriding stuff. */
+  switch ($charttype) {
+    case 'pie':
+      $display_id = 'page_2';
+      break;
+    case 'bar':
+      $display_id = 'page_3';
+      $view->display['page_3']->display_options['style_options']['y_min'] = -0.000000000000000000000000001;
+      
+      break;
+    case 'timeline':
+      $display_id = 'page_4';
+      $view->display['page_4']->display_options['style_options']['y_min'] = -0.000000000000000000000000001;
+      break;
+  }
+
+  drupal_set_title(questionaire_question_charts_title($context, $qid));
+  return $view->preview($display_id, array($context, $qid));
+}
+
+
+function questionaire_question_form($node) {
+  $type = node_get_types('type', $node);
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5,
+    '#maxlength' => 255,
+  );
+  
+  $options = questionaire_question_getquestiontypes();
+  $form['questiontype'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#required' => TRUE,
+    '#default_value' => $node->questiontype,
+    '#weight' => -4,
+    '#options' => $options,
+  );
+  $form['questionoptions'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Options'),
+    '#required' => FALSE,
+    '#default_value' => $node->questionoptions,
+    '#weight' => -3,
+    '#cols' => 40,
+    '#rows' => 5,
+    '#resizable' => FALSE,
+  );
+  return $form;
+}
+
+function questionaire_question_insert($node) {
+  db_query("INSERT INTO {questionaire_question} (nid, vid, questiontype, questionoptions) VALUES (%d, %d, '%s', '%s')", $node->nid, $node->vid, $node->questiontype, $node->questionoptions);
+}
+
+function questionaire_question_update($node) {
+  if ($node->revision) {
+    questionaire_question_insert($node);
+  } 
+  else {
+    db_query("UPDATE {questionaire_question} SET questiontype = '%s', questionoptions = '%s' WHERE vid = %d", $node->questiontype, $node->questionoptions, $node->vid);
+  }
+}
+
+function questionaire_question_delete(&$node) {
+  db_query("DELETE FROM {questionaire_question} WHERE nid = %d", $node->nid);
+}
+
+function questionaire_question_load($node) {
+  return db_fetch_object(db_query('SELECT questiontype, questionoptions from {questionaire_question} WHERE vid = %d', $node->vid));
+}
+
+function questionaire_question_view($node, $teaser = FALSE, $page = FALSE) {
+  $node = node_prepare($node, FALSE);
+  $options = questionaire_question_getquestiontypes();
+  $node->content['questiontype'] = array(
+    '#value' => theme_item(Array('#title' => 'Question Type', '#value' => check_plain($options[$node->questiontype]))),
+    '#weight' => 2
+  );
+  $node->content['questionoptions'] = array(
+    '#value' => theme_item_list(questionaire_question_allowed_values($node->questionoptions), 'Options', $type = 'ul'),
+    '#weight' => 3
+  );
+  return $node;
+}
+
+function questionaire_question_allowed_values($questionoptions) {
+  $allowed_values = Array();
+  $list = explode("\n", $questionoptions);
+  $list = array_map('trim', $list);
+  $list = array_filter($list, 'strlen');
+  foreach ($list as $opt) {
+    // Sanitize the user input with a permissive filter.
+    $opt = filter_xss_admin($opt);  //In the content (cck) module there is a special function for this that is perhaps more secure TODO check that out
+    if (strpos($opt, '|') !== FALSE) {
+      list($key, $value) = explode('|', $opt);
+      $allowed_values[$key] = (isset($value) && $value !=='') ? $value : $key;
+    }
+    else {
+      $allowed_values[$opt] = $opt;
+    }
+  }
+  return $allowed_values;
+}
+
+function questionaire_question_getquestiontypes() {
+  return Array('select', 'checkboxes', 'radios', 'number', 'time');
+}
+
+function questionaire_question_process_answer($qid, $answer) {
+  $question = node_load($qid);
+  $qtype = $question->questiontype;
+  $options = questionaire_question_getquestiontypes();
+  // lookup questiontype
+  switch ($options[$qtype]) {
+    case 'select': 
+      $options = questionaire_question_allowed_values($node->questionoptions);
+      $answertext = $options[$answer];
+      break;
+    case 'checkboxes': 
+      $answertext = $answer;
+      break;
+    case 'radios': 
+      $answertext = ($answer == 0 ) ? 'No' : 'Yes'; 
+      break;
+    case 'number': 
+      $answertext = $answer;
+      break;
+    case 'time': 
+      $time = explode(':', $answer);
+      $answertext = $time[0] * 3600 + $time[1] * 60;
+      break;
+  }
+  return $answertext;
+}
+
+/* 
+ *   Below is things to do with the Question Page
+ */
+
+function questionaire_question_questions_access($nid) {
+  $node = node_load($nid);
+  $result = FALSE;
+  $isqn = questionaire_question_isquestionaire($node->type);
+  
+  if ($isqn) {
+    $sql = 'SELECT COUNT(qa.qnid) FROM {questionaire_answer} qa WHERE qa.qnid = %d';
+    $countanswers = db_result(db_query($sql, $nid));
+    $countquestions = (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+    return (user_access('view questions') && (($countanswers > 0) || ($countquestions > 0)));
+  }
+  else {
+    $sql = 'SELECT COUNT(qa.context) FROM {questionaire_answer} qa WHERE qa.context = %d';
+    $count = db_result(db_query($sql, $nid));
+    return (user_access('view questions') && ($count > 0));
+  }
+  return FALSE;
+}
+
+function questionaire_question_questions($nid) {
+  $node = node_load($nid);
+  
+  if (questionaire_question_isquestionaire($node->type)) {
+    drupal_goto('node/'. $nid . '/questions/questionaire');
+  }
+  else {
+    drupal_goto('node/'. $nid . '/questions/context');
+  }
+}
+
+
+
+
+/* 
+ *   Below is things to do with submissions
+ */
+
+function questionaire_question_addsubmission_access($nid) {
+  $node = node_load($nid);
+  if (user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
+    // make sure there are questions for this questionairetype. 
+    //TODO, also check if there are submissions (when questions become disabled, the submissions migh still be there)
+    return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+  }
+  else {
+    return FALSE;
+  }
+}
+
+function questionaire_question_submission_add($nid) {
+  return drupal_get_form('questionaire_question_submission_form', $nid);
+}
+
+function questionaire_question_submission_edit($nid, $sid) {
+  return drupal_get_form('questionaire_question_submission_form', $nid, $sid);
+}
+
+/* this function is only used inside the module to get questions.
+ * We need it when we build the form, but also when we 
+ * determine the visibility of the Question menu
+ */
+
+function questionaire_question_getquestionsprivate($context) {
+  $questions = Array();
+  foreach (module_implements('getquestions') as $module) {
+    $function = $module .'_getquestions';
+    $result = call_user_func($function, $context);
+    if (isset($result) && is_array($result)) {
+      $questions =  $result;
+      break;
+    }
+  }
+  return $questions;
+}
+
+function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL ) {
+  $form = Array();
+  $context = questionaire_question_getcontext($nid);
+  $questions = questionaire_question_getquestionsprivate($context);
+  //$questions = module_invoke_all('getcontext', $nid);
+  
+  
+  $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
+  
+//  $vocabulary = taxonomy_vocabulary_load(1) ; //TODO Load this number from the Data configuration
+//  print_r(hierarchical_select_config_id_load('taxonomy-'. $vocabulary->vid));
+//  print_r(variable_get('hs_config_'. 'taxonomy-'. $vocabulary->vid, FALSE));
+
+  
+  
+  
+//  $table = data_get_table('questionaire_answer');
+  
+  foreach ($questions as $code => $question) {
+    
+    if ($sid) {
+      $sql = 'SELECT answer FROM {questionaire_answer} where question = %d AND sid = %d'; 
+      $answer = db_result(db_query($sql, $question->nid, $sid));
+    }
+    else {
+      // Changed default to NULL (from '') to solve
+      // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
+      // $answer = '';
+      $answer = NULL;
+    }
+    $node = node_load($question->nid);
+    $options = NULL;    
+    switch ($questiontypes[$node->questiontype]) {
+      case 'select' :
+        $formtype = 'select';
+        $description = 'Please select the appropriate option';
+        $options = questionaire_question_allowed_values($node->questionoptions);
+        break;
+      case 'checkboxes' :
+        $formtype = 'checkboxes';
+        $description = 'Please select the appropriate options';
+        $options = questionaire_question_allowed_values($node->questionoptions);
+        // Added the following check to solve the following
+        // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
+        // Checkboxes are multi value, hence an empty array
+        if ($answer == NULL) {
+          $answer = array();
+        }
+        break;
+      case 'radios' :
+        $formtype = 'radios';
+        $description = 'Please select the appropriate option';
+        $options = questionaire_question_allowed_values($node->questionoptions);
+        break;
+      case 'number':
+        $formtype = 'textfield';
+        $description = 'Please provide a number';
+      break;
+      case 'time' :
+        $formtype = 'textfield';
+        $description = 'Please provide a time in the format HH:MM';
+      break;
+    }
+    $form['questions'][$code] = array(
+      '#type' => $formtype,
+      '#title' => $code . ' ' . $node->title,
+      '#description' => t($description),
+      '#weight' => $question->weight,
+      '#options' => $options,
+      '#default_value' => $answer,
+    );
+    if (isset($options)) {
+      $form[$question->code]['#options'] = $options;
+    }
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  
+  $form['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => t('Cancel'),
+  );
+  $form['qnid'] = array(
+    '#type' => 'value',
+    '#value' => $nid,
+  );
+  $form['contextnid'] = array(
+    '#type' => 'value',
+    '#value' => $context,
+  );
+
+  $form['#redirect'] = 'node/' . $nid;
+  return $form;
+  
+}
+
+function questionaire_question_submission_form_validate($form, &$form_state) {
+  watchdog('questionaire', 'validate the form');
+
+  foreach ($form_state['values'] as $questionid => $answer) {
+    if (is_numeric($questionid)) {
+      if (isset($answer) && (strlen($answer) > 0)) {
+        $sql = "SELECT qq.nid, qq.questiontype, n.title FROM {questionaire_question} qq JOIN {node} n ON n.nid = qq.nid WHERE qq.nid = %d";
+        $question = db_fetch_object(db_query($sql, $questionid));
+        if ($question->questiontype == 3) { // Numeric value
+          if (!preg_match('/^[0-9]+$/', $answer)) {
+            form_set_error($question->title, 'Please enter an integer number (digits only) for question: "'. $question->title . '".');
+          }
+        }
+        if ($question->questiontype == 4) { // Time value
+          if (!preg_match('/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/', $answer)) {
+            form_set_error($question->title, 'Please enter a time with a 24-hour format (HH:MM) for question: "'. $question->title . '".');
+          }
+        }
+      }
+    }
+  }
+}
+
+function questionaire_question_submission_form_submit($form, &$form_state) {
+//  print "<br/><br/>Here are the values again<br/>";
+//  print_r($form_state['values']);
+//  drupal_set_message("here is the keys " . implode("   ", array_keys($form_state['values'])));
+//  drupal_set_message("here is the values " . implode("   ", $form_state['values']));
+  global $user;
+  if ($form_state['values']['op'] == $form_state['values']['submit']) { //TODO will this work in a translated environment? 
+  // TODO validate time & number fields
+//  print_r ($form_state['values']);//['hierarchical_select']['selects']);
+//  foreach ($tid as $form_state['values'][1]['hierarchical_select']['selects']) {  //TODO check with multi-value taxonomies
+//    watchdog ('questionaire', 'adding ' . $tid);
+//  }  
+    $answers = Array();
+    $answers['uid'] = $user->uid; 
+//    $answers['terms'][] = taxonomy_get_term($form_state['values'][1]);
+    $answers['answers'] = array();
+    if (isset($form_state['values']['sid'])) {  
+      $answers['sid'] = $form_state['values']['sid'];
+    }
+    $answers['qnid'] = $form_state['values']['qnid'];  
+    $answers['context'] = $form_state['values']['contextnid'];  
+
+    foreach ($form_state['values'] as $question => $answer) {
+      if (is_numeric($question)) {
+        if (is_array($answer)) {
+          foreach($answer as $checkedoption) {
+            if (isset($checkedoption) && ($checkedoption != '0')) {
+              $answers['answers'][$checkedoption] = Array('question' => $question, 'answer' => $checkedoption);
+            }
+          }
+        }
+        else {
+          if (isset($answer) && (strlen($answer) > 0)) {
+            $answers['answers'][$question] = Array('question' => $question, 'answer' => $answer);
+          }
+        }
+      }
+    }
+    questionaire_question_saveanswers($answers);
+    drupal_set_message("Thank you for your submission");
+  }
+  if ($form_state['values']['op'] == $form_state['values']['cancel']) { //TODO will this work in a translated environment? 
+    drupal_set_message("You cancelled your submission. No answers have been saved.");
+  }
+  return "japie";
+//  drupal_goto('node/'. $form_state['values']['qnid']);
+}
+
+function questionaire_question_saveanswers($answers) {
+
+  if (isset($answers['terms'][0])) {
+    $termid = $answers['terms'][0]->tid;
+  }
+  
+  
+  $uid = $answers['uid']; //TODO make conditional (if not set then $user-uid)
+  $qnid = $answers['qnid'];
+  $context = $answers['context'];
+  if ($answers['sid']) {
+    $sid = $answers['sid'];
+    $submission = Array();
+    $submission['context'] = $context;
+
+    drupal_write_record('questionaire_submissions', $submission, array('sid' => $sid));
+  }
+  else { 
+    $sid = questionaire_question_create_submission($uid, $qnid, $context);  
+  }
+  
+//  $table = data_get_table('questionaire_answer');
+    
+  foreach ($answers['answers'] as $answer) {
+    $answer['sid'] = $sid;
+    $answer['uid'] = $uid;
+    $answer['created'] = date('U');
+    $answer['qnid'] = $qnid;
+    $answer['context'] = $context;
+    
+/*    if (is_array($answers['terms'])) {
+      foreach($answers['terms'] as $term) {
+//        watchdog('questionairesms', "going to save term " . $term->tid . " from ". $term->vid);
+        if (!is_array($answer['data_taxonomy:'. $term->vid])) {
+          $answer['data_taxonomy:'. $term->vid] = array();
+        }
+        $answer['data_taxonomy:'. $term->vid][] = $term->tid;
+      }
+    }
+  */
+      
+    if (isset($answers['sid'])) {
+      $keys = array( 'sid', 'question');
+      $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
+      $answer['id'] = $id;
+      drupal_write_record('questionaire_answer', $answer, $keys);
+    }
+    else { 
+       drupal_write_record('questionaire_answer', $answer);
+       $contextnode = node_load($context);
+       foreach ($contextnode->taxonomy as $term) {
+         $answerterm = array(
+           'id' => $answer['id'],
+           'tid' => $term->tid,
+         );
+         drupal_write_record('questionaire_answer_term', $answerterm);
+       } 
+    }
+  }
+}
+
+function questionaire_question_create_submission($uid, $qnid, $context) {
+  $submission = Array();
+  $submission['uid'] = $uid;
+  $submission['created'] = date('U');
+  $submission['context'] = $context;
+  $submission['qnid'] = $qnid;
+  drupal_write_record('questionaire_submission', $submission);
+  return $submission['sid'];
+}  
+
+/*
+ * The next section is about figuring out which context we should get the questions from
+ * For now, the only context we support is Node
+ * A content_type will have to be marked as being a Questionaire
+ * That content type can then *be* the context,
+ * If you write a support module that implements hook_getcontext($nid) then you can return a 
+ * different $nid than the default one. (for example, by selecting a childnode of your node)
+ * 
+ */
+
+
+/**
+ * Implementation of hook_node_type().
+ * Rename or delete the settings variable if a type changes.
+ */
+function questionaire_question_node_type($op, $info) {
+  switch ($op) {
+    case 'delete':
+      variable_del('questionaire_question_isquestionaire_'. $info->type);
+      break;
+    case 'update':
+      if (!empty($info->old_type) && $info->old_type != $info->type) {
+        if (questionaire_question_isquestionaire($info->old_type)) {
+          $settings = variable_get('questionaire_question_isquestionaire_'. $info->old_type, array());
+          variable_del('questionaire_question_isquestionaire_'. $info->old_type);
+          variable_set('questionaire_question_isquestionaire_'. $info->type, 1);
+        }
+      }
+      break;
+  }
+}
+
+
+
+/**
+ * Implementation of hook_form_alter().
+ */
+function questionaire_question_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'node_type_form') {
+    $form['questionaire_question'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Questionaire'),
+      '#group' => 'additional_settings',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#weight' => 33,
+    );
+    $form['questionaire_question']['questionaire_question_isquestionaire'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Use this content type as a Questionaire'),
+      '#default_value' => variable_get('questionaire_question_isquestionaire_'. $form['#node_type']->type, FALSE),
+    );
+  }
+}
+
+function questionaire_question_isquestionaire($nodetype) {
+  return variable_get('questionaire_question_isquestionaire_'. $nodetype, FALSE);
+}
+
+function questionaire_question_getcontext($nid) {
+  foreach (module_implements('getcontext') as $module) {
+    $function = $module .'_getcontext';
+    if ($module != 'questionaire_question') {
+      $result = call_user_func($function, $nid);
+      if (isset($result)) {
+        return $result;
+      }
+    }
+  }
+  return $nid;
+}
+
+function questionaire_question_getquestions($nid) {
+  if (module_exists('associated_nodes')) {
+    $result = Array();
+    $questions = associated_nodes_get($nid, 1);
+    foreach ($questions as $key => $value) {
+      $result[$key] = node_load($key); // the first is the code, the second the nid of the question!!! (and in our case, they are the same)
+    }
+    return $result;
+  }
+}
+
+/**
+* Implementation of hook_service()
+*/
+function questionaire_question_service() {
+  return array(
+    // echo.echo
+    array(
+      '#method'   => 'questionnaire.submit',
+      '#callback' => 'questionaire_question_submitquestions',
+      '#access callback'  => 'questionaire_question_submitquestions_access',
+      //'#auth'     => false,
+      '#return'   => 'struct',
+      '#args'     => array(
+        array(
+          '#name'         => 'questions',
+          '#type'         => 'array',
+          '#description'  => t('The Answers to Questions, with the nid of the question as the key and the answer as the value.'),
+        ),
+        array(
+          '#name'         => 'qnid',
+          '#type'         => 'int',
+          '#description'  => t('The Questionaire nid.'),
+        ),
+        array(
+          '#name'         => 'contextnid',
+          '#type'         => 'int',
+          '#description'  => t('The nid of the context of the questions.'),
+        )),
+      '#help'     => t('Returns a submissionId.'))
+  );
+}
+
+function questionaire_question_submitquestions($questions, $qnid, $contextnid) {
+  // Load the required includes for drupal_execute
+  $nid = NULL;
+  $questions = (array) $questions;
+   
+  $questions['qnid'] = $qnid;
+  $questions['contextnid'] = $contextnid;
+  $questions['op'] = t('Submit');
+
+  // Setup form_state
+  $form_state = array();
+  $form_state['values'] = (array) $questions;
+
+  $ret = drupal_execute('questionaire_question_submission_form', $form_state, $qnid);
+
+  // Fetch $nid out of $form_state
+  $sid = $form_state['sid'];
+
+  if ($errors = form_get_errors()) {
+    // TODO fix this for normal posts (or fix it for services, whatever you like
+    return services_error(implode("\n", $errors), 401);
+  }
+  return $sid;
+  
+}
+
+function questionaire_question_submitquestions_access($questions, $qnid, $contextnid) {
+  return TRUE; //TODO 
+}

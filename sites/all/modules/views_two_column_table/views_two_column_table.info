@@ -1,0 +1,13 @@
+; $Id: views_two_column_table.info,v 1.1 2009/12/17 13:05:59 snpower Exp $
+name = Views Two Column Table
+description = Provides an alternate table row style for the Views module.
+dependencies[] = views
+package = Views
+core = 6.x
+
+; Information added by drupal.org packaging script on 2009-12-17
+version = "6.x-1.1"
+core = "6.x"
+project = "views_two_column_table"
+datestamp = "1261056397"
+

@@ -1,0 +1,17 @@
+*************** function node_service_service() {
+*** 77,83 ****
+        '#args'             => array(
+          array(
+            '#name'           => 'node',
+-           '#type'           => 'struct',
+            '#description'    => t('A node object. Upon creation, node object must include "type". Upon update, node object must include "nid" and "changed".'))),
+        '#return'           => 'struct',
+        '#help'             => t('Save a node object into the database.')),
+--- 77,83 ----
+        '#args'             => array(
+          array(
+            '#name'           => 'node',
++           '#type'           => 'array',
+            '#description'    => t('A node object. Upon creation, node object must include "type". Upon update, node object must include "nid" and "changed".'))),
+        '#return'           => 'struct',
+        '#help'             => t('Save a node object into the database.')),

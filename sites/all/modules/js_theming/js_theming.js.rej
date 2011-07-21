@@ -1,0 +1,18 @@
+*************** Drupal.queryStringEncode = function(quer
+*** 63,69 ****
+        newkey = key;
+      }
+      
+-     if (exclude.indexOf(key) >= 0) {
+        continue; // Skip exclude keys
+      }
+      
+--- 63,70 ----
+        newkey = key;
+      }
+      
++     var excludestring = exclude.toString();
++     if (excludestring.indexOf(key) >= 0) {
+        continue; // Skip exclude keys
+      }
+      

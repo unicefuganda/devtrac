@@ -1,0 +1,84 @@
+<?php
+// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $ 
+
+/**
+ * @file
+ * Install, update and uninstall functions for the XXX module.
+ */
+
+
+/**
+ * Implementation of hook_schema().
+ */
+function devtrack_module_schema() {
+  $schema = array();
+
+  $schema['devtrac_bbsync'] = array(
+    'description' => 'Contains SyncBB.',
+    'fields' => array(
+      'nid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Nid of the syncbb.',
+      ),
+      'vid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Version ID of the syncbb.',
+      ),
+      'ftnid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Nid of the field trip.',
+      ),
+      'result' => array(
+        'type' => 'varchar',
+        'length' => 4096,
+        'not null' => TRUE,
+        'description' => 'Results of the sync.',
+      ),
+      'synced' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Did we try to sync?',
+      ),
+      'error' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Something went wrong durint the sync.',
+      ),
+    ),
+    'primary key' => array('nid'),
+    'indexes' => array(
+      'vid' => array('vid'),
+    ),
+  );
+
+	return $schema;
+}
+
+
+/**
+ * Implementation of hook_install().
+ */
+function devtrack_module_install() {
+  // Create tables.
+  drupal_install_schema('devtrac_bbsync');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function devtrack_module_uninstall() {
+	drupal_uninstall_schema('devtrac_bbsync');
+}
+
+
+

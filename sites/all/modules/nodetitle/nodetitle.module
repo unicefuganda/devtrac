@@ -1,0 +1,109 @@
+<?php
+// $Id: nodetitle.module,v 1.1.4.2 2010/05/29 23:07:46 hanoii Exp $
+
+function _nodetitle_get_title($node) {
+  if (($title = variable_get('nodetitle_title_'. $node->type, '')) !== '') {
+    $nodetitle = token_replace($title, 'node', $node);
+  }
+  if (($php = variable_get('nodetitle_php_'. $node->type, '')) !== '') {
+    $variables['%title'] = $nodetitle;
+    $variables['%php_title'] = '$nodetitle = \'' . str_replace('\'', '\\\'', $nodetitle) . '\';';
+    $nodetitle = drupal_eval(strtr($php, $variables));
+  }
+
+  return $nodetitle;
+}
+
+function nodetitle_form_alter(&$form, $form_state, $form_id) {
+  if ($form_id == 'node_type_form' && isset($form['#node_type'])) {
+    $form['nodetitle'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Node Title'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+
+    $form['nodetitle']['nodetitle_title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#default_value' => variable_get('nodetitle_title_'. $form['#node_type']->type, ''),
+      '#description' => t('A replacement title for this content type.'),
+    );
+
+    $form['nodetitle']['nodetitle_title_head'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Do no change the visible node\'s page title'),
+      '#description' => t('Only change the &lt;title&gt; tag on the &lt;head&gt; section of the node\'s page on a theme level. It will not change the actual node page title. I will only be displayed on search engine search results or on the visitor browser title window or tab.'),
+      '#default_value' => variable_get('nodetitle_title_head_'. $form['#node_type']->type, 0),
+    );
+
+
+    $form['nodetitle']['nodetitle_token'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Token replacements'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+    $form['nodetitle']['nodetitle_token']['help'] = array(
+        '#type' => 'markup',
+        '#value' => theme('token_help'),
+      );
+
+    $form['nodetitle']['advanced'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Advanced PHP replacement'),
+        '#collapsible' => TRUE,
+        '#collapsed' => TRUE,
+      );
+    $form['nodetitle']['advanced']['nodetitle_php'] = array(
+        '#type' => 'textarea',
+        '#title' => t('PHP replacement'),
+        '#default_value' => variable_get('nodetitle_php_'. $form['#node_type']->type, ''),
+        '#description' => t('Code must be included within %php_tags tags. You can add any php code here to perform a particular replacement on the node title after token substitution. %title and %php_title are available to be used within this code. %title is the actual title string, be careful if the title has single or double quotes in it. %php_title is replaced with a PHP code that defines a $nodetitle variable that you can use along your eval code with the title string (quotes are not a problem here). A good starting poing would be: <code>%code</code>.', array('%php_tags' => '<?php ?>', '%code' => '<?php %php_title return $nodetitle; ?>')),
+      );
+  }
+
+}
+
+/**
+ * Implementation of hook_nodeapi().
+ */
+function nodetitle_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  switch ($op) {
+    case 'view':
+      $teaser = $a3;
+      $page =  $a4;
+      if (!variable_get('nodetitle_title_head_'. $node->type, 0) && !$teaser && $page) {
+        $nodetitle = _nodetitle_get_title($node);
+        if ($nodetitle) {
+          drupal_set_title($nodetitle);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Process variables for page.tpl.php
+ *
+ * Change the <title> tag of the page
+ *
+ * @see page.tpl.php
+ * @see template_preprocess_page().
+ */
+function nodetitle_preprocess_page(&$variables) {
+
+  if (arg(0) == 'node' && is_numeric(arg(1)) && is_null(arg(2))) {
+    $node = node_load(arg(1));
+    if (variable_get('nodetitle_title_head_'. $node->type, 0)) {
+      $nodetitle = _nodetitle_get_title($node);
+      if ($nodetitle) {
+        drupal_set_title($nodetitle);
+      }
+      // Construct page title
+      if ($nodetitle) {
+        $variables['head_title'] = $nodetitle;
+      }
+    }
+  }
+}

@@ -1,0 +1,39 @@
+@CHARSET "UTF-8";
+
+#nav a {
+	background-image: url("/sites/default/themes/devtrack_theme/images/menu_bkgd.gif");
+	background-repeat: repeat-x;
+	background-position: left top;
+    height: 30px;
+	padding: 6px 10px 4px;
+/*	display: block; */ 
+    /* webkit = Chrome & safari. This is the ie.css. this is not going to be activated, ever   
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    */
+}
+button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link {
+	background-image: url("/sites/default/themes/devtrack_theme/images/input_btn.gif");
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-color: #000;
+	border: #f2f2f2 solid 1px;
+	
+	/* webkit = Chrome & safari. This is the ie.css. this is not going to be activated, ever   
+	-webkit-border-top-left-radius: 4px;
+	-webkit-border-top-right-radius: 4px;
+	-webkit-border-bottom-left-radius: 4px;
+	-webkit-border-bottom-right-radius: 4px;
+	*/
+}
+button:hover ,
+input.form-submit:hover,
+input a.form-button-cancel:hover, 
+.node-form a.openlayers-cck-hide-link:hover  {
+  background-color: #000;
+}
+#footermenubar {
+	background-color:#000 !important;	
+	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
+	display: inline-block;
+}

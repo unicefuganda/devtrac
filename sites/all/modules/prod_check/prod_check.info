@@ -1,0 +1,13 @@
+; $Id: prod_check.info,v 1.1 2010/12/08 20:50:18 malc0mn Exp $
+
+name = "Production check"
+description = "Check a site to see if it's properly setup for production use."
+package = "Monitoring"
+core = "6.x"
+
+; Information added by drupal.org packaging script on January 1, 1970 - 00:00
+version = "6.x-1.0-beta8"
+core = "6.x"
+project = "prod_check"
+datestamp = "1297011117"
+

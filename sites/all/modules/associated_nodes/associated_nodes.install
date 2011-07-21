@@ -1,0 +1,52 @@
+<?php
+// $Id: associated_nodes.install,v 1.2.2.3 2009/04/24 13:45:15 jfberroyer Exp $
+
+function associated_nodes_install() {
+  $result = drupal_install_schema('associated_nodes');
+  if ($result[0]['success']) {
+    drupal_set_message(t("The module Associated Nodes has been installed.")." ".l(t("Click here"), "admin/settings/associated-nodes")." ".t("to configure it."));
+  }
+}
+
+function associated_nodes_uninstall() {
+  drupal_uninstall_schema('associated_nodes');
+}
+
+function associated_nodes_schema() {
+  $schema = array();
+  $schema['associated_nodes_association'] = array(
+    'fields' => array(
+      'aid' => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+      'name' => array('type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''),
+      'number' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'published_only' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1),
+    ),
+    'primary key' => array('aid'),
+  );
+  $schema['associated_nodes_nodetype'] = array(
+    'fields' => array(
+      'aid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'type' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''),
+    ),
+    'primary key' => array('aid', 'type'),
+  );
+  $schema['associated_nodes_criterion'] = array(
+    'fields' => array(
+      'aid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'type' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''),
+      'element' => array('type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''),
+      'weight' => array('type' => 'float', 'not null' => TRUE, 'default' => 0),
+    ),
+    'primary key' => array('aid', 'type', 'element'),
+  );
+  $schema['associated_nodes_cache'] = array(
+    'fields' => array(
+      'aid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'nid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'associated_nid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'score' => array('type' => 'float', 'not null' => TRUE, 'default' => 0),
+    ),
+    'primary key' => array('aid', 'nid', 'associated_nid'),
+  );
+  return $schema;
+}

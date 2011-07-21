@@ -1,0 +1,8 @@
+/* $Id: prod-check.css,v 1.1.2.1 2011/01/24 15:26:18 malc0mn Exp $ */
+
+/* Prod monitor settings page styling */
+
+.prod-check-settings{float:left;padding:0 5px;}
+.prod-check-settings.odd{background-color:#f8f8f8;}
+.prod-check-settings.even{background-color:#f1f1f1;}
+#edit-prod-check-module-list-day-wrapper, #edit-prod-check-module-list-time-wrapper{float:left;}

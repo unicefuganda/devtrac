@@ -1,0 +1,98 @@
+# $Id: user_activity.pot,v 1.2 2008/07/18 08:58:39 sanduhrs Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  user_activity.module,v 1.1.2.11 2008/01/31 13:16:28 sanduhrs
+#  user_activity.install: n/a
+#  user_activity.info: n/a
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"POT-Creation-Date: 2008-07-06 20:28+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+
+#: user_activity.module:21;33
+msgid "User activity"
+msgstr ""
+
+#: user_activity.module:27
+msgid "User activity feed"
+msgstr ""
+
+#: user_activity.module:34
+msgid "Configure how the activity is calculated."
+msgstr ""
+
+#: user_activity.module:69
+msgid "Latest activity"
+msgstr ""
+
+#: user_activity.module:91;123
+msgid "Most active users"
+msgstr ""
+
+#: user_activity.module:97
+msgid "Number of users to display"
+msgstr ""
+
+#: user_activity.module:453
+msgid "Activity index: %idx%"
+msgstr ""
+
+#: user_activity.module:454
+msgid "read more"
+msgstr ""
+
+#: user_activity.module:484
+msgid "Calculation options"
+msgstr ""
+
+#: user_activity.module:485
+msgid "Adjust the Options to influence the activity calculation."
+msgstr ""
+
+#: user_activity.module:489
+msgid "Page impressions"
+msgstr ""
+
+#: user_activity.module:496
+msgid "User logins"
+msgstr ""
+
+#: user_activity.module:503
+msgid "Nodes created"
+msgstr ""
+
+#: user_activity.module:510
+msgid "Comments created"
+msgstr ""
+
+#: user_activity.module:47
+msgid "administer user activity"
+msgstr ""
+
+#: user_activity.module:0
+msgid "user_activity"
+msgstr ""
+
+#: user_activity.install:46
+msgid "The user activity modul is installed and ready to go."
+msgstr ""
+
+#: user_activity.info:0
+msgid "User Activity"
+msgstr ""
+
+#: user_activity.info:0
+msgid "Measure the activity of your users."
+msgstr ""
+

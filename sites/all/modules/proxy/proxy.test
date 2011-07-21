@@ -1,0 +1,82 @@
+<?php
+// $Id: proxy.test,v 1.2 2010/01/20 14:55:45 zzolo Exp $
+
+/**
+ * @file
+ * Tests for proxy.
+ */
+
+/**
+ * Basic Test Class for proxy
+ */
+class ProxyTest extends DrupalWebTestCase {
+
+  /**
+   * Get Info
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Basic Proxy Test',
+      'description' => 'Ensure that the proxy functionality is working correctly.',
+      'group' => 'Proxy',
+    );
+  }
+
+  /**
+   * Set Up
+   */
+  public function setUp() {
+    // Enable any modules required for the test
+    parent::setUp('proxy');
+  }
+
+  /**
+   * Test to check proxyion methods
+   */
+  public function testBasicProxy() {
+    $url = 'http://drupal.org/';
+    $params['request_uri'] = $url;
+    $check_content = '<a href="http://buytaert.net">Dries Buytaert</a>.';
+
+    // Get proxy content
+    $content = proxy($params);
+    // Check for specific content
+    $this->verbose(var_export($content, TRUE));
+    $this->assertTrue((strpos($check_content, $content->data) > 0), t('Ensure that the correct content is returned from drupal.org.'));
+  }
+
+  /**
+   * Test Router functionality
+   */
+  public function testRouterProxy() {
+    // Create user that has access
+    $user = $this->drupalCreateUser(array('access proxy router'));
+    $this->drupalLogin($user);
+
+    // Variables
+    $url = 'http://drupal.org/';
+    $params['request_uri'] = $url;
+    $check_content = '<a href="http://buytaert.net">Dries Buytaert</a>.';
+    $path = 'proxy?proxy=' . $url;
+
+    // Go to path
+    $this->drupalGet($path);
+    $this->assertRaw($check_content, t('Ensure that the correct text shows on the page.'));
+  }
+
+  /**
+   * Test Cache functionality
+   */
+  public function testCacheProxy() {
+    // Variables
+    $url = 'http://drupal.org/';
+    $params['request_uri'] = $url;
+    // Set cache to 5 minutes
+    $params['cache'] = time() + (60 * 5);
+
+    // Go to path
+    $content_orig = proxy($params);
+    $content_cache = proxy($params);
+    $this->assertEqual($content_orig, $content_cache, t('Ensure that the cache returns the same for drupal.org.'));
+  }
+}

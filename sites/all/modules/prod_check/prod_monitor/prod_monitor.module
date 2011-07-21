@@ -1,0 +1,521 @@
+<?php
+// $Id: prod_monitor.module,v 1.7.2.12 2011/02/06 16:37:15 malc0mn Exp $
+
+/**
+ * Our own definition of the core requirements states. These can be found in
+ * includes/install.inc and are only available in hook_install(). That's why
+ * we redefine them here (yes, it's double!). It's nicer than including the
+ * install.inc file...
+ * Let's see if this will pose problems...
+ */
+define('REQUIREMENT_INFO', -1);
+define('REQUIREMENT_OK', 0);
+define('REQUIREMENT_WARNING', 1);
+define('REQUIREMENT_ERROR', 2);
+
+/**
+ * We do the same here for the update module constants: redefine them so that we
+ * do not need to run the update module entirely!
+ */
+define('UPDATE_DEFAULT_URL', 'http://updates.drupal.org/release-history');
+define('UPDATE_NOT_SECURE', 1);
+define('UPDATE_REVOKED', 2);
+define('UPDATE_NOT_SUPPORTED', 3);
+define('UPDATE_NOT_CURRENT', 4);
+define('UPDATE_CURRENT', 5);
+define('UPDATE_NOT_CHECKED', -1);
+define('UPDATE_UNKNOWN', -2);
+define('UPDATE_NOT_FETCHED', -3);
+define('UPDATE_MAX_FETCH_ATTEMPTS', 2);
+
+/**
+ * Implementation of hook_help().
+ */
+function prod_monitor_help($path, $arg) {
+  $output = '';
+  switch ($path) {
+    case 'admin/help#prod_monitor':
+      $output .= '<p>'.t('Production monitor is a module that can connect to the <strong>Production check</strong> module using <strong>XMLRPC</strong> and an <strong>API key</strong>. It will retrieve all specified data from the remote site to create a satus page and monitoring facility in a central place.').'<br />';
+      $output .= t('You can add multiple sites and configure per site what data you wish (not) to monitor, allowing you to setup a central Drupal site that will monitor all of your sites that have the <em>Production check</em> module with <em>XMLRPC</em> enabled.').'<br />';
+      $output .= t('The <strong>data retrieval</strong> mechanism can be called <strong>manually</strong> and is integrated with the <strong>cron</strong>, so you get a fresh update of data each cron run.').'</p>';
+      break;
+    case 'admin/reports/prod-monitor':
+      $output .= '<p><strong>'.t('Site overview table').'</strong><br />';
+      $output .= t('The overview table gives you an overview of what sites you have added together with their status. The status will be the highest error detected in the retrieved data set.').'<br />';
+      $output .= t('The per site functions <strong>View</strong>, <strong>Edit</strong>, <strong>Fetch data</strong>, <strong>Flush</strong> and <strong>Delete</strong> should be self explanatory.').'</p>';
+      // No break!
+    case 'admin/reports/prod-monitor/%/edit':
+      $output .= '<p><strong>'.t('Website URL & API key').'</strong><br />';
+      $output .= t('To add a site, enter it\'s <strong>full url</strong>, including the protocol, but omitting the <em>xmlrpc.php</em> part and the <strong>API key</strong> that you have configured for it using the <strong>Production check</strong> module. Now click the <strong>Get settings</strong> button.').'<br />';
+      $output .= t('All of the checks that the <em>Production check</em> module can perform are fetched from the remote site and presented as an array of checkboxes. Finally you can configure what exactly you wish to monitor for this site, then hit the <strong>Add site</strong> button.').'<br />';
+      $output .= t('Each time you edit a site, the settings are fetched from the remote server so that any new checks that might have been added to the <em>Production check</em> module there are always up to date in the monitoring section.').'<br />';      $output .= t('<strong>Fetch data immediately</strong> does exactly what it says and fetches all the configured data from the remote site and will direct you to the report page.').'</p>';
+      break;
+    case 'admin/reports/prod-monitor/%':
+    case 'admin/reports/prod-monitor/%/view':
+      $output .= '<p>'.t('This is an overview of all checks performed by the <em>Production check</em> module and their status <strong>on the remote site</strong>. You can click the links inside the report to jump to the module\'s settings page, or to go to the project page of a module, in case you need to download it for installation.').'</p>';
+      break;
+  }
+  return $output;
+}
+
+/**
+ * Implementation of hook_perm()
+ */
+function prod_monitor_perm() {
+  return array('access production monitor');
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function prod_monitor_menu() {
+  $items = array();
+
+  $items['admin/reports/prod-monitor'] = array(
+    'title' => t('Production monitor'),
+    'description' => t('Setup the Production monitor.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prod_monitor_overview_form'),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'includes/prod_monitor.admin.inc',
+  );
+
+  // We need this item for a proper breadcrumb. Don't understand why (yet).
+  $items['admin/reports/prod-monitor/%'] = array(
+    'title' => t('View'),
+    'description' => t('View the Production monitor report page.'),
+    'page callback' => 'prod_monitor_status',
+    'page arguments' => array(3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 10,
+  );
+
+  $items['admin/reports/prod-monitor/%/view'] = array(
+    'title' => t('View'),
+    'description' => t('View the Production monitor detailed report page.'),
+    'page callback' => 'prod_monitor_status',
+    'page arguments' => array(3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 10,
+  );
+
+  $items['admin/reports/prod-monitor/%prod_monitor/updates'] = array(
+    'title' => t('Updates'),
+    'description' => t('View the Production monitor modules update page.'),
+    'page callback' => 'prod_monitor_updates',
+    'page arguments' => array(3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 15,
+  );
+
+  $items['admin/reports/prod-monitor/%/update-check'] = array(
+    'title' => t('Updates'),
+    'description' => t('Refresh Production monitor modules update page.'),
+    'page callback' => 'prod_monitor_updates_check',
+    'page arguments' => array(3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_CALLBACK,
+    'file' => 'includes/prod_monitor.admin.inc',
+  );
+
+  $items['admin/reports/prod-monitor/%/edit'] = array(
+    'title' => t('Edit'),
+    'description' => t('Edit website'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prod_monitor_overview_form', 3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 20,
+  );
+
+  $items['admin/reports/prod-monitor/%/flush'] = array(
+    'title' => t('Flush'),
+    'description' => t('Flush website\'s data.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prod_monitor_flush_form', 3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 30,
+  );
+
+  $items['admin/reports/prod-monitor/%/fetch'] = array(
+    'title' => t('Fetch'),
+    'description' => t('Fetch website\'s data.'),
+    'page callback' => 'prod_monitor_fetch_data',
+    'page arguments' => array(3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 35,
+  );
+
+  $items['admin/reports/prod-monitor/%/delete'] = array(
+    'title' => t('Delete'),
+    'description' => t('Delete website'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('prod_monitor_delete_form', 3),
+    'access callback' => 'user_access',
+    'access arguments' => array('access production monitor'),
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'includes/prod_monitor.admin.inc',
+    'weight' => 40,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of the hook_theme() registry.
+ */
+function prod_monitor_theme() {
+  return array(
+    'prod_monitor_update_report' => array(
+      'arguments' => array('id' => NULL, 'last' => NULL, 'data' => NULL),
+      'file' => 'includes/prod_monitor.theme.inc',
+    ),
+    'prod_monitor_update_version' => array(
+      'arguments' => array('version' => NULL, 'tag' => NULL, 'class' => NULL),
+      'file' => 'includes/prod_monitor.theme.inc',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_load()
+ */
+function prod_monitor_load($id) {
+  // Get module data.
+  $modules = _prod_monitor_get_site_modules($id);
+  // Hide tab if no module data found.
+  if (!isset($modules['projects']) || empty($modules['projects'])) {
+    $modules = FALSE;
+  }
+  return $modules;
+}
+
+/**
+ * Implementation of hook_cron()
+ */
+function prod_monitor_cron() {
+  if (variable_get('prod_monitor_cron_running', FALSE)) {
+    watchdog('prod_monitor', 'Last cron run was not properly terminated!', array(), WATCHDOG_ERROR);
+  }
+
+  $sites = _prod_monitor_get_sites(variable_get('prod_monitor_cron_start_at', 0));
+
+  // Indicate we're running.
+  variable_set('prod_monitor_cron_running', TRUE);
+  $cron_start = time();
+  // 180 seconds run max!
+  $time_limit = 180;
+  $elapsed = $process = 0;
+
+  foreach ($sites as $id => $site_info) {
+    $elapsed = time() - $cron_start;
+    if ($elapsed < $time_limit) {
+      //TODO: add module status update check here.
+      _prod_monitor_retrieve_data($id, $site_info);
+      $process++;
+    }
+    else {
+      // Time's up! Start with this site next time.
+      variable_set('prod_monitor_cron_start_at', $id);
+      break;
+    }
+  }
+
+  // If all was processed, make sure we start from the top next time
+  if ($process >= count($sites)) {
+    variable_set('prod_monitor_cron_start_at', 0);
+  }
+
+  watchdog('prod_monitor', '!count sites updated successfully in !time seconds.', array('!count' => $process, '!time' => $elapsed), WATCHDOG_NOTICE);
+
+  // Indicate we've stopped.
+  variable_del('prod_monitor_cron_running');
+}
+
+/**
+ * Retrieve settings form from Prod check using XMLRPC
+ */
+function _prod_monitor_retrieve_functions($url, $api_key, $msg = TRUE) {
+  $url = rtrim($url, '/') . '/xmlrpc.php';
+
+  $functions = xmlrpc($url, 'prod_check.get_settings', $api_key);
+  if (!$functions) {
+    drupal_set_message(
+      t('Failed to retrieve settings form from !link, please verify the given URL and try again!',
+        array('!link' => l('remote site', $url, array('attributes' => array('title' => t('remote site')))))
+      ),
+      'error'
+    );
+  }
+  else if ($msg) {
+    drupal_set_message(t('Settings form updated, please adjust your settings.'));
+  }
+
+  return $functions;
+}
+
+/**
+ * Retrieve data form from Prod check using XMLRPC
+ */
+function _prod_monitor_retrieve_data($id, $site_info, $msg = FALSE) {
+  $url = rtrim($site_info['url'], '/') . '/xmlrpc.php';
+  $api_key = $site_info['settings']['api_key'];
+  $checks = $site_info['settings']['checks'];
+
+  // Do requests.
+  $data = xmlrpc($url, 'prod_check.get_data', $api_key, $checks);
+  if (!$data) {
+    watchdog('prod_monitor', 'Could not retrieve settings data for %link', array('%link' => $site_info['url']), WATCHDOG_ERROR);
+    if ($msg) {
+      drupal_set_message(
+        t('Data for %link not successfully fetched. Errors have been !link.',
+          array(
+            '%link' => $site_info['url'],
+            '!link' => l(t('logged'), 'admin/reports/dblog'),
+          )
+        ), 'error'
+      );
+    }
+  }
+  else {
+    // Extract the module list data to be stored in a different table
+    $module_list = array();
+    if (isset($data['prod_mon']['prod_check_module_list'])) {
+      $module_list = $data['prod_mon']['prod_check_module_list'];
+      unset($data['prod_mon']['prod_check_module_list']);
+    }
+
+    // Write site data
+    $site = new stdClass();
+    $site->id = $id;
+    $site->data = serialize($data);
+    $site->lastupdate = time();
+    $result = drupal_write_record('prod_monitor_sites', $site, array('id'));
+    if (!$result) {
+      watchdog('prod_monitor', 'Could not update data for %link', array('%link' => $site_info['url']), WATCHDOG_ERROR);
+      if ($msg) {
+      drupal_set_message(
+        t('Data for %link not successfully saved. Errors have been !link.',
+          array(
+            '%link' => $site_info['url'],
+            '!link' => l(t('logged'), 'admin/reports/dblog'),
+          )
+        ), 'error'
+      );
+      }
+    }
+    else {
+      if ($msg) {
+        drupal_set_message(t('Data for %link successfully updated.', array('%link' => $site_info['url'])));
+      }
+      // Write module data if there is an update.
+      if (!empty($module_list)) {
+        // Check if data present, so we can update.
+        $modules = _prod_monitor_get_site_modules($id, TRUE);
+        $update = array();
+        if (!empty($modules)) {
+          $update = array('id');
+        }
+
+        $modules = new stdClass();
+        $modules->id = $id;
+        $modules->projects = serialize($module_list['projects']);
+        $modules->sitekey = $module_list['site_key'];
+        $modules->lastfetch = $module_list['last_update'];
+        $result = drupal_write_record('prod_monitor_site_modules', $modules, $update);
+        if (!$result) {
+          watchdog('prod_monitor', 'Could not update module data for %link', array('%link' => $site_info['url']), WATCHDOG_ERROR);
+          if ($msg) {
+            drupal_set_message(
+              t('Module data for %link not successfully saved. Errors have been !link.',
+                array(
+                  '%link' => $site_info['url'],
+                  '!link' => l(t('logged'), 'admin/reports/dblog'),
+                )
+              ), 'error'
+            );
+          }
+        }
+        else if ($msg) {
+          drupal_set_message(t('Module data for %link successfully updated.', array('%link' => $site_info['url'])));
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function to get all sites.
+ */
+function _prod_monitor_get_sites($start_id = FALSE) {
+  $where = 'ORDER BY added DESC';
+  if ($start_id) {
+    // When called from hook_cron
+    $where = "WHERE id >= $start_id ORDER BY id ASC";
+  }
+  $sql = "SELECT * FROM {prod_monitor_sites} $where";
+  $result = db_query($sql);
+
+  $sites = array();
+  while ($row = db_fetch_array($result)) {
+    $id = $row['id'];
+    $row['data'] = unserialize($row['data']);
+
+    // Get highest error level
+    $status = -1;
+    if (!empty($row['data'])) {
+      foreach ($row['data'] as $set => $checks) {
+        foreach ($checks as $check => $results) {
+          $status = ($results['severity'] > $status) ? $results['severity'] : $status;
+        }
+      }
+      $data_status = TRUE;
+    }
+    else {
+      $data_status = FALSE;
+    }
+
+    switch ($status) {
+      case 0: $status = 'ok';
+        break;
+      case 1: $status = 'warning';
+        break;
+      case 2: $status = 'error';
+        break;
+      default: $status = '';
+    }
+
+    $sites[$id]['url'] = $row['url'];
+    $sites[$id]['settings'] = unserialize($row['settings']);
+    $sites[$id]['data'] = $data_status;
+    $sites[$id]['status'] = $status;
+    $sites[$id]['added'] = format_date($row['added'], 'small');
+    $sites[$id]['lastupdate'] = (empty($row['lastupdate'])) ? FALSE : format_date($row['lastupdate'], 'small');
+  }
+
+  return $sites;
+}
+
+/**
+ * Helper function to get a site by ID.
+ *
+ * @param $id
+ *  int site id.
+ * @param $all
+ *  Boolean whether or not to return all fields or just the url and settings.
+ */
+function _prod_monitor_get_site($id, $all = FALSE) {
+  if (!$all) {
+    $sql = "SELECT url, settings FROM {prod_monitor_sites} WHERE id = %d";
+  }
+  else {
+    $sql = "SELECT * FROM {prod_monitor_sites} WHERE id = %d";
+  }
+
+  $site = db_fetch_array(db_query($sql, $id));
+  if (!empty($site)) {
+    $site['settings'] = unserialize($site['settings']);
+    if ($all) {
+      $site['data'] = unserialize($site['data']);
+    }
+  }
+
+  return $site;
+}
+
+/**
+ * Helper function to get a site's mdules by ID.
+ *
+ * @param $id
+ *  int site id.
+ * @param $exists
+ *  Boolean wether to return just the ID (to check if there is module info)
+ *  or all fields.
+ */
+function _prod_monitor_get_site_modules($id, $exists = FALSE) {
+  if (!$exists) {
+    $sql = "SELECT * FROM {prod_monitor_site_modules} WHERE id = %d";
+  }
+  else {
+    $sql = "SELECT id FROM {prod_monitor_site_modules} WHERE id = %d";
+  }
+
+  $modules = db_fetch_array(db_query($sql, $id));
+  if (!empty($modules) && !$exists) {
+    $modules['projects'] = unserialize($modules['projects']);
+    $modules['available'] = unserialize($modules['available']);
+  }
+
+  return $modules;
+}
+
+/**
+ * Helper function to get the module status of a site by ID.
+ *
+ * @param $id
+ *  int site id.
+ */
+function _prod_monitor_get_update_status($id) {
+  $sql = "SELECT updates FROM {prod_monitor_site_modules} WHERE id = %d";
+  return db_result(db_query($sql, $id));
+}
+
+/**
+ * Helper function to flush data for a site.
+ * Added for easy implementation of Drush functionality.
+ */
+function _prod_monitor_flush_data($id) {
+  $site = new stdClass();
+  $site->id = $id;
+  // Setting data to NULL would be preferred, but then drupal_write_record
+  // fails!
+  $site->data = serialize(array());
+  $site->lastupdate = 0;
+
+  return drupal_write_record('prod_monitor_sites', $site, array('id'));
+}
+
+/**
+ * Helper function to delete a site.
+ * Added for easy implementation of Drush functionality.
+ */
+function _prod_monitor_delete_site($id) {
+  // Is this one compatible with all DB types? If not, raise a flag!
+  $sql = "DELETE FROM ps, pm USING {prod_monitor_sites} ps LEFT JOIN {prod_monitor_site_modules} pm ON ps.id = pm.id WHERE ps.id = %d";
+  return db_query($sql, $id);
+}
+
+/**
+ * Helper function for Drush to show proper info when deleting a site.
+ */
+function _prod_monitor_get_url($id) {
+  return _prod_monitor_sanitize_url(rtrim(db_result(db_query("SELECT url FROM {prod_monitor_sites} WHERE id = %d", $id)), '/'));
+}
+
+/**
+ * Remove (optional) password from URL.
+ */
+function _prod_monitor_sanitize_url($url) {
+  return preg_replace('/(:\/\/[^:]+:)[^@]+(@)/', "$1...$2", $url);
+}
+

@@ -1,0 +1,9 @@
+<?php
+// $Id$
+
+function associated_links_uninstall() {
+	$q = "DELETE FROM {blocks} WHERE module = 'associated_links'";
+	db_query($q);
+	
+	variable_del("associated_links_ajax_loading");
+}

@@ -1,0 +1,46 @@
+<?php
+// $Id: proxy.install,v 1.1 2010/01/19 15:19:33 zzolo Exp $
+
+/**
+ * @file
+ * This file holds the functions for the installing
+ * and enabling of the Proxy module.
+ *
+ * @ingroup proxy
+ */
+
+/**
+ * Implementation of hook_install().
+ */
+function proxy_install() {
+  // Install scheme, specifically cache table
+  drupal_install_schema('proxy');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function proxy_uninstall() {
+  // Uninstall schema (delete db tables)
+  drupal_uninstall_schema('proxy');
+
+  // Get module variables
+  $results = db_query("SELECT v.name FROM {variable} AS v WHERE v.name LIKE '%s%%'", 'proxy_');
+  // Remove variables
+  while ($row = db_fetch_array($results)) {
+    variable_del($row['name']);
+  }
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function proxy_schema() {
+  $schema = array();
+
+  // Create proxy cache
+  $schema['cache_proxy'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_proxy']['description'] = 'Cache table for proxy module.';
+
+  return $schema;
+}

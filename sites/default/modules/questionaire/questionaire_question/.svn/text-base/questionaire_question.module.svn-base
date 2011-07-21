@@ -1,0 +1,143 @@
+<?php
+
+function question_node_info() {
+  return array(
+    'question' => array(
+       'name' => t('Question'),
+       'module' => 'question',
+       'description' => t('Questions that are part of a question'),
+       'has_title' => TRUE,
+       'title_label' => t('Question'),
+       'has_body' => FALSE,
+    )
+  );
+}
+
+function question_form($node) {
+  $type = node_get_types('type', $node);
+  $form['title'] = array(
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
+    '#required' => TRUE,
+    '#default_value' => $node->title,
+    '#weight' => -5,
+    '#maxlength' => 255,
+  );
+  
+  $options = question_getquestiontypes();
+  $form['questiontype'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#required' => TRUE,
+    '#default_value' => $node->questiontype,
+    '#weight' => -4,
+    '#options' => $options,
+  );
+  $form['questionoptions'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Options'),
+    '#required' => FALSE,
+    '#default_value' => $node->questionoptions,
+    '#weight' => -3,
+    '#cols' => 40,
+    '#rows' => 5,
+    '#resizable' => FALSE,
+  );
+  return $form;
+}
+
+function question_insert($node) {
+  db_query("INSERT INTO {questionaire_question} (nid, vid, questiontype, questionoptions) VALUES (%d, %d, '%s', '%s')", $node->nid, $node->vid, $node->questiontype, $node->questionoptions);
+}
+
+function question_update($node) {
+  if ($node->revision) {
+    question_insert($node);
+  } else {
+    db_query("UPDATE {questionaire_question} SET questiontype = '%s', questionoptions = '%s' WHERE vid = %d", $node->questiontype, $node->questionoptions, $node->vid);
+  }
+}
+
+function question_delete(&$node) {
+  db_query("DELETE FROM {questionaire_question} WHERE nid = %d", $node->nid);
+}
+
+function question_load($node) {
+  return db_fetch_object(db_query('SELECT questiontype, questionoptions from {questionaire_question} WHERE vid = %d', $node->vid));
+}
+
+function question_view($node, $teaser = FALSE, $page = false) {
+  $node = node_prepare($node, FALSE);
+  $options = question_getquestiontypes();
+  $node->content['questiontype'] = array(
+    '#value' => theme_item(Array('#title'=> 'Question Type', '#value'=> check_plain($options[$node->questiontype]))),
+    '#weight' => 2
+  );
+  $node->content['questionoptions'] = array(
+//    '#value' => '<ul>'. implode ('</li><li>', question_allowed_values($node->questionoptions)) . '</ul>',
+    '#value' => theme_item_list(question_allowed_values($node->questionoptions), 'Options', $type = 'ul'),
+    '#weight' => 3
+  );
+  return $node;
+}
+
+function question_allowed_values($questionoptions) {
+	$allowed_values = Array();
+	$list = explode("\n", $questionoptions);
+  $list = array_map('trim', $list);
+  $list = array_filter($list, 'strlen');
+  foreach ($list as $opt) {
+    // Sanitize the user input with a permissive filter.
+    $opt = filter_xss_admin($opt);  //In the content (cck) module there is a special function for this that is perhaps more secure TODO check that out
+    if (strpos($opt, '|') !== FALSE) {
+      list($key, $value) = explode('|', $opt);
+      $allowed_values[$key] = (isset($value) && $value !=='') ? $value : $key;
+    }
+    else {
+      $allowed_values[$opt] = $opt;
+    }
+  }
+	return $allowed_values;
+}
+
+
+function question_getquestiontypes(){
+	return Array('select', 'checkboxes', 'radios', 'number', 'time');
+}
+
+function question_process_answer($qid, $answer) {
+	
+	$question = node_load($qid);
+	$qtype = $question->questiontype;
+	watchdog('question', "qid ". $qid . " questionnid " . $question->nid . ' qtype ' . $qtype);
+	$options = question_getquestiontypes();
+	// lookup questiontype
+	switch ($options[$qtype]) {
+	  case 'select': 
+	  	watchdog('question', 'select');
+	     $options = question_allowed_values($node->questionoptions);
+	     $answertext = $options[$answer];
+	  break;
+	  case 'checkboxes': 
+      watchdog('question', 'checkboxes');
+	  	$answertext = $answer;
+    break;
+    case 'radios': 
+      watchdog('question', 'radios');
+    	$answertext = ($answer == 0 ) ? 'No' : 'Yes'; 
+    break;
+    case 'number': 
+    	 watchdog('question', 'select');
+    	
+      $answertext = $answer;
+    break;
+    case 'time': 
+      watchdog('question', 'time');
+    	$time = explode (':', $answer);
+       $answertext = $time[0] * 3600 + $time[1] * 60;
+    break;
+	}
+	
+	
+	return $answertext;
+}

@@ -1,0 +1,257 @@
+<?php
+// $Id: associated_nodes_taxonomy.module,v 1.2.2.5 2009/04/24 13:45:15 jfberroyer Exp $
+
+function associated_nodes_taxonomy_associated_nodes_types() {
+  return array('taxonomy' => t("Taxonomy"));
+}
+
+function associated_nodes_taxonomy_associated_nodes_criteria($aid) {
+  $vocabularies = _associated_nodes_taxonomy_get_vocabularies($aid);
+  return array('taxonomy' => $vocabularies);
+}
+
+function associated_nodes_taxonomy_associated_nodes_form($aid) {
+  $constraints = _associated_nodes_taxonomy_get_constraints($aid);
+  $terms = _associated_nodes_taxonomy_get_terms_options($aid);
+  if (count($terms) <= 1) {
+    return NULL;
+  }
+  $form = array();
+  $form['taxonomy_constraints'] = array(
+    '#type' => "fieldset",
+    '#title' => t("Taxonomy constraints"),
+    '#collapsible' => TRUE,
+    '#collapsed' => empty($constraints),
+    '#tree' => TRUE,
+  );
+  $i = 0;
+  foreach ($constraints as $constraint) {
+    $form['taxonomy_constraints']["taxonomy_constraint_$i"]['term'] = array(
+	    '#type' => "select",
+	    '#options' => $terms,
+      '#default_value' => $constraint['tid'],
+	  );
+	  $form['taxonomy_constraints']["taxonomy_constraint_$i"]['excludes'] = array(
+	    '#value' => t("excludes"),
+	  );
+	  $form['taxonomy_constraints']["taxonomy_constraint_$i"]['excluded'] = array(
+	    '#type' => "select",
+	    '#options' => $terms,
+	    '#default_value' => $constraint['excluded_tid'],
+	  );
+	  $i++;
+  }
+  $form['taxonomy_constraints']['taxonomy_constraint_new']['term'] = array(
+    '#type' => "select",
+    '#options' => $terms,
+  );
+  $form['taxonomy_constraints']['taxonomy_constraint_new']['excludes'] = array(
+    '#value' => t("excludes"),
+  );
+  $form['taxonomy_constraints']['taxonomy_constraint_new']['excluded'] = array(
+    '#type' => "select",
+    '#options' => $terms,
+  );
+  return $form;
+}
+
+function associated_nodes_taxonomy_theme() {
+	return array(
+    'associated_nodes_taxonomy_associated_nodes_form' => array(
+      'arguments' => array('form' => NULL),
+    ),
+  );
+}
+
+function theme_associated_nodes_taxonomy_associated_nodes_form($form) {
+  if (isset($form['taxonomy_constraints']) && is_array($form['taxonomy_constraints'])) {
+	  $rows = array();
+	  foreach ($form['taxonomy_constraints'] as $constraint_id => $constraint) {
+	    if (strpos($constraint_id, "taxonomy_constraint_") === 0) {
+		    $row = array();
+		    $row[] = drupal_render($form['taxonomy_constraints'][$constraint_id]['term']);
+		    $row[] = drupal_render($form['taxonomy_constraints'][$constraint_id]['excludes']);
+		    $row[] = drupal_render($form['taxonomy_constraints'][$constraint_id]['excluded']);
+		    $rows[] = $row;
+	    }
+	  }
+	  $form['taxonomy_constraints']['#value'] = theme('table', array(), $rows);
+  }
+  return drupal_render($form);
+}
+
+function associated_nodes_taxonomy_associated_nodes_update($form_values) {
+  $aid = $form_values['aid'];
+  $q = "DELETE FROM {associated_nodes_taxonomy_constraint} WHERE aid = %d";
+  db_query($q, $aid);
+  if (isset($form_values['taxonomy_constraints']) and is_array($form_values['taxonomy_constraints'])) {
+	  foreach ($form_values['taxonomy_constraints'] as $constraint) {
+	    if ($constraint['term'] and $constraint['excluded']) {
+		    $q = "INSERT INTO {associated_nodes_taxonomy_constraint} SET aid = %d, tid = %d, excluded_tid = %d";
+		    db_query($q, $aid, $constraint['term'], $constraint['excluded']);
+	    }
+	  }
+  }
+}
+
+function associated_nodes_taxonomy_associated_nodes_delete($form_values) {
+  $aid = $form_values['aid'];
+  $q = "DELETE FROM {associated_nodes_taxonomy_constraint} WHERE aid = %d";
+  db_query($q, $aid);
+}
+
+function associated_nodes_taxonomy_associated_nodes_exclude($aid, $node) {
+  $constraints = _associated_nodes_taxonomy_get_constraints($aid);
+  $terms = _associated_nodes_taxonomy_get_terms($node->nid);
+  $excluded_nodes = array();
+  foreach ($constraints as $constraint) {
+    if (in_array($constraint['tid'], $terms)) {
+      $excluded_terms = _associated_nodes_taxonomy_get_parents($constraint['excluded_tid']);
+			$params = array();
+			$place_holders = array();
+			foreach ($excluded_terms as $term) {
+			  $params[] = $term;
+			  $place_holders[] = "%d";
+			}
+      $q = "SELECT n.nid FROM {node} AS n INNER JOIN {term_node} AS tn ON tn.nid = n.nid WHERE tn.tid IN (".implode(", ", $place_holders).")";
+      $result = db_query($q, $params);
+      while ($row = db_fetch_array($result)) {
+        $excluded_nodes[] = $row['nid'];
+      }
+    }
+  }
+  $excluded_nodes = array_unique($excluded_nodes);
+  return $excluded_nodes;
+}
+
+function associated_nodes_taxonomy_associated_nodes_find($aid, $node, $criteria) {
+	$types = associated_nodes_nodetypes($aid);
+  $associated_nodes = array();
+  foreach ($criteria as $vid => $weight) {
+    if ($weight != 0) {
+      $terms = _associated_nodes_taxonomy_get_terms($node->nid, $vid);
+      $nb_terms = count($terms);
+      foreach ($terms as $tid) {
+        $descendants = _associated_nodes_taxonomy_get_all_descendants($tid);
+        $nodes = array();
+        foreach($descendants as $descendant_tid) {
+          $nodes = array_merge($nodes, _associated_nodes_taxonomy_get_nodes($descendant_tid, $types));
+        }
+        $nodes = array_unique($nodes);
+        foreach ($nodes as $nid) {
+          if (!isset($associated_nodes[$nid])) {
+            $associated_nodes[$nid] = 0;
+          }
+          $associated_nodes[$nid] += $weight / $nb_terms;
+        }
+      }
+    }
+  }
+  return $associated_nodes;
+}
+
+function _associated_nodes_taxonomy_get_all_descendants($tid) {
+  static $descendants = array();
+  if (isset($descendants[$tid])) {
+    return $descendants[$tid];
+  }
+  $descendants[$tid] = array($tid);
+  $children = taxonomy_get_children($tid);
+  foreach ($children as $child_tid => $child) {
+    $descendants[$tid] = array_merge($descendants[$tid], _associated_nodes_taxonomy_get_all_descendants($child_tid));
+  }
+  $descendants[$tid] = array_unique($descendants[$tid]);
+  return $descendants[$tid];
+}
+
+function _associated_nodes_taxonomy_get_nodes($tid, $nodetypes) {
+  static $nodes = array();
+  if (isset($nodes[$tid])) {
+    return $nodes[$tid];
+  }
+  $nodes[$tid] = array();
+  $params = array($tid);
+  $place_holders = array();
+  foreach ($nodetypes as $type) {
+    $params[] = $type;
+    $place_holders[] = "'%s'";
+  }
+  $q = "SELECT n.nid FROM {node} AS n INNER JOIN {term_node} AS tn ON tn.nid = n.nid WHERE tn.tid = %d AND n.type IN (".implode(", ", $place_holders).")";
+  $result = db_query($q, $params);
+  while ($row = db_fetch_array($result)) {
+    $nodes[$tid][] += $row['nid'];
+  }
+  $children = taxonomy_get_children($tid);
+  foreach ($children as $child) {
+    $nodes[$tid] = array_merge($nodes[$tid], _associated_nodes_taxonomy_get_nodes($child->tid, $nodetypes));
+  }
+  $nodes[$tid] = array_unique($nodes[$tid]);
+  return $nodes[$tid];
+}
+
+function _associated_nodes_taxonomy_get_terms($nid, $vid = NULL) {
+  $q = "SELECT tn.tid FROM {term_node} AS tn INNER JOIN {term_data} AS td ON td.tid = tn.tid WHERE tn.nid = %d";
+  if ($vid != NULL) {
+    $q .= " AND td.vid = %d";
+  }
+  $result = db_query($q, $nid, $vid);
+  $terms = array();
+  while ($row = db_fetch_array($result)) {
+    $terms = array_merge($terms, _associated_nodes_taxonomy_get_parents($row['tid']));
+  }
+  return array_unique($terms);
+}
+
+function _associated_nodes_taxonomy_get_parents($tid) {
+  static $parents = array();
+  if (isset($parents[$tid])) {
+    return $parents[$tid];
+  }
+  $parents_all = taxonomy_get_parents_all($tid);
+  foreach ($parents_all as $parent) {
+    $parents[$tid][] = $parent->tid;
+  }
+  return $parents[$tid];
+}
+
+function _associated_nodes_taxonomy_get_vocabularies($aid) {
+  $types = associated_nodes_nodetypes($aid);
+  $vocabularies = array();
+  foreach ($types as $type) {
+    $vocabularies = array_merge($vocabularies, taxonomy_get_vocabularies($type));
+  }
+  $returned_vocabularies = array();
+  foreach ($vocabularies as $vocabulary) {
+    $returned_vocabularies[$vocabulary->vid] = $vocabulary->name;
+  }
+  asort($returned_vocabularies);
+  return $returned_vocabularies;
+}
+
+function _associated_nodes_taxonomy_get_terms_options($aid) {
+  $taxonomy_terms = array("" => "");
+  $vocabularies = _associated_nodes_taxonomy_get_vocabularies($aid);
+  foreach ($vocabularies as $vid => $vocabulary) {
+    $taxonomy_form = taxonomy_form($vid);
+    $terms = $taxonomy_form['#options'];
+    array_shift($terms);
+    $taxonomy_terms[$vocabulary] = $terms;
+  }
+  return $taxonomy_terms;
+}
+
+function _associated_nodes_taxonomy_get_constraints($aid) {
+  $constraints = array();
+  $q = "SELECT tid, excluded_tid FROM {associated_nodes_taxonomy_constraint} WHERE aid = %d";
+  $result = db_query($q, $aid);
+  while ($row = db_fetch_array($result)) {
+    $constraints[] = $row;
+  }
+  return $constraints;
+}
+
+function associated_nodes_taxonomy_taxonomy($op, $type, $array = NULL) {
+	if ($op == "delete" AND $type = "vocabulary") {
+		associated_nodes_delete_criterion("taxonomy", $array['vid']);
+	}
+}

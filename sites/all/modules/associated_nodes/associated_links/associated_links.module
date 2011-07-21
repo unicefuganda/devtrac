@@ -1,0 +1,109 @@
+<?php
+// $Id: associated_links.module,v 1.2.2.3 2009/04/24 13:45:14 jfberroyer Exp $
+
+function associated_links_menu() {
+	$items = array();
+  $items['associated-links/ajax/%/%node'] = array(
+  	'title' => "Load associated nodes",
+    'type' => MENU_CALLBACK,
+    'page callback' => 'associated_links_load',
+    'page arguments' => array(2, 3),
+    'access callback' => 'node_access',
+    'access arguments' => array('view', 3),
+  );
+  return $items;
+}
+
+function associated_links_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list' :
+      $blocks = array();
+      $associations = associated_nodes_associations();
+      foreach ($associations as $key => $association) {
+        $blocks[$key] = array(
+          'info' => t("Associated Links") ." : ". t($association['name']),
+          'cache' => BLOCK_NO_CACHE,
+        );
+      }
+      return $blocks;
+    case 'configure' :
+    	$ajax_loading = variable_get('associated_links_ajax_loading', array());
+    	$form['associated_links_ajax_loading'] = array(
+	      '#type' => 'radios',
+	      '#title' => t('Loading'),
+	      '#default_value' => isset($ajax_loading[$delta]) ? $ajax_loading[$delta] : 0,
+	      '#options' => array(t('Normal loading'), t('Ajax loading')),
+	    );
+    	return $form;
+    case 'save' :
+    	$ajax_loading = variable_get('associated_links_ajax_loading', array());
+    	$ajax_loading[$delta] = $edit['associated_links_ajax_loading'];
+    	variable_set('associated_links_ajax_loading', $ajax_loading);
+    	break;
+    case 'view' :
+      if (arg(0) == 'node' && is_numeric(arg(1))) {
+      	$nid = arg(1);
+      	$ajax_loading = variable_get('associated_links_ajax_loading', array());
+      	$associations = associated_nodes_associations();
+      	$name = $associations[$delta]['name'];
+      	if (isset($ajax_loading[$delta]) and $ajax_loading[$delta]) {
+      		$class = "associated-links-ajax-loader";
+      		$id = "$class-$delta";
+      		drupal_add_js(array('associated_links' => array('ajax_urls' => array($id => url("associated-links/ajax/$delta/$nid")))), 'setting');
+      		drupal_add_js(drupal_get_path('module', 'associated_links')."/associated_links.js", 'module', 'footer');
+      		$content = '<div id="'.$id.'" class="'.$class.' progress">';
+      		$content .= '<div class="bar"></div>';
+      		$content .= '</div>';
+      	}
+      	else {
+      		$content = associated_links_get_content($delta, $nid);
+      	}
+      	if ($content) {
+	        $block = array(
+	          'subject' => t($name),
+	          'content' => $content,
+	        );
+	        return $block;
+      	}
+      }
+      break;
+  }
+}
+
+function associated_links_load($delta, $node) {
+	echo associated_links_get_content($delta, $node);
+	exit;
+}
+
+function associated_links_get_content($delta, $node) {
+	$associated_nodes = associated_nodes_get($node, $delta);
+	$nodes = array();
+	foreach ($associated_nodes as $nid => $weight) {
+    $nodes[] = $nid;
+  }
+  if (count($nodes) > 0) {
+    return associated_links_get_links($nodes);
+  }
+  return NULL;
+}
+
+function associated_links_get_links($nodes) {
+  $place_holders = array();
+  foreach ($nodes as $nid) {
+    $place_holders[] = "%d";
+  }
+  $q = "SELECT * FROM {node} WHERE nid IN (".implode(", ", $place_holders).")";
+  $result = db_query($q, $nodes);
+
+  $links = array();
+  while ($node = db_fetch_object($result)) {
+    $links[$node->nid] = l($node->title, 'node/'. $node->nid, !empty($node->comment_count) ? array('attributes' => array('title' => format_plural($node->comment_count, '1 comment', '@count comments'))) : array());
+  }
+  
+  $items = array();
+  foreach ($nodes as $nid) {
+    $items[] = $links[$nid];
+  }
+  
+  return theme('node_list', $items);
+}

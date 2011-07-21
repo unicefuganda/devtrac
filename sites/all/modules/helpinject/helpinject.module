@@ -1,0 +1,981 @@
+<?php
+// $Id: helpinject.module,v 1.31 2009/05/31 14:06:05 robertDouglass Exp $
+
+/**
+ * Implementation of hook_help().
+ */
+function helpinject_help($path, $arg) {
+  // This tests whether HelpInject should be doing anything on this page.
+  if (helpinject_path_visibility()) {
+    $help_link = '';
+    $inject_link = '';
+
+    // If there help for this path, inject it.
+    if (user_access('view advanced help popup')) {
+      if ($values = helpinject_get_from_key('path', helpinject_get_path_ancestors())) {
+        foreach ($values as $value) {
+          $help_link = theme('helpinject_topic', $value['nid']);
+        }
+      }
+      if (arg((0) == 'node' && is_numeric(arg(1)))) {
+        // TODO make special keys for node/%/edit/etcetc
+        // could be advanced like node/%/devel is the same for all nodetypes
+        $node = node_load(arg(1));
+        if ($values = helpinject_get_from_key('nodetype', 'node/['. $node->type . ']')) {
+          foreach ($values as $value) {
+            $help_link .= theme('helpinject_topic', $value['nid']);
+          }
+        }
+      }
+    }
+    // If the user is allowed, show the injection icon.
+    if ((user_access('inject help')) && ($inject_link == '')) {
+      $inject_link = _helpinject_admin_link('path', $_GET['q'], t('this page'));
+    }
+    return $help_link . $inject_link;
+  }
+}
+
+/**
+ * Helper function to get the ancestor paths from any given path.
+ */
+function helpinject_get_path_ancestors($path = '') {
+  if (empty($path)) {
+    $path = $_GET['q'];
+  }
+  // The paths in $ancestors become the possible IDs for "path" based help.
+  $parts = array_slice(arg(NULL, $path), 0, MENU_MAX_PARTS);
+  list($ancestors, $placeholders) = menu_get_ancestors($parts);
+  return $ancestors;
+}
+
+/**
+ * Tests whether HelpInject should be doing anything on this path.
+ */
+function helpinject_path_visibility() {
+  $excluded_paths =  variable_get('helpinject_excluded_paths', "admin/build/helpinject\r\nadmin/settings/helpinject");
+  $path = drupal_get_path_alias($_GET['q']);
+  // Compare with the internal and path alias (if any).
+  $page_match = drupal_match_path($path, $excluded_paths);
+  if ($path != $_GET['q']) {
+    $page_match = $page_match || drupal_match_path($_GET['q'], $excluded_paths);
+  }
+  return !$page_match;
+}
+
+/**
+ * Implementation of hook_perm()
+ */
+function helpinject_perm() {
+  return array('inject help', 'export help links');
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function helpinject_theme() {
+  $hooks['helpinject_topic'] = array(
+    'arguments' => array('nid' => NULL),
+  );
+  $hooks['helpinject_injection_form'] = array(
+    'arguments' => array('form' => NULL),
+  );
+  return $hooks;
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function helpinject_menu() {
+  $items = array();
+  $items['helpinject/node/%node'] = array(
+    'title callback'      => 'node_page_title',
+    'title arguments'     => array(2),
+    'page callback'       => 'helpinject_popup',
+    'page arguments'      => array(2),
+    'access callback'     => 'node_access',
+    'access arguments'    => array('view', 2),
+    'type'                => MENU_CALLBACK,
+  );
+  $items['helpinject/inject/%/%menu_tail'] = array(
+    'title'               => 'Inject help text',
+    'description'         => 'Choose a help file or text to be shown',
+    'page callback'       => 'drupal_get_form',
+    'page arguments'      => array('helpinject_injection_form', 2),
+    'access arguments'    => array('inject help'),
+    'type'                => MENU_CALLBACK,
+  );
+  $items['admin/build/helpinject'] = array(
+    'title'               => 'Export help',
+    'description'         => 'Use this form to generate a module which will insert help links into the pages and forms on a Drupal site.',
+    'page callback'       => 'drupal_get_form',
+    'page arguments'      => array('helpinject_export_form'),
+    'access arguments'    => array('export help links'),
+    'type'                => MENU_NORMAL_ITEM,
+  );
+  $items['admin/settings/helpinject'] = array(
+    'title'              => 'Advanced Help Injection and Export',
+    'description'        => 'Administer the Help Inject module.',
+    'page callback'      => 'drupal_get_form',
+    'page arguments'     => array('helpinject_settings'),
+    'access callback'    => 'user_access',
+    'access arguments'   => array('administer site configuration'),
+    'file'               => 'helpinject.admin.inc',
+  );
+  return $items;
+}
+
+function helpinject_popup($node) {
+  // This technique gets us the title, the rendered body, and everything like
+  // uploaded files, but the "authored by" cruft is now doubled.
+  $node->body = node_view($node, FALSE, TRUE, FALSE);
+  print theme('node', $node);
+  exit;
+}
+
+function helpinject_nodeapi(&$node, $op) {
+  if (helpinject_exporting() && $op == 'view') {
+    unset($node->content['book_navigation']);
+  }
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function helpinject_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $blocks = array();
+      $blocks[0]['info'] = t('Incoming help links');
+      return $blocks;
+
+    case 'view':
+      $block = array();
+      switch ($delta) {
+        case 0:
+          // This block only appears on node pages of type book to those users
+          // with a role that has the 'inject help' permission.
+          if (user_access('inject help')) {
+            if ($node = menu_get_object()) {
+              if ($node->type == 'book') {
+                $result = db_query("SELECT * FROM {helpinject} WHERE nid = %d", $node->nid);
+                $incoming = array();
+                while ($row = db_fetch_object($result)) {
+                  if ($row->type == 'form') {
+                    // We could show the whole key here, but it takes up too much space for
+                    // most blocks, so I simplified it to the first segment.
+                    $segments = split(':', $row->helpkey);
+                    $incoming[$row->type][] = $segments[0];
+                  }
+                  else {
+                    $incoming[$row->type][] = $row->helpkey;
+                  }
+                }
+                $paths = isset($incoming['path']) ? count($incoming['path']) : 0;
+                $forms = isset($incoming['form']) ? count($incoming['form']) : 0;
+                // Only display if there are incoming links of some kind.
+                if ($paths || $forms) {
+                  $block['subject'] = t('Incoming help links');
+                  $block['content'] = '<p>' . t("This page is referenced as advanced help from the following:") . '</p>';
+                  if ($paths) {
+                    $block['content'] .= theme('item_list', $incoming['path'], format_plural($paths, t('path'), t('paths')));
+                  }
+                  if ($forms) {
+                    $block['content'] .= theme('item_list', $incoming['form'], format_plural($forms, t('form'), t('forms')));
+                  }
+                }
+              }
+            }
+          }
+          break;
+      }
+      return $block;
+  }
+}
+
+
+function helpinject_exporting($exporting = NULL) {
+  static $_exporting = FALSE;
+  if (!is_null($exporting)) {
+    $_exporting = $exporting;
+  }
+  return $_exporting;
+}
+
+/**
+ * @key is either the path, for injecting into the hook_help,
+ * or the $form_id + hash.
+ */
+function helpinject_injection_form(&$form_state, $type) {
+  $form = array();
+  // Pack the type into the form for later use.
+  $form['type'] = array('#type' => 'value', '#value' => $type);
+
+  if ((($type == 'path') || ($type == 'nodetype')) && empty($form_state['storage']['helpkey'])) {
+    // Get the whole rest of the path
+    $q_paths = explode('/', $_GET['q'], 4);
+    $key = $q_paths[3];
+    $ancestors = drupal_map_assoc(helpinject_get_path_ancestors($key));
+    $existing = helpinject_get_from_key($type, $ancestors);
+    foreach ($ancestors as $key => $value) {
+      if ($match = $existing[$key]) {
+        $title = db_result(db_query("SELECT r.title FROM {node_revisions} r INNER JOIN {node} n ON n.vid = r.vid WHERE r.nid = %d", $match['nid']));
+        $ancestors[$key] .= ' (' . t('Currently %title [nid !nid]', array('%title' => check_plain($title), '!nid' => $match['nid'])) . ')';
+      }
+    }
+    /* if we are on a node page, we would also like to include the nodetype as an optional 'path'
+     * TODO make special keys for /edit/blabla etc
+     * could be advanced like node/%/devel is the same for all nodetypes
+     */
+    $myargs = explode ('/', $q_paths[3]);
+    if ($myargs[0] == 'node') {
+      $nid = $myargs[1];
+      $node = node_load ($nid);
+      $key = 'node/['. $node->type . ']'; // The format of the key in the database is node/[nodetype] the [ ] are used later to identify this key as a nodetype key
+      $ancestors[$key] = 'node/['. $node->type . ']'; 
+      $existing = helpinject_get_from_key($type, $ancestors);
+      foreach ($ancestors as $key => $value) {
+        if ($match = $existing[$key]) {
+          $title = db_result(db_query("SELECT r.title FROM {node_revisions} r INNER JOIN {node} n ON n.vid = r.vid WHERE r.nid = %d", $match['nid']));
+          $ancestors[$key] .= ' (' . t('Currently %title [nid !nid]', array('%title' => check_plain($title), '!nid' => $match['nid'])) . ')';
+        }
+      }
+    }
+    // This prevents it from going to the theme function for the injection form.
+    $form['#theme'] = 'theme_form';
+    $form['helpkey'] = array(
+      '#type' => 'radios',
+      '#required' => TRUE,
+      '#title' => t('Path granularity'),
+      '#description' => t('Choose a level of path granularity for this injection rule.'),
+      '#options' => $ancestors,
+      '#default_value' => $key,
+    );
+    $form['next'] = array(
+      '#title' => t('Next'),
+      '#type' => 'submit',
+      '#value' => t('Next'),
+    );
+  }
+  else {
+    if (empty($form_state['storage']['helpkey'])) {
+      // In this case we're injecting into something other than a path, so we
+      // need to get the helpkey from the URL path.
+      // Get the whole rest of the path
+      $q_paths = explode('/', $_GET['q'], 4);
+      $myargs = explode ('/', $q_paths[3]);
+     if ($myargs[0] == 'node') {
+        $nid = $myargs[1];
+        $node = node_load ($nid);
+        $key = 'node/['. $node->type . ']'; // The format of the key in the database is node/[nodetype] the [ ] are used later to identify this key as a nodetype key
+      }
+      else {
+        $key = $q_paths[3];
+      }
+      // Pack the helpkey into the form for later use.
+      $form['helpkey'] = array('#type' => 'value', '#value' => $key);
+    }
+    
+    if ($type == 'path') {
+      if ((!(strpos($form_state['storage']['helpkey'], 'node/', 0) === FALSE) == 1) &&  //holy crap! this looks like Visual Basic where true = -1 
+          (strpos($form_state['storage']['helpkey'], '[') > 0) && 
+          (strpos($form_state['storage']['helpkey'], ']') > 0)
+         ) {
+        // $type has [] set so we are looking at a node path
+        $form['type'] = array('#type' => 'value', '#value' => 'nodetype');
+        $type = 'nodetype';
+        $key = $form_state['storage']['helpkey'];
+      }
+    }
+    // We show every topic (book page) grouped by book title.
+    // Pack the book trees into the form.
+    $trees = array();
+    $books = book_get_books();
+    ksort($books);
+    foreach ($books as $book) {
+      $node = node_load($book['nid']);
+      $trees[$node->nid] = book_menu_subtree_data($node->book);
+    }
+    $form['book_trees'] = array('#type' => 'value', '#value' => $trees);
+
+    // Find out if a help topic has already been selected.
+    $defaults = helpinject_get_from_key($type, $key);
+    $default =  $defaults[$key]; // this is very inconsistently used throughout the module it seems, sometimes with a foreach, array_pop is used and now this
+    // Build the options. It's simply a list of nids from the {book} table.
+    $options = array();
+    $result = db_query("SELECT nid FROM {book}");
+    while ($row = db_fetch_object($result)) {
+      $options[$row->nid] = $row->nid;
+    }
+    // Make sure there's an option for NONE (to remove a mapping, for example).
+    $none = t('None');
+    $options[$none] = $none;
+    $attributes = array('attributes' => array('rel' => 'lightframe'),
+      'query' => drupal_query_string_encode(array('destination' => $_GET['q'], 'require-outline' => 'true')),
+    );
+    $book_add_link = l(t('create'), 'node/add/book', $attributes);
+    // The form element for pages radio buttons.
+    $form['page'] = array(
+      '#type' => 'radios',
+      '#required' => TRUE,
+      '#title' => t('Available book pages'),
+      '#description' => t('Choose the book page that should be used for this item, or !create a new one.', array('!create' => $book_add_link)),
+      '#options' => $options,
+      '#default_value' => empty($default) ? $none : $default['nid'] ,  // Ok, this just does not work. Even hardcoding the nid will not set the radio to the right default. Beats me
+    );
+    $form['submit'] = array(
+      '#title' => t('Submit'),
+      '#type' => 'submit',
+      '#value' => t('Submit'),
+    );
+  }
+  return $form;
+}
+
+
+function helpinject_injection_form_submit($form, &$form_state) {
+  // It's important that we only go into this first block if we're dealing with
+  // 'path' types, and if the helpkey hasn't yet been chosen.
+  if (empty($form_state['storage']['helpkey']) && (($form_state['values']['type'] == 'path') || ($form_state['values']['type'] == 'nodetype'))) {
+    $form_state['storage']['helpkey'] = $form_state['values']['helpkey'];
+    $form_state['storage']['type'] = $form_state['values']['type'];
+    $form_state['rebuild'] = TRUE;
+  }
+  else {
+    $book_id = $form_state['values']['page'];
+    // First look into 'storage' for the helpkey (the case of a multi-step form),
+    // and if not found there. look in 'values' (the case of a single-step form).
+    $helpkey = empty($form_state['storage']['helpkey']) ? $form_state['values']['helpkey'] : $form_state['storage']['helpkey'];
+    $values = array(
+      'type' => $form_state['values']['type'],
+      'helpkey' => $helpkey,
+      'nid' => $book_id,
+    );
+    if ($book_id != t('None') && !@drupal_write_record('helpinject', $values)) {
+      drupal_write_record('helpinject', $values, 'helpkey');
+    }
+    if ($book_id == t('None')) {
+      db_query("DELETE FROM {helpinject} WHERE helpkey = '%s'", $helpkey);
+    }
+    // Unsetting storage allows the form to redirect to "destination".
+    unset($form_state['storage']);
+  }
+}
+
+function helpinject_injection_form_treewalker($tree = NULL, &$rows = NULL) {
+  static $column = 0;
+  static $max_colspan = 0;
+
+  // This function gets called to find out how many columns there should be.
+  // In that case $tree and $rows will be NULL.
+  if (is_null($tree) && is_null($rows)) {
+    return $max_colspan;
+  }
+
+  // Each element in the book structure gets a 'column' attribute. This indicates
+  // which column in the display table the element should appear in to visually
+  // show hierarchy by horizontal positioning.
+  $column++;
+  if ($column > $max_colspan) {
+    $max_colspan = $column;
+  }
+
+  foreach ($tree as $name => $data) {
+    $rows[] = array('nid' => $data['link']['nid'], 'data' => $data['link']['link_title'], 'column' => $column);
+    if (isset($data['below']) && is_array($data['below'])) {
+      foreach ($data['below'] as $name => $subtree) {
+        // Recurse into children book elements.
+        helpinject_injection_form_treewalker(array($name => $subtree), $rows);
+      }
+    }
+  }
+  $column--;
+}
+
+function theme_helpinject_injection_form($form, $blah = NULL) {
+  drupal_set_title(t("Inject help text for @type %key", array('@type' => $form['type']['#value'], '%key' => $form['helpkey']['#value'])));
+
+  $bookrows = array();
+  foreach ($form['book_trees']['#value'] as $nid => $tree) {
+    helpinject_injection_form_treewalker($tree, $bookrows);
+  }
+
+  $max_colums = helpinject_injection_form_treewalker();
+  foreach ($bookrows as $bookrow) {
+    $row = array();
+    // Remove the title of the radio button (which is set to be the node id);
+    $form['page'][$bookrow['nid']]['#title'] = '';
+    $row[] = array('data' =>  drupal_render($form['page'][$bookrow['nid']]));
+    $position = $bookrow['column'] - 1;
+    if ($bookrow['column'] > 1) {
+      $row[] = array('data' => '', 'colspan' => $position);
+    }
+    $row[] = array('data' => $bookrow['data'], 'colspan' => $max_colums - $position);
+
+    $rows[] = $row;
+  }
+  $rows[] = array(drupal_render($form['page'][t('None')]), array('data' => '', 'colspan' => $max_colums));
+
+  $output = drupal_render($form['page']);
+  $output .= theme('table', array_fill(0, $max_colums + 1, ''), $rows);
+  $output .= drupal_render($form);
+  return $output;
+}
+
+// TODO: The form should be smart enough to know which books are referenced by
+// injected help. http://drupal.org/node/416142
+// TODO: Support exporting sub-books. http://drupal.org/node/416146
+function helpinject_export_form() {
+  $form = array();
+  $form['module_readable_name'] = array(
+    '#required' => TRUE,
+    '#type' => 'textfield',
+    '#title' => t('Module name (human readable)'),
+    '#description' => t('The human readable name of the module that will be generated.'),
+  );
+  $form['module_base_name'] = array(
+    '#required' => TRUE,
+    '#type' => 'textfield',
+    '#title' => t('Module base name'),
+    '#description' => t('The base name of the module that will be generated. Use only lowercase letters and the underscore (_).'),
+  );
+  $form['package_name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Package name'),
+    '#description' => t('The package name that groups modules on the admin/build/modules page.'),
+  );
+  // Add a form element for language selection.
+  if (module_exists('locale') && module_exists('translation')) {
+    $languages = locale_language_list();
+    $form['languages'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Languages'),
+      '#description' => t('Check each language that should be exported. Do this if you have translations (using the content translation module) of your help texts.'),
+      '#options' => $languages,
+      '#default_value' => array_keys($languages),
+    );
+  }
+
+  $options = array();
+  foreach (book_get_books() as $book) {
+    $options[$book['nid']] = $book['title'];
+  }
+  // Add a drop-down to select the destination book.
+  $form['book_id'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t('Books to export'),
+    '#options' => $options,
+    '#default_value' => array_keys($options),
+    '#description' => t('This book (including its children) will be exported in a format suitable for use with the Advanced Help module.'),
+  );
+  $form['submit'] = array(
+    '#title' => t('Submit'),
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  return $form;
+}
+
+function helpinject_export_form_validate($form, &$form_state) {
+  // TODO: Validate module name and package name to make sure they're suitable.
+  // http://drupal.org/node/416148
+  $book_ids = array_filter($form_state['values']['book_id']);
+  if (count($book_ids) == 0) {
+    form_set_error('book_id', t('Please choose a book for export.'));
+  }
+}
+
+function helpinject_export_form_submit($form, &$form_state) {
+  if ($result = helpinject_generate_module($form_state['values']['module_readable_name'], $form_state['values']['module_base_name'], $form_state['values']['package_name'])) {
+    if ($result === TRUE) {
+      drupal_set_message(t("The module %module_name was successfully generated.", array('%module_name' => $form_state['values']['module_readable_name'])));
+    }
+    else {
+      drupal_set_message($result);
+    }
+  }
+  else {
+    drupal_set_message(t("The generation of the %module_name failed.", array('%module_name' => $form_state['values']['module_readable_name'])), 'error');
+  }
+  foreach ($form_state['values']['book_id'] as $bid => $is_set) {
+    if ($bid !== 0 && $is_set) {
+      $languages = isset($form_state['values']['languages']) ? $form_state['values']['languages'] : array();
+      $languages = array_filter($languages);
+      if (helpinject_book_export($bid, $form_state['values']['module_base_name'], $languages)) {
+        $dir = file_create_path() .'/helpinject/' . $form_state['values']['module_base_name'] . '/help';
+        drupal_set_message(t('The help texts have been successfully exported. You can find the exported help files at %dir', array('%dir' => $dir)));
+      }
+      else {
+        drupal_set_message(t('The help text export failed.'), 'error');
+      }
+    }
+  }
+}
+
+function helpinject_book_export($nid, $module_base_name, $languages = array()) {
+  global $language;
+
+  helpinject_exporting(TRUE);
+  $node = node_load($nid);
+  $tree = book_menu_subtree_data($node->book);
+  // FALSE in this case represents the base language, which is done according to
+  // Drupal's defaults and no translation, because a top-level help directory
+  // has to exist or Advanced Help won't detect the topics.
+  $languages = array_merge($languages, array(FALSE));
+  foreach ($languages as $l) {
+    $items = helpinject_book_traverse($tree, $l);
+    // Generate the .ini file
+    $help_ini = '';
+    foreach ($items as $item) {
+      $help_ini .= "[{$item['filename']}]\ntitle = {$item['title']}\nfile = {$item['filename']}\nweight = {$item['weight']}\nparent = {$item['parent']}\n\n";
+    }
+    if ($l) {
+      $dir = file_create_path() . "/helpinject/{$module_base_name}/translations/help/{$l}";
+    }
+    else {
+      $dir = file_create_path() . "/helpinject/{$module_base_name}/help";
+    }
+    // TODO: There has GOT to be a better way to rm -fd -R, right?
+    file_scan_directory(realpath($dir), '.', array('.', '..', 'CVS'), create_function('$a', '@unlink($a);@rmdir($a);'));
+
+    // Create the directory. Return FALSE on failure.
+    if (!file_check_directory($dir, FILE_CREATE_DIRECTORY) && !mkdir($dir, 0775, true)) {
+      watchdog('helpinject', 'Failed to create book2advhelp directory: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+      helpinject_exporting(FALSE);
+      return FALSE;
+    }
+
+    // Write the .ini file. Return FALSE on failure.
+    $file = "{$dir}/{$module_base_name}.help.ini";
+    if (!file_save_data($help_ini, $file, FILE_EXISTS_REPLACE)) {
+      watchdog('helpinject', 'Failed to write .help.inc file: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+      helpinject_exporting(FALSE);
+      return FALSE;
+    }
+
+    // Write each individual file and all attached files. Return FALSE on any individual failure.
+    foreach ($items as $item) {
+      $file = "{$dir}/{$item['filename']}.html";
+      if (!file_save_data($item['body'], $file, FILE_EXISTS_REPLACE)) {
+        watchdog('helpinject', 'Failed to write %file_name file: %dir', array('%file_name' => $item['filename'], '%dir' => $dir), WATCHDOG_ERROR);
+        helpinject_exporting(FALSE);
+        return FALSE;
+      }
+      if (isset($item['files'])) {
+        foreach ($item['files'] as $filename => $filepath) {
+          if (!file_copy($filepath, $dir, FILE_EXISTS_REPLACE)) {
+            watchdog('helpinject', 'Failed to write file %filepath to %dir', array('%filepath' => $filepath, '%dir' => $dir));
+          }
+        }
+      }
+    }
+  }
+  // It worked!
+  helpinject_exporting(FALSE);
+  return TRUE;
+}
+
+/**
+ * @tree The results of a call to book_menu_subtree_data()
+ */
+function helpinject_book_traverse($tree, $language) {
+  static $help_files = array();
+  foreach ($tree as $subtree) {
+    $nid = $subtree['link']['nid'];
+    // Apparently only the book nodes, not their translations, have the book
+    // book information.
+    $book_node = $node = node_load($nid);
+    // If we're exporting a translation of this node, change the $nid.
+    if (module_exists('locale') && module_exists('translation')) {
+      $translations = translation_node_get_translations($nid);
+      if (!empty($translations[$language]) && $node->nid != $translations[$language]->nid) {
+        $nid = $translations[$language]->nid;
+        // Replace the $node from before with the translated node.
+        $node = node_load($nid);
+      }
+    }
+    // Transfer the book information from the original to the translation.
+    $node->book = $book_node->book;
+    $output = node_view($node, FALSE, TRUE, FALSE);
+
+    // Replace all paths to files with path:
+    // This gets parsed later by the advanced_help module.
+    // Keep a record of all such replacements in the $files array so that we can
+    // export those files to the generated help directory in the next step.
+    $file_matches = array();
+    $file_directory_path = file_directory_path();
+    $regexp = '&((href)|(src))=["\']((.+?)(' . $file_directory_path . ')(.+?))["\']&';
+    $number_of_matches = preg_match_all($regexp, $output, $file_matches);
+    for ($i=0; $i<$number_of_matches; $i++) {
+      $file_basename = basename($file_matches[7][$i]);
+      $output = str_replace($file_matches[4][$i], "path:$file_basename", $output);
+      $files[$file_basename] = $file_matches[6][$i] . $file_matches[7][$i];
+    }
+
+    // This is all of the information needed to write a file, except for the parent information.
+    $info = array('title' => $node->title,
+          'body' => $output,
+          'weight' => $subtree['link']['weight'],
+          // TODO: There's still room for figuring out the best way to munge titles for file names.
+          // Very important! We use $book_node here because that is the
+          // untranslated basis with which Advanced Help does all of its lookups.
+          'filename' => helpinject_munge_title($book_node->title),
+          'mlid' => $node->book['mlid'],
+          'parent' => NULL,
+          'files' => $files,
+    );
+    // Add parent information.
+    if ($subtree['link']['depth'] > 1) {
+      $pnumber = (int)$subtree['link']['depth'] - 1;
+      // $pmlid is parent menu link id, as per the menu system.
+      $pmlid = $subtree['link']["p$pnumber"];
+      $info['parent'] = $help_files[$language][$pmlid]['filename'];
+    }
+    $help_files[$language][$node->book['mlid']] = $info;
+    if ($subtree['below']) {
+      helpinject_book_traverse($subtree['below'], $language);
+    }
+  }
+  return $help_files[$language];
+}
+
+/**
+ * Titles have to be prepared to be file names in the help directory.
+ */
+function helpinject_munge_title($title) {
+  return preg_replace('/\s/', '-', preg_replace('/\W/', ' ', str_replace("'", '', $title)));
+}
+
+/**
+ * Implementation of hook_form_alter.
+ * This is where all of the help links (both the ones to view help and to inject
+ * help) are inserted into forms and form elements.
+ */
+function helpinject_form_alter(&$form, $form_state, $form_id) {
+  static $excluded;
+  if (!isset($excluded)) {
+    $excluded = helpinject_get_excluded_forms();
+  }
+  // Get out early if the administrator has decided to exclude this form id.
+  if (in_array($form_id, drupal_map_assoc($excluded))) {
+    return;
+  }
+
+  // Get out early if the administrator has decided to exclude this path.
+  if (!helpinject_path_visibility()) {
+    return;
+  }
+
+  if (user_access('inject help')) {
+    // This line recurses through the form and injects the admin link for each element
+    helpinject_step_form($form, $form_id, 'helpinject_admin_link');
+    // This line injects the admin link for the whole form.
+    $form['#description'] = isset($form['#description']) ? _helpinject_admin_link('form', $form_id, t('whole form')) . ' ' . $form['#description'] : _helpinject_admin_link('form', $form_id, t('whole form'));
+  }
+  // Note that we borrow the permission from Advanced Help
+  if (user_access('view advanced help popup')) {
+    // This line recurses through the form and displays help links for each element (if they've been injected).
+    helpinject_step_form($form, $form_id, 'helpinject_help_link');
+    $topic = '';
+    if ($values = helpinject_get_from_key('form', $form_id)) {
+      $value = array_pop($values);
+      $topic = theme('helpinject_topic', $value['nid']);
+    }
+    // This line displays the help link for the whole form (if one has been injected for it).
+    $form['#description'] = isset($form['#description']) ? $topic . ' ' . $form['#description'] : $topic;
+  }
+
+  // When adding a book page from the injection form, require the book outline
+  // field to have a value as a convenience to the user. Otherwise they will
+  // typically forget to put the new page in an outline, and it will not show
+  // up on the injection form when they return.
+  if ($form_id == 'book_node_form' && $_GET['require-outline'] == 'true') {
+    $form['book']['#collapsed'] = FALSE;
+    $form['book']['bid']['#required'] = TRUE;
+    $form['#validate'][] = 'helpinject_book_node_form_validate';
+  }
+}
+
+/**
+ * Validate book node forms when submitted in the context of creating new
+ * help pages to inject. We require that that the new page be placed in a book
+ * outline because it is otherwise confusing to the end user when the newly
+ * created book node doesn't appear in the list of books that can be injected.
+ */
+function helpinject_book_node_form_validate($form, &$form_state) {
+  if ($form_state['values']['book']['bid'] === 0) {
+    form_set_error('book][bid', t('Please place this book page in a book outline so that it can be used for help injection.'));
+  }
+}
+
+function helpinject_admin_link(&$element, $form_id) {
+  if (!user_access('inject help')) {
+    return;
+  }
+  if (isset($element['#type']) && !in_array($element['#type'], array('button', 'image_button', 'submit', 'markup', 'token', 'hidden', 'form', 'value', 'weight'))) {
+    // This "feature" mainly exists to let us hack the link icons a bit and
+    // keep Advanced Help's icons from not sitting right on top of ours.
+    // The logic is "if the helpinject icon pertains to a fieldset it shouldn't
+    // float left so that there is a line break before the next element, BUT
+    // if there is ALSO an Advanced Help icon to display, it should have a 12px
+    // margin on the left so that they're not stacked on top of each other.
+    if ($element['#type'] == 'fieldset') {
+      $class = 'helpinject-link-nofloat';
+      if ($values = helpinject_get_from_key('form', $form_id, $element)) {
+        $class .= ' helpinject-link-offset';
+      }
+    }
+
+    $element['#description'] = isset($element['#description']) ? _helpinject_admin_link('form', $form_id, $element['#type'], $class) . ' ' . $element['#description'] : _helpinject_admin_link('form', $form_id, $element['#type'], $class);
+  }
+}
+
+function _helpinject_admin_link($type, $key, $name, $class = '') {
+  global $base_path;
+  if (user_access('inject help')) {
+    drupal_add_css(drupal_get_path('module', 'helpinject') . '/helpinject.css');
+    $_class = 'helpinject-link';
+    if (!empty($class)) {
+      $_class .= " $class";
+    }
+    $text = '<span>' . t('Inject help') . '</span>';
+    return l($text, "helpinject/inject/$type/" . drupal_urlencode($key), array(
+        'attributes' => array(
+          'class' => $_class,
+          'title' => t('Inject some help text here (%type, %value).', array('%type' => t($type), '%value' => $name)),
+        ),
+        'query' => 'destination=' . $_GET['q'],
+        'html' => TRUE,
+      )
+    );
+  }
+}
+
+function helpinject_help_link(&$element, $form_id) {
+  if (user_access('view advanced help popup')) {
+    if (is_array($element) && isset($element['#type']) && !in_array($element['#type'], array('button', 'image_button', 'submit', 'markup', 'token', 'hidden', 'form', 'value', 'weight'))) {
+      if ($values = helpinject_get_from_key('form', $form_id, $element)) {
+        $value = array_pop($values);
+        $link = theme('helpinject_topic', $value['nid']);
+        $element['#description'] = isset($element['#description']) ? $link . ' ' . $element['#description'] : $link;
+      }
+    }
+  }
+}
+
+function helpinject_get_from_key($type, $key) {
+  if (!is_array($key)) {
+    $key = array($key);
+  }
+  $s = array();
+  foreach ($key as $k) {
+    $s[] = "'%s'";
+  }
+  $values = array();
+  $params = array_merge(array($type), $key);
+  $result = db_query("SELECT h.*, n.title FROM {helpinject} h INNER JOIN {node} n ON h.nid = n.nid WHERE h.type = '%s' AND h.helpkey in (" . implode(',', $s) . ")", $params);
+  while ($row = db_fetch_array($result)) {
+    $row['title'] = helpinject_munge_title($row['title']);
+    $values[$row['helpkey']] = $row;
+  }
+  return empty($values) ? FALSE : $values;
+}
+
+function helpinject_step_form(&$element, $form_id, $callback) {
+  foreach (element_children($element) as $child) {
+    helpinject_step_form($element[$child], $form_id . ':' . $child, $callback);
+  }
+  $callback($element, $form_id);
+}
+
+function helpinject_get_excluded_forms() {
+  $excluded = variable_get('helpinject_excluded_forms', "helpinject_settings\r\nmenu_overview_form");
+  return array_filter(split("\r\n", $excluded), 'trim');
+}
+
+/**
+ * This function generates a module (.info and .module files) that serialize,
+ * in code, the contents of the helpinject table. The generated module can
+ * be distributed, along with the generated help files, to provide a "help"
+ * module. The generated module is responsible for injecting the help links into
+ * hook_help and hook_form_alter.
+ *
+ * @module_readable_name The human-readable name of the module.
+ * @module_base_name The base name of the module that will be exported.
+ * @package_name The value for "package =" in the .info file.
+ */
+function helpinject_generate_module($module_readable_name, $module_base_name, $package_name = NULL) {
+  // If there isn't anything in the helpinject table, get out of here
+  $count = db_result(db_query("SELECT COUNT(*) FROM {helpinject}"));
+  if ($count == 0) {
+    return t('No help texts have been injected. No module will be generated.');
+  }
+
+  // Some set up on the file system.
+  $dir = file_create_path() .'/helpinject/' . $module_base_name;
+  // TODO: There has GOT to be a better way to rm -fd -R, right?
+  file_scan_directory(realpath($dir), '.', array('.', '..', 'CVS'), create_function('$a', '@unlink($a);@rmdir($a);'));
+  // Create the directory. Return FALSE on failure.
+  if (!file_check_directory($dir, FILE_CREATE_DIRECTORY) && !mkdir($dir, 0775, true)) {
+    watchdog('helpinject', 'Failed to create helpinject directory: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  // generate info file.
+  $package = '';
+  if ($package_name) {
+    $package = "package = $package_name";
+  }
+  $infofile = <<<EOF
+; \$Id\$
+name = {$module_readable_name}
+description = Ties in the advanced help icons for the generated help documents.
+dependencies[] = advanced_help
+stylesheets[all][] = {$module_base_name}.css
+core = 6.x
+{$package}
+EOF;
+
+  // Write the .info file. Return FALSE on failure.
+  $file = "{$dir}/{$module_base_name}.info";
+  if (!file_save_data($infofile, $file, FILE_EXISTS_REPLACE)) {
+    watchdog('helpinject', 'Failed to write .info file: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  // Generate a small .css file
+  $file = "{$dir}/{$module_base_name}.css";
+  $css = ".{$module_base_name}-nofloat { float: none; }";
+  if (!file_save_data($css, $file, FILE_EXISTS_REPLACE)) {
+    watchdog('helpinject', 'Failed to write .css file: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  $sql = "SELECT h.*, n.title FROM {helpinject} h INNER JOIN {node} n ON h.nid = n.nid WHERE h.type = '%s'";
+  $result_paths = db_query($sql, 'path');
+  $result_forms = db_query($sql, 'form');
+  // generate a module file. It should have a hook help implementation as well as a hook_form_alter implementation.
+  // Begin the module file
+  $module = "<?php\n";
+
+  // Generate hook_help
+  $rows = array();
+  while ($row = db_fetch_object($result_paths)) {
+    $rows[] = $row;
+  }
+  if (count($rows) > 0) {
+    $hook_help = '';
+    foreach ($rows as $row) {
+      $file = helpinject_munge_title($row->title);
+      // Write lines for the hook_help implementation.
+      $hook_help .= "    case '{$row->helpkey}':\n";
+      $hook_help .= "      return theme('advanced_help_topic', '{$module_base_name}', '{$file}');\n";
+    }
+    $hook_help = "  switch (\$path) {\n{$hook_help}  }";
+
+    // Add hook_help
+    $module .= helpinject_wrap_function($module_base_name . '_help', $hook_help, array('$path'));
+  }
+
+  // Add hook_form_alter
+  $rows = array();
+  while ($row = db_fetch_object($result_forms)) {
+    $rows[] = $row;
+  }
+  if (count($rows) > 0) {
+    // Add recursive step code for form altering.
+    $step_code = <<<EOF
+    foreach (element_children(\$element) as \$child) {
+      {$module_base_name}_step_form(\$element[\$child], \$form_id . ':' . \$child, \$callback);
+    }
+    \$callback(\$element, \$form_id);
+EOF;
+
+    $module .= helpinject_wrap_function($module_base_name . '_step_form', $step_code, array('&$element', '$form_id', '$callback'));
+
+    $hook_form_alter = '';
+    $hook_form_alter .= "  {$module_base_name}_step_form(\$form, \$form_id, '{$module_base_name}_help_link');\n";
+    $hook_form_alter .= "  \$form['#description'] = isset(\$form['#description']) ? {$module_base_name}_get_from_key('form', \$form_id) . ' ' . \$form['#description'] : {$module_base_name}_get_from_key('form', \$form_id);";
+    $module .= helpinject_wrap_function($module_base_name . '_form_alter', $hook_form_alter, array('&$form', '$form_state', '$form_id'));
+
+    // foobar_get_from_key
+    $helpkeys = '';
+    foreach ($rows as $row) {
+      // Build an array of help keys (as strings) for generated code.
+      $file = helpinject_munge_title($row->title);
+      $helpkeys .= "    '{$row->helpkey}' => array('module' => '{$module_base_name}', 'file' => '{$file}'),\n";
+    }
+    $helpkeys = "  static \$helpkeys = array(\n" . $helpkeys . "  );\n";
+    $helpkeys .= '  return isset($helpkeys[$key]) ? $helpkeys[$key] : FALSE;';
+    $module .= helpinject_wrap_function($module_base_name . '_get_from_key', $helpkeys, array('$key'));
+
+    // foobar_help_link
+    $helplink = "  if (isset(\$element['#type']) && !in_array(\$element['#type'], array('button', 'image_button', 'submit', 'markup', 'token', 'hidden', 'form', 'value', 'weight'))) {
+    if (\$result = {$module_base_name}_get_from_key(\$form_id)) {
+      \$link = theme('advanced_help_topic', \$result['module'], \$result['file']);
+      if (\$element['#type'] == 'fieldset') {
+        drupal_add_css(drupal_get_path('module', '{$module_base_name}') . '/{$module_base_name}.css');
+        \$link = preg_replace('/class=\"(.+?)\"/', 'class=\"\\1 {$module_base_name}-nofloat\"', \$link);
+      }
+      \$element['#description'] = isset(\$element['#description']) ? \$link . ' ' . \$element['#description'] : \$link;
+    }
+  }";
+    $module .= helpinject_wrap_function($module_base_name . '_help_link', $helplink, array('&$element', '$form_id'));
+  }
+
+  // Write the .module file. Return FALSE on failure.
+  $file = "{$dir}/{$module_base_name}.module";
+  if (!file_save_data($module, $file, FILE_EXISTS_REPLACE)) {
+    watchdog('helpinject', 'Failed to write .module file: %dir', array('%dir' => $dir), WATCHDOG_ERROR);
+    return FALSE;
+  }
+
+  return TRUE;
+}
+
+function helpinject_wrap_function($name, $code, $args = array()) {
+  $arguments = implode(", ", $args);
+  return <<<EOF
+function {$name}({$arguments}) {
+$code
+}
+\n
+EOF;
+}
+
+
+/**
+ * Display a help icon with a link to view the node in a popup.
+ */
+function theme_helpinject_topic($nid) {
+  if (user_access('view advanced help popup')) {
+    $node = node_load($nid);
+    drupal_add_css(drupal_get_path('module', 'advanced_help') . '/help-icon.css');
+    return l('<span>' . t('Help') . '</span>', "helpinject/node/$nid", array(
+      'attributes' => array(
+        'class' => 'advanced-help-link',
+        'onclick' => "var w=window.open(this.href, 'advanced_help_window', 'width=500,height=500,scrollbars,resizable'); w.focus(); return false;",
+        'title' => $node->title,
+      ),
+      'query' => array('popup' => TRUE),
+      'html' => TRUE)
+    );
+  }
+}
+
+/**
+* Implementation of hook_preprocess_block().
+*/
+function helpinject_preprocess_block(&$variables) {
+  $key = $variables['block']->module . '_' .$variables['block']->delta;
+  if (user_access('inject help')) {
+    $variables['block']->subject .=  _helpinject_admin_link('block',  $key , t($variables['block']->subject));
+  }
+  if (user_access('view advanced help popup')) {
+    if ($values = helpinject_get_from_key('block', $key)) {
+      foreach ($values as $value) {
+        $variables['block']->subject  .= $help_link = theme('helpinject_topic', $value['nid']);
+      }
+    }
+  }
+}

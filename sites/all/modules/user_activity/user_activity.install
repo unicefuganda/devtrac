@@ -1,0 +1,57 @@
+<?php
+/* $Id: user_activity.install,v 1.7 2008/07/18 17:14:53 sanduhrs Exp $ */
+
+/**
+ * Implementation of hook_schema().
+ */
+function user_activity_schema() {
+  $schema['user_activity'] = array(
+    'description' => t('The base table user activity.'),
+    'fields' => array(
+      'uid' => array(
+        'description' => t('The primary identifier for a user.'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'pis' => array(
+        'description' => t('Counts a users page impressions.'),
+        'type' => 'int',
+        'not null' => TRUE),
+      'logins' => array(
+        'description' => t('Counts a users page logins.'),
+        'type' => 'int',
+        'not null' => TRUE),
+      'idx' => array(
+        'description' => t('A users activity index.'),
+        'type' => 'float',
+        'precision' => 30,
+        'scale' => 20,
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      'timestamp' => array(
+        'description' => t('Timestamp of the last update.'),
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE),
+      ),
+    'primary key' => array('uid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function user_activity_install() {
+  drupal_install_schema('user_activity');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function user_activity_uninstall() {
+  //cache id
+  $cid = 'user-activity';
+  cache_clear_all($cid, 'cache', TRUE);
+  drupal_uninstall_schema('user_activity');
+}

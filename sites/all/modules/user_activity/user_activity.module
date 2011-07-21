@@ -1,0 +1,477 @@
+<?php
+/* $Id: user_activity.module,v 1.12.2.4 2008/08/01 10:58:39 sanduhrs Exp $ */
+
+/**
+ * @file
+ * Calculates and displays a user's activity index.
+ *
+ * The calculation is based on logins, pis, created nodes and comments
+ *
+ * @author
+ * Stefan Auditor <stefan.auditor@erdfisch.de>
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function user_activity_menu() {
+  $items['user_activity'] = array(
+    'title' => t('User activity'),
+    'page callback' => 'user_activity_browse',
+    'access arguments' => array('access user profiles'),
+    'type' => MENU_SUGGESTED_ITEM,
+  );
+  $items['user_activity/feed'] = array(
+    'title' => t('User activity feed'),
+    'page callback' => 'user_activity_feed',
+    'access arguments' => array('access user profiles'),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/user/user_activity'] = array(
+    'title' => t('User activity'),
+    'description' => t('Configure how the activity is calculated.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('user_activity_settings'),
+    'access arguments' => array('administer user activity'),
+    'file' => 'user_activity.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function user_activity_perm() {
+  return array('administer user activity');
+}
+
+/**
+ * Implementation of hook_user();
+ */
+function user_activity_user($op, &$edit, &$account, $category = NULL) {
+  global $user;
+  //cache id
+  $cid = 'user-activity-uid-'. $account->uid;
+  
+  switch ($op) {
+    case 'insert':
+      $idx = user_activity_index_calculate($account);
+      user_activity_index_store($account, $idx);
+      break;
+    case 'login':
+      user_activity_login_count($account);
+      break;
+    case 'view':
+      $account->content['user_activity'] = array (
+        '#type' => 'user_profile_item',
+        '#title' => t('Latest activity'),
+        '#value' => theme('user_activity_o_meter', $account->user_activity_index),
+        '#attributes' => array('class' => 'user-activity'),
+      );
+      break;
+    case 'load':
+      $account->user_activity_index = user_activity_index_get($account);
+      break;
+    case 'delete':
+      db_query("DELETE FROM {user_activity} WHERE uid=%d", $account->uid);
+      cache_clear_all($cid, 'cache');
+      break;
+  }
+}
+
+/**
+ * Implementation of hook_block().
+ */
+function user_activity_block($op = 'list', $delta = 0, $edit = array()) {
+  global $user;
+
+  if ($op == 'list') {
+    $blocks[0]['info'] = t('Most active users');
+    return $blocks;
+  }
+  else if ($op == 'configure' && $delta == 0) {
+    $form['user_activity_activity_count'] = array(
+      '#type' => 'select',
+      '#title' => t('Number of users to display'),
+      '#default_value' => variable_get('user_activity_activity_count', 5),
+      '#options' => drupal_map_assoc(array(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)),
+    );
+    return $form;
+  }
+  else if ($op == 'save' && $delta == 0) {
+    variable_set('user_activity_activity_count', $edit['user_activity_activity_count']);
+  }
+  else if ($op == 'view') {
+    $block = array();
+
+    switch ($delta) {
+      case 0:
+        if (user_access('access content')) {
+          $result = db_query_range('SELECT ua.uid, ua.idx, u.name FROM {user_activity} ua
+                                      INNER JOIN {users} u
+                                      WHERE u.uid=ua.uid AND u.status != 0 AND u.access != 0
+                                      ORDER BY ua.idx DESC', 0, variable_get('user_activity_activity_count', 5));
+          while ($account = db_fetch_object($result)) {
+            $account->user_activity_index = user_activity_index_get($account);
+            $items[] = $account;
+          }
+          $output = theme('user_activity_list', $items);
+          $output .= '<div>'. l('more', 'user_activity') .'</div>';
+
+          $block['subject'] = t('Most active users');
+          $block['content'] = $output;
+        }
+        return $block;
+    }
+  }
+}
+
+/**
+ * Implementation of hook_cron().
+ */
+function user_activity_cron() {
+  user_activity_update(250);
+}
+
+function user_activity_update($limit) {
+  $result = db_query('SELECT uid,timestamp FROM {user_activity} WHERE timestamp<%d ORDER BY timestamp ASC LIMIT %d', time(), $limit);
+
+  while ($account = db_fetch_object($result)) {
+    $account = user_load(array('uid' => $account->uid));
+    $account->user_activity_index = user_activity_index_calculate($account);
+    user_activity_index_store($account, $account->user_activity_index);
+  }
+}
+
+function user_activity_browse() {
+  $result = pager_query("SELECT DISTINCT(u.uid) FROM {user_activity} ua
+                            INNER JOIN {users} u ON u.uid=ua.uid
+                            WHERE u.status>0 AND u.access>0 ORDER BY ua.idx DESC", 10);
+
+  $output = '<div id="user_activity">';
+  while ($account = db_fetch_object($result)) {
+    $account = user_load(array('uid' => $account->uid));
+    $output .= theme('user_activity_listing', $account, $profile);
+  }
+  $output .= theme('pager');
+  $output .= '</div>';
+
+  return $output;
+}
+
+/**
+ * Implementation of hook_exit();
+ */
+function user_activity_exit($destination = NULL) {
+  global $user;
+
+  if ($user->uid) {
+    //Count the page impression
+    user_activity_pi_count($user);
+    
+    //cache id
+    $cid = 'user-activity-uid-'. $user->uid;
+    //maximum cache time
+    $lifetime = 24*60*60; //24hours
+    
+    //get cached object
+    $cache = cache_get($cid);
+    
+    if (empty($cache)  OR (($cache->created+$lifetime) <= time())) {
+      //Recalculate the activity index
+      $index = user_activity_index_calculate($user);
+      //Store the index
+      user_activity_index_store($user, $index);
+      //generate cache
+      cache_set($cid, $index, 'cache', CACHE_TEMPORARY);
+    }
+  }
+}
+
+
+/**
+ * Implementation of hook_theme()
+ * @return array Definitions of the themable functions
+ */
+function user_activity_theme() {
+  return array (
+    'user_activity_o_meter_small' => array(
+      'arguments' => array ('index' => NULL)
+    ),
+    'user_activity_o_meter' => array(
+      'arguments' => array ('index' => NULL)
+    ),
+    'user_activity_list' => array(
+      'arguments' => array (
+        'users' => NULL,
+        'title' => NULL
+      )
+    ),
+    'user_activity_listing' => array(
+      'arguments' => array (
+        'account' => NULL
+      )
+    ),
+  );
+}
+
+/**
+ * Check if there already is a DB entry for that user
+ * @param $user a user object
+ */
+function user_activity_userentry($user) {
+  if (db_result(db_query("SELECT uid FROM {user_activity} WHERE uid=%d LIMIT 1", $user->uid)) == FALSE) {
+    user_activity_set($user);
+  }
+}
+
+/**
+ * Count a user's logins
+ * @param $user a user object
+ */
+function user_activity_login_count($user) {
+  user_activity_userentry($user);
+  return db_query("UPDATE {user_activity} SET logins=logins+1 WHERE uid=%d", $user->uid);
+}
+
+/**
+ * Count a user's page impressions
+ * @param $user a user object
+ */
+function user_activity_pi_count($user) {
+  user_activity_userentry($user);
+  return db_query("UPDATE {user_activity} SET pis=pis+1 WHERE uid=%d", $user->uid);
+}
+
+/**
+ * First time
+ * @param $user a user object
+ * @return A database query result resource, or FALSE if the query was not executed correctly.
+ */
+function user_activity_set($user) {
+  return db_query("INSERT INTO {user_activity} (uid, pis, logins, timestamp) VALUES (%d, 1, 1, %d)", $user->uid, time());
+}
+
+/**
+ * Get a user's page impressions
+ * @param $user a user object
+ * @return an integer representing the total of a user's page impressions
+ */
+function user_activity_pis($user) {
+  return db_result(db_query("SELECT pis FROM {user_activity} WHERE uid=%d LIMIT 1", $user->uid));
+}
+
+/**
+ * Get a user's logins
+ * @param $user a user object
+ * @return an integer representing the total of a user's logins
+ */
+function user_activity_logins($user) {
+  return db_result(db_query("SELECT logins FROM {user_activity} WHERE uid=%d LIMIT 1", $user->uid));
+}
+
+/**
+ * Calculate a user's activity index based on logins, page impressions and authorship
+ * @param $user a user object
+ * @return an floating point number representing a percentage
+ */
+function user_activity_index_calculate($user) {
+  //Get weights
+  $weight = array(
+    'logins'   => variable_get('user_activity_logins', 1),
+    'pis'      => variable_get('user_activity_pis', 1),
+    'nodes'    => variable_get('user_activity_nodes', 1),
+    'comments' => variable_get('user_activity_comments', 1),
+  );
+
+  //Get maximum logins/pis/nodes
+  $max->logins    = db_result(db_query("SELECT logins FROM {user_activity} ORDER BY logins DESC LIMIT 1"));
+  $max->pis       = db_result(db_query("SELECT pis FROM {user_activity} ORDER BY pis DESC LIMIT 1"));
+  $max->logins    = $max->logins ? $max->logins : 1;
+  $max->pis       = $max->pis ? $max->pis : 1;
+  $max->nodes     = db_result(db_query("SELECT COUNT(nid) AS count FROM {node} GROUP BY uid ORDER BY count DESC LIMIT 1"));
+  $max->nodes     = $max->nodes ? $max->nodes : 1;
+  $max->comments  = db_result(db_query("SELECT COUNT(cid) AS count FROM {comments} GROUP BY uid ORDER BY count DESC LIMIT 1"));
+  $max->comments  = $max->comments ? $max->comments : 1;
+
+  //Get user's logins/pis/nodes
+  $usr   = db_fetch_object(db_query("SELECT logins,pis FROM {user_activity} WHERE uid=%d", $user->uid));
+  $usr->logins   = $usr->logins ? $usr->logins : 1;
+  $usr->pis      = $usr->pis ? $usr->pis : 1;
+  $usr->nodes    = db_result(db_query("SELECT COUNT(*) AS count FROM {node} WHERE uid=%d", $user->uid));
+  $usr->nodes    = $usr->nodes ? $usr->nodes : 1;
+  $usr->comments = db_result(db_query("SELECT COUNT(*) AS count FROM {comments} WHERE uid=%d", $user->uid));
+  $usr->comments = $usr->comments ? $usr->comments : 1;
+
+  //Calculate percentages
+  $percentage->logins   = ($usr->logins/$max->logins)*100*$weight['logins'];
+  $percentage->pis      = ($usr->pis/$max->pis)*100*$weight['pis'];
+  $percentage->nodes    = ($usr->nodes/$max->nodes)*100*$weight['nodes'];
+  $percentage->comments = ($usr->comments/$max->comments)*100*$weight['comments'];
+
+  //DEBUG
+  //drupal_set_message($user->uid. ' Logins: '. $max->logins .':'. $usr->logins .' Percent: '. $percentage->logins);
+  //drupal_set_message($user->uid. ' PIs: '. $max->pis .':'. $usr->pis .'Percent: '. $percentage->pis);
+  //drupal_set_message($user->uid. ' Nodes: '. $max->nodes .':'. $usr->nodes .'Percent: '. $percentage->nodes);
+  //drupal_set_message($user->uid. ' Comments: '. $max->comments .':'. $usr->comments .'Percent: '. $percentage->comments);
+  //drupal_set_message(print_r($weight, 1));
+
+
+  //Calculate activity index
+  $activity_index = ($percentage->logins+$percentage->pis+$percentage->nodes+$percentage->comments)/array_sum($weight);
+
+  return $activity_index;
+}
+
+/**
+ * Store a user's activity index to the database
+ * @param $user a user object
+ * @return A database query result resource, or FALSE if the query was not executed correctly.
+ */
+function user_activity_index_store($user, $idx) {
+  if ($user->uid == 0) {
+    return FALSE;
+  }
+  $result = db_result(db_query("SELECT uid FROM {user_activity} WHERE uid=%d", $user->uid));
+  if (!$result) {
+    user_activity_set($user);
+  }
+
+  return db_query("UPDATE {user_activity} SET idx=%f, timestamp=%d WHERE uid=%d", $idx, time(), $user->uid);
+}
+
+/**
+ * Get a user's activity index from the database
+ * @param $user a user object
+ * @return an floating point number representing a percentage
+ */
+function user_activity_index_get($user) {
+  $index = db_result(db_query("SELECT idx FROM {user_activity} WHERE uid=%d", $user->uid));
+  return $index;
+}
+
+/**
+ * Display a percentage meter
+ * @param index a integer value representing a percentage
+ * @return a percentage meter in html
+ */
+function theme_user_activity_o_meter($index) {
+  drupal_add_css(drupal_get_path('module', 'user_activity') .'/user_activity.css');
+  $output = '
+  <div class="user_activity_o_meter user_activity_o_meter_large">
+    <div class="background">'. sprintf("%01.2f", $index) .'%</div>
+    <div class="foreground" style="width:'. sprintf("%01.0f", $index) .'%;"></div>
+  </div>';
+
+  return $output;
+}
+
+/**
+ * Display a percentage meter
+ * @param index a integer value representing a percentage
+ * @return a percentage meter in html
+ */
+function theme_user_activity_o_meter_small($index) {
+  drupal_add_css(drupal_get_path('module', 'user_activity') .'/user_activity.css');
+  $output = '
+  <div class="user_activity_o_meter user_activity_o_meter_small">
+    <div class="foreground" style="width:'. sprintf("%01.0f", $index) .'%;"></div>
+    <div class="background">'. sprintf("%01.2f", $index) .'%</div>
+  </div>';
+
+  return $output;
+}
+
+function theme_user_activity_list($users, $title = NULL) {
+  if (!empty($users)) {
+    foreach ($users as $user) {
+      $items[] = theme('username', $user) . theme('user_activity_o_meter_small', $user->user_activity_index);
+    }
+  }
+  return theme('item_list', $items, $title);
+}
+
+function theme_user_activity_listing($account) {
+
+  $output  = "<div class=\"profile\">\n";
+  $output .= theme('user_picture', $account);
+  $output .= ' <div class="name">'. theme('username', $account) ."</div>\n";
+  $output .= ' <div class="activity">'. theme('user_activity_o_meter_small', $account->user_activity_index) ."</div>\n";
+  $output .= "</div>\n";
+
+  return $output;
+}
+
+function user_activity_feed($uids = array(), $channel = array()) {
+  global $base_url, $language;
+
+  if (!$uids) {
+    $result = db_query_range("SELECT u.uid FROM {user_activity} ua
+                                INNER JOIN {users} u ON u.uid=ua.uid
+                                WHERE u.status>0 AND u.access>0 ORDER BY ua.idx DESC", 0, variable_get('feed_default_items', 10));
+    while ($row = db_fetch_object($result)) {
+      $uids[] = $row->uid;
+    }
+  }
+
+  $namespaces = array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/');
+
+  $items = '';
+  foreach ($uids as $uid) {
+    // Load the specified user
+    $item = user_load(array('uid' => $uid));
+    $link = url("user/$uid", array('absolute' => TRUE));
+
+    $extra = array();
+    $extra = array_merge($extra,
+      array(
+        array(
+          'key' => 'pubDate',
+          'value' =>  date('r', $item->created)),
+          array(
+            'key' => 'dc:creator',
+            'value' => $item->name
+          ),
+          array(
+            'key' => 'guid',
+            'value' => $item->uid .' at '. $base_url,
+            'attributes' => array('isPermaLink' => 'false')
+          ),
+          array(
+          'key' => 'activity_idx',
+          'value' =>  $item->user_activity_index
+          ),
+        )
+      );
+
+    foreach ($extra as $element) {
+      if (isset($element['namespace'])) {
+        $namespaces = array_merge($namespaces, $element['namespace']);
+      }
+    }
+
+    $item->title = $item->name;
+    $item_text = t('Activity index: %idx%', array('%idx' => sprintf("%01.2f", $item->user_activity_index)));
+    $item_text .= '<p>'. l(t('read more'), 'user/'. $item->uid, array('html' => TRUE)) .'</p>';
+
+    $items .= format_rss_item($item->title, $link, $item_text, $extra);
+  }
+
+  $channel_defaults = array(
+    'version'     => '2.0',
+    'title'       => variable_get('site_name', 'Drupal'),
+    'link'        => $base_url,
+    'description' => variable_get('site_mission', ''),
+    'language'    => $language->language
+  );
+  $channel = array_merge($channel_defaults, $channel);
+
+  $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+  $output .= "<rss version=\"". $channel["version"] ."\" xml:base=\"". $base_url ."\" ". drupal_attributes($namespaces) .">\n";
+  $output .= format_rss_channel($channel['title'], $channel['link'], $channel['description'], $items, $channel['language']);
+  $output .= "</rss>\n";
+
+  drupal_set_header('Content-Type: application/rss+xml; charset=utf-8');
+  print $output;
+}

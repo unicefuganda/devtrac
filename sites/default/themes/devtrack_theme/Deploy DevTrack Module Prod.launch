@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
+<stringAttribute key="org.eclipse.debug.core.ATTR_REFRESH_SCOPE" value="${working_set:&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;&#10;&lt;resources&gt;&#10;&lt;item path=&quot;/mountbattentheme&quot; type=&quot;4&quot;/&gt;&#10;&lt;/resources&gt;}"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="DESTINATION" value="drupal@www.devtrac.ug:"/>
+<mapEntry key="PROJECT" value="/home/drupal/drupal6"/>
+<mapEntry key="SITE" value="default"/>
+<mapEntry key="SSH" value="/usr/bin/ssh"/>
+<mapEntry key="WORKSPACE" value="${workspace_loc}"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.ui.externaltools.launchGroup"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LAUNCH_CONFIGURATION_BUILD_SCOPE" value="${projects:mountbattentheme}"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_LOCATION" value="/var/www/DeployDrupal/deploy_drupal.sh"/>
+<stringAttribute key="org.eclipse.ui.externaltools.ATTR_TOOL_ARGUMENTS" value="--module ${project_name}"/>
+</launchConfiguration>

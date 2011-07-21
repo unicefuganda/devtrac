@@ -1,0 +1,47 @@
+<div id="node-1" class="node">
+
+
+
+      <span class="submitted">Tue, 05/05/2009 - 22:38 — <a href="/helpinject/user/1" title="View user profile.">admin</a></span>
+  
+  <div class="content clear-block">
+    <span class='print-link'></span><p>The HelpInject module assists you in writing help texts suitable for use with the <a href="http://drupal.org/project/advanced_help">Advanced Help module</a> by allowing you to write your help texts in Drupal books. Once you've written the help texts you can inject help icons into any page, form or form item, linking them to the book page that should later appear. The final step is to export all of the help texts as well as the injection data into a new module consisting of Advanced Help files and a simple generated module. The module has all of the information needed to inject the help icons into the right pages, forms, and form elements. The new generated module is ready for distribution as a standalone project or a submodule in a larger project.</p>
+<h3>Workflow</h3>
+<p>Advanced Help Injection and Export addresses four workflows where help texts need to be written:</p>
+<ol>
+<li>You want to document a website and the help texts are in flux. Write your texts in a Drupal book, inject the context sensitive help icons throughout the website, and let the Help Inject module provide the end-user the help icons.</li>
+<li>You want to document a website and the help texts are finished. Write your texts in a Drupal book, inject the context sensitive help icons throughout the website, and export the module. That module is now the complete documentation for a particular website.</li>
+<li>You want to document a module. Write your texts in a Drupal book, inject the context sensitive help icons into the pages and forms that your module supplies, and export the new generated help module. Distribute the new generated help module as a sub module with your module.</li>
+<li>You want to document a larger project, such as Drupal core. Write your texts in a Drupal book, inject context sensitive help icons throughout the larger project, and export the new generated help module. Distribute the new generated help module as a module with your larger project.</li>
+</ol>
+<p>The Advanced Help Injection and Export module has the following benefits to help writers and module maintainers:</p>
+<ol>
+<li>Help writers can use web based tools that they're familiar with, and which are collaboration friendly (Drupal books).</li>
+<li>Module maintainers don't need to pollute their code with theme() calls to inject the help icons.</li>
+<li>Help texts can easily be distributed as they are just a collection of HTML files.</li>
+<li>Help texts are not part of the site's content (so you don't have to worry about help texts showing up in Views, or on the front page).</li>
+<li>Thanks to the coolness of Advanced Help, help texts are searchable.</li>
+</ol>
+<p>The workflow for using this module is:</p>
+<ol>
+<li>Create your documentation in a book structure.</li>
+<li>Enable the helpinject module</li>
+<li>Using the (+) icons that now appear everywhere, "inject" your help into the pages and forms by linking (+) icons to book pages.</li>
+<li>Export the help to a new module at admin/build/helpinject</li>
+<li>Move the generated module (found in your files directory) to your sites/all/modules directory.</li>
+<li>Disable helpinject and enable the module you generated.</li>
+</ol>
+<p>The help that you wrote in the Drupal books is now available as advanced help files and gets injected into the right forms and pages.</p>
+<h3>Uploads and attached files</h3>
+<p>Files attached to book nodes using the upload module, filefield, imagefield, and any other module that populates node-&gt;files, will be copied into the exported help distribution. Furthermore, references to those files in the body text of your book nodes will be updated to that the paths to the files are portable. This makes writing help texts with image or video content a breeze.</p>
+<h3>Translations</h3>
+<p>If you have translated your help texts using Drupal's locale and content translation modules, the HelpInject module will export the Advanced Help files and their translations.</p>
+  </div>
+
+  <div class="clear-block">
+    <div class="meta">
+        </div>
+
+      </div>
+
+</div>

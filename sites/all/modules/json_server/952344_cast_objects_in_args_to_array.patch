@@ -1,0 +1,11 @@
+--- json_server.module (saved version)
++++ json_server.module (current document)
+@@ -81,7 +81,7 @@
+ function drupal_parse_json($v) {
+   // PHP 5 only
+   if (function_exists('json_decode')) {
+-    return json_decode($v);
++    return json_decode($v, TRUE);
+   }
+   if ($v{0} == '"') {
+     $v = substr($v, 1, -1);

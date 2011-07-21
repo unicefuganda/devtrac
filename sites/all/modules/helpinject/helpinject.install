@@ -1,0 +1,50 @@
+<?php
+// $Id: helpinject.install,v 1.2 2009/03/22 15:02:25 robertDouglass Exp $
+/**
+ * @file helpinject.install
+ * Contains install and update functions for helpinject.
+ */
+
+function helpinject_install() {
+  drupal_set_message('Installing Help Injection.');
+  drupal_install_schema('helpinject');
+}
+
+function helpinject_uninstall() {
+  drupal_uninstall_schema('helpinject');
+}
+
+/**
+ * helpinject's initial schema.
+ */
+function helpinject_schema() {
+  $schema['helpinject'] = array(
+    'description' => t('Stores mappings between UI elements and help files.'),
+    'fields' => array(
+      'type' => array(
+        'type' => 'varchar',
+        'length' => '32',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => t('The type of this help item.'),
+      ),
+      'helpkey' => array(
+        'type' => 'varchar',
+        'length' => '128',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => t('The key of this help item.'),
+      ),
+      'nid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('The nid of the book node which will later become the help file for this item.'),
+      ),
+    ),
+    'primary key' => array('type', 'helpkey'),
+  );
+
+  return $schema;
+}

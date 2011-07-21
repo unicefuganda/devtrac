@@ -1,0 +1,156 @@
+
+
+/* 
+  Good, this seems to be generic for all tables in all views. 
+   All the rest is overrides for values like this. 
+   So this is where we start with 
+*/
+.views-table tr.even td {
+  background-color: #fff; /*fffce2*/
+}
+
+.views-table tr td { border-bottom: 1px solid #fff;}
+
+/*..........tables...................*/
+
+/*
+  this was at the end of the styles.css file. Great. All table stuff together\
+  Perhaps mark it as table somewhere, just to make sure?
+  and try to always use spaces, indenting and returns.
+*/
+
+.block ul.pager li.pager-current, .block ul.pager a:hover,
+.block ul.pager a:visiteds{background-color:#000; color:#fff}
+.block ul.pager a, .block ul.pager li.pager-current, .block ul.pager a:hover {border:1px solid #000;}
+
+/*
+.block .views-table tr .views-field-field-fieldtrip-start-end-date-value{
+  background-color:#faf9f9; }
+.block .views-table tr .views-field-field-fieldtrip-start-end-date-value2{
+background-color: #f5f5f5; border-left:1px solid #FFFFFF;}
+.block .views-table tr .views-field-field-fieldtrip-duration-value{
+  background-color:#f1f1f1; border-left:1px solid #FFFFFF;}
+*/
+
+
+
+/* 
+  I found this somewhere floating 
+  Perhaps is should be close to the rest 
+ */
+   .view-field-trip-report-items table {
+  margin-bottom:-0.4em;
+  margin-top:-10px;
+}
+.not-front .col-content_contentlayerright.last .view-field-trip-report-items table {
+    margin-top: 0px;
+}
+
+/* can you point out which block that is? */
+/* Perhaps in the comments? */
+/* or is it a block in a certain region on a certain page? */
+
+#block-views-cac0f8a4b9f539757b67cf65047d5197 table th,
+#block-views-87cfc5888b93ec2b557b2215e685ab74 table th ,
+.view-my-homepage-my-action-items th,
+.view-my-homepage-my-field-trips th,
+.view-my-homepage-my-field-trips thead th
+{
+	/* lets say all tables within a view have a yellow header. there are so many by now 
+	
+	if there are blocks/pages where the table header should *not* be yellow, make an exception
+	right below this first definition. (not in a random place in the file, or worse, in styles.css)
+	*/
+	}
+
+table.views-table th
+{
+  background-color: #fff9cd;
+  border:0 none;
+  color:#000000;
+  font-size:11px;
+  line-height: 10px;
+}
+
+
+/* this is pretty specific stuff. as you can see on 
+
+http://unicef.mountbatten.net/node/145
+
+it makes the header of the table in the Places to Visit and the Action Items blocks 
+start at a different height. 
+What to do? Where are you trying to fix this? 
+*/
+.view-my-homepage-my-action-items .views-table {
+/* remove for now  margin-top: -17px;  */
+}
+/* idem */
+.view-my-homepage-my-action-items th a {
+	/* why? */
+  color: #990000;
+}
+.not-front .block .views-table td, .not-front .block .views-table th {
+	padding-left: 10px;
+}
+
+
+/* what is so special about the .view-field-trip-report-items view? I dont see that.
+*  I would guess the formatting of tables is more dependant on *where* the view is shown.
+* (and it was messing up a page, where i think this code is ment for a block.
+*/
+
+/* so i comment this out...
+
+(mm, i think this is the one on the frontpage? 
+lets put some .front before it
+
+*/
+
+
+.front .view-field-trip-report-items tr td{
+  margin-bottom: 2px;
+}
+.front .view-field-trip-report-items tr.even,
+.front .view-field-trip-report-items tr.odd {
+  background: none;
+}
+.front .view-field-trip-report-items td.views-field-nid {
+    background-color: #FFF9EB;
+    float: left;
+    font-size: 40px;
+    font-weight: bold;
+    height: 45px;
+    line-height: 50px;
+    margin-right: 5px;
+    text-align: center;
+    width: 94px;
+}
+.front .view-field-trip-report-items .views-row-first .views-field-nid,
+.front .view-field-trip-report-items .views-row-first .views-field-name a {
+  /*background-color: #FFD4D4;*/ color: #FF0000;
+}
+
+.front .view-field-trip-report-items tr.even td.views-field-nid,
+.front .view-field-trip-report-items .views-field-name a{
+  color: #006300;/*ffcc00*/
+  text-decoration: none;
+}
+.front .view-field-trip-report-items .views-row-last .views-field-nid,
+.front .view-field-trip-report-items .views-row-last .views-field-name a {
+  color: #0066CC;
+}
+.front .view-field-trip-report-items .views-field-name {
+  background-color: #fff;
+  float:left;
+  font-size: 20px;
+  height: 50px;
+  width: 180px;
+  line-height: 50px;
+}
+
+.front .view-field-trip-report-items tr th {
+  display: none; 
+}
+
+.tabsaslist-title{ font-weight: bold; /*background-color: #F2F2F2; margin: -10px 0 0 -10px;
+    padding: 2px 0 2px 10px;*/ }

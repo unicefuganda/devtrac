@@ -1,0 +1,30 @@
+.user_activity_o_meter_large .background {
+  height:20px;
+  background-color:#C3D9FF;
+  text-align:center;
+}
+
+.user_activity_o_meter_large .foreground {
+  height:20px;
+  background-color:#6BBA70;
+  text-align:center;
+  margin-top:-20px;
+}
+
+.user_activity_o_meter_small {
+  width:75%;
+  height:2px;
+  background-color:#C3D9FF;
+}
+
+.user_activity_o_meter_small .background {
+  text-align:right;
+  margin-top:-22px;
+}
+
+.user_activity_o_meter_small .foreground {
+  height:2px;
+  background-color:#6BBA70;
+  color:white;
+  text-align:left;
+}

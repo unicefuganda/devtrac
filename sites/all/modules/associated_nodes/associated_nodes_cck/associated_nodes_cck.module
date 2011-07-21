@@ -1,0 +1,63 @@
+<?php
+// $Id: associated_nodes_cck.module,v 1.2.2.2 2009/04/24 13:45:14 jfberroyer Exp $
+
+function associated_nodes_cck_associated_nodes_types() {
+  return array('cck' => t("CCK fields"));
+}
+
+function associated_nodes_cck_associated_nodes_criteria($aid) {
+  $nodetypes = associated_nodes_nodetypes($aid);
+  $content_types = content_types();
+  $cck_fields = array();
+  foreach ($nodetypes as $type) {
+    if (isset($content_types[$type]) and is_array($content_types[$type])) {
+	    foreach ($content_types[$type]['fields'] as $field_name => $field_data) {
+	      $cck_fields[$field_name] = $field_data['widget']['label'];
+	    }
+    }
+  }
+  asort($cck_fields);
+  return array('cck' => $cck_fields);
+}
+
+function associated_nodes_cck_associated_nodes_find($aid, $node, $criteria) {
+	$types = associated_nodes_nodetypes($aid);
+  $associated_nodes = array();
+  foreach ($criteria as $field => $weight) {
+    if (($weight != 0) and isset($node->$field)) {
+	    $db_info = content_database_info(content_fields($field));
+	    $table = $db_info['table'];
+	    $nodefields = $node->$field;
+	    $nb_fields = count($nodefields);
+	    foreach ($nodefields as $nodefield) {
+	      $conditions = array();
+	      $params = array();
+		    foreach ($db_info['columns'] as $key => $column) {
+		      $conditions[] = "{$column['column']} = '%s'";
+		      $params[] = $nodefield[$key];
+		    }
+		    $params2 = array();
+		    foreach ($types as $type) {
+			    $place_holders[] = "'%s'";
+			    $params[] = $type;
+			    $params_nodeypes[] = $type;
+			  }
+		    $q = "SELECT t.nid FROM {".$table."} AS t INNER JOIN {node} AS n ON t.nid = n.nid AND t.vid = n.vid WHERE ".implode(" AND ", $conditions)." AND n.type IN (".implode(", ", $place_holders).")";
+		    $result = db_query($q, $params);
+		    while ($row = db_fetch_array($result)) {
+		      $nid = $row['nid'];
+		      $q = "SELECT count(*) FROM {".$table."} AS t INNER JOIN {node} AS n ON t.nid = n.nid AND t.vid = n.vid WHERE n.type IN (".implode(", ", $place_holders).") AND t.nid = %d";
+		      $params = $params_nodeypes;
+		      $params[] = $nid;
+		      $count = db_result(db_query($q, $params));
+		      $div = max($nb_fields, $count);
+		      if (!isset($associated_nodes[$nid])) {
+		        $associated_nodes[$nid] = 0;
+		      }
+		      $associated_nodes[$nid] += $weight / $div;
+		    }
+	    }
+    }
+  }
+  return $associated_nodes;
+}

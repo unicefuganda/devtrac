@@ -1,0 +1,694 @@
+<?php
+// $Id: associated_nodes.module,v 1.2.2.10 2009/04/24 13:45:15 jfberroyer Exp $
+
+function associated_nodes_init() {
+	if (user_access("administer node associations") && arg(0) == "admin") {
+		if (!_associated_nodes_check_criteria() && (arg(2) != 'associated-nodes' || arg(3) != 'cleanup')) {
+			drupal_set_message(t("You need to ").l(t("clear Associated Nodes cache"), 'admin/settings/associated-nodes/cleanup'), 'error', FALSE);
+		}
+	}
+}
+
+function associated_nodes_perm() {
+  return array(
+    "administer node associations",
+  );
+}
+
+function associated_nodes_menu() {
+  $items = array();
+  $items['admin/settings/associated-nodes'] = array(
+    'title' => "Associated Nodes",
+    'description' => "Configure the node associations",
+    'type' => MENU_NORMAL_ITEM,
+    'page callback' => 'associated_nodes_form_associations',
+    'access arguments' => array('administer node associations'),
+  );
+  $items['admin/settings/associated-nodes/association'] = array(
+    'title' => "Associations",
+    'description' => "Configure the node associations",
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'page callback' => 'associated_nodes_form_associations',
+    'access arguments' => array('administer node associations'),
+  );
+  $items['admin/settings/associated-nodes/delete'] = array(
+    'title' => "Delete association",
+    'type' => MENU_CALLBACK,
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('associated_nodes_delete_form'),
+    'access arguments' => array('administer node associations'),
+  );
+  $items['admin/settings/associated-nodes/cleanup'] = array(
+    'title' => "Clean deleted criteria",
+    'type' => MENU_CALLBACK,
+    'page callback' => 'associated_nodes_cleanup',
+    'access arguments' => array('administer node associations'),
+  );
+  return $items;
+}
+
+function associated_nodes_form_associations() {
+  $html = "";
+  $associations = associated_nodes_associations();
+  foreach ($associations as $aid => $association) {
+    $html .= drupal_get_form("associated_nodes_form_associations_association".$association['aid'], $association);
+  }
+  $html .= drupal_get_form("associated_nodes_form_associations_new", count($associations) > 0);
+  return $html;
+}
+
+function associated_nodes_forms($form_id) {
+  $forms = array();
+  if (strpos($form_id, "associated_nodes_form_associations_association") === 0) {
+    $forms[$form_id] = array('callback' => 'associated_nodes_form_associations_association');
+  }
+  return $forms;
+}
+
+function associated_nodes_form_associations_association($form_state, $association) {
+  $aid = $association['aid'];
+  $form = array();
+  $form['association'] = array(
+    '#type' => "fieldset",
+    '#title' => $association['name'],
+    '#collapsible' => TRUE,
+    '#collapsed' => (arg(4) != $aid),
+  );
+  $form['association']['aid'] = array(
+    '#type' => "value",
+    '#value' => $aid,
+  );
+  $form['association']['name'] = array(
+    '#type' => "textfield",
+    '#title' => t("Name"),
+    '#description' => t("Name of the node association."),
+    '#default_value' => $association['name'],
+    '#required' => TRUE,
+  );
+  $form['association']['number'] = array(
+    '#type' => "textfield",
+    '#title' => t("Number of associated nodes"),
+    '#description' => t("Maximum number of nodes that are associated with each node."),
+    '#default_value' => $association['number'],
+    '#required' => TRUE,
+  );
+  $form['association']['published_only'] = array(
+    '#type' => "checkbox",
+    '#title' => t("Published nodes only"),
+    '#default_value' => $association['published_only'],
+  );
+  $nodetypes = associated_nodes_nodetypes($aid);
+  $form['association']['nodetypes_fieldset'] = array(
+    '#type' => "fieldset",
+    '#title' => t("Node types: ") . implode(", ", $nodetypes),
+    '#default_value' => $association['number'],
+    '#collapsible' => TRUE,
+    '#collapsed' => count($nodetypes),
+  );
+  $form['association']['nodetypes_fieldset']['nodetypes'] = array(
+    '#type' => 'checkboxes',
+    '#title' => t("Node types"),
+    '#options' => _associated_nodes_get_node_types(),
+    '#default_value' => $nodetypes,
+    '#description' => t("Types of nodes that can be associated."),
+  );
+  $form['association']['criteria'] = associated_nodes_form_associations_criteria($aid);
+  $modules = module_implements("associated_nodes_form");
+  foreach ($modules as $module) {
+    $sub_forms = module_invoke($module, "associated_nodes_form", $aid);
+    $form['association'][$module] = $sub_forms;
+  }
+  $form['association']['update'] = array(
+    '#type' => "submit",
+    '#value' => t("Update"),
+  );
+  $form['association']['delete'] = array(
+    '#type' => "submit",
+    '#value' => t("Delete"),
+  );
+  $form['association']['clone'] = array(
+    '#type' => "submit",
+    '#value' => t("Clone"),
+  );
+  $form['#submit'][] = "associated_nodes_form_associations_association_submit";
+  $form['#validate'][] = "associated_nodes_form_associations_association_validate";
+  $form['#theme'] = "associated_nodes_form_associations_association";
+  return $form;
+}
+
+function associated_nodes_form_associations_criteria($aid) {
+  $fieldset = array(
+    '#type' => "fieldset",
+    '#title' => t("Association criteria"),
+    '#tree' => TRUE,
+  );
+  $criteria = _associated_nodes_get_criteria_unclassed($aid);
+  $association_criteria = _associated_nodes_get_association_criteria($aid);
+  $i = 0;
+  foreach ($association_criteria as $criterion) {
+    $key = $criterion['type']."::".$criterion['element'];
+    if (isset($criteria[$key])) {
+	    $fieldset["criterion_$i"]['element'] = array(
+		    '#type' => "select",
+		    '#options' => _associated_nodes_get_criteria($aid),
+	      '#default_value' => $key,
+		  );
+		  $fieldset["criterion_$i"]['weight'] = array(
+		    '#type' => 'textfield',
+		    '#default_value' => $criterion['weight'],
+		    '#size' => 3,
+		  );
+    }
+    $i++;
+  }
+  if (count($criteria) > 0) {
+	  $fieldset['criterion_new']['element'] = array(
+	    '#type' => "select",
+	    '#options' => _associated_nodes_get_criteria($aid),
+	  );
+	  $fieldset['criterion_new']['weight'] = array(
+	    '#type' => 'textfield',
+	    '#size' => 3,
+	  );
+  }
+  else {
+    $nodetypes = associated_nodes_nodetypes($aid);
+    if (count($nodetypes)) {
+      $message = t("There is no criterion available. You should activate plugin modules for Associated Nodes.");
+    }
+    else {
+      $message = t("There is no criterion available. Please select node types for the association.");
+    }
+    $fieldset['no_criterion'] = array(
+      '#value' => $message,
+    );
+  }
+  return $fieldset;
+}
+
+function associated_nodes_form_associations_association_validate($form, &$form_state) {
+  if ($form_state['values']['op'] == t("Update") and isset($form_state['values']['criteria']) and is_array($form_state['values']['criteria'])) {
+	  $already_used = array();
+	  foreach ($form_state['values']['criteria'] as $criterion) {
+	    if ($criterion['element']) {
+	      if (in_array($criterion['element'], $already_used)) {
+	        form_set_error('criteria', t("A criterion cannot be used twice in the same node association."));
+	      }
+	      else {
+		      $already_used[] = $criterion['element'];
+	      }
+	    }
+	  }
+  }
+}
+
+function associated_nodes_form_associations_association_submit($form, &$form_state) {
+  switch ($form_state['values']['op']) {
+    case t("Update") :
+      _associated_nodes_save($form_state['values']);
+      $form_state['redirect'] = "admin/settings/associated-nodes/association/".$form_state['values']['aid'];
+      break;
+    case t("Delete") :
+      $form_state['redirect'] = "admin/settings/associated-nodes/delete/".$form_state['values']['aid'];
+      break;
+    case t("Clone") :
+      $new_aid = _associated_nodes_clone($form_state['values']);
+      $form_state['redirect'] = "admin/settings/associated-nodes/association/".$new_aid;
+      break;
+  }
+}
+
+function associated_nodes_theme() {
+	return array(
+    'associated_nodes_form_associations_association' => array(
+      'arguments' => array('form' => NULL),
+    ),
+  );
+}
+
+function theme_associated_nodes_form_associations_association($form) {
+  $header = array(t('Criterion'), t('Weight'));
+  $rows = array();
+  foreach ($form['association']['criteria'] as $criterion_id => $criterion) {
+    if (strpos($criterion_id, "criterion_") === 0) {
+	    $row = array();
+	    $row[] = drupal_render($form['association']['criteria'][$criterion_id]['element']);
+	    $row[] = drupal_render($form['association']['criteria'][$criterion_id]['weight']);
+	    $rows[] = $row;
+    }
+  }
+  if (!empty($rows)) {
+    $form['association']['criteria']['#value'] = theme('table', $header, $rows);
+  }
+  $modules = module_implements("associated_nodes_form");
+  foreach ($modules as $module) {
+    $function = "theme_".$module."_associated_nodes_form";
+    if (function_exists($function)) {
+      $function = "theme_".$module."_associated_nodes_form";
+      $form['association'][$module] = array(
+      	'#type' => 'markup',
+      	'#value' => $form['association'][$module]['#value'] = $function($form['association'][$module]),
+      );
+    }
+  }
+  return drupal_render($form);
+}
+
+function associated_nodes_form_associations_new($collapsed) {
+  $form = array();
+  $form['new_association'] = array(
+    '#type' => "fieldset",
+    '#title' => t("Add a node association"),
+    '#collapsible' => $collapsed,
+    '#collapsed' => $collapsed,
+  );
+  $form['new_association']['name'] = array(
+    '#type' => "textfield",
+    '#title' => t("Name"),
+    '#description' => t("Name of the node association"),
+    '#required' => TRUE,
+  );
+  $form['new_association']['add'] = array(
+    '#type' => "submit",
+    '#value' => t("Add"),
+  );
+  return $form;
+}
+
+function associated_nodes_form_associations_new_submit($form, &$form_state) {
+  $name = $form_state['values']['name'];
+  $q = "INSERT INTO {associated_nodes_association} SET name = '%s'";
+  db_query($q, $name);
+  $aid = db_last_insert_id("associated_nodes_association", "aid");
+  drupal_set_message(t("The node association named %name has been added.", array("%name" => $name)));
+  $association = array('aid' => $aid, 'name' => $name);
+  module_invoke_all('associated_nodes_create', $association);
+  $form_state['redirect'] = "admin/settings/associated-nodes/association/$aid";
+}
+
+function associated_nodes_delete_form() {
+  $aid = arg(4);
+  $name = db_result(db_query("SELECT name FROM {associated_nodes_association} WHERE aid = %d", $aid));
+  $form = array();
+  $form['aid'] = array(
+    '#type' => "value",
+    '#value' => $aid,
+  );
+  $form['name'] = array(
+    '#type' => "value",
+    '#value' => $name,
+  );
+  $question = t("Are you sure you want to delete the node association %name ?", array('%name' => $name));
+  return confirm_form($form, $question, 'admin/settings/associated-nodes/associations');
+}
+
+function associated_nodes_delete_form_submit($form, &$form_state) {
+  _associated_nodes_delete($form_state['values']);
+  drupal_goto('admin/settings/associated-nodes/associations');
+}
+
+function associated_nodes_nodetypes($aid, $cache = TRUE) {
+  static $nodetypes = array();
+  if (isset($nodetypes[$aid]) and $cache) {
+    return $nodetypes[$aid];
+  }
+  $nodetypes[$aid] = array();
+  $q = "SELECT type FROM {associated_nodes_nodetype} WHERE aid = %d";
+  $result = db_query($q, $aid);
+  while ($row = db_fetch_array($result)) {
+    $nodetypes[$aid][] = $row['type'];
+  }
+  return $nodetypes[$aid];
+}
+
+function associated_nodes_all_nodetypes() {
+  static $nodetypes = NULL;
+  if ($nodetypes !== NULL) {
+    return $nodetypes;
+  }
+  $q = "SELECT DISTINCT type FROM {associated_nodes_nodetype}";
+  $result = db_query($q);
+  while ($row = db_fetch_array($result)) {
+    $nodetypes[] = $row['type'];
+  }
+  return $nodetypes;
+}
+  
+function associated_nodes_associations() {
+  static $associations = NULL;
+  if ($associations !== NULL) {
+    return $associations;
+  }
+  $q = "SELECT * FROM {associated_nodes_association} ORDER BY name";
+  $result = db_query($q);
+  $associations = array();
+   while ($row = db_fetch_array($result)) {
+    $associations[$row['aid']] = $row;
+  }
+  return $associations;
+}
+
+function associated_nodes_get($node, $aid = NULL) {
+  static $associated_nodes = array();
+  if ($aid === NULL) {
+  	return associated_nodes_get_all($node);
+  }
+  if (is_numeric($node)) {
+    $node = node_load($node);
+  }
+  if (isset($associated_nodes[$aid][$node->nid])) {
+    return $associated_nodes[$aid][$node->nid];
+  }
+  $associated_nodes[$aid][$node->nid] = array();
+  $associations = associated_nodes_associations();
+  $association = $associations[$aid];
+  $nodetypes = array_merge(associated_nodes_nodetypes($aid), Array($node->type)); // TODO Mountbatten
+
+//  $nodetypes = associated_nodes_nodetypes($aid);
+  if (in_array($node->type, $nodetypes)) {
+	  if ($association['number'] != 0) {
+	    $q = "SELECT count(*) FROM {associated_nodes_cache} WHERE aid = %d AND nid = %d";
+	    $count = db_result(db_query($q, $aid, $node->nid));
+	    if ($count > 0) {
+	      $where_published_only = ($association['published_only'] ? "n.status = 1 AND" : "");
+		    $q = "SELECT n.nid, c.score FROM {node} AS n INNER JOIN {associated_nodes_cache} AS c ON n.nid = c.associated_nid WHERE $where_published_only c.aid = %d AND c.nid = %d ORDER BY c.score DESC, n.nid DESC";
+			  $q = db_rewrite_sql($q);
+			  $result = db_query($q, $aid, $node->nid);
+			  $i = 0;
+			  while (($i < $association['number']) and ($row = db_fetch_array($result))) {
+			    if ($row['nid'] != $node->nid) {
+				    $associated_nodes[$aid][$node->nid][$row['nid']] = $row['score'];
+				    $i++;
+			    }
+			  }
+	    }
+	    else {
+			  $associated_nodes_temp = _associated_nodes_find($aid, $node);
+			  if (count($associated_nodes_temp) == 0) {
+			    $q = "INSERT INTO {associated_nodes_cache} SET aid = %d, nid = %d, associated_nid = %d";
+			    db_query($q, $aid, $node->nid, $node->nid);
+			  }
+			  else {
+			    $excluded_nodes = _associated_nodes_exclude($aid, $node);
+			    $place_holders = array();
+			    $values = array();
+			    foreach ($associated_nodes_temp as $nid => $score) {
+			      if (!in_array($nid, $excluded_nodes) and $score > 0) {
+			        $place_holders[] = "(%d, %d, %d, %f)";
+			        $values[] = $aid;
+			        $values[] = $node->nid;
+			        $values[] = $nid;
+			        $values[] = $score;
+			      }
+			    }
+			    $q = "INSERT INTO {associated_nodes_cache} (aid, nid, associated_nid, score) VALUES ".implode(", ", $place_holders);
+			    db_query($q, $values);
+				  unset($associated_nodes[$aid][$node->nid]);
+				  associated_nodes_get($node, $aid);
+			  }
+		  }
+	  }
+  }
+  return $associated_nodes[$aid][$node->nid];
+}
+
+function associated_nodes_get_all($node) {
+  $associations = associated_nodes_associations();
+  foreach ($associations as $aid => $association) {
+    $associations[$aid]['nodes'] = associated_nodes_get($node, $aid);
+  }
+  return $associations;
+}
+
+function associated_nodes_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  if (in_array($op, array("delete", "insert", "update"))) {
+  	associated_nodes_cache_clear();
+  }
+}
+
+function _associated_nodes_find($aid, $node) {
+	$weigths = _associated_nodes_get_weights($aid);
+	$nodetypes = associated_nodes_nodetypes($aid);
+	$modules_for_types = _associated_nodes_modules_for_types();
+	$associated_nodes = array();
+	foreach ($weigths[$aid] as $type => $criteria) {
+	  foreach ($modules_for_types[$type] as $module) {
+	    if (module_hook($module, "associated_nodes_find")) {
+	      $associated_nodes_part = module_invoke($module, "associated_nodes_find", $aid, $node, $criteria, $nodetypes, $type);
+	      foreach ($associated_nodes_part as $nid => $score) {
+	        if ($nid != $node->nid) {
+		        if (!isset($associated_nodes[$nid])) {
+		          $associated_nodes[$nid] = 0;
+		        }
+		        $associated_nodes[$nid] += $score;
+	        }
+	      }
+	    }
+	  }
+	}
+	return $associated_nodes;
+}
+
+function _associated_nodes_exclude($aid, $node) {
+  $excluded_nodes = module_invoke_all("associated_nodes_exclude", $aid, $node);
+  return array_unique($excluded_nodes);
+}
+      
+function _associated_nodes_get_node_types() {
+  static $types = NULL;
+  if ($types !== NULL) {
+    return $types;
+  }
+  $types = array();
+  $result = db_query("SELECT type, name FROM {node_type} ORDER BY name");
+  while ($row = db_fetch_array($result)) {
+    $types[$row['type']] = $row['name'];
+  }
+  return $types;
+}
+
+function _associated_nodes_save($association) {
+  $aid = $association['aid'];
+  $name = $association['name'];
+  $number = $association['number'];
+  $published_only = $association['published_only'];
+  $q = "UPDATE {associated_nodes_association} SET name = '%s', number = %d, published_only = %d WHERE aid = %d";
+  db_query($q, $name, $number, $published_only, $aid);
+  $q = "DELETE FROM {associated_nodes_nodetype} WHERE aid = %d";
+  db_query($q, $aid);
+  foreach ($association['nodetypes'] as $nodetype) {
+    if ($nodetype) {
+	    $q = "INSERT INTO {associated_nodes_nodetype} SET aid = %d, type = '%s'";
+	    db_query($q, $aid, $nodetype);
+    }
+  }
+  $q = "DELETE FROM {associated_nodes_criterion} WHERE aid = %d";
+  db_query($q, $aid);
+  if (isset($association['criteria']) and is_array($association['criteria'])) {
+    associated_nodes_nodetypes($aid, FALSE);
+    $criteria = array_keys(_associated_nodes_get_criteria_unclassed($aid, FALSE));
+	  foreach ($association['criteria'] as $criterion) {
+	    if ($criterion['element'] and in_array($criterion['element'], $criteria)) {
+		    list($type, $element) = explode("::", $criterion['element']);
+		    $q = "INSERT INTO {associated_nodes_criterion} SET aid = %d, type = '%s', element = '%s', weight = %f";
+		    db_query($q, $aid, $type, $element, $criterion['weight']);
+	    }
+	  }
+  }
+  associated_nodes_cache_clear($aid);
+  drupal_set_message(t("Parameters of node association %name has been saved.", array('%name' => $name)));
+  module_invoke_all('associated_nodes_update', $association);
+}
+
+function _associated_nodes_delete($association) {
+  $aid = $association['aid'];
+  $name = $association['name'];
+  associated_nodes_cache_clear($aid);
+  $q = "DELETE FROM {associated_nodes_nodetype} WHERE aid = %d";
+  db_query($q, $aid);
+  $q = "DELETE FROM {associated_nodes_criterion} WHERE aid = %d";
+  db_query($q, $aid);
+  $q = "DELETE FROM {associated_nodes_association} WHERE aid = %d";
+  db_query($q, $aid);
+  drupal_set_message(t("Node association %name has been deleted.", array('%name' => $name)));
+  module_invoke_all('associated_nodes_delete', $association);
+}
+
+function _associated_nodes_clone($association) {
+  $q = "INSERT INTO {associated_nodes_association} SET name = ''";
+  db_query($q);
+  $aid = db_last_insert_id("associated_nodes_association", "aid");
+  drupal_set_message(t("The node association named %name has been cloned.", array("%name" => $association['name'])));
+  $association['aid'] = $aid;
+  $association['name'] .= " (clone)";
+  module_invoke_all('associated_nodes_create', $association);
+  _associated_nodes_save($association);
+  return $aid;
+}
+
+function _associated_nodes_get_criteria($aid, $cache = TRUE) {
+  static $returned_criteria = array();
+  if (isset($returned_criteria[$aid]) and $cache) {
+    return $returned_criteria[$aid];
+  }
+  $returned_criteria[$aid] = array();
+  $returned_criteria[$aid][""] = "";
+  
+  $types = module_invoke_all('associated_nodes_types', $aid);
+  $modules_criteria = module_invoke_all('associated_nodes_criteria', $aid);
+  foreach ($modules_criteria as $type => $criteria) {
+    foreach ($criteria as $element => $label) {
+      $returned_criteria[$aid][$types[$type]][$type."::".$element] = $label;
+    }
+  }
+  return $returned_criteria[$aid];
+}
+
+function _associated_nodes_get_criteria_unclassed($aid, $cache = TRUE) {
+  static $criteria = array();
+  if (isset($criteria[$aid]) and $cache) {
+    return $criteria[$aid];
+  }
+  $criteria[$aid] = array();
+  $classed_criteria = _associated_nodes_get_criteria($aid, $cache);
+  foreach ($classed_criteria as $key => $class_of_criteria) {
+    if (is_array($class_of_criteria)) {
+	    foreach ($class_of_criteria as $key2 => $criterion) {
+	      $criteria[$aid][$key2] = $criterion;
+	    }
+    }
+    elseif($key) {
+      $criteria[$aid][$key] = $class_of_criteria;
+    }
+  }
+  return $criteria[$aid];
+}
+  
+function _associated_nodes_get_association_criteria($aid) {
+  $criteria = _associated_nodes_get_criteria_unclassed($aid);
+  $association_criteria = array();
+  $q = "SELECT type, element, weight FROM {associated_nodes_criterion} WHERE aid = %d";
+  $result = db_query($q, $aid);
+  while ($row = db_fetch_array($result)) {
+    $association_criteria[] = $row;
+  }
+  $sorted_criteria = array();
+  $temp_criteria = array();
+  foreach ($association_criteria as $key => $criterion) {
+  	$k = $criterion['type']."::".$criterion['element'];
+  	if (isset($criteria[$k])) {
+      $temp_criteria[$key] = $criteria[$k];
+  	}
+  }
+  asort($temp_criteria);
+  foreach ($temp_criteria as $key => $criterion) {
+    $sorted_criteria[] = $association_criteria[$key];
+  }
+  return $sorted_criteria;
+}
+
+function _associated_nodes_check_criteria() {
+	$bdd_criteria = array();
+	$q = "SELECT DISTINCT aid, type, element FROM {associated_nodes_criterion}";
+	$result = db_query($q);
+	while ($row = db_fetch_array($result)) {
+		$bdd_criteria[] = $row['aid']."::".$row['type']."::".$row['element'];
+	}
+	$associations = associated_nodes_associations();
+	$real_criteria = array();
+	foreach($associations as $aid => $association) {
+		$modules_criteria = module_invoke_all('associated_nodes_criteria', $aid);
+	  foreach ($modules_criteria as $type => $criteria) {
+	    foreach ($criteria as $element => $label) {
+	      $real_criteria[] = $aid."::".$type."::".$element;
+	    }
+	  }
+	}
+	foreach ($bdd_criteria as $criterion) {
+  	if (!in_array($criterion, $real_criteria)) {
+  		return false;
+  	}
+  }
+  return true;
+}
+
+function _associated_nodes_modules_for_types() {
+  static $modules_for_types = NULL;
+  if ($modules_for_types !== NULL) {
+    return $modules_for_types;
+  }
+  $modules_for_types = array();
+  $modules = module_implements('associated_nodes_types');
+  foreach ($modules as $module) {
+    $types = array_keys(module_invoke($module, 'associated_nodes_types'));
+    foreach ($types as $type) {
+      $modules_for_types[$type][] = $module;
+    }
+  }
+  return $modules_for_types;
+}
+
+function _associated_nodes_get_weights($aid) {
+  static $weights = NULL;
+  if ($weights === NULL) {
+    $weights = array();
+    $q = "SELECT aid FROM {associated_nodes_association}";
+    $result = db_query($q);
+    while ($row = db_fetch_array($result)) {
+      $weights[$row['aid']] = array();
+    }
+    $q = "SELECT aid, type, element, weight FROM {associated_nodes_criterion}";
+    $result = db_query($q);
+    while ($row = db_fetch_array($result)) {
+      $weights[$row['aid']][$row['type']][$row['element']] = $row['weight'];
+    }
+  }
+  return $weights;
+}
+
+function associated_nodes_delete_criterion($type, $element) {
+	$q = "SELECT DISTINCT aid FROM {associated_nodes_criterion} WHERE type = '%s' AND element = '%s'";
+	$result = db_query($q, $type, $element);
+	while ($row = db_fetch_array($result)) {
+    associated_nodes_cache_clear($row['aid']);
+  }
+	$q = "DELETE FROM {associated_nodes_criterion} WHERE type = '%s' AND element = '%s'";
+	db_query($q, $type, $element);
+}
+
+function associated_nodes_cache_clear($aid = NULL) {
+	$q = "DELETE FROM {associated_nodes_cache}";
+	if ($aid) {
+		 $q .= " WHERE aid = %d";
+	}
+  db_query($q, $aid);
+}
+
+function associated_nodes_cleanup() {
+	$bdd_criteria = array();
+	$q = "SELECT DISTINCT aid, type, element FROM {associated_nodes_criterion}";
+	$result = db_query($q);
+	while ($row = db_fetch_array($result)) {
+		$bdd_criteria[] = $row['aid']."::".$row['type']."::".$row['element'];
+	}
+	$associations = associated_nodes_associations();
+	$real_criteria = array();
+	foreach($associations as $aid => $association) {
+		$modules_criteria = module_invoke_all('associated_nodes_criteria', $aid);
+	  foreach ($modules_criteria as $type => $criteria) {
+	    foreach ($criteria as $element => $label) {
+	      $real_criteria[] = $aid."::".$type."::".$element;
+	    }
+	  }
+	}
+	foreach ($bdd_criteria as $criterion) {
+  	if (!in_array($criterion, $real_criteria)) {
+  		list($aid, $type, $element) = explode("::", $criterion);
+  		$q = "DELETE FROM {associated_nodes_criterion} WHERE aid = %d AND type = '%s' AND element = '%s'";
+  		db_query($q, $aid, $type, $element);
+  	}
+  }
+	associated_nodes_cache_clear();
+	drupal_set_message(t("Associated Nodes cache has been cleared"));
+	drupal_goto();
+}

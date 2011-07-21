@@ -1,0 +1,25 @@
+<div id="node-14" class="node">
+
+
+
+      <span class="submitted">Wed, 05/06/2009 - 13:12 — <a href="/helpinject/user/1" title="View user profile.">admin</a></span>
+  
+  <div class="content clear-block">
+    <span class='print-link'></span><p>When injecting help into the "help text" area of a page, you must indicate how specific the match should be to the current path. For example, if you click the inject icon on node/1, does this mean you want the help text to appear just on node/1? Or all nodes? Or perhaps even the default start page (q=node)? To resolve this ambiguity, and to give you finer grained control over where specific help texts appear, you are asked to choose the path granularity for the injected help text. Here is an example set of options:</p>
+<ul>
+<li>node/2</li>
+<li>node/%</li>
+<li>node</li>
+</ul>
+<p>In this case, the most specific path is node/2, which will cause the help icon to appear on all paths that begin with node/2. That includes node/2, node/2/edit, node/2/translate, and any other longer, more specific variations beginning with node/2. It doesn't include node/3 or any of its variants. </p>
+<p>The second most specific option is node/% which will behave like the previous path, only for any path that starts with node and has at least two segments: node/3, node/100/edit, and so forth.</p>
+<p>The third most specific option is node, which matches each and every path that starts with node.</p>
+  </div>
+
+  <div class="clear-block">
+    <div class="meta">
+        </div>
+
+      </div>
+
+</div>

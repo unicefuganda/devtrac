@@ -1,0 +1,7 @@
+name = DevTrack Module
+description = Module for Devtrack 
+
+package = DevTrack
+dependencies[] = openlayers
+dependencies[] = feeds
+core = 6.x

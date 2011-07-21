@@ -1,0 +1,98 @@
+# $Id: de.po,v 1.2 2008/07/18 08:58:39 sanduhrs Exp $
+#
+# LANGUAGE translation of Drupal (general)
+# Copyright Stefan Auditor <stefan.auditor@erdfisch.de>
+# Generated from files:
+#  user_activity.module,v 1.1.2.11 2008/01/31 13:16:28 sanduhrs
+#  user_activity.install: n/a
+#  user_activity.info: n/a
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: user_activity\n"
+"POT-Creation-Date: 2008-07-06 20:28+0200\n"
+"PO-Revision-Date: 2008-07-06 20:41+0100\n"
+"Last-Translator: Mirko Haaser <mcgo@drupalist.de>\n"
+"Language-Team: Stefan Auditor <stefan.auditor@erdfisch.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"X-Poedit-Language: German\n"
+
+#: user_activity.module:21;33
+msgid "User activity"
+msgstr "Benutzeraktivität"
+
+#: user_activity.module:27
+msgid "User activity feed"
+msgstr "Benutzeraktivität RSS Feed"
+
+#: user_activity.module:34
+msgid "Configure how the activity is calculated."
+msgstr "Konfigurieren, wie der Aktivitätsindex berechnet wird."
+
+#: user_activity.module:69
+msgid "Latest activity"
+msgstr "Aktueller Aktivitätsgrad"
+
+#: user_activity.module:91;123
+msgid "Most active users"
+msgstr "Aktivste Benutzer"
+
+#: user_activity.module:97
+msgid "Number of users to display"
+msgstr "Anzahl der anzuzeigenden Benutzer"
+
+#: user_activity.module:453
+msgid "Activity index: %idx%"
+msgstr "Aktivitätsindex: %idx%"
+
+#: user_activity.module:454
+msgid "read more"
+msgstr "weiterlesen"
+
+#: user_activity.module:484
+msgid "Calculation options"
+msgstr "Berechnungsoptionen"
+
+#: user_activity.module:485
+msgid "Adjust the Options to influence the activity calculation."
+msgstr "Die Optionen zur Berechnung der Benutzeraktivität einstellen."
+
+#: user_activity.module:489
+msgid "Page impressions"
+msgstr "Seitenaufrufe"
+
+#: user_activity.module:496
+msgid "User logins"
+msgstr "Benutzeranmeldungen"
+
+#: user_activity.module:503
+msgid "Nodes created"
+msgstr "Erstellte Beiträge"
+
+#: user_activity.module:510
+msgid "Comments created"
+msgstr "Erstellte Kommentare"
+
+#: user_activity.module:47
+msgid "administer user activity"
+msgstr "Benutzeraktivität verwalten"
+
+#: user_activity.module:0
+msgid "user_activity"
+msgstr "Benutzeraktivität"
+
+#: user_activity.install:46
+msgid "The user activity modul is installed and ready to go."
+msgstr "Das Modul zur Benutzeraktivität wurde erfolgreich installiert."
+
+#: user_activity.info:0
+msgid "User Activity"
+msgstr "Benuterzaktivität"
+
+#: user_activity.info:0
+msgid "Measure the activity of your users."
+msgstr "Messen Sie den Aktivitätsgrad Ihrer Benutzer."
+

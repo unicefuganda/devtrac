@@ -1,0 +1,200 @@
+<?php
+// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $ 
+
+/**
+ * @file
+ * Install, update and uninstall functions for the XXX module.
+ */
+
+
+/**
+ * Implementation of hook_schema().
+ */
+function questionaire_question_schema() {
+  $schema = array();
+
+  $schema['questionaire_question'] = array(
+    'description' => 'Contains Questions.',
+    'fields' => array(
+      'nid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Nid of the question.',
+      ),
+      'vid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Version ID of the question.',
+      ),
+      'questiontype' => array(
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'Type of question.',
+      ),
+      'questionoptions' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Optional Options of the question.',
+      ),
+    ),
+    'primary key' => array('nid'),
+    'indexes' => array(
+      'vid' => array('vid'),
+    ),
+  );
+
+  $schema['questionaire_answer'] = array(
+    'title' => 'Anwsers',
+    'description' => 'Contains Answers to questions.',
+	  'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Id.',
+      ),
+      'created' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Date the answer was submitted.',
+        'default' => 0,
+      ),
+      'answer' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The answer.',
+      ),
+      'question' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'The nid of the question.',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'The uid of submitting user.',
+      ),
+      'sid' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'Submission nid.',
+      ),
+      'qnid' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'The QuestionaireId of the node initiated the generation of the Questions.',
+      ),
+      'context' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'The nid of the node these anwsers relate to.',
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'created' => array('created'),
+      'question' => array('question'),
+      'answer' => array('answer'),
+      'sid' => array('sid'),
+      'qnid' => array('qnid'),
+      'context' => array('context'),
+    ),
+  );
+
+  $schema['questionaire_answer_term'] = array(
+    'title' => 'Anwsers',
+    'description' => 'Contains the link between Answers and Terms.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Id.',
+        'default' => 0,
+    ),
+      'tid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Term Id.',
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('id', 'tid'),
+  );
+  
+  
+  $schema['questionaire_submission'] = array(
+    'title' => 'Submissions',
+    'description' => 'A set of anwsers that is submitted all at the same time.',
+    'fields' => array(
+      'sid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Id of the submission.',
+      ),
+      'created' => array(
+        'type' => 'int',
+        'default' => 0,
+        'not null' => TRUE,
+        'description' => 'Datetime of the submission.',
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'User doing the submission.',
+      ),
+      'qnid' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'unsigned' => TRUE,
+        'description' => 'The QuestionaireId of the node initiated the generation of the Questions.',
+      ),
+      'context' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        'description' => 'Nid of the node this submission is related to.',
+      ),
+    ),
+    'primary key' => array('sid'),
+    'indexes' => array(
+      'uid' => array('uid'),
+      'qnid' => array('qnid'),
+      'context' => array('context'),
+    ),
+  );
+	return $schema;
+}
+
+
+/**
+ * Implementation of hook_install().
+ */
+function questionaire_question_install() {
+  // Create tables.
+  drupal_install_schema('questionaire_question');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function questionaire_question_uninstall() {
+	drupal_uninstall_schema('questionaire_question');
+}
+
+
+

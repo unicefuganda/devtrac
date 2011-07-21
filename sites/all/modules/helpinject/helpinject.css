@@ -1,0 +1,28 @@
+/* $Id: helpinject.css,v 1.2 2009/04/25 09:32:43 robertDouglass Exp $ */
+
+.helpinject-link {
+  width: 12px;
+  height: 12px;
+  background: transparent url('helpinject.png') no-repeat top left;
+  display: block;
+  margin-top: 2px;
+  padding: 0px;
+  float: left;
+}
+
+.helpinject-link-nofloat {
+  float: none;
+}
+
+.helpinject-link-offset {
+  position: relative;
+  left: 12px;
+}
+
+.helpinject-link span {
+  display: none;
+}
+
+.helpinject-link:hover {
+  background-position: 0px -12px;
+}

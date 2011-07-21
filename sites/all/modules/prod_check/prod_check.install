@@ -1,0 +1,51 @@
+<?php
+// $Id: prod_check.install,v 1.3.2.1 2011/01/25 16:05:44 malc0mn Exp $
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function prod_check_uninstall() {
+  // This beats multiple variable_del() calls.
+  db_query('DELETE FROM {variable} WHERE name LIKE "prod_check_%"');
+}
+
+/**
+ * Implementation of hook_requirements().
+ */
+function prod_check_requirements($phase) {
+  $requirements = array();
+  
+  switch ($phase) {
+    case 'runtime':
+      $sitemail = variable_get('prod_check_sitemail', '');
+      if (empty($sitemail)) {
+        $requirements['prod_check_email'] = array(
+          'title' => t('Production check'),
+          'value' => t('Site e-mail check not properly configured.'),
+          'severity' => REQUIREMENT_WARNING,
+          'description' => t('You have not changed the e-mail address on the prod-check !link. The Site e-mail check will not function properly. Please read the README.txt file.', prod_check_link_array('settings page', 'admin/settings/prod-check')),
+        );
+      }
+      if (variable_get('prod_check_apcpass', 'password') == 'password') {
+        $requirements['prod_check_apc'] = array(
+          'title' => t('Production check'),
+          'value' => t('APC password not configured.'),
+          'severity' => REQUIREMENT_WARNING,
+          'description' => t('You have not !link for the APC status page. The page will function, but advanced options require that you set a password. Please read the README.txt file.', prod_check_link_array('changed the password', 'admin/settings/prod-check')),
+        );
+      }
+      $nagios = variable_get('prod_check_enable_nagios', 0);
+      if ($nagios && !module_exists('nagios')) {
+        $requirements['prod_check_nagios'] = array(
+          'title' => t('Production check'),
+          'value' => t('Nagios module not installed/enabled.'),
+          'severity' => REQUIREMENT_ERROR,
+          'description' => t('You have enabled <em>Nagios integration</em> but you have not installed or enabled the !link module! Please install the !link module if you wish to use this functionality.', prod_check_link_array('Nagios', 'http://drupal.org/project/nagios')),
+        );
+      }
+      break;
+  }
+
+  return $requirements;
+}
+

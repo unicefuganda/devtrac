@@ -1,0 +1,395 @@
+@CHARSET "UTF-8";
+
+
+
+/*...........Hide Pre-filled Controls (disabled)...............*/
+/* Disabled in CSS Injector so we did not bother to copy the code */
+
+/*...........Username and Search Box...............*/
+/**
+ * Common
+ */
+
+#tpblock {
+  padding: 10px;
+}
+
+
+/**
+ * Username
+ */
+
+#tpblock #username {
+  display: block;
+  float: left;
+  padding: 10px 50px 0px 0px;
+}
+
+#tpblock #username a {
+  color: #FFFFFF;
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#tpblock #username a:hover {
+//  color: #BFCDD5;
+  text-decoration: underline;
+}
+
+
+/**
+ * Search Box
+ */
+
+#tpblock form {
+  float:right;
+}
+
+#tpblock form label {
+  display: none;
+}
+
+#tpblock form input#edit-search-theme-form-1 {
+  border: 1px solid #EA0000;
+  background-color: transparent;
+  color: #FFFFFF;
+}
+
+#tpblock form input#edit-submit-2 {
+//  display: none;
+}
+
+/*...............Page and Block Titles.......................*/
+/**
+ * Page Titles
+ */
+
+.col-content_contentlayerleft h2 {
+  color: #222222;
+  padding: 0px 10px;
+  background-color: transparent;
+}
+
+.col-content_contentlayerleft .profile h3 {
+  color: #01385A;
+  background-color: transparent;
+  border-bottom: 1px solid #01385A;
+}
+
+.col-content_contentlayerleft .profile dl {
+  padding: 0px 10px;
+}
+
+.col-content_contentlayerleft .profile dl ul li {
+  list-style: none outside url(square_bullet.png);
+}
+
+
+/**
+ * Block Titles
+ */
+
+.block h3 {
+  color: #FFFFFF;
+  padding: 6px 10px 8px;
+  background-color: #999999;
+  font-family: Tahoma, Geneva, sans-serif;
+}
+
+/*.........Gradients............*/
+/* Disabled in CSS Injector so we did not bother to copy the code */
+
+/*...Tabs................................*/
+/*
+
+/*
+
+Commented out because we are back to the vertical menu!
+
+
+ul.tabs.primary li a {
+background-color: transparent;
+
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.47, rgb(221,237,245)),
+    color-stop(0.74, rgb(208,228,238)),
+    color-stop(0.87, rgb(201,224,237))
+);
+
+background-image: -moz-linear-gradient(
+    center top,
+    rgb(221,237,245) 47%,
+    rgb(208,228,238) 74%,
+    rgb(201,224,237) 87%
+);
+
+*/ 
+
+  border-color: #000000;
+
+
+
+border-top-left-radius: 4px;
+-moz-border-radius-topleft: 4px;
+-webkit-border-top-left-radius: 4px;
+
+
+border-top-right-radius: 4px;
+-moz-border-radius-topright: 4px;
+-webkit-border-top-right-radius: 4px;
+
+}
+ul.primary li.active a {
+  background-color:#FFFFFF;
+  border-color:#EA0000 #EA0000 #FFFFFF;
+}
+
+
+.col-content_contentlayerright .block {
+  width: 100%;
+  float: left;
+}
+
+/*...My Profile Blocks.............................*/
+/**
+ * All Blocks
+ */
+
+#block-views-my_homepage_picture-block_1 {
+  display: block;
+}
+
+#block-views-my_homepage_picture-block_1, #block-devtrack_module-0, #block-views-82b405e48615f4f718a3de0caf6ad948 .content {
+  padding: 10px;
+}
+
+#block-views-my_homepage_picture-block_2 .content, #block-views-bb81c6932c49ceae6c11cf399465f5ce .content, #block-views-6c5d40078b5d978dec5660e09799fa4d .content, #block-views-87cfc5888b93ec2b557b2215e685ab74 .content, #block-views-e2873ecf875782fff940de052e22939c .content, #block-views-my_homepage_picture-block_3 .content, #block-block-2 .content, #block-views-cac0f8a4b9f539757b67cf65047d5197 .content {
+  padding: 0px;
+}
+
+#block-views-my_homepage_picture-block_1 label {
+  display: none;
+}
+
+#block-views-my_homepage_picture-block_1 a, #block-devtrack_module-0 li a, #block-views-my_homepage_picture-block_2 a, #block-views-bb81c6932c49ceae6c11cf399465f5ce a, #block-views-6c5d40078b5d978dec5660e09799fa4d a, #block-views-87cfc5888b93ec2b557b2215e685ab74 a, #block-views-e2873ecf875782fff940de052e22939c a, #block-views-my_homepage_picture-block_3 a, #block-views-cac0f8a4b9f539757b67cf65047d5197 a {
+  color: #000000;
+}
+
+#block-views-my_homepage_picture-block_1 a:hover, #block-devtrack_module-0 li a:hover, #block-views-my_homepage_picture-block_2 a:hover, #block-views-bb81c6932c49ceae6c11cf399465f5ce a:hover, #block-views-6c5d40078b5d978dec5660e09799fa4d a:hover, #block-views-87cfc5888b93ec2b557b2215e685ab74 a:hover, #block-views-e2873ecf875782fff940de052e22939c a:hover, #block-views-my_homepage_picture-block_3 a:hover, #block-views-cac0f8a4b9f539757b67cf65047d5197 a:hover {
+  color: #777777;
+}
+
+#block-views-my_homepage_picture-block_1 .picture {
+  padding-bottom: 10px;
+}
+
+#block-views-my_homepage_picture-block_1 .picture a {
+  text-decoration: none;
+}
+
+#block-views-e2873ecf875782fff940de052e22939c table, #block-views-my_homepage_picture-block_3 table, #block-views-cac0f8a4b9f539757b67cf65047d5197 table {
+  /*border: 1px solid #fff9cd;*/
+  margin-top: -17px;
+}
+
+#block-views-e2873ecf875782fff940de052e22939c table tr, #block-views-my_homepage_picture-block_3 table tr, #block-views-cac0f8a4b9f539757b67cf65047d5197 table tr {
+  border: 1px solid #fff9cd;
+}
+
+ #block-views-e2873ecf875782fff940de052e22939c table th, #block-views-my_homepage_picture-block_3 table th, #block-views-cac0f8a4b9f539757b67cf65047d5197 table th {
+  color: #000000;
+  background-color: transparent;
+  border-bottom: 2px solid #fff9cd;
+}
+
+ #block-views-87cfc5888b93ec2b557b2215e685ab74 table td p, #block-views-e2873ecf875782fff940de052e22939c table td p, #block-views-my_homepage_picture-block_3 table td p, #block-views-cac0f8a4b9f539757b67cf65047d5197 table td p {
+  margin:10px 0px;
+  padding: 0px;
+}
+
+
+/**
+ * DevTrac Module Block 0
+ */
+
+/**
+#block-devtrack_module-0 li {
+  list-style: none url(square_bullet.png) outside;
+}
+ */
+
+
+/**
+ * block-views-bb81c6932c49ceae6c11cf399465f5ce
+ */
+
+/**
+#block-views-bb81c6932c49ceae6c11cf399465f5ce a {
+  padding-left: 20px;
+}
+
+#block-views-bb81c6932c49ceae6c11cf399465f5ce .views-field-field-ftritem-images-fid {
+  padding: 0px 40px 10px;
+}
+ */
+
+/*.....Home Page Blocks..............................*/
+/**
+ * Field Trip Report Item Block, Funding Partners Block and Place Types Block
+ */
+
+#block-views-field_trip_report_items-block_4 ul li, #block-menu-menu-funding-partners ul li, #block-menu-menu-placetype-menu ul li ul li {
+  list-style: none url(square_bullet.png) outside;
+}
+
+#block-views-field_trip_report_items-block_4 ul li label {
+  font-weight: normal;
+}
+
+#block-menu-menu-placetype-menu ul li {
+  list-style: none url(downarrow_bullet.png) outside;
+}
+
+#block-views-field_trip_report_items-block_4 ul li a, #block-menu-menu-funding-partners ul li a, #block-menu-menu-placetype-menu ul li a, #block-menu-menu-placetype-menu ul li ul li a {
+  color: #000000;
+}
+
+#block-views-field_trip_report_items-block_4 ul li a:hover, #block-menu-menu-funding-partners ul li a:hover, #block-menu-menu-placetype-menu ul li a:hover, #block-menu-menu-placetype-menu ul li ul li a:hover {
+  color: #777777;
+}
+
+
+/**
+ * Counters Block
+ */
+
+.counters tr td{
+  margin-bottom: 5px;
+}
+
+.counters {
+  background: none;
+}
+
+.counters .views-field-nid {
+  background-color: #ffd4d4;
+  float:left;
+  font-size:55px;
+  height:70px;
+  text-align:center;
+  width: 95px;
+  color: #fff;
+  margin-right: 5px;
+}
+
+.counters .School .views-field-nid {
+  background-color: #ffe680;
+}
+
+.counters .Wash .views-field-nid {
+  background-color: #d4e5f6;
+}
+
+.counters .Health .views-field-nid {
+  background-color: #ffd4d4;
+}
+
+.counters .views-field-name {
+  background-color: #fff9eb;
+  float:left;
+  font-size: 20px;
+  height: 70px;
+  width: 180px;
+  line-height: 68px;
+}
+
+.counters .School .views-field-name a{
+  color: #ffcc00;
+}
+
+.counters .Health .views-field-name a{
+  color: #ff0000;
+  text-decoration: none;
+}
+
+.counters .Wash .views-field-name a{
+  color: #0066cc;
+}
+
+.counters tr th{
+  display: none;
+}
+
+/*..Node Edit Forms.............................*/
+/**
+ * The Place Edit Form
+ */
+body.page-node .node-form #edit-taxonomy-1-wrapper, body.page-node .node-form #edit-taxonomy-2-wrapper {
+  float: left;
+  padding-left: 25px;
+}
+
+body.page-node .node-form #edit-taxonomy-2-wrapper select#edit-taxonomy-2{
+  width: 140px;
+}
+
+
+/**
+ * The Field Trip Report Item Edit Form
+ */
+body.page-node .node-form #field-ftritem-images-items {
+  padding-bottom: 40px;
+}
+
+/**
+ * The Field Trip Edit Form
+ */
+body.page-node .node-form .container-inline-date {
+  clear: none;
+  float: left;
+  padding-left: 25px;
+}
+
+body.page-node .node-form #field-fieldtrip-places-items {
+  padding-bottom: 25px;
+}
+
+/**
+ * The Action Item Edit Form
+ */
+body.page-node .node-form .group-actionitem-status .container-inline-date, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper {
+  float: left;
+  padding-left: 25px;
+  margin: 0px;
+}
+
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper {
+  padding-left: 30px;
+}
+
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper select#edit-field-actionitem-status-value, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper select#edit-field-actionitem-severity-value {
+  margin-top: 7px;
+  width: 100px;
+}
+
+body.page-node .node-form #field-actionitem-responsible-items {
+  padding-bottom: 30px;
+}
+
+/*...District Search Box....The district Search box on /tripreports......................................*/
+#views-exposed-form-trip-reports-search-page-1 #edit-district {
+  width: 200px;
+}
+
+/*...The Help Icons......................................*/
+/* the help icons */
+/* there is a css inject rule for this that needs to be removed!! */
+
+body div.help {
+  background: none;
+  margin-bottom: 6px; /* was 1.5 em, far too much it seems */
+}

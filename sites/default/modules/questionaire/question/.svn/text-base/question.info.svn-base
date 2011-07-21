@@ -1,0 +1,6 @@
+name = Question Module
+description = Module for unstructured Questions & Anwsers 
+
+package = Questionaire
+core = 6.x
+

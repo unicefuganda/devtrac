@@ -1,0 +1,31 @@
+8
+
+dir
+318
+http://version.mountbatten.net:81/svn/drupalmodules/devtrack_module/trunk/plugins
+http://version.mountbatten.net:81/svn/drupalmodules
+
+
+
+2010-12-22T10:07:39.736905Z
+297
+reinier
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+e6400b8e-e919-40d2-892a-df3ec89b7d3b
+
+style_plugin
+dir
+

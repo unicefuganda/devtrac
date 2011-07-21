@@ -1,0 +1,11 @@
+; $Id: nodetitle.info,v 1.1.4.1 2010/05/29 22:12:54 hanoii Exp $
+name = Node Title
+description = Redefine a title pattern per content type using tokens.
+dependencies[] = token
+core = 6.x
+; Information added by drupal.org packaging script on 2010-05-29
+version = "6.x-1.0"
+core = "6.x"
+project = "nodetitle"
+datestamp = "1275174608"
+

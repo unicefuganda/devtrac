@@ -1,0 +1,24 @@
+/* Remove all tabs from all node pages */
+body.page-node div#maincontent.mobileregion ul.tabs { display: none; }
+
+/* Do some breadcrumb styling */
+body ul.breadcrumb {
+  font-size: normal;
+  list-style-type: none;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding-bottom: 0.3em;
+  padding-left: 0px;
+  padding-right: 0.5em;
+  padding-top: 0px;
+  margin-left: 0.5em;
+}
+
+body ul.breadcrumb li {
+  line-height: 1.5em;
+  display: inline;
+}
+
+body ul.breadcrumb li a {
+  padding: 0px 0.3em;
+}

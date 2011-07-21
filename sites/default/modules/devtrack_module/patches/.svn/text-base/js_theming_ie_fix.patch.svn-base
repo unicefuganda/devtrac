@@ -1,0 +1,28 @@
+? example.patch
+Index: js_theming.table.js
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/js_theming/js_theming.table.js,v
+retrieving revision 1.1
+diff -u -p -r1.1 js_theming.table.js
+--- js_theming.table.js 19 Jul 2008 09:27:18 -0000      1.1
++++ js_theming.table.js 15 Oct 2009 16:27:17 -0000
+@@ -366,17 +366,9 @@ function tablesort_get_querystring() {
+         }
+       }
+       else {
+-        cell = {data: cell, class:'active'};
++        cell = {data: cell, 'class':'active'};
+       }
+     }
+     return cell;
+-  },
++  }
+ }
+-
+-
+-
+-
+-
+-
+-
+-

@@ -1,0 +1,782 @@
+/* First, the color scheme:
+
+
+Bright red: #EA0001
+Visited link maroon: #840000
+Logo Grey: #9B9B9A
+
+
+background yellowish: #FEFCEA
+
+*/
+
+/* Let's first start with some good old generic stuff, the html elements, font-sizes & families etc. */
+* {
+	padding: 0;
+	margin: 0;
+}
+
+html, body {
+	height: 100%;
+}
+
+html body{
+	font-family:Tahoma, Geneva, sans-serif;
+	font-size: 12px; /* 0.916666666667em; /* this should be 11px, but it isnt. we need to read the blueprint readme very properly one day */
+  background-image:url("/sites/default/themes/devtrack_theme/images/devtrav_bkgd.gif");
+  background-position:center top;
+  background-repeat:repeat-y;
+  background-color: #f2f2f2;
+  /*color:#666;*/
+}
+
+.wrapper {
+	height: auto !important;
+  margin: 0 auto -150px;
+  min-height: 100%;
+}
+
+body div.container {
+  padding-bottom: 15px;
+  margin: 0px auto;
+}
+
+.wrapper div.push {
+	height: 150px;
+}
+
+body a:link, body a:visited{
+	color: #666666;/*#EA0001;*/
+	text-decoration:none;
+}
+
+body a:hover, body .link a:hover {
+	color: #000;
+	text-decoration:underline;
+}
+/*
+body a:visited {
+	color:#840000;
+}*/
+
+body .more-link a, body .node-links a, .view-my-homepage-my-action-items .more-link a,
+.view-my-homepage-my-action-items .view-footer a{
+	border-bottom:1px solid;
+	color: #EA0001;
+	font-family:Georgia,"Times New Roman",Times,serif;
+	font-size: 11px;
+	font-style: italic;
+	margin-right: 10px;
+	text-decoration:none;
+	text-transform: capitalize;
+}
+body .more-link a:hover, body .node-links a:hover, 
+.view-my-homepage-my-action-items .view-footer a:hover{
+	/*text-decoration:underline;*/
+}
+body .more-link a:hover, body .node-links a:hover{color: #9B9B9A;}
+.view-my-homepage-my-action-items .view-footer a:hover{color: #CCC;}
+.view-my-homepage-my-action-items .view-footer a {float:right;}
+
+button ,
+input.form-submit,  input a.form-button-cancel, .node-form a.openlayers-cck-hide-link
+{
+  border-style:solid;
+  color:#FFFFFF;
+  /*font-weight:bold; */
+  padding:2px 5px;
+  text-align:center;
+  background-image: -moz-linear-gradient(
+    rgb(180,0,0) 33%,
+    rgb(107,0,0) 66%);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+	margin: 0;
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.33, rgb(180,0,0)),
+    color-stop(0.66, rgb(107,0,0))
+);
+}
+
+button:hover ,
+input.form-submit:hover,
+input a.form-button-cancel:hover, 
+.node-form a.openlayers-cck-hide-link:hover  {
+  color: #cccccc;
+}
+.node-form a.openlayers-cck-hide-link{
+  border: 2px solid #F2F2F2; margin: 15px 10px 5px 0;}
+.node-form{
+	padding-bottom:10px;
+}
+/* This is a temporary fix just not to cluther the page */
+.profile .picture {
+	display: none;
+}
+#search-theme-form, #tpblock {
+	float: right;
+}
+/*.footermap {
+  width: 100%;
+  display: block; 
+}*/
+
+div.olMapViewport {
+    clear: both;
+}
+
+#footermenubar .block-menu_block,
+#footermenubar .block-menu{
+  /*width: 200px; 
+  float: left;*/
+}
+#footermenubar .block-menu_block ul li,
+#footermenubar .block-menu ul li {
+  /*width: 150px;*/
+  display: block;
+  margin-left: 20px;
+}
+
+
+/*.........................*/
+
+#header .links {
+	float:right;
+	margin-right:10px;
+	margin-top:-20px;
+}
+#header {
+	border-bottom:7px solid #ea0001;
+	padding: 20px 0px 0px 30px;
+	margin-bottom:10px;
+	background-image: url(/sites/default/themes/devtrack_theme/images/hf_bkgd.jpg);
+	background-repeat: repeat-x;
+	background-color: #000;
+}
+#header ul.links li{
+	padding: 0px;
+}
+#header li a {
+	background-color: #000;
+	text-decoration: none;
+	margin-left: 6px;
+	padding: 6px 10px 4px;
+	color: #fff;
+	font-weight:bold;
+}
+
+#header li a:hover{
+	background-color: #000; /* this will not work, the gradient wins */
+	color: #CCCCCC;
+}
+#header #username {
+    font-weight: bold;
+    padding: 0;
+    position: absolute;
+    right: 212px;
+    text-transform: capitalize;
+    top: 40px;
+    display: none;
+}/*
+#header #username a {
+    color: #F2F2F2;
+    margin: 0;
+}*/
+#nav a {
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.10, rgb(0,0,0)),
+    color-stop(0.74, rgb(234,0,0)),
+   color-stop(0.87, rgb(234,0,0))
+  );
+
+  background-image: -moz-linear-gradient(
+    center top,
+    rgb(107,0,0) 10%,
+    rgb(234,0,0) 74%
+  );
+  -moz-border-radius-topleft: 4px;
+  -moz-border-radius-topright: 4px;
+  -webkit-border-top-left-radius: 4px;
+  -webkit-border-top-right-radius: 4px;
+  
+}
+#logo a{
+  width: 310px;
+  height: 74px;
+  display:block;
+  text-indent: -99999em;
+  background: url("/sites/default/themes/devtrack_theme/images/devtrac_logo.png") no-repeat left top;
+} 
+#footer-message {
+	background-image:url("/sites/default/themes/devtrack_theme/images/footer_shadow.png");
+	background-repeat:repeat-y;
+	border-left:1px solid #000000;
+	color:#CCCCCC;
+	float:right;
+	height:114px;
+	line-height:28px;
+	margin-top:-28px;
+	padding-left:10px;
+	padding-top:16px;
+	width: 28%;
+}
+.uniceflogo {background-image:url("/sites/default/themes/devtrack_theme/images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.mblogo{ background-image: url("/sites/default/themes/devtrack_theme/images/mountbatten.png");  float:left; height:20px; margin-right:10px; width:20px;}
+.uganda{ background-image: url("/sites/default/themes/devtrack_theme/images/uganda.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.text-footer {
+	clear:left;
+	font-size:10px;
+	line-height:15px;
+	margin-left:0;
+	text-align:left;
+	width: 285px;
+}
+.hosted{float:left;}
+#footer-message a {float:left; line-height: 18px;}
+
+#footermenubar {
+	background-color:#000;
+	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
+	background-repeat: repeat-x;
+	border-top:7px solid #ea0001; 
+	min-height:200px; 
+	padding-top:10px;
+	position: relative;
+	clear:both;
+/* fuck me, this didnt work	margin: 200px auto 0 auto; */ /* margin-top equals the min-height !! this is for the push div to push the footer to the bottom of the page!!!!*/
+	color: #DDD;
+	text-align:center;
+}
+
+#footermenubar {
+	width: 100%;
+}
+/*
+#context-block-region-footer {
+	margin: 0 auto;
+	width: 600px;
+}*/
+
+#footermenubar li a, 
+#footer-message a {
+	color: #999999;
+	text-decoration:none;
+}
+
+#footermenubar li a:hover,
+#footer-message a:hover {
+	color: #fff;
+	text-decoration: none;
+}
+#footermenubar li a{ font-weight:bold;}
+#footermenubar ul.menu li ul a{
+	font-size:0.9em;
+	font-weight: normal;
+	margin-left: -16px;
+}
+.views-label-field-fieldtrip-public-summary-value{ line-height:30px; }
+
+/*...temporary...can be pasted in reiniers css file.........*/
+.col-content_layertworight .block h3, 
+.col-content_contentlayerright .block h3 {
+	border-bottom: 2px solid #ea0001;
+}
+.col-content_layertworight .block h3, 
+.col-content_contentlayerright .block h3,
+.block h3, 
+.col-content_contentlayermiddle caption{
+	background-image: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png");
+	background-repeat:repeat-x;
+	background-color:#FFF9CD;
+	color: #000;
+	padding: 5px 8px;
+}
+.container caption{font-weight:bold; padding: 5px; border-bottom: 1px solid #FFF;}
+.col-content_layertworight .block h3{
+	 margin: 0;
+}
+.col-content_layerthree .block h3,
+.col-content_layertwoleft .block h3,
+.col-content_layerthree .region-odd h3{ margin:0 0 1px 0px;}
+
+.col-content_layerthree #block-views-field_trip_report_items-block_1 h3{margin-bottom: 11px;}
+.col-content_layeroneright .block h3 {
+	background-color:#000000;
+	background-image:none;
+	border-bottom:2px solid #EA0001;
+	color:#FFFFFF;
+	font-size:1.2em;
+	font-weight:bold;
+	padding-top:10px;
+}
+.col-content_layeroneright .item-list ul,
+.col-content_contentlayerleft .block ul {
+	margin:0;
+}
+.col-content_contentlayerleft ul.links li{
+	padding: 0;
+}
+.col-content_contentlayerleft .clear-block{
+	margin-bottom: -2px;
+}
+.col-content_contentlayerleft {
+	min-height: 50px;
+}
+
+.views-row .picture {
+    left: -4px;
+    position: relative;
+}
+.col-content_layertworight .picture img{
+	float:left;
+	margin: 8px 4px -2px;
+}
+.col-content_contentlayerright .block-views .picture {
+	-moz-box-shadow:0 0 4px 1px #CCCCCC;
+	-webkit-box-shadow: 0 0 4px 1px #CCCCCC;
+	box-shadow:0 0 4px 1px #CCCCCC;
+	margin:0 10px 12px;
+	float: left;
+}
+.col-content_layeroneright ul li,
+.col-content_layeroneright .item-list ul li{
+	background-color: #fff9cd;
+	/*float: left;*/
+	height: 53px;
+	list-style:none outside none;
+	padding: 5px;
+	margin-bottom: 10px;
+}
+.col-content_layeroneright .views-field-nothing a {
+	color: #EA0001;
+	float:right;
+	font-size:11px;
+	font-weight:bold;
+	margin-top:-32px;
+}
+/*.views-field-title a , .view-field-trip-report-items 
+.view-field-trip-report-items .views-field-field-ftritem-place-nid{
+	font-size: 15px;
+}*/
+.view-field-trip-report-items .item-list ul{
+	margin: 0px;
+}
+.view-field-trip-report-items .views-field-body {
+	display:block;
+	float:left;
+	margin-top:10px;
+	width:310px;
+}
+.view-field-trip-report-items .more-link a,
+.view-id-user_report_items_map .more-link a{
+	/*border-bottom:1px solid #000000;
+	color:#9B9B9A;*/
+	line-height:11px;
+	margin-top:9px;
+	text-decoration:none;
+	text-transform:capitalize;
+}
+.block-views .view-field-trip-report-items .more-link a{
+	line-height: 25px;
+}
+.view-field-trip-report-items .more-link a:hover,
+.view-id-user_report_items_map .more-link a:hover{
+	/*color: #000000;*/
+}
+.view-field-trip-report-items .views-field-title a:hover{color: #9b9b9a;}
+#header #nav .last a {
+	background:none repeat scroll 0 0 transparent;
+	border:1px solid #EA0000;
+}#header #nav .last a:hover {color: #CCCCCC;}
+#header #search {
+    margin: 0 10px 0 0;
+    position: relative;
+    top: -14px;
+}
+#header input.form-text { background: none repeat scroll 0 0 transparent; color: #f2f2f2;}
+#header .advanced-help-link{
+	padding: 0 0 0 5px;
+	margin-top: 11px;
+}
+
+#search label {
+    color: #666666;
+    font-size: 0.95em;
+    font-weight: normal;
+}
+
+/* this is the tabs above the content, but then as a vertical menu. sweet! */
+
+.tabsaslist ul.primary {
+	 border-bottom: none; 
+	 margin-left: 10px; 
+	 width: 200px;
+	 margin-top: 2px;
+}
+
+.tabsaslist ul.primary li a:link,
+.tabsaslist ul.primary li a:visited,
+.tabsaslist ul.primary li a:hover
+ {
+	background-color: transparent;
+	border-color: transparent;
+	border: none;
+	color: #000;
+	line-height: 25px;
+	vertical-align: text-top;
+	display: inline-block;
+	-moz-border-radius-topleft: 0px;
+  -moz-border-radius-topright: 0px;
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-top-right-radius: 0px;
+}
+
+.tabsaslist ul.primary li a:hover {
+	background-color: #F2F2F2;/*9B9B9B*/
+}
+
+
+.tabsaslist ul.tabs.primary li a {
+  background-image: none;
+}
+
+.tabsaslist .tabs li {
+	display: list-item;
+	line-height: 14px;
+	list-style-type: square;
+	color: #EA0001;
+  list-style-image: none;
+  font-size: 25px;
+  display: list-item;
+/*  list-style-image:url("/sites/default/themes/devtrack_theme/images/listimage.gif");*/
+}
+
+.tabsaslist .tabs li.active {
+  color: #000000;
+}
+
+.tabsaslist .tabs li a{
+	font-size: 12px;
+}
+
+/*.tabsaslist ul.primary {
+	 list-style-type: lower-roman;
+}*/
+
+/* when is this? this seems like a very specific instance of the primary tabs? 
+   Can you describe? (with URL if needed)
+*/
+
+
+.col-content_contentlayerleft ul.tabs.primary li a {
+	background-color:transparent;
+	background-image:none;
+	border:medium none;
+}
+
+ul.secondary {
+	border-bottom: none;
+}
+
+
+/*.view-my-homepage-my-field-trips .views-field-title*/
+
+/* The gradients in the upper menu */
+/* this will only work in modern browser, IE & others will still need background images */
+
+/*
+.col-content_contentlayerleft h2, .block h3 {
+background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.47, rgb(221,237,245)),
+    color-stop(0.74, rgb(208,228,238)),
+    color-stop(0.87, rgb(201,224,237))
+);
+
+background-image: -moz-linear-gradient(
+    center top,
+    rgb(221,237,245) 47%,
+    rgb(208,228,238) 74%,
+    rgb(201,224,237) 87%
+);
+}
+
+.col-content_layertworight .block h3,
+.col-content_contentlayerright .block h3 {
+  background-color: transparent;
+  background-image: none;
+  border-bottom: 1px solid #01385A;
+  color: #01385A;
+}
+*/
+
+.block-devtrack_module li {
+    font-style: italic;
+    font-weight: bold;
+    list-style-image: none;
+    list-style-type: none;
+}
+
+/* the create report buttons in the Places to Visit block on the Field Trip page */
+.view-field-trip-places-to-visit .views-field-phpcode {
+  list-style-image: none;
+  list-style-type: none;
+}
+#titlediv h2 {
+	margin-bottom: 0; font-size: 1.7em;
+}
+.page-user h2{
+	text-transform: capitalize;
+}
+	
+/* Openlayers stuff */
+
+.openlayers-views-map .olPopupCloseBox {
+  background-image: url('/sites/default/themes/devtrack_theme/images/close.png');
+}
+.openlayers-popup img {
+	margin-top:4px;
+	float: right;
+	border:2px solid #fff;
+}
+#popup_GroupDiv{
+	z-index:10;
+}
+#popup_contentDiv .openlayers-popup-name a,
+#popup_contentDiv .openlayers-popup-description{
+	 color: #FFFFFF
+}
+#popup_contentDiv .openlayers-popup-description a{ 
+	color: #DDDDDD;
+	text-decoration: underline; 
+	display:block;
+	padding-bottom:10px;
+}
+
+.openlayers-popup-name a{
+	font-weight: bold;
+}
+#popup_GroupDiv .olFramedCloudPopupContent{ overflow: visible;}
+
+/*.................................*/
+.breadcrumb, 
+.node-form .standard, 
+.col-content_contentlayerleft dl,
+.col-content_contentlayerleft.span-6,
+.col-content_contentlayerleft .views-exposed-widgets,
+.col-content_layertwoleft .view-field-trip-report-item-details,
+.col-content_layertworight .content,
+.col-content_layerthree .content p,
+#getfeatureinfo,
+.front .clear-block p,
+.clearfix h2/*,
+.not-front .col-content_contentlayerright .block-devtrack_module*/{
+	padding-left: 10px;
+}
+/*#user-login, #contentcontainer h2, .node .content, .col-content_contentlayerleft .meta, .context-block p,
+.view-my-homepage-my-field-trips .views-row, #contact-mail-page, .view-empty, .tabaslist, .block-devtrack_module li*/
+
+.node-form .standard,
+.col-content_contentlayerright .openlayers-views-map{
+	margin-right: 10px;
+}
+.col-content_contentlayerleft.span-6 { padding-right: 0; margin: 0;}
+.col-content_contentlayerleft.span-6, 
+.col-content_layertwoleft .views-label-field-ftritem-public-summary-value{ 
+	float: left;
+}
+.col-content_contentlayerleft .view-field-trip-report-item-details{
+	padding-right: 3px;
+ }
+
+
+.col-content_contentlayerright .block-devtrack_module h3{margin-bottom:8px; margin-top:-8px;}
+
+.view-devtrac-frontpage .node{
+	background-color: #FFF9EB; 
+	padding:5px 10px 10px 0px;
+	border-bottom: #ea0001 solid 2px; 
+	color: #aeaeae; 
+	font-size:11px;
+	font-style:italic;
+}
+#footermenubar .block-menu_block ul li {
+  float:left;
+}
+#footermenubar .block-menu_block ul li ul li{
+  float:none;
+  margin-left:0;
+}
+/*..................gallery Slideshow...........*/
+.view-field-trip-report-items-images.view-display-id-page_1  .views-content-field-ftritem-images-fid {
+	background-color: #FAFAFA; 
+	float:left; }
+.col-content_contentlayermiddle div.block {margin: 0px;}
+.view-field-trip-report-items-images {
+	background-color: #fafafa; 
+	margin-bottom:10px;
+	float: left; 
+	 }
+.views-content-field-ftritem-images-fid img { 
+	background-color: #666666;	
+	cursor: pointer;
+	margin: 5px; float:left;
+}
+.col-content_contentlayermiddle .views-content-field-ftritem-images-data {
+    background-color: #000000;
+    color: #FFFFFF;
+    float: left;
+    margin-left: 5px;
+    margin-top: -37px;
+    opacity: 0.5;
+    padding: 4px 5px 0;
+    width: 370px;
+}
+#contentcontainer .col-content_contentlayermiddle .view-empty .views-content-field-ftritem-images-data {
+    margin-top: -45px;
+}
+.col-content_contentlayerright .views-content-field-ftritem-images-data {
+    background-color: #000000;
+    color: #FFFFFF;
+    display: list-item;
+    float: left;
+    margin-left: 5px;
+    margin-top: -35px;
+    opacity: 0.5;
+    padding: 7px 5px 5px;
+    width: 97%;
+}
+
+.downloadimage {
+	background-image:url("/sites/default/themes/devtrack_theme/icons/download_image.png");
+	background-repeat: no-repeat;
+	float:right;
+	height:24px;
+	width:24px;
+	padding: 2px;
+}
+.activeSlide{
+  opacity: 0.3;
+  background-color:#FFFFFF;
+}
+.not-front div.node {
+	border-bottom:none;
+	padding-right:10px;
+}
+
+/* This is for the Openlayers_plus module from Tom.
+   It shows the layerswitcher in a block. 
+   We do not need everything in the block, so we hide it.
+   */
+.openlayers-blockswitcher .layers.base { /* tom overwrites this in code*/
+	display: none;
+}
+
+.openlayers-blockswitcher .layers.base  .layers-title,
+.openlayers-blockswitcher .layers.base  .layers-content,
+.openlayers-blockswitcher .layers.data .layers-title {
+  display: none;
+}
+    
+/* On certain pages we show or hide fields by wrapping them in an extra div */
+
+.devtracshowfield {
+	display: inline;
+}
+.devtrachidefield {
+	display: none;
+}
+
+/*............ after the release ...............*/
+.col-content_contentlayerleft .tvi-term-desc{
+}
+.col-content_contentlayerleft .book-block-menu{
+	display: none;
+	/*padding-left: 30px;*/
+}
+/*  comments   */
+.col-content_contentlayerright div.comment img { border: 0 none;}
+.col-content_contentlayerright div.comment { margin-right: 10px;}
+
+.col-content_contentlayermiddle.last {
+	width:710px;
+}
+.col-content_contentlayermiddle .tabs-secondary a, .col-content_contentlayermiddle .tabs-secondary a:hover,
+.col-content_contentlayermiddle .tabs-secondary a:visited{
+	text-decoration: none;
+	font-weight:bold;
+} 
+.col-content_contentlayermiddle ul.secondary a.active {
+	background-color:#EA0001;
+	border-bottom:medium none;
+	color:#FFFFFF;
+	font-weight:bold;
+	padding:5px 10px 3px;
+	text-decoration: none;
+}
+.col-content_contentlayermiddle.last ul.secondary{ border-bottom:3px solid #ea0001;}
+.col-content_contentlayermiddle.last ul.secondary li { border-right:0 none;}
+.col-content_contentlayermiddle .view-header{ float: right;}
+.col-content_contentlayermiddle .view-header a {
+    border-bottom: 1px solid;
+    color: #EA0001;
+    font-family: Georgia,"Times New Roman",Times,serif;
+    font-size: 11px;
+    font-style: italic;
+    margin-right: 10px;
+    position: relative;
+    text-decoration: none;
+    text-transform: capitalize;
+    top: 33px;
+}
+.col-content_contentlayermiddle .view-header a:hover{color: #9B9B9A;}
+
+/*
+.not-front .views-table tr td:first-child {
+    border-right: 1px solid #FFF9CD;
+}*/
+.col-content_layertworight .views-table tr td {
+    border-right: none;
+}
+.not-front .views-table tr td {
+    border-bottom: 1px solid #FFF9CD;
+}
+
+/*  ........pager..........*/
+.clearfix .block ul.pager a, .clearfix .block ul.pager li.pager-current, .clearfix .block ul.pager a:hover {
+    border: 1px solid #FFF9CD;
+}
+.clearfix ul.pager a:link, .clearfix ul.pager a:visited {
+    color: #EA0001;
+}
+.clearfix ul.pager li.pager-current, .clearfix .block ul.pager a:hover{
+    background: none repeat scroll 0 0 #EA0001;
+    color: #FFFFFF;
+}
+.container div.help, .help{background: none repeat scroll 0 0 transparent; float:right;}
+
+.page-places .col-content_contentlayerleft.span-16 div.help {
+    left: 316px;
+    position: absolute;
+    top: 247px;
+}
+.col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
+.col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
+}
+#contentcontainer div.content-profile-display{
+	border: none;
+}
+#edit-district-wrapper input, .node-form .text { width: 89%;}
+body.page-placetypes .col-content_contentlayerright{ margin-top: 40px;
+}
+.openlayers-views-map .olControlLayerSwitcher .layersDiv{
+	background-color: #000000;
+} 

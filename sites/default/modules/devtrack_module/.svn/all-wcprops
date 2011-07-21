@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/drupalmodules/!svn/ver/318/devtrack_module/trunk
+END
+.buildpath
+K 25
+svn:wc:ra_dav:version-url
+V 64
+/svn/drupalmodules/!svn/ver/297/devtrack_module/trunk/.buildpath
+END
+.project
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/drupalmodules/!svn/ver/297/devtrack_module/trunk/.project
+END
+devtrack_module.info
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/drupalmodules/!svn/ver/297/devtrack_module/trunk/devtrack_module.info
+END
+devtrack_module.module
+K 25
+svn:wc:ra_dav:version-url
+V 76
+/svn/drupalmodules/!svn/ver/319/devtrack_module/trunk/devtrack_module.module
+END

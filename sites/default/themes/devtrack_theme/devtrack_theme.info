@@ -1,0 +1,31 @@
+name = DevTrack Theme
+description = Theme for UNICEF DevTrack website
+core = 6.x
+version = "6.x-1.0-dev"
+base theme = blueprint
+
+
+regions[contentlayerleft] = Content Left
+regions[contentlayermiddle] = Content Middle
+regions[contentlayerright] = Content Right
+
+
+regions[layeroneleft] = Layer One Left
+regions[layeronemiddle] = Layer One Middle
+regions[layeroneright] = Layer One Right
+
+regions[layertwoleft] = Layer 2 Left
+regions[layertworight] = Layer 2 Right
+
+
+regions[layerthree] = Layer 3 Full
+
+regions[footernavigation] = Footer Navigation
+
+regions[footer] = Footer
+
+// stylesheets[all][] = css/devtrac.css
+stylesheets[all][] = css/styles.css
+stylesheets[all][] = css/tables.css
+// only once it works scripts[] = scripts/search.js
+

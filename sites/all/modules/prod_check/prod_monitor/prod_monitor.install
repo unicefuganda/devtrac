@@ -1,0 +1,136 @@
+<?php
+// $Id: prod_monitor.install,v 1.2.2.4 2011/01/26 19:59:45 malc0mn Exp $
+
+/**
+ * Implementation of hook_schema().
+ */
+function prod_monitor_schema() {
+  return array(
+    'prod_monitor_sites' => array(
+      'description' => t('Holds all sites and data monitored by Production monitor.'),
+      'fields' => array(
+        'id' => array(
+          'description' => t('The primary identifier for a site.'),
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'url' => array(
+          'description' => t('URL of the website to monitor.'),
+          'type' => 'text',
+          'size' => 'normal',
+          'default' => NULL,
+        ),
+        'settings' => array(
+          'description' => t('All settings related to the site.'),
+          'type' => 'text',
+          'size' => 'normal',
+          'default' => NULL,
+        ),
+        'data' => array(
+          'description' => t('All data collected through XMLRPC in serialized form.'),
+          'type' => 'text',
+          'size' => 'medium',
+          'default' => NULL,
+        ),
+        'added' => array(
+          'description' => t('The Unix timestamp when the site was added.'),
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0
+        ),
+        'lastupdate' => array(
+          'description' => t('The Unix timestamp when the data was most recently updated.'),
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'primary key' => array('id'),
+    ),
+    'prod_monitor_site_modules' => array(
+      'description' => t('Holds all retrieved module data for a specific site.'),
+      'fields' => array(
+        'id' => array(
+          'description' => t('The primary identifier for a site.'),
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+        ),
+        'projects' => array(
+          'description' => t('All modules installed on the remote site.'),
+          'type' => 'text',
+          'size' => 'medium',
+          'default' => NULL,
+        ),
+        'sitekey' => array(
+          'description' => t('All modules installed on the remote site.'),
+          'type' => 'varchar',
+          'length' => 32,
+          'not null' => TRUE,
+          'default' => '',
+        ),
+        'lastfetch' => array(
+          'description' => t('The Unix timestamp when the data was most recently retrieved from the remote site.'),
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'available' => array(
+          'description' => t('All module updates available for the remote site.'),
+          'type' => 'text',
+          'size' => 'medium',
+          'default' => NULL,
+        ),
+        'updates' => array(
+          'description' => t('0 = unknown, 1 = no updates, 2 = regular updates, 3 = security updates.'),
+          'type' => 'int',
+          'size' => 'tiny',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'lastupdate' => array(
+          'description' => t('The Unix timestamp of the most recent module update check.'),
+          'type' => 'int',
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+      ),
+      'foreign keys' => array(
+        'prod_monitor_sites' => array(
+          'table' => 'prod_monitor_sites',
+          'columns' => array('id' => 'id'),
+         ),
+       ),
+      'primary key' => array('id'),
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function prod_monitor_install() {
+  drupal_install_schema('prod_monitor');
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function prod_monitor_uninstall() {
+  drupal_uninstall_schema('prod_monitor');
+
+  variable_del('prod_monitor_cron_running');
+  variable_del('prod_monitor_cron_start_at');
+}
+
+/**
+ * Update 6101 - Add new table to store module data.
+ */
+function prod_monitor_update_6101() {
+  $ret = array();
+  $schema = prod_monitor_schema();
+  db_create_table($ret, 'prod_monitor_site_modules', $schema['prod_monitor_site_modules']);
+  return $ret;
+}

@@ -1,0 +1,355 @@
+<?php
+
+function questionaire_menu() {
+  $items['node/%/addsubmission'] = array(
+    'title' => t('Add Submission'),
+    'description'      => t('Add Submission to Questionaire.'),
+    'page callback'    => 'questionaire_submission_add',
+    'page arguments'   => array(1),
+    'access callback' => 'questionaire_addsubmission_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+  );
+  $items['node/%/editsubmission/%'] = array(
+    'title' => t('Edit Submission'),
+    'description'      => t('Edit Submission of Questionaire.'),
+    'page callback'    => 'questionaire_submission_edit',
+    'page arguments'   => array(1,3),
+    'access callback' => 'questionaire_addsubmission_access',
+    'access arguments' => array(1),
+    'type' => MENU_CALLBACK,
+  );
+  /*
+  $items['node/%/addreview'] = array(
+    'title' => t('Add review'),
+    'page callback' => 'node_add',
+    'page arguments' => array('nodereview'),
+    'access callback' => 'addreview_access',
+    'access arguments' => array(1),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 3,
+  );
+*/
+  return $items;
+}
+
+function questionaire_perm() {
+	return array('administer questionaire');
+}
+
+function questionaire_addsubmission_access($nid) {
+	global $user;
+	$node = node_load($nid);
+	return (($node->type == 'questionaire') && user_access('administer questionaire'));
+}
+
+function questionaire_submission_add($nid) {
+  watchdog ('questionaire', 'entered questionaire_submission_add for nid '. $nid); 
+	return drupal_get_form('questionaire_submission_form', $nid);
+}
+
+function questionaire_submission_edit($nid, $sid) {
+  watchdog ('questionaire', 'entered questionaire_submission_edit for sid '. $sid); 
+  return drupal_get_form('questionaire_submission_form', $nid, $sid);
+}
+
+function questionaire_submission_form(&$form_state, $nid, $sid = NULL ) {
+  require_once(drupal_get_path('module', 'hierarchical_select') .'/includes/common.inc');
+  $form = Array();
+    
+  if ($sid) {
+    $table = data_get_table('questionaire_submissions');
+    $submission = $table->handler()->load(Array('sid' => $sid));
+    $termid = db_result(db_query("SELECT tid from {data_taxonomy} WHERE data_table_name = '%s' AND id = %d",'questionaire_submissions', $sid));
+    $form['sid'] = array(
+      '#type' => 'value',
+      '#value' => $sid,
+    );
+    drupal_set_message("here is the termid" . $termid);
+  }
+    
+	$questions = db_query('SELECT questions.nid nid, forms.weight weight, forms.code code from {questionaire_question} questions, {questionaire_forms} forms WHERE questions.nid = forms.qid AND forms.qnid = %d', $nid);
+	$questiontypes = question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
+  
+  $vocabulary = taxonomy_vocabulary_load(1) ; //TODO Load this number from the Data configuration
+//  print_r(hierarchical_select_config_id_load('taxonomy-'. $vocabulary->vid));
+//  print_r(variable_get('hs_config_'. 'taxonomy-'. $vocabulary->vid, FALSE));
+  $form['taxonomy'][$vocabulary->vid] = array(
+    '#type' => 'hierarchical_select',
+    '#title' => $vocabulary->name,
+    '#description' => 'hallo',
+    '#required' => $vocabulary->required,
+    '#weight' =>  $vocabulary->weight,
+    '#default_value' => $termid,
+  );
+
+  // Add the Hierarchical Select config form.
+  $module = 'hs_taxonomy';
+  $params = array(
+    'vid'         => $vocabulary->vid,
+    'exclude_tid' => NULL,
+    'root_term'   => NULL,
+  );
+  
+  hierarchical_select_common_config_apply($form['taxonomy'][$vocabulary->vid], 'taxonomy-'. $vocabulary->vid, array_merge(array('module' => $module, 'params' => $params)));
+  
+  $form['taxonomy']['#weight'] = -100;
+  
+  $form['qnid'] = array(
+    '#type' => 'value',
+    '#value' => $nid,
+  );
+  
+//  $table = data_get_table('questionaire_answers');
+  
+	while ($question = db_fetch_object($questions)) {
+  	
+    if ($sid) {
+      $sql = 'SELECT answer FROM {questionaire_answers} where question = %d AND sid = %d'; 
+      $answer = db_result(db_query($sql, $question->nid, $sid));
+    } else {
+    	$answer = '';
+    }
+  	
+  	
+  	$node = node_load($question->nid);
+    $options = NULL;  	
+  	switch ($questiontypes[$node->questiontype]) {
+  	  case 'select' :
+  	  	$formtype = 'select';
+        $description = 'Please select the appropriate option';
+  	  	$options = question_allowed_values($node->questionoptions);
+  	  	break;
+      case 'checkboxes' :
+        $formtype = 'checkboxes';
+        $description = 'Please select the appropriate options';
+        $options = question_allowed_values($node->questionoptions);
+        break;
+      case 'radios' :
+        $formtype = 'radios';
+        $description = 'Please select the appropriate option';
+        $options = question_allowed_values($node->questionoptions);
+        break;
+      case 'number':
+        $formtype = 'textfield';
+  	  	$description = 'Please provide a number';
+  	  break;
+  	  case 'time' :
+  	    $formtype = 'textfield';
+        $description = 'Please provide a time in the format HH:MM';
+  	  break;
+  	}
+  	$form[$question->code] = array(
+      '#type' => $formtype,
+      '#title' => $question->code . ' ' . $node->title,
+      '#description' => t($description),
+  	  '#weight' => $question->weight,
+      '#options' => $options,
+  	  '#default_value' => $answer,
+    );
+    if (isset($options)) {
+      $form[$question->code]['#options'] = $options;
+    }
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  
+  $form['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => t('Cancel'),
+  );
+  
+  return $form;
+  
+}
+
+function questionaire_submission_form_validate($form, &$form_state) {
+  watchdog ('questionaire', 'validate the form');
+
+  // TODO validate time & number fields
+  
+}
+
+function questionaire_submission_form_submit($form, &$form_state) {
+	global $user;
+  if ($form_state['values']['op'] == $form_state['values']['submit']) //TODO will this in a translated environment? 
+  // TODO validate time & number fields
+//  print_r ($form_state['values']);//['hierarchical_select']['selects']);
+//  foreach ($tid as $form_state['values'][1]['hierarchical_select']['selects']) {  //TODO check with multi-value taxonomies
+//    watchdog ('questionaire', 'adding ' . $tid);
+//  }  
+    $answers = Array();
+    $answers['uid'] = $user->uid; 
+    $answers['terms'][] = taxonomy_get_term($form_state['values'][1]);
+    $answers['answers'] = array();
+    if (isset($form_state['values']['sid'])) {  
+      $answers['sid'] = $form_state['values']['sid'];
+    }
+    $answers['qnid'] = $form_state['values']['qnid'];  
+    
+    watchdog ('questionaire', 'qnid ' . $form_state['values']['qnid']);
+    
+        
+  $questions = db_query('SELECT questions.nid nid, forms.code code from {questionaire_question} questions, {questionaire_forms} forms WHERE questions.nid = forms.qid AND forms.qnid = %d', $form_state['values']['qnid']);
+  
+  
+  while ($question = db_fetch_object($questions)) {
+  	$tpanswer = $form_state['values'][$question->code];
+  	$answers['answers'][$question->code] = Array('question'=>$question->nid, 'answer'=>$tpanswer);
+  }
+  questionaire_saveanswers($answers);
+  
+  drupal_set_message("Thank you for your submission");
+}
+
+function questionaire_saveanswers($answers) {
+
+//	print_r($answers);
+	// holy fuck, this needs work. we know for LTO that this is only one. please fix this for multiple taxonomies
+	 if (isset($answers['terms'][0])) {
+    $termid = $answers['terms'][0]->tid;
+//    watchdog('questionaire', 'termid = '. $termid);
+  }
+	
+	
+  $uid = $answers['uid']; //TODO make conditional (if not set then $user-uid)
+  $qnid = $answers['qnid'];
+  if ($answers['sid']) {
+  	drupal_set_message('going to update the submission');
+  	$sid = $answers['sid'];
+  	$submission = Array();
+    $submission['sid'] = $sid;
+    $submission['qnid'] = $qnid;
+    $submission['data_taxonomy:1'] = array();
+    $submission['data_taxonomy:1'][] = $termid;
+    $tablesub = data_get_table('questionaire_submissions');
+    $tablesub->handler()->save($submission, Array('sid'));
+    
+    
+  } else { 
+	  $sid = questionaire_create_submission($qnid, $uid, 1, $termid);  // TODO hardcoded $vid alarm
+  }
+  
+	$table = data_get_table('questionaire_answers');
+		
+  foreach ($answers['answers'] as $answer) {
+    $answer['sid'] = $sid;
+    $answer['uid'] = $uid;
+    $answer['createddate'] = date('U');
+  	
+    if (is_array($answers['terms'])) {
+      foreach($answers['terms'] as $term) {
+//        watchdog('questionairesms', "going to save term " . $term->tid . " from ". $term->vid);
+        if (!is_array($answer['data_taxonomy:'. $term->vid])) {
+          $answer['data_taxonomy:'. $term->vid] = array();
+        }
+        $answer['data_taxonomy:'. $term->vid][] = $term->tid;
+      }
+    }
+    
+    if (isset($answers['sid'])) {
+//    	drupal_set_message("going to update");
+    	$keys = array( 'sid', 'question');
+    	
+    	$id = db_result(db_query("SELECT id FROM {questionaire_answers} WHERE question = %d AND sid = %d", $answer['question'], $sid));
+    	$answer['id'] = $id;
+    	$table->handler()->save($answer, $keys);
+    } else { 
+//      drupal_set_message("going to insert");
+    	$table->handler()->save($answer);
+      data_node_add($table, $answer['id'], $answer['question']);
+    }
+    //    watchdog('questionairesms', "Saved with id " . $answer['id']);
+  }
+	
+}
+
+
+
+function questionaire_create_submission($qnid, $uid, $vid, $tid) {
+	  $table = data_get_table('questionaire_submissions');
+	  $submission = Array();
+	  
+	  $submission['qnid'] = $qnid;
+	  $submission['uid'] = $uid;
+    $submission['submissiontime'] = date('U');
+    $submission['data_taxonomy:1'] = array(); //TODO Hardcoded VID alarm!
+    $submission['data_taxonomy:1'][] = $tid;
+    
+    $tpsub =  $table->handler()->save($submission);
+    return $submission['sid'];
+	
+}  
+
+
+function questionaire_node_info() {
+	return array(
+	  'questionaire' => array(
+	     'name' => t('Questionaire'),
+	     'module' => 'questionaire',
+	     'description' => t('Container for Questions'),
+	     'has_title' => TRUE,
+	     'title_label' => t('Name'),
+	     'has_body' => FALSE,
+	  )
+	);
+}
+
+function questionaire_form($node) {
+	$type = node_get_types('type', $node);
+	$form['title'] = array(
+	  '#type' => 'textfield',
+	  '#title' => check_plain($type->title_label),
+	  '#required' => TRUE,
+	  '#default_value' => $node->title,
+	  '#weight' => -5,
+	  '#maxlength' => 255,
+	);
+  $options = Array('In Preparation', 'Active', 'Closed');
+  $form['qstatus'] = array(
+    '#type' => 'select',
+    '#title' => t('Status'),
+    '#required' => TRUE,
+    '#default_value' => 'In Preparation',
+    '#weight' => -4,
+    '#options' => $options,
+  );
+	return $form;
+}
+
+function questionaire_insert($node) {
+	db_query("INSERT INTO {questionaire} (nid, vid, qstatus) VALUES (%d, %d, '%s')", $node->nid, $node->vid, $node->qstatus);
+}
+
+function questionaire_update($node) {
+	if ($node->revision) {
+		questionaire_insert($node);
+	} else {
+		db_query("UPDATE {questionaire} SET qstatus = '%s' WHERE vid = %d", $node->qstatus, $node->vid);
+	}
+}
+
+function questionaire_delete(&$node) {
+	db_query("DELETE FROM {questionaire} WHERE nid = %d", $node->nid);
+}
+
+function questionaire_load($node) {
+	return db_fetch_object(db_query('SELECT qstatus, formid from {questionaire} WHERE vid = %d', $node->vid));
+}
+
+function questionaire_view($node, $teaser = FALSE, $page = false) {
+	$node = node_prepare($node, FALSE);
+  $node->content['formid'] = array(
+    '#value' => theme_item(Array('#title'=> 'Form ID', '#description'=> 'The FormID is used in the SMS interface to uniquely identify a form', '#value'=> check_plain($node->formid))),
+    '#weight' => 2
+  );
+  $options = Array('In Preparation', 'Active', 'Closed');
+  $node->content['qstatus'] = array(
+	  '#value' => theme_item(Array('#title'=> 'Status', '#description'=> 'The Questionaire will become Read Only if this value has been changed to Active.', '#value'=> check_plain($options[$node->qstatus]))),
+	  '#weight' => 3
+	);
+	return $node;
+}

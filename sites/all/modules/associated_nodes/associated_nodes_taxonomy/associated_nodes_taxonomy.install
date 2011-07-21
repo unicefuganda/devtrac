@@ -1,0 +1,23 @@
+<?php
+// $Id: associated_nodes_taxonomy.install,v 1.2.2.1 2009/04/24 13:45:15 jfberroyer Exp $
+
+function associated_nodes_taxonomy_install() {
+  $result = drupal_install_schema('associated_nodes_taxonomy');
+}
+
+function associated_nodes_taxonomy_uninstall() {
+  drupal_uninstall_schema('associated_nodes_taxonomy');
+}
+
+function associated_nodes_taxonomy_schema() {
+  $schema = array();
+  $schema['associated_nodes_taxonomy_constraint'] = array(
+    'fields' => array(
+      'aid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'tid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'excluded_tid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+    ),
+    'primary key' => array('aid', 'tid', 'excluded_tid'),
+  );
+  return $schema;
+}

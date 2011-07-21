@@ -1,0 +1,17 @@
+***************
+*** 81,87 ****
+  function drupal_parse_json($v) {
+    // PHP 5 only
+    if (function_exists('json_decode')) {
+-     return json_decode($v);
+    }
+    if ($v{0} == '"') {
+      $v = substr($v, 1, -1);
+--- 81,87 ----
+  function drupal_parse_json($v) {
+    // PHP 5 only
+    if (function_exists('json_decode')) {
++     return json_decode($v, TRUE);
+    }
+    if ($v{0} == '"') {
+      $v = substr($v, 1, -1);

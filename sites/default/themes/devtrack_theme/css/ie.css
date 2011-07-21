@@ -1,0 +1,32 @@
+@CHARSET "UTF-8";
+
+#nav a {
+	background-image: url("/sites/default/themes/devtrack_theme/images/menu_bkgd.gif");
+	background-repeat: repeat-x;
+	background-color: #000;
+	/*padding: 6px 10px 4px;
+	height: 30px;
+	display: inline-block;*/
+
+}
+button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link {
+	background-image: url("/sites/default/themes/devtrack_theme/images/input_btn.gif");
+	background-repeat: repeat-x;
+	background-position: left top;
+	background-color: #000;
+	border: #f2f2f2 solid 1px;
+}
+button:hover ,
+input.form-submit:hover,
+input a.form-button-cancel:hover, 
+.node-form a.openlayers-cck-hide-link:hover  {
+  background-color: #CCCCCC;
+}
+#footermenubar {
+	background-color:#000 !important;	
+	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
+	display: inline-block;
+}
+#footer-message {
+	margin-top:-10px;
+}

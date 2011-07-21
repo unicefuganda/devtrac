@@ -1,0 +1,7 @@
+name = Devtrack Mobile Theme
+description = "Mobile optimized theme based on Nokia mobile web templates for the UNICEF DevTrac website."
+base theme = nokia_mobile
+core = 6.x
+engine = phptemplate
+
+stylesheets[all][] = substyle.css

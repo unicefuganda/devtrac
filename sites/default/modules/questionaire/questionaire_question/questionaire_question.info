@@ -1,0 +1,13 @@
+; $Id: questionaire_question.info,v 1.1 2010/12/21 06:46:30 batje Exp $ 
+name = Questionaire Question Module
+description = Module for unstructured Questions & Anwsers 
+
+package = Questionaire
+core = 6.x
+
+dependencies[] = views_charts
+dependencies[] = charts_graphs
+dependencies[] = views_groupby
+dependencies[] = associated_nodes
+dependencies[] = charts_graphs_bluff
+

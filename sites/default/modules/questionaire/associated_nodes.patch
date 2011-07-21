@@ -1,0 +1,11 @@
+--- /var/www/hotline_old/sites/all/modules/associated_nodes/associated_nodes.module	2009-04-24 16:45:15.000000000 +0300
++++ associated_nodes.module	2010-12-09 13:16:43.000000000 +0300
+@@ -362,7 +362,7 @@ function associated_nodes_get($node, $ai
+   $associated_nodes[$aid][$node->nid] = array();
+   $associations = associated_nodes_associations();
+   $association = $associations[$aid];
+-  $nodetypes = associated_nodes_nodetypes($aid);
++  $nodetypes = array_merge(associated_nodes_nodetypes($aid), Array($node->type)); // TODO Mountbatten
+   if (in_array($node->type, $nodetypes)) {
+ 	  if ($association['number'] != 0) {
+ 	    $q = "SELECT count(*) FROM {associated_nodes_cache} WHERE aid = %d AND nid = %d";

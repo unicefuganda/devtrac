@@ -1,0 +1,52 @@
+# $Id: CHANGELOG.txt,v 1.1.2.24 2010/02/11 04:50:10 iva2k Exp $
+
+itweak_upload 6.x-2.x-dev
+-------------------------
+[#561890] by iva2k: Increased weight to 10 (should load after comment_upload.module)
+[#672486] by genox: German translation
+[#642076] by afterdark: Brazilian Portugese translation
+[#646460] by maximpodorov: Fancybox support
+[NOISSUE] by iva2k: Shadowbox support
+[#544058] by iva2k: Crude jCarousel support
+[#575808] by ferdi: Use hook_imagecache_default_presets
+[#706888] by iva2k: Remove images from gallery if user has no permission to view/download them
+[#707360] by iva2k: Making extra checks to ensure image can be rendered
+[#542018] by iva2k: Using image description in lightbox, shadowbox
+SA-CONTRIB-2010-003 by iva2k: remove XSS vulnerability in file names
+
+itweak_upload 6.x-2.2, 2009-08-07
+---------------------------------
+[#537586] by iva2k: Fixed WSOD when ImageCache module is not installed.
+[#537586] by iva2k: Removed extra checks.
+[NOISSUE] by iva2k: Added "No preview" preset option (disables thumbnails) for graceful degradation without ImageCache.
+
+itweak_upload 6.x-2.1, 2009-07-29
+---------------------------------
+[NOISSUE] by iva2k: Getting ready for 2.1 release.
+
+itweak_upload 6.x-2.1-rc2, 2009-07-22
+-------------------------------------
+[NOISSUE] by iva2k: Added margin-right to attachments and images divs in itweak_upload.css (for cleaner advanced forum styling).
+[#520286] by jackinloadup: Fixed .eps icons not showing up.
+[NOISSUE] by iva2k: Added missing psd.png for mime-16.
+[#520912] by iva2k: Image CSS sprites for mime icons.
+[NOISSUE] by iva2k: Images (and other files via hook) preview in upload and comment_upload. Massive changes.
+[NOISSUE] by iva2k: Grouped "Attachment display" settings into sub-fieldsets.
+[NOISSUE] by iva2k: Moved admin settings into itweak_upload.admin.inc (code load performance optimization).
+[NOISSUE] by iva2k: Created site-wide settings for image preset and link display option (lightbox, thickbox, etc.).
+[NOISSUE] by iva2k: Cleanup. Translation .pot file.
+[NOISSUE] by iva2k: Updated README.txt.
+
+itweak_upload 6.x-2.0-rc1, 2009-07-14
+-------------------------------------
+[NOISSUE] by iva2k: Main functionality for 2.x - attachment display tweaks, image thumbnails.
+[NOISSUE] by iva2k: Main functionality for 2.x - attachment display tweaks for comments.
+[NOISSUE] by iva2k: Main functionality for 2.x - per-content type settings.
+[NOISSUE] by iva2k: Main functionality for 2.x - automatic profile for ImageCache, permissions.
+[NOISSUE] by iva2k: Main functionality for 2.x - thumbnail link display option (lightbox2, thickbox).
+[NOISSUE] by iva2k: Added collapsible setting for Attachments form.
+
+itweak_upload 6.x-1.0, 2009-07-03
+---------------------------------
+[NOISSUE] by iva2k: Initial commit, First Release.
+[NOISSUE] by iva2k: Initial commit, First Release - apply theme tweaks to comment attachments.

@@ -1,0 +1,40 @@
+<?php
+function helpinject_help_step_form(&$element, $form_id, $callback) {
+    foreach (element_children($element) as $child) {
+      helpinject_help_step_form($element[$child], $form_id . ':' . $child, $callback);
+    }
+    $callback($element, $form_id);
+}
+
+function helpinject_help_form_alter(&$form, $form_state, $form_id) {
+  helpinject_help_step_form($form, $form_id, 'helpinject_help_help_link');
+  $form['#description'] = isset($form['#description']) ? helpinject_help_get_from_key('form', $form_id) . ' ' . $form['#description'] : helpinject_help_get_from_key('form', $form_id);
+}
+
+function helpinject_help_get_from_key($key) {
+  static $helpkeys = array(
+    'helpinject_export_form:book_id' => array('module' => 'helpinject_help', 'file' => 'Books-to-Export'),
+    'helpinject_export_form:languages' => array('module' => 'helpinject_help', 'file' => 'Languages'),
+    'helpinject_export_form:module_base_name' => array('module' => 'helpinject_help', 'file' => 'Module-base-name'),
+    'helpinject_export_form:module_readable_name' => array('module' => 'helpinject_help', 'file' => 'Module-Name'),
+    'helpinject_export_form:package_name' => array('module' => 'helpinject_help', 'file' => 'Package-Name'),
+    'helpinject_injection_form:helpkey' => array('module' => 'helpinject_help', 'file' => 'Path-granularity'),
+    'helpinject_settings:helpinject_excluded_forms' => array('module' => 'helpinject_help', 'file' => 'Excluding-forms-from-HelpInject'),
+    'helpinject_settings:helpinject_excluded_paths' => array('module' => 'helpinject_help', 'file' => 'Excluding-paths-from-Helpinject'),
+  );
+  return isset($helpkeys[$key]) ? $helpkeys[$key] : FALSE;
+}
+
+function helpinject_help_help_link(&$element, $form_id) {
+  if (isset($element['#type']) && !in_array($element['#type'], array('button', 'image_button', 'submit', 'markup', 'token', 'hidden', 'form', 'value', 'weight'))) {
+    if ($result = helpinject_help_get_from_key($form_id)) {
+      $link = theme('advanced_help_topic', $result['module'], $result['file']);
+      if ($element['#type'] == 'fieldset') {
+        drupal_add_css(drupal_get_path('module', 'helpinject_help') . '/helpinject_help.css');
+        $link = preg_replace('/class="(.+?)"/', 'class="\1 helpinject_help-nofloat"', $link);
+      }
+      $element['#description'] = isset($element['#description']) ? $link . ' ' . $element['#description'] : $link;
+    }
+  }
+}
+

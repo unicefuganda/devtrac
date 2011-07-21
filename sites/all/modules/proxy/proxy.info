@@ -1,0 +1,13 @@
+; $Id: proxy.info,v 1.2 2010/01/31 15:28:37 zzolo Exp $
+name = Proxy
+description = A simple, yet powerful HTTP proxy API module.
+core = 6.x
+php = 5.2
+dependencies[] = ctools
+
+; Information added by drupal.org packaging script on 2010-02-12
+version = "6.x-1.0-alpha1"
+core = "6.x"
+project = "proxy"
+datestamp = "1265993413"
+

@@ -1,0 +1,185 @@
+<?php
+// $Id
+
+
+/**
+ * @file
+ * WMS module.
+ */
+
+function wms_check_perm_getfeatureinfo() {
+	$result = true;
+	foreach (module_implements('perm_getfeatureinfo') as $module) {
+    $function = $module .'perm_getfeatureinfo';
+    $result = $result && call_user_func_array($function);
+	}
+	return $result;
+}
+
+function wms_menu() {
+  $items['openlayers/wms/wmsgetfeatureinfo'] = array(
+    'page callback' => 'wms_ajax_wmsgetfeatureinfo',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'wms_check_perm_getfeatureinfo',
+  );
+  $items['openlayers/wms/wmsgetfeatureinfo_process'] = array(
+    'page callback' => 'wms_ajax_wmsgetfeatureinfo_process',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'wms_check_perm_getfeatureinfo',
+  );
+  return $items;
+}
+ 
+function wms_ajax_wmsgetfeatureinfo($url) {
+	
+	$url = $_POST['url']; 
+	watchdog('wms', $url);
+	
+	$params = Array(
+	  'request_uri'=>$url,
+	);
+  $content_object = proxy($params);
+
+  if (is_array($content_object)) {
+    return implode(" ", $content_object);
+    exit;
+  } elseif ($content_object) {
+  	
+  	if ($content_object->code == 200) {
+  		$return = (string)$content_object->data;
+  		
+      $resultarray = wms_process_wmsgetfeatureinfo_result($result);  		
+  		
+  		foreach ($featuremembers->featuremember as $featuremember) {
+  			print 'this would be where we do nice stuff<br/>';
+  		}
+  		
+  		print 'I guess we didnt find anything useful';
+  		exit;
+  	}
+  } else {
+  	print 'Something went wrong';
+  }
+}
+
+function wms_hook_info() {
+  return array(
+    'wms' => array(
+      'wms' => array(
+        'perm_getfeatureinfo' => array(
+          'runs when' => t('user_access checks if someone can process getfeatureinfo results'),
+        ),
+        'process_getfeatureinfo' => array(
+          'runs when' => t('When someone clicks the \'process\' link in the getfeatureresult table'),
+        ),
+      ),
+    ),
+  );
+}
+
+
+/**
+ * Implementation of hook_ctools_plugin_api().
+ */
+function wms_ctools_plugin_api($module, $api) {
+  if ($module == "openlayers") {
+    switch ($api) {
+      case 'openlayers_layers':
+        return array('version' => 1);
+    }
+  }
+}
+
+/**
+ * Implementation of hook_openlayers_behaviors()
+ */
+function wms_openlayers_behaviors() {
+  return array(
+    'openlayers_behavior_wmsgetfeatureinfo' => array(
+      'title' => t('Get Feature Info'),
+      'description' => t('Queries WMS server for more info about features on the map.'),
+      'type' => 'layer',
+      'path' => drupal_get_path('module', 'wms') . '/includes/behaviors',
+      'file' => 'openlayers_behavior_wmsgetfeatureinfo.inc',
+      'behavior' => array(
+        'class' => 'openlayers_behavior_wmsgetfeatureinfo',
+        'parent' => 'openlayers_behavior',
+      ),
+    ),
+  );
+}
+
+function wms_process_wmsgetfeatureinfo_result($rawxml) {
+  /* just for the sake of it, try with the DOMDocument class */
+	$xml = new DOMDocument();
+  $xml->preserveWhiteSpace = false;
+  $xml->formatOutput = true;
+  $xml->loadXML($rawxml);
+  /* $xml does not contain any XML at this point. So its pretty useless */
+
+  /* let's try with simplexml */    
+  $xmlresult = simplexml_load_string($rawxml);
+      
+  $errors = libxml_get_errors();
+  foreach ($errors as $error) {
+    /* no errors to be found that are any help*/
+    print display_xml_error($error, $xml);
+  }
+  libxml_clear_errors();
+  
+  if (isset($xmlresult[0])) {
+  	return $xmlresult;
+  } else {
+  	return false;
+  }
+}
+
+function wms_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list' :
+      $blocks[0]['info'] = t('GetFeatureInfo Results');
+      return $blocks;
+      break;
+    case 'view' :
+      $block = array();
+      switch ($delta) {
+        case 0:
+           $block['subject'] = "";
+           $block['content'] = '<div id="getfeatureinfo">'. t('Click a feature on the map to see the details') . '</div>';
+           return $block;
+          break;
+      }
+    break;
+  }
+}
+
+function wms_ajax_wmsgetfeatureinfo_process() {
+	$result = false;
+  $geometry = $_GET['geometry'];
+  $layer = $_GET['layer'];
+  /*
+   *  these are the arg of the original page request
+   */ 
+  $arg = $_GET['arg'];
+  $args = explode('/', $arg); 
+  
+  $params = $_GET;
+  unset($params['geometry']); 
+  unset($params['layer']);
+  unset($params['arg']);
+  $messages = "";
+  foreach (module_implements('process_getfeatureinfo') as $module) {
+    $function = $module .'_process_getfeatureinfo';
+    /* this is tricky, what if a module does something and invokes a goto? Or what if it doesnt 
+     * Feel free to comment on this */
+    
+    $result =  call_user_func_array($function, Array($layer, $geometry, $params, $args));
+    $messages .= $result; 
+  }
+    // make sure sensible headers etc are sent
+    drupal_set_header('Content-Type: text; charset=utf-8');
+    $object = new stdClass();
+    $object->content = $messages;
+    drupal_json($object);
+  	exit();
+}

@@ -1,0 +1,16 @@
+Index: services/node_service/node_service.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/services/services/node_service/Attic/node_service.module,v
+retrieving revision 1.5.2.21.2.4
+diff -u -p -r1.5.2.21.2.4 node_service.module
+--- services/node_service/node_service.module	28 Feb 2010 01:15:31 -0000	1.5.2.21.2.4
++++ services/node_service/node_service.module	30 Oct 2010 21:04:06 -0000
+@@ -77,7 +77,7 @@ function node_service_service() {
+       '#args'             => array(
+         array(
+           '#name'           => 'node',
+-          '#type'           => 'struct',
++          '#type'           => 'array',
+           '#description'    => t('A node object. Upon creation, node object must include "type". Upon update, node object must include "nid" and "changed".'))),
+       '#return'           => 'struct',
+       '#help'             => t('Save a node object into the database.')),

@@ -1,0 +1,12 @@
+; $Id: user_activity.info,v 1.2 2008/07/18 17:14:53 sanduhrs Exp $
+name         = User Activity
+description  = "Calculates and displays a user's activity index."
+core = 6.x
+; dependencies = module1 module2 module3
+; package      = "Your arbitrary grouping string"
+; Information added by drupal.org packaging script on 2008-08-01
+version = "6.x-1.1"
+core = "6.x"
+project = "user_activity"
+datestamp = "1217589618"
+

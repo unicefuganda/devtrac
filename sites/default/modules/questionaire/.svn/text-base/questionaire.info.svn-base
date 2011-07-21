@@ -1,0 +1,7 @@
+name = Questionaire Module
+description = Module for running unstructured Questionaires 
+
+package = Questionaire
+dependencies[] = question
+core = 6.x
+

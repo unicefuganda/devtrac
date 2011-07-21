@@ -1,0 +1,85 @@
+<?php
+
+
+function questionaire_perm() {
+	return array('administer questionaire');
+}
+
+
+
+function questionaire_node_info() {
+	return array(
+	  'questionaire' => array(
+	     'name' => t('Questionaire'),
+	     'module' => 'questionaire',
+	     'description' => t('Container for Questions'),
+	     'has_title' => TRUE,
+	     'title_label' => t('Name'),
+	     'has_body' => FALSE,
+	  )
+	);
+}
+
+function questionaire_form($node) {
+	$type = node_get_types('type', $node);
+	$form['title'] = array(
+	  '#type' => 'textfield',
+	  '#title' => check_plain($type->title_label),
+	  '#required' => TRUE,
+	  '#default_value' => $node->title,
+	  '#weight' => -5,
+	  '#maxlength' => 255,
+	);
+  $options = Array('In Preparation', 'Active', 'Closed');
+  $form['qstatus'] = array(
+    '#type' => 'select',
+    '#title' => t('Status'),
+    '#required' => TRUE,
+    '#default_value' => 'In Preparation',
+    '#weight' => -4,
+    '#options' => $options,
+  );
+	return $form;
+}
+
+function questionaire_insert($node) {
+	db_query("INSERT INTO {questionaire} (nid, vid, qstatus) VALUES (%d, %d, '%s')", $node->nid, $node->vid, $node->qstatus);
+}
+
+function questionaire_update($node) {
+	if ($node->revision) {
+		questionaire_insert($node);
+	} else {
+		db_query("UPDATE {questionaire} SET qstatus = '%s' WHERE vid = %d", $node->qstatus, $node->vid);
+	}
+}
+
+function questionaire_delete(&$node) {
+	db_query("DELETE FROM {questionaire} WHERE nid = %d", $node->nid);
+}
+
+function questionaire_load($node) {
+	return db_fetch_object(db_query('SELECT qstatus, formid from {questionaire} WHERE vid = %d', $node->vid));
+}
+
+function questionaire_view($node, $teaser = FALSE, $page = false) {
+	$node = node_prepare($node, FALSE);
+  $node->content['formid'] = array(
+    '#value' => theme_item(Array('#title'=> 'Form ID', '#description'=> 'The FormID is used in the SMS interface to uniquely identify a form', '#value'=> check_plain($node->formid))),
+    '#weight' => 2
+  );
+  $options = Array('In Preparation', 'Active', 'Closed');
+  $node->content['qstatus'] = array(
+	  '#value' => theme_item(Array('#title'=> 'Status', '#description'=> 'The Questionaire will become Read Only if this value has been changed to Active.', '#value'=> check_plain($options[$node->qstatus]))),
+	  '#weight' => 3
+	);
+	return $node;
+}
+
+function questionaire_questionaire_question_getcontext($nid) {
+	$questions = Array();
+	$result = db_query('SELECT questions.nid nid, forms.code code from {questionaire_question} questions, {questionaire_forms} forms WHERE questions.nid = forms.qid AND forms.qnid = %d ORDER BY forms.weight ASC', $nid);
+	while($question = db_fetch_object($result)) {
+		$questions[] = $question;
+	}
+}

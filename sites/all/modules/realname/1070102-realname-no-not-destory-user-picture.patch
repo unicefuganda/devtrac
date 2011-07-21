@@ -1,0 +1,49 @@
+Index: realname.module
+===================================================================
+RCS file: /cvs/drupal-contrib/contributions/modules/realname/realname.module,v
+retrieving revision 1.4.4.77
+diff -u -p -r1.4.4.77 realname.module
+--- realname.module	22 Feb 2011 20:19:33 -0000	1.4.4.77
++++ realname.module	23 Feb 2011 06:28:59 -0000
+@@ -397,27 +397,21 @@ function realname_theme_registry_alter(&
+  * Override template_preprocess_user_picture() to display a user's realname.
+  */
+ function realname_preprocess_user_picture(&$variables) {
+-  $variables['picture'] = '';
+-  if (variable_get('user_pictures', 0)) {
++  if (!empty($variables['picture'])) {
++    // Replace the alt text 'username's picture' with 'realname's picture.'
+     $account = $variables['account'];
+-    if (!empty($account->picture) && file_exists($account->picture)) {
+-      $picture = file_create_url($account->picture);
+-    }
+-    elseif (variable_get('user_picture_default', '')) {
+-      $picture = variable_get('user_picture_default', '');
+-    }
+-
+-    if (isset($picture)) {
+-      $name = isset($account->realname) ? $account->realname : realname_make_name($account);
+-      $alt = t("@user's picture", array('@user' => $name ? $name : variable_get('anonymous', t('Anonymous'))));
+-      $variables['picture'] = theme('image', $picture, $alt, $alt, '', FALSE);
+-      if (!empty($account->uid) && user_access('access user profiles')) {
+-        $attributes = array(
+-          'attributes' => array('title' => t('View user profile.')),
+-          'html' => TRUE,
+-        );
+-        $variables['picture'] = l($variables['picture'], "user/$account->uid", $attributes);
+-      }
++    $not_real_name = $account->name ? $account->name : variable_get('anonymous', t('Anonymous'));
++    $real_name = isset($account->realname) ? $account->realname : realname_make_name($account);
++    if ($real_name && $real_name != $not_real_name) {
++      $not_real_name_alt = check_plain(t("@user's picture", array('@user' => $not_real_name)));
++      $real_name_alt = check_plain(t("@user's picture", array('@user' => $real_name)));
++      $variables['picture'] = str_replace($not_real_name_alt, $real_name_alt, $variables['picture']);
++
++      // Intentionally clone the account object and set the name property
++      // to the user's realname so that any further implementations of
++      // hook_preprocess_user_picture() can just use $account->name.
++      $variables['account'] = drupal_clone($account);
++      $variables['account']->name = $real_name;
+     }
+   }
+ }

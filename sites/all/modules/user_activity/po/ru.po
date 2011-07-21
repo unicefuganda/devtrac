@@ -1,0 +1,35 @@
+# $Id: ru.po,v 1.1 2007/11/30 11:00:49 sanduhrs Exp $
+#
+# Russian translation of Drupal (general)
+# Copyright 2007 Ne01eX <Ne01eX@rambler.ru>
+
+msgid ""
+msgstr ""
+"Project-Id-Version: user_activity 5.x-1.x-dev\n"
+"POT-Creation-Date: 2007-10-24 18:19+0100\n"
+"PO-Revision-Date: 2007-10-24 17:29+0400\n"
+"Last-Translator: Ne01eX <Ne01eX@rambler.ru>\n"
+"Language-Team: RU_ru <ru@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: user_activity.module:26
+msgid "Latest activity"
+msgstr "Процент активности"
+
+#: user_activity.module:30
+msgid "Activity"
+msgstr "Активность"
+
+#: user_activity.module:0
+msgid "user_activity"
+msgstr "активность_участника"
+
+#: user_activity.info:0
+msgid "User Activity"
+msgstr "Активность Участника"
+
+#: user_activity.info:0
+msgid "Calculates and displays a user's activity index."
+msgstr "Подсчитывает и показывает процент активности участников"

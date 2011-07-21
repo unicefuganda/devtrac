@@ -1,0 +1,45 @@
+<?php
+// $Id: views_two_column_table.module,v 1.1 2009/12/17 13:05:59 snpower Exp $
+
+/**
+ * Implementation of hook_views_api().
+ */
+function views_two_column_table_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'views_two_column_table'),
+  );
+}
+
+/**
+ * Implementation of hook_views_plugins().
+ */
+function views_two_column_table_views_plugins() {
+  $path = drupal_get_path('module', 'views_two_column_table');
+  $views_path = drupal_get_path('module', 'views');
+  require_once "./$path/theme.inc";
+
+  $data = array(
+    'module' => 'views_two_column_table',
+    'style' => array(
+      'views_two_column_table' => array(
+        'title' => t('Two Column Table'),
+        'help' => t('Creates a two column table, with field labels in one column and data in the other.'),
+        'handler' => 'views_plugin_style_two_column_table',
+        'path' => $path,
+        'theme' => 'views_view_two_column_table',
+        'theme file' => 'theme.inc',
+        'theme path' => "$path",
+        'parent' => 'table',
+        'uses row plugin' => TRUE,
+        'uses fields' => TRUE,
+        'uses options' => FALSE,
+        'uses grouping' => FALSE,
+        'type' => 'normal',
+        'even empty' => FALSE,
+      ),
+    )
+  );
+  return $data;
+}
+

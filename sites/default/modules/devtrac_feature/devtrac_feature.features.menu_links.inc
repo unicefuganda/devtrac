@@ -22,7 +22,7 @@ function devtrac_feature_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-46',
+    'weight' => '-47',
   );
   // Exported menu link: primary-links:logout
   $menu_links['primary-links:logout'] = array(
@@ -58,7 +58,7 @@ function devtrac_feature_menu_default_menu_links() {
     'external' => '0',
     'has_children' => '0',
     'expanded' => '0',
-    'weight' => '-48',
+    'weight' => '-49',
   );
   // Exported menu link: primary-links:user/%
   $menu_links['primary-links:user/%'] = array(

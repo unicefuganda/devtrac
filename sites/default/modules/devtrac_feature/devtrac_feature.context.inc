@@ -53,6 +53,8 @@ function devtrac_feature_context_default_contexts() {
     'path' => array(
       'values' => array(
         'place_type/all' => 'place_type/all',
+        'homepage' => 'homepage',
+        '<front>' => '<front>',
       ),
     ),
   );
@@ -221,22 +223,34 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerright',
           'weight' => 0,
         ),
+        'views-my_homepage_picture-block_5' => array(
+          'module' => 'views',
+          'delta' => 'my_homepage_picture-block_5',
+          'region' => 'contentlayerright',
+          'weight' => 1,
+        ),
         'views-side_block_map-block_1' => array(
           'module' => 'views',
           'delta' => 'side_block_map-block_1',
           'region' => 'contentlayerright',
-          'weight' => 1,
+          'weight' => 2,
         ),
         'views-side_block_map-block_3' => array(
           'module' => 'views',
           'delta' => 'side_block_map-block_3',
           'region' => 'contentlayerright',
-          'weight' => 2,
+          'weight' => 3,
         ),
         'views-c8fc7e0ba137d31339cf5fffceffe21b' => array(
           'module' => 'views',
           'delta' => 'c8fc7e0ba137d31339cf5fffceffe21b',
           'region' => 'layertwoleft',
+          'weight' => 0,
+        ),
+        'views-Questions-block_1' => array(
+          'module' => 'views',
+          'delta' => 'Questions-block_1',
+          'region' => 'layertworight',
           'weight' => 0,
         ),
         'views-67588c60d2487fe75c1e360fc884bc49' => array(
@@ -308,11 +322,6 @@ function devtrac_feature_context_default_contexts() {
         'node_form' => '0',
       ),
     ),
-    'views' => array(
-      'values' => array(
-        'my_homepage_my_action_items:page_1' => 'my_homepage_my_action_items:page_1',
-      ),
-    ),
   );
   $context->reactions = array(
     'block' => array(
@@ -334,6 +343,12 @@ function devtrac_feature_context_default_contexts() {
           'delta' => 'side_block_map-block_2',
           'region' => 'contentlayerright',
           'weight' => 0,
+        ),
+        'views-Questions-block_2' => array(
+          'module' => 'views',
+          'delta' => 'Questions-block_2',
+          'region' => 'contentlayerright',
+          'weight' => 1,
         ),
         'views-user_report_items_map-block_4' => array(
           'module' => 'views',
@@ -407,11 +422,17 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerright',
           'weight' => 0,
         ),
+        'views-my_homepage_picture-block_5' => array(
+          'module' => 'views',
+          'delta' => 'my_homepage_picture-block_5',
+          'region' => 'contentlayerright',
+          'weight' => 1,
+        ),
         'views-fe5f6d4111d9bf8d5e5bbad09680099b' => array(
           'module' => 'views',
           'delta' => 'fe5f6d4111d9bf8d5e5bbad09680099b',
           'region' => 'contentlayerright',
-          'weight' => 1,
+          'weight' => 2,
         ),
         'views-8656ee277feb02e7dab0daebd8ae7663' => array(
           'module' => 'views',

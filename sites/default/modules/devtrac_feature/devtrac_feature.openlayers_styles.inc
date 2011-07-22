@@ -12,7 +12,7 @@ function devtrac_feature_openlayers_styles() {
   $openlayers_styles->title = 'Placetype';
   $openlayers_styles->description = 'The style to render placetypes with. Must have a [tid] field to show the taxonomy image';
   $openlayers_styles->data = array(
-    'externalGraphic' => '${tid_rendered}',
+    'externalGraphic' => 'http://devtrac.mbcdn.net${tid_rendered}',
     'pointRadius' => 10,
     'fillColor' => '#EE9900',
     'strokeColor' => '#EE9900',

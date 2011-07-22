@@ -333,15 +333,14 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_actionitem';
   $strongarm->value = array(
     'title' => '-5',
-    'body_field' => '-3',
     'revision_information' => '5',
     'author' => '6',
     'options' => '7',
     'comment_settings' => '3',
     'menu' => '4',
-    'taxonomy' => '-4',
+    'book' => '10',
     'path' => '8',
-    'attachments' => '2',
+    'print' => '30',
   );
 
   $export['content_extra_weights_actionitem'] = $strongarm;
@@ -351,14 +350,15 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_fieldtrip';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '6',
-    'author' => '8',
-    'options' => '9',
-    'comment_settings' => '7',
-    'menu' => '5',
-    'book' => '11',
-    'path' => '10',
-    'print' => '12',
+    'revision_information' => '7',
+    'author' => '9',
+    'options' => '10',
+    'comment_settings' => '8',
+    'menu' => '6',
+    'taxonomy' => '-3',
+    'book' => '12',
+    'path' => '11',
+    'print' => '13',
   );
 
   $export['content_extra_weights_fieldtrip'] = $strongarm;
@@ -444,9 +444,7 @@ function devtrac_feature_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_ftritem';
-  $strongarm->value = array(
-    0 => 'status',
-  );
+  $strongarm->value = array();
 
   $export['node_options_ftritem'] = $strongarm;
   $strongarm = new stdClass;

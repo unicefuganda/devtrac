@@ -32,6 +32,7 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_attribution' => array(),
       'openlayers_behavior_popup' => array(
         'layers' => array(
+          'field_trip_places_to_visit_openlayers_2' => 'field_trip_places_to_visit_openlayers_2',
           'field_trip_places_to_visit_openlayers_1' => 'field_trip_places_to_visit_openlayers_1',
         ),
       ),
@@ -39,14 +40,13 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_layerswitcher' => array(
         'ascending' => 1,
         'roundedCorner' => 1,
-        'roundedCornerColor' => 'darkblue',
+        'roundedCornerColor' => 'black',
       ),
       'openlayers_behavior_mouseposition' => array(),
       'openlayers_behavior_navigation' => array(
         'zoomWheelEnabled' => 0,
       ),
       'openlayers_behavior_panzoombar' => array(),
-      'openlayers_behavior_permalink' => array(),
       'openlayers_behavior_scaleline' => array(),
       'openlayers_behavior_zoomtolayer' => array(
         'zoomtolayer' => 'field_trip_places_to_visit_openlayers_1',
@@ -55,8 +55,9 @@ function devtrac_feature_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
+      'field_trip_places_to_visit_openlayers_2' => 'field_trip_places_to_visit_openlayers_2',
       'field_trip_places_to_visit_openlayers_1' => 'field_trip_places_to_visit_openlayers_1',
     ),
     'layer_styles' => array(
@@ -67,6 +68,7 @@ function devtrac_feature_openlayers_presets() {
       ),
     ),
     'layer_activated' => array(
+      'field_trip_places_to_visit_openlayers_2' => 'field_trip_places_to_visit_openlayers_2',
       'field_trip_places_to_visit_openlayers_1' => 'field_trip_places_to_visit_openlayers_1',
     ),
     'layer_switcher' => array(),
@@ -89,8 +91,8 @@ function devtrac_feature_openlayers_presets() {
   $openlayers_presets->data = array(
     'width' => 'auto',
     'height' => '400px',
-    'image_path' => '',
-    'css_path' => '',
+    'image_path' => 'sites/default/themes/devtrack_theme/openlayers/img/',
+    'css_path' => 'sites/default/themes/devtrack_theme/openlayers/style.css',
     'proxy_host' => '',
     'hide_empty_map' => 0,
     'center' => array(
@@ -118,8 +120,8 @@ function devtrac_feature_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
       'u-map-it-health' => 'u-map-it-health',
       'u-map-it-wash' => 'u-map-it-wash',
       'u-map-it-schools' => 'u-map-it-schools',
@@ -134,9 +136,9 @@ function devtrac_feature_openlayers_presets() {
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'default',
-      'select' => 'default',
-      'temporary' => 'default',
+      'default' => 'default_select',
+      'select' => 'default_select',
+      'temporary' => 'default_select',
     ),
   );
 
@@ -265,11 +267,6 @@ function devtrac_feature_openlayers_presets() {
     ),
     'behaviors' => array(
       'openlayers_behavior_attribution' => array(),
-      'openlayers_behavior_popup' => array(
-        'layers' => array(
-          'side_block_map_openlayers_1' => 'side_block_map_openlayers_1',
-        ),
-      ),
       'openlayers_behavior_keyboarddefaults' => array(),
       'openlayers_behavior_layerswitcher' => array(
         'ascending' => 1,
@@ -281,17 +278,9 @@ function devtrac_feature_openlayers_presets() {
         'zoomWheelEnabled' => 0,
       ),
       'openlayers_behavior_panzoombar' => array(),
-      'openlayers_behavior_permalink' => array(),
       'openlayers_behavior_zoomtolayer' => array(
         'zoomtolayer' => 'side_block_map_openlayers_1',
-        'point_zoom_level' => '7',
-      ),
-      'openlayers_behavior_cluster' => array(
-        'clusterlayer' => array(
-          'side_block_map_openlayers_1' => 'side_block_map_openlayers_1',
-        ),
-        'distance' => '20',
-        'threshold' => '',
+        'point_zoom_level' => '8',
       ),
     ),
     'default_layer' => 'uganda_basemap',
@@ -301,6 +290,11 @@ function devtrac_feature_openlayers_presets() {
       'side_block_map_openlayers_1' => 'side_block_map_openlayers_1',
     ),
     'layer_styles' => array(
+      'side_block_map_openlayers_3' => array(
+        'default' => 'default',
+        'select' => 'default',
+        'temporary' => 'default',
+      ),
       'side_block_map_openlayers_1' => array(
         'default' => 'placetype',
         'select' => 'placetype',
@@ -314,9 +308,9 @@ function devtrac_feature_openlayers_presets() {
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'Government Office',
-      'select' => 'Government Office',
-      'temporary' => 'Government Office',
+      'default' => 'default',
+      'select' => 'default',
+      'temporary' => 'default',
     ),
   );
 
@@ -346,11 +340,6 @@ function devtrac_feature_openlayers_presets() {
     ),
     'behaviors' => array(
       'openlayers_behavior_attribution' => array(),
-      'openlayers_behavior_popup' => array(
-        'layers' => array(
-          'side_block_map_openlayers_3' => 'side_block_map_openlayers_3',
-        ),
-      ),
       'openlayers_behavior_keyboarddefaults' => array(),
       'openlayers_behavior_layerswitcher' => array(
         'ascending' => 1,
@@ -362,17 +351,9 @@ function devtrac_feature_openlayers_presets() {
         'zoomWheelEnabled' => 0,
       ),
       'openlayers_behavior_panzoombar' => array(),
-      'openlayers_behavior_permalink' => array(),
       'openlayers_behavior_zoomtolayer' => array(
         'zoomtolayer' => 'side_block_map_openlayers_3',
-        'point_zoom_level' => '7',
-      ),
-      'openlayers_behavior_cluster' => array(
-        'clusterlayer' => array(
-          'side_block_map_openlayers_3' => 'side_block_map_openlayers_3',
-        ),
-        'distance' => '20',
-        'threshold' => '',
+        'point_zoom_level' => '8',
       ),
     ),
     'default_layer' => 'uganda_basemap',
@@ -383,9 +364,9 @@ function devtrac_feature_openlayers_presets() {
     ),
     'layer_styles' => array(
       'side_block_map_openlayers_3' => array(
-        'default' => 'placetype',
-        'select' => 'placetype',
-        'temporary' => 'placetype',
+        'default' => 'default',
+        'select' => 'default',
+        'temporary' => 'default',
       ),
     ),
     'layer_activated' => array(
@@ -395,9 +376,9 @@ function devtrac_feature_openlayers_presets() {
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'Government Office',
-      'select' => 'Government Office',
-      'temporary' => 'Government Office',
+      'default' => 'default',
+      'select' => 'default',
+      'temporary' => 'default',
     ),
   );
 
@@ -560,8 +541,6 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
-          'user_report_items_map_openlayers_5' => 'user_report_items_map_openlayers_5',
-          'user_report_items_map_openlayers_4' => 'user_report_items_map_openlayers_4',
           'funding_partner_sites_openlayers_1' => 0,
         ),
       ),
@@ -582,52 +561,40 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_permalink' => array(),
       'openlayers_behavior_scaleline' => array(),
     ),
-    'default_layer' => '',
+    'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
       'u-map-it-health' => 'u-map-it-health',
-      'funding_partner_sites_openlayers_1' => 'funding_partner_sites_openlayers_1',
       'u-map-it-schools' => 'u-map-it-schools',
       'u-map-it-wash' => 'u-map-it-wash',
       'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
     ),
     'layer_styles' => array(
-      'user_report_items_map_openlayers_1' => array(
-        'default' => 'School',
-        'select' => 'School',
-        'temporary' => 'School',
-      ),
       'user_report_items_map_openlayers_3' => array(
         'default' => 'Wash',
         'select' => 'Wash',
         'temporary' => 'Wash',
+      ),
+      'user_report_items_map_openlayers_1' => array(
+        'default' => 'School',
+        'select' => 'School',
+        'temporary' => 'School',
       ),
       'field_trip_report_items_openlayers_3' => array(
         'default' => 'placetype',
         'select' => 'placetype',
         'temporary' => 'placetype',
       ),
-      'user_report_items_map_openlayers_5' => array(
-        'default' => 'Government Office',
-        'select' => 'Government Office',
-        'temporary' => 'Government Office',
-      ),
-      'user_report_items_map_openlayers_4' => array(
-        'default' => 'Health',
-        'select' => 'Health',
-        'temporary' => 'Health',
-      ),
     ),
     'layer_activated' => array(
-      'funding_partner_sites_openlayers_1' => 'funding_partner_sites_openlayers_1',
       'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
     ),
     'layer_switcher' => array(
       'u-map-it-health' => 'u-map-it-health',
-      'funding_partner_sites_openlayers_1' => 'funding_partner_sites_openlayers_1',
       'u-map-it-schools' => 'u-map-it-schools',
       'u-map-it-wash' => 'u-map-it-wash',
+      'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
     ),
     'projection' => '900913',
     'displayProjection' => '4326',
@@ -647,7 +614,7 @@ function devtrac_feature_openlayers_presets() {
   $openlayers_presets->description = 'Map to show the user trip reports';
   $openlayers_presets->data = array(
     'width' => 'auto',
-    'height' => '300px',
+    'height' => '400px',
     'image_path' => 'sites/default/themes/devtrack_theme/openlayers/img/',
     'css_path' => 'sites/default/themes/devtrack_theme/openlayers/style.css',
     'proxy_host' => '',
@@ -658,7 +625,7 @@ function devtrac_feature_openlayers_presets() {
         'zoom' => '6',
       ),
       'restrict' => array(
-        'restrictextent' => 0,
+        'restrictextent' => 1,
         'restrictedExtent' => '3285827.410659,-159925.03252,3902215.606641,466247.10308',
       ),
     ),
@@ -666,6 +633,7 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_attribution' => array(),
       'openlayers_behavior_popup' => array(
         'layers' => array(
+          'user_report_items_map_openlayers_1' => 'user_report_items_map_openlayers_1',
           'user_report_items_map_openlayers_3' => 'user_report_items_map_openlayers_3',
         ),
       ),
@@ -680,24 +648,17 @@ function devtrac_feature_openlayers_presets() {
         'zoomWheelEnabled' => 0,
       ),
       'openlayers_behavior_panzoombar' => array(),
-      'openlayers_behavior_permalink' => array(),
       'openlayers_behavior_scaleline' => array(),
       'openlayers_behavior_zoomtolayer' => array(
         'zoomtolayer' => 'user_report_items_map_openlayers_3',
         'point_zoom_level' => '7',
       ),
-      'openlayers_behavior_cluster' => array(
-        'clusterlayer' => array(
-          'user_report_items_map_openlayers_3' => 0,
-        ),
-        'distance' => '20',
-        'threshold' => '',
-      ),
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
+      'user_report_items_map_openlayers_1' => 'user_report_items_map_openlayers_1',
       'user_report_items_map_openlayers_3' => 'user_report_items_map_openlayers_3',
     ),
     'layer_styles' => array(
@@ -713,11 +674,10 @@ function devtrac_feature_openlayers_presets() {
       ),
     ),
     'layer_activated' => array(
+      'user_report_items_map_openlayers_1' => 'user_report_items_map_openlayers_1',
       'user_report_items_map_openlayers_3' => 'user_report_items_map_openlayers_3',
     ),
-    'layer_switcher' => array(
-      'user_report_items_map_openlayers_3' => 'user_report_items_map_openlayers_3',
-    ),
+    'layer_switcher' => array(),
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(

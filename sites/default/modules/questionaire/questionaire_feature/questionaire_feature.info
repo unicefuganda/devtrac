@@ -1,4 +1,3 @@
-; $Id$ 
 core = "6.x"
 dependencies[] = "questionaire_question"
 dependencies[] = "views_charts"
@@ -11,4 +10,4 @@ features[views_api][] = "api:2"
 name = "questionaire_feature"
 package = "Features"
 project = "questionaire_feature"
-version = "6.x-1.0-alpha2"
+version = "6.x-1.0-beta6"

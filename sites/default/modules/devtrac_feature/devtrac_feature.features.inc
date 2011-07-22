@@ -35,7 +35,7 @@ function devtrac_feature_imagecache_default_presets() {
           'module' => 'imagecache',
           'action' => 'imagecache_scale_and_crop',
           'data' => array(
-            'width' => '365',
+            'width' => '380',
             'height' => '290',
           ),
         ),
@@ -49,7 +49,7 @@ function devtrac_feature_imagecache_default_presets() {
             ),
             'under' => 1,
             'exact' => array(
-              'width' => '365',
+              'width' => '380',
               'height' => '290',
               'xpos' => 'center',
               'ypos' => 'center',
@@ -84,7 +84,7 @@ function devtrac_feature_imagecache_default_presets() {
           'module' => 'imagecache_canvasactions',
           'action' => 'canvasactions_file2canvas',
           'data' => array(
-            'xpos' => '310',
+            'xpos' => '325',
             'ypos' => '244',
             'alpha' => '80',
             'path' => 'sites/default/themes/devtrack_theme/images/devtrac_logo_watermark_small.png',
@@ -456,16 +456,24 @@ function devtrac_feature_rules_defaults() {
         '#type' => 'rule',
         '#set' => 'event_node_presave',
         '#label' => 'Submit Field Trip To Manager',
-        '#active' => 1,
+        '#active' => 0,
         '#weight' => '0',
         '#categories' => array(
           '0' => 'Field Trip',
-          'devtrac_feature' => 'devtrac_feature',
+          '1' => 'devtrac_feature',
         ),
         '#status' => 'default',
         '#conditions' => array(
           '0' => array(
-            '#weight' => 0,
+            '#type' => 'condition',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+                'node_unchanged' => 'node_unchanged',
+              ),
+            ),
+            '#name' => 'content_rules_field_changed',
             '#info' => array(
               'label' => 'Saved content\'s field \'field_fieldtrip_status\' has been changed',
               'arguments' => array(
@@ -480,32 +488,9 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#name' => 'content_rules_field_changed',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-                'node_unchanged' => 'node_unchanged',
-              ),
-            ),
-            '#type' => 'condition',
+            '#weight' => 0,
           ),
           '1' => array(
-            '#weight' => 0,
-            '#type' => 'condition',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-              ),
-              'value' => array(
-                '0' => array(
-                  'value' => 'Submitted',
-                ),
-              ),
-              'code' => '',
-            ),
-            '#name' => 'content_rules_field_has_value',
             '#info' => array(
               'label' => 'Status = Submitted',
               'label callback' => FALSE,
@@ -521,11 +506,34 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
+            '#name' => 'content_rules_field_has_value',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+              'value' => array(
+                '0' => array(
+                  'value' => 'Submitted',
+                ),
+              ),
+              'code' => '',
+            ),
+            '#type' => 'condition',
+            '#weight' => 0,
           ),
         ),
         '#actions' => array(
           '0' => array(
-            '#weight' => -9,
+            '#type' => 'action',
+            '#settings' => array(
+              'type' => 'user_profile',
+              '#argument map' => array(
+                'user' => 'author',
+                'profile_node' => 'author_profile_node',
+              ),
+            ),
+            '#name' => 'content_profile_action_load',
             '#info' => array(
               'label' => 'Load content\'s author\'s User Profile',
               'arguments' => array(
@@ -543,26 +551,10 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'Content Profile',
             ),
-            '#name' => 'content_profile_action_load',
-            '#settings' => array(
-              'type' => 'user_profile',
-              '#argument map' => array(
-                'user' => 'author',
-                'profile_node' => 'author_profile_node',
-              ),
-            ),
-            '#type' => 'action',
+            '#weight' => -9,
           ),
           '1' => array(
-            '#type' => 'action',
-            '#settings' => array(
-              'field' => 'field_user_superior',
-              '#argument map' => array(
-                'node' => 'author_profile_node',
-                'referenced_user' => 'author_manager',
-              ),
-            ),
-            '#name' => 'userreference_rules_action_load',
+            '#weight' => 0,
             '#info' => array(
               'label' => 'Load Manager',
               'label callback' => FALSE,
@@ -581,10 +573,28 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#weight' => 0,
+            '#name' => 'userreference_rules_action_load',
+            '#settings' => array(
+              'field' => 'field_user_superior',
+              '#argument map' => array(
+                'node' => 'author_profile_node',
+                'referenced_user' => 'author_manager',
+              ),
+            ),
+            '#type' => 'action',
           ),
           '2' => array(
-            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'ops' => array(
+                'update' => 'update',
+              ),
+              '#argument map' => array(
+                'node' => 'node',
+                'user' => 'author_manager',
+              ),
+            ),
+            '#name' => 'content_access_action_acl_grant_access',
             '#info' => array(
               'label' => 'Grant access for Author Manager.',
               'arguments' => array(
@@ -599,17 +609,7 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'Content access',
             ),
-            '#name' => 'content_access_action_acl_grant_access',
-            '#settings' => array(
-              'ops' => array(
-                'update' => 'update',
-              ),
-              '#argument map' => array(
-                'node' => 'node',
-                'user' => 'author_manager',
-              ),
-            ),
-            '#type' => 'action',
+            '#weight' => 0,
           ),
         ),
         '#version' => 6003,
@@ -618,24 +618,16 @@ function devtrac_feature_rules_defaults() {
         '#type' => 'rule',
         '#set' => 'event_node_presave',
         '#label' => 'Approve Field Trip',
-        '#active' => 1,
+        '#active' => 0,
         '#weight' => '0',
         '#categories' => array(
           '0' => 'Field Trip',
-          'devtrac_feature' => 'devtrac_feature',
+          '1' => 'devtrac_feature',
         ),
         '#status' => 'default',
         '#conditions' => array(
           '0' => array(
-            '#type' => 'condition',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-                'node_unchanged' => 'node_unchanged',
-              ),
-            ),
-            '#name' => 'content_rules_field_changed',
+            '#weight' => 0,
             '#info' => array(
               'label' => 'Saved content\'s field \'field_fieldtrip_status\' has been changed',
               'arguments' => array(
@@ -650,9 +642,32 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#weight' => 0,
+            '#name' => 'content_rules_field_changed',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+                'node_unchanged' => 'node_unchanged',
+              ),
+            ),
+            '#type' => 'condition',
           ),
           '1' => array(
+            '#weight' => 0,
+            '#type' => 'condition',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+              'value' => array(
+                '0' => array(
+                  'value' => 'Approved',
+                ),
+              ),
+              'code' => '',
+            ),
+            '#name' => 'content_rules_field_has_value',
             '#info' => array(
               'label' => 'Status = Approved',
               'label callback' => FALSE,
@@ -668,34 +683,11 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#name' => 'content_rules_field_has_value',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-              ),
-              'value' => array(
-                '0' => array(
-                  'value' => 'Approved',
-                ),
-              ),
-              'code' => '',
-            ),
-            '#type' => 'condition',
-            '#weight' => 0,
           ),
         ),
         '#actions' => array(
           '0' => array(
-            '#type' => 'action',
-            '#settings' => array(
-              'type' => 'user_profile',
-              '#argument map' => array(
-                'user' => 'author',
-                'profile_node' => 'author_profile_node',
-              ),
-            ),
-            '#name' => 'content_profile_action_load',
+            '#weight' => -9,
             '#info' => array(
               'label' => 'Load content\'s author\'s User Profile',
               'arguments' => array(
@@ -713,10 +705,26 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'Content Profile',
             ),
-            '#weight' => -9,
+            '#name' => 'content_profile_action_load',
+            '#settings' => array(
+              'type' => 'user_profile',
+              '#argument map' => array(
+                'user' => 'author',
+                'profile_node' => 'author_profile_node',
+              ),
+            ),
+            '#type' => 'action',
           ),
           '1' => array(
-            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'field' => 'field_user_superior',
+              '#argument map' => array(
+                'node' => 'author_profile_node',
+                'referenced_user' => 'author_manager',
+              ),
+            ),
+            '#name' => 'userreference_rules_action_load',
             '#info' => array(
               'label' => 'Load Manager',
               'label callback' => FALSE,
@@ -735,18 +743,15 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#name' => 'userreference_rules_action_load',
-            '#settings' => array(
-              'field' => 'field_user_superior',
-              '#argument map' => array(
-                'node' => 'author_profile_node',
-                'referenced_user' => 'author_manager',
-              ),
-            ),
-            '#type' => 'action',
+            '#weight' => 0,
           ),
           '2' => array(
-            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'message' => 'You are not the manager. You can not approve this item.',
+              'error' => 1,
+            ),
+            '#name' => 'rules_action_drupal_message',
             '#info' => array(
               'label' => 'Show "You are not a manager"',
               'label callback' => FALSE,
@@ -755,15 +760,23 @@ function devtrac_feature_rules_defaults() {
                 '0' => 'message',
               ),
             ),
-            '#name' => 'rules_action_drupal_message',
-            '#settings' => array(
-              'message' => 'You are not the manager. You can not approve this item.',
-              'error' => 1,
-            ),
-            '#type' => 'action',
+            '#weight' => 0,
           ),
           '3' => array(
-            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+              'value' => array(
+                '0' => array(
+                  'value' => 'Submitted',
+                ),
+              ),
+              'code' => '',
+            ),
+            '#name' => 'content_rules_action_populate_field',
             '#info' => array(
               'label' => 'Populate saved content\'s field \'field_fieldtrip_status\'',
               'arguments' => array(
@@ -778,20 +791,7 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#name' => 'content_rules_action_populate_field',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-              ),
-              'value' => array(
-                '0' => array(
-                  'value' => 'Submitted',
-                ),
-              ),
-              'code' => '',
-            ),
-            '#type' => 'action',
+            '#weight' => 0,
           ),
         ),
         '#version' => 6003,
@@ -800,16 +800,24 @@ function devtrac_feature_rules_defaults() {
         '#type' => 'rule',
         '#set' => 'event_node_presave',
         '#label' => 'Approve Field Trip by Manager',
-        '#active' => 1,
+        '#active' => 0,
         '#weight' => '0',
         '#categories' => array(
           '0' => 'Field Trip',
-          'devtrac_feature' => 'devtrac_feature',
+          '1' => 'devtrac_feature',
         ),
         '#status' => 'default',
         '#conditions' => array(
           '0' => array(
-            '#weight' => 0,
+            '#type' => 'condition',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+                'node_unchanged' => 'node_unchanged',
+              ),
+            ),
+            '#name' => 'content_rules_field_changed',
             '#info' => array(
               'label' => 'Saved content\'s field \'field_fieldtrip_status\' has been changed',
               'arguments' => array(
@@ -824,32 +832,9 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#name' => 'content_rules_field_changed',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-                'node_unchanged' => 'node_unchanged',
-              ),
-            ),
-            '#type' => 'condition',
+            '#weight' => 0,
           ),
           '1' => array(
-            '#weight' => 0,
-            '#type' => 'condition',
-            '#settings' => array(
-              'field_name' => 'field_fieldtrip_status',
-              '#argument map' => array(
-                'node' => 'node',
-              ),
-              'value' => array(
-                '0' => array(
-                  'value' => 'Approved',
-                ),
-              ),
-              'code' => '',
-            ),
-            '#name' => 'content_rules_field_has_value',
             '#info' => array(
               'label' => 'Status = Approved',
               'label callback' => FALSE,
@@ -865,11 +850,34 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
+            '#name' => 'content_rules_field_has_value',
+            '#settings' => array(
+              'field_name' => 'field_fieldtrip_status',
+              '#argument map' => array(
+                'node' => 'node',
+              ),
+              'value' => array(
+                '0' => array(
+                  'value' => 'Approved',
+                ),
+              ),
+              'code' => '',
+            ),
+            '#type' => 'condition',
+            '#weight' => 0,
           ),
         ),
         '#actions' => array(
           '0' => array(
-            '#weight' => -9,
+            '#type' => 'action',
+            '#settings' => array(
+              'type' => 'user_profile',
+              '#argument map' => array(
+                'user' => 'author',
+                'profile_node' => 'author_profile_node',
+              ),
+            ),
+            '#name' => 'content_profile_action_load',
             '#info' => array(
               'label' => 'Load content\'s author\'s User Profile',
               'arguments' => array(
@@ -887,26 +895,10 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'Content Profile',
             ),
-            '#name' => 'content_profile_action_load',
-            '#settings' => array(
-              'type' => 'user_profile',
-              '#argument map' => array(
-                'user' => 'author',
-                'profile_node' => 'author_profile_node',
-              ),
-            ),
-            '#type' => 'action',
+            '#weight' => -9,
           ),
           '1' => array(
-            '#type' => 'action',
-            '#settings' => array(
-              'field' => 'field_user_superior',
-              '#argument map' => array(
-                'node' => 'author_profile_node',
-                'referenced_user' => 'author_manager',
-              ),
-            ),
-            '#name' => 'userreference_rules_action_load',
+            '#weight' => 0,
             '#info' => array(
               'label' => 'Load Manager',
               'label callback' => FALSE,
@@ -925,16 +917,17 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'CCK',
             ),
-            '#weight' => 0,
+            '#name' => 'userreference_rules_action_load',
+            '#settings' => array(
+              'field' => 'field_user_superior',
+              '#argument map' => array(
+                'node' => 'author_profile_node',
+                'referenced_user' => 'author_manager',
+              ),
+            ),
+            '#type' => 'action',
           ),
           '2' => array(
-            '#weight' => 0,
-            '#type' => 'action',
-            '#settings' => array(
-              'message' => 'The Field Trip Item was Approved',
-              'error' => 0,
-            ),
-            '#name' => 'rules_action_drupal_message',
             '#info' => array(
               'label' => 'Show "The Field Trip Item was Approved"',
               'label callback' => FALSE,
@@ -943,8 +936,27 @@ function devtrac_feature_rules_defaults() {
                 '0' => 'message',
               ),
             ),
+            '#name' => 'rules_action_drupal_message',
+            '#settings' => array(
+              'message' => 'The Field Trip Item was Approved',
+              'error' => 0,
+            ),
+            '#type' => 'action',
+            '#weight' => 0,
           ),
           '3' => array(
+            '#weight' => 0,
+            '#type' => 'action',
+            '#settings' => array(
+              'ops' => array(
+                'update' => 'update',
+              ),
+              '#argument map' => array(
+                'node' => 'node',
+                'user' => 'author_manager',
+              ),
+            ),
+            '#name' => 'content_access_action_acl_revoke_access',
             '#info' => array(
               'label' => 'Revoke access for Author Manager.',
               'arguments' => array(
@@ -959,18 +971,6 @@ function devtrac_feature_rules_defaults() {
               ),
               'module' => 'Content access',
             ),
-            '#name' => 'content_access_action_acl_revoke_access',
-            '#settings' => array(
-              'ops' => array(
-                'update' => 'update',
-              ),
-              '#argument map' => array(
-                'node' => 'node',
-                'user' => 'author_manager',
-              ),
-            ),
-            '#type' => 'action',
-            '#weight' => 0,
           ),
         ),
         '#version' => 6003,

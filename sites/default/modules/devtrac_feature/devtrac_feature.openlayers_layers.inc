@@ -5,6 +5,7 @@
  */
 function devtrac_feature_openlayers_layers() {
   $export = array();
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -29,8 +30,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['UgandaHealthWMS'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -55,8 +56,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['u-map-it-health'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -80,8 +81,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['u-map-it-schools'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -106,8 +107,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['u-map-it-schoolsWMS'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -131,8 +132,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['u-map-it-wash'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -157,8 +158,8 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['u-map-it-washWMS'] = $openlayers_layers;
+
   $openlayers_layers = new stdClass;
   $openlayers_layers->disabled = FALSE; /* Edit this to true to make a default openlayers_layers disabled initially */
   $openlayers_layers->api_version = 1;
@@ -183,7 +184,7 @@ function devtrac_feature_openlayers_layers() {
     ),
     'layer_type' => 'openlayers_layer_type_wms',
   );
-
   $export['uganda_basemap'] = $openlayers_layers;
+
   return $export;
 }

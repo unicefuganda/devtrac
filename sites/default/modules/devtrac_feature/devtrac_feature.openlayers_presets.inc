@@ -5,7 +5,6 @@
  */
 function devtrac_feature_openlayers_presets() {
   $export = array();
-
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -81,8 +80,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['field_trip'] = $openlayers_presets;
 
+  $export['field_trip'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -142,8 +141,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default_select',
     ),
   );
-  $export['geocoder_map'] = $openlayers_presets;
 
+  $export['geocoder_map'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -241,8 +240,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'placetype',
     ),
   );
-  $export['places'] = $openlayers_presets;
 
+  $export['places'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -314,8 +313,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['report_items_locations'] = $openlayers_presets;
 
+  $export['report_items_locations'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -382,8 +381,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['report_items_report_items'] = $openlayers_presets;
 
+  $export['report_items_report_items'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -457,8 +456,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['side_block_map'] = $openlayers_presets;
 
+  $export['side_block_map'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -512,8 +511,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['singlecolumnblock'] = $openlayers_presets;
 
+  $export['singlecolumnblock'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -605,8 +604,8 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'placetype',
     ),
   );
-  $export['uganda_map'] = $openlayers_presets;
 
+  $export['uganda_map'] = $openlayers_presets;
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -687,7 +686,7 @@ function devtrac_feature_openlayers_presets() {
       'temporary' => 'default',
     ),
   );
-  $export['user_trip_reports'] = $openlayers_presets;
 
+  $export['user_trip_reports'] = $openlayers_presets;
   return $export;
 }

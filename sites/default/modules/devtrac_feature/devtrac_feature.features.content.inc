@@ -2121,9 +2121,6 @@ return array(
     'referenceable_roles' => array(
       '2' => 0,
       '3' => 0,
-      '4' => FALSE,
-      '5' => FALSE,
-      '6' => FALSE,
     ),
     'referenceable_status' => '1',
     'advanced_view' => '--',

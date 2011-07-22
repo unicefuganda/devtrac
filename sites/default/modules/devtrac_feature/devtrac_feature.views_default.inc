@@ -11068,7 +11068,7 @@ if (arg(1) == \'me\') {
 //  } else {
 //    $uid = arg(1);
 //  }
-//  return l(\'All My Team Action Items\', \'user/\'. $uid . \'/actionitems/myteam\');
+  return l(\'All My Team Action Items\', \'user/\'. arg(1) . \'/actionitems/myteam\');
 //} 
 ?>');
   $handler->override_option('footer_format', '3');
@@ -11076,9 +11076,6 @@ if (arg(1) == \'me\') {
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', 'mini');
-  $handler->override_option('use_more', 1);
-  $handler->override_option('use_more_always', 1);
-  $handler->override_option('use_more_text', 'All my Team Action Items');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'All Action Items on Node Block', 'block_3');
@@ -14398,7 +14395,7 @@ if (arg(1) == \'me\') {
   $handler = $view->new_display('page', 'My Teams Action Items Page', 'page_5');
   $handler->override_option('arguments', array(
     'field_actionitem_responsible_uid' => array(
-      'default_action' => 'default',
+      'default_action' => 'empty',
       'style_plugin' => 'default_summary',
       'style_options' => array(),
       'wildcard' => 'all',
@@ -14419,6 +14416,8 @@ if (arg(1) == \'me\') {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
@@ -14426,6 +14425,8 @@ if (arg(1) == \'me\') {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'relationship' => 'none',
       'default_options_div_prefix' => '',
@@ -14433,20 +14434,23 @@ if (arg(1) == \'me\') {
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
         'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+        'testype' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '6' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
         '1' => 0,
@@ -14454,8 +14458,23 @@ if (arg(1) == \'me\') {
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
       'validate_user_restrict_roles' => 0,
-      'validate_argument_php' => 'watchdog("reinier", "just checking" . $argument);
-$handler->argument = "11";
+      'validate_argument_php' => 'if ((arg(0) == \'user\') && (is_numeric(arg(1)) | arg(1) == \'me\')) {
+
+  if (arg(1) == \'me\') {
+    global $user;
+    $uid = $user->uid;
+  } else {
+    $uid = arg(1);
+  }
+  $sql = \'SELECT n.uid FROM {content_type_user_profile} as profile, {node} as n WHERE profile.nid = n.nid AND profile.field_user_superior_uid = %d\';
+  $result = db_query(db_rewrite_sql($sql), $uid);
+
+  while ($data = db_fetch_object($result)) {
+    $uids .= "+" .$data->uid;
+  } 
+  $uids = trim($uids, "+");
+  $handler->argument = $uids;
+}
 return TRUE;',
       'me_validate_user_restrict_roles' => 0,
       'override' => array(

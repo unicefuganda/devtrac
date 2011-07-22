@@ -5,6 +5,7 @@
  */
 function devtrac_feature_context_default_contexts() {
   $export = array();
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -41,8 +42,8 @@ function devtrac_feature_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('Blocks that are active on all pages');
-
   $export['all_pages'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -87,8 +88,8 @@ function devtrac_feature_context_default_contexts() {
   // Translatables
   // Included for use with string extractors like potx.
   t('The anonymous homepage');
-
   $export['context_ui-section-homepage'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -136,8 +137,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Taxonomy Term items for Navigation');
   t('taxonomy');
-
   $export['context_ui-section-navigation'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -178,8 +179,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Blocks on Action Items');
   t('nodetype');
-
   $export['node-view-actionitem'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -268,8 +269,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Show on Field Trip Report Items');
   t('nodetype');
-
   $export['node-view-ftreportitem'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -305,8 +306,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Context for Pages');
   t('nodetype');
-
   $export['node-view-page'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -377,8 +378,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('To be shown on Place pages');
   t('nodetype');
-
   $export['node-view-place'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -461,8 +462,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('Field Trip page');
   t('nodetype');
-
   $export['node_view_field_trip'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -506,8 +507,8 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('The view(s) to find places');
   t('taxonomy');
-
   $export['places'] = $context;
+
   $context = new stdClass;
   $context->disabled = FALSE; /* Edit this to true to make a default context disabled initially */
   $context->api_version = 3;
@@ -600,7 +601,7 @@ function devtrac_feature_context_default_contexts() {
   // Included for use with string extractors like potx.
   t('A User\'s Home Page');
   t('user');
-
   $export['user_view_my_home_page'] = $context;
+
   return $export;
 }

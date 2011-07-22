@@ -562,9 +562,17 @@ function devtrack_module_firejson($jsonarray) {
 
 
 function devtrack_module_init() {
+  global $user;
+  // Suppress the admin menu on the mobile website.
   if (devtrack_module_ismobile()) {
-    admin_menu_suppress(); // Suppress the admin menu on the mobile website.
+    admin_menu_suppress(); 
   }
+  // redirect the /user page to the user profile page
+  $arg1 = arg(1);
+  if ((arg(0) == 'user') && !isset($arg1) && $user->uid > 0) {
+    drupal_goto('user/me');
+  }
+  
 }
 
 function devtrack_module_ismobile() {

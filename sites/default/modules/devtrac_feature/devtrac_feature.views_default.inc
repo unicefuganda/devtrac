@@ -1787,6 +1787,8 @@ function devtrac_feature_views_default_views() {
     'type' => 'none',
   ));
   $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('footer_format', '1');
+  $handler->override_option('footer_empty', 1);
   $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
@@ -2090,8 +2092,6 @@ function devtrac_feature_views_default_views() {
   ));
   $handler->override_option('filters', array());
   $handler->override_option('title', 'Report Items');
-  $handler->override_option('footer_format', '1');
-  $handler->override_option('footer_empty', 1);
   $handler->override_option('empty', 'There are no trip report items for this field trip yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
@@ -4614,7 +4614,6 @@ else {
   }
 ?>');
   $handler->override_option('footer_format', '3');
-  $handler->override_option('footer_empty', 1);
   $handler->override_option('items_per_page', 0);
   $handler->override_option('distinct', 1);
   $handler->override_option('style_options', array(
@@ -19764,6 +19763,9 @@ return TRUE;',
     'type' => 'none',
   ));
   $handler->override_option('title', 'My Picture');
+  $handler->override_option('footer_format', '1');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('empty_format', '1');
   $handler = $view->new_display('block', 'My Picture', 'block_1');
   $handler->override_option('fields', array(
     'picture' => array(
@@ -19807,7 +19809,6 @@ return TRUE;',
   ));
   $handler->override_option('title', '');
   $handler->override_option('empty', 'No Picture Uploaded Yet.');
-  $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 1);
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', '-1');
@@ -20006,7 +20007,6 @@ if ($user->uid == arg(1)) {
 
 ?>');
   $handler->override_option('footer_format', '3');
-  $handler->override_option('footer_empty', 0);
   $handler->override_option('empty', '<?php
 if (arg(0) != \'user\' | !is_numeric(arg(1))) {
   return \'\';
@@ -20202,7 +20202,6 @@ if ($user->uid == arg(1)) {
   ));
   $handler->override_option('title', 'My Team');
   $handler->override_option('empty', 'No Team Yet.');
-  $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('style_plugin', 'table');
@@ -20557,7 +20556,6 @@ if ($user->uid == arg(1)) {
 
 ?>');
   $handler->override_option('footer_format', '3');
-  $handler->override_option('footer_empty', 0);
   $handler->override_option('empty', '<?php
 global $user;
 
@@ -20788,9 +20786,6 @@ if ($user->uid == arg(1)) {
     ),
   ));
   $handler->override_option('title', '');
-  $handler->override_option('footer_format', '1');
-  $handler->override_option('footer_empty', 0);
-  $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 1);
   $handler->override_option('use_pager', 'mini');

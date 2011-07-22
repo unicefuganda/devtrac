@@ -5,6 +5,7 @@
  */
 function devtrac_feature_openlayers_styles() {
   $export = array();
+
   $openlayers_styles = new stdClass;
   $openlayers_styles->disabled = FALSE; /* Edit this to true to make a default openlayers_styles disabled initially */
   $openlayers_styles->api_version = 1;
@@ -24,7 +25,7 @@ function devtrac_feature_openlayers_styles() {
     'graphicOpacity' => 1,
     'labelAlign' => 'cm',
   );
-
   $export['placetype'] = $openlayers_styles;
+
   return $export;
 }

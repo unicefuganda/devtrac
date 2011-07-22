@@ -686,10 +686,9 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'view field_place_email',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'unicef user',
-      '4' => 'unicef user (Mobile)',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
     ),
   );
 
@@ -710,10 +709,9 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'view field_place_phone',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'unicef user',
-      '4' => 'unicef user (Mobile)',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
     ),
   );
 
@@ -722,10 +720,9 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'view field_place_responsible_person',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'unicef user',
-      '4' => 'unicef user (Mobile)',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
     ),
   );
 
@@ -767,10 +764,9 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'view field_place_website',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'anonymous user',
-      '2' => 'authenticated user',
-      '3' => 'unicef user',
-      '4' => 'unicef user (Mobile)',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
     ),
   );
 

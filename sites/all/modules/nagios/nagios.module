@@ -339,6 +339,14 @@ function nagios_check_requirements() {
   $severity = REQUIREMENT_OK;
   foreach ($reqs as $key => $requirement) {
     if (isset($requirement['severity'])) {
+      // Ignore update_core warning if update cache has expired and nagios_cron_duration has not passed by yet
+      if ($key == 'update_core' && $requirement['severity'] == REQUIREMENT_WARNING && $requirement['reason'] == UPDATE_UNKNOWN) {
+        $grace = 60 * variable_get('nagios_cron_duration', 60);
+        $expire = db_result(db_query("SELECT expire FROM {cache_update} WHERE cid = '%s'", 'update_available_releases'));
+        if ($expire && time() < ($expire + $grace)) {
+          continue;
+        }
+      }
       if ($requirement['severity'] > $severity) {
         $severity = $requirement['severity'];
         $desc = $requirement['title'];
@@ -484,6 +492,25 @@ function nagios_check_modules() {
     'key' => 'MOD',
     'data' => $data,
   );
+}
+
+/**
+ * Implementation of hook_nagios_checks().
+ */
+function nagios_nagios_checks() {
+  return nagios_functions();
+}
+
+/**
+ * Implementation of drush hook_nagios_check().
+ */
+function nagios_nagios_check($function) {
+  // We don't bother to check if the function has been enabled by the user.
+  // Since this runs via drush, web security is not an issue.
+  $func = 'nagios_check_' . $function;
+  $result = $func();
+  $status[$result['key']] = $result['data'];
+  return $status;
 }
 
 function nagios_check_themes() {

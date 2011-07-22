@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_google_charts.class.inc,v 1.1.2.13 2010/11/18 01:52:04 rsevero Exp $
 
 /**
  * @file
@@ -18,12 +17,15 @@ define('CHARTS_GRAPHS_GOOGLE_CHARTS_CUSTOM_AXIS_LABELS', 'chxl');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_CHART_TYPE', 'cht');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_MARKER_STYLE', 'chm');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_CHART_TITLE', 'chtt');
+define('CHARTS_GRAPHS_GOOGLE_CHARTS_CHART_TITLE_COLOUR', 'chts');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_CHART_SIZE', 'chs');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_SERIES_COLOUR', 'chco');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_LABEL_POSITION', 'chxp');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_BARS_WIDTH_SPACING', 'chbh');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_LEGEND', 'chdl');
+define('CHARTS_GRAPHS_GOOGLE_CHARTS_LEGEND_POSITION', 'chdlp');
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_BACKGROUND_COLOUR', 'chf');
+define('CHARTS_GRAPHS_GOOGLE_CHARTS_PIE_LABELS', 'chl');
 
 define('CHARTS_GRAPHS_GOOGLE_CHARTS_COLOUR_DEFINITION_LENGTH', 6);
 
@@ -108,8 +110,11 @@ class ChartsGraphsGoogleCharts extends ChartsGraphsCanvas {
     $chds = '';
     $chd = array();
     $chdl = array();
+    $is_pie = (strpos($this->type, 'pie') !== FALSE);
     foreach ($series as $serie_name => $serie) {
-      $chdl[] = $serie_name;
+      if (!$is_pie) {
+        $chdl[] = $serie_name;
+      }
       $min_serie = 0;
       $max_serie = reset($serie);
       $serie_as_string = '';
@@ -134,59 +139,11 @@ class ChartsGraphsGoogleCharts extends ChartsGraphsCanvas {
         }
       }
 
-      /**
-       * Applying user defined min and max y axis values.
-       */
-      if (isset($this->y_min)) {
-        $min_serie = $this->y_min;
-        $min_y = $this->y_min;
-      }
-      if (isset($this->y_max)) {
-        $max_serie = $this->y_max;
-        $max_y = $this->y_max;
-      }
-
       if (strlen($serie_as_string)) {
         $serie_as_string = substr($serie_as_string, 1);
       }
       $chd[] = $serie_as_string;
-      if (!$is_stacked) {
-        $chds .= ',' . drupal_urlencode($min_serie) . ',' . drupal_urlencode($max_serie);
-      }
     }
-    if ($is_stacked) {
-      $chds = drupal_urlencode($min_y) . ',' . drupal_urlencode($max_y);
-    }
-    else {
-      if (strlen($chds)) {
-        $chds = substr($chds, 1);
-      }
-    }
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_DATA_PARAMETER] = 
-      CHARTS_GRAPHS_GOOGLE_CHARTS_DATA_STARTER . implode('|', $chd);
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_MIN_MAX_PER_SERIE_PARAMETER] = $chds;
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_VISIBLE_AXIS_PARAMETER] = 'x,y';
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_LEGEND] = implode('|', $chdl);
-    if (strpos($this->type, 'side') === FALSE) {
-      $scale_axis_identifier = 1;
-      $text_labels_axis_identifier = 0;
-      $y_legend_axis = ',y';
-    }
-    else {
-      $scale_axis_identifier = 0;
-      $text_labels_axis_identifier = 1;
-      $y_legend_axis = ',x';
-    }
-    if ($this->y_legend) {
-      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_VISIBLE_AXIS_PARAMETER] .= $y_legend_axis;
-      $y_legend = '2:|' . drupal_urlencode($this->y_legend) . '|';
-      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_LABEL_POSITION] = '2,50';
-    }
-    else {
-      $y_legend = '';
-    }
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_CUSTOM_AXIS_LABELS] =
-      $y_legend . $text_labels_axis_identifier . ':' . $this->_get_encoded_text_labels();
 
     /**
      * Applying user defined min and max y axis values.
@@ -197,14 +154,61 @@ class ChartsGraphsGoogleCharts extends ChartsGraphsCanvas {
     if (isset($this->y_max)) {
       $max_y = $this->y_max;
     }
-    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_AXIS_RANGE_PARAMETER] =
-      $scale_axis_identifier . ',' . drupal_urlencode($min_y) . ',' .
-      drupal_urlencode($max_y);
-    /**
-     * Applying user defined step for y axis values.
-     */
-    if (isset($this->y_step)) {
-      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_AXIS_RANGE_PARAMETER] .= ',' . $this->y_step;
+
+    $chds = drupal_urlencode($min_y) . ',' . drupal_urlencode($max_y);
+    if ($is_pie) {
+      $chdl = $this->x_labels;
+      $chl = reset($this->series);
+    }
+    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_DATA_PARAMETER] =
+      CHARTS_GRAPHS_GOOGLE_CHARTS_DATA_STARTER . implode('|', $chd);
+    $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_LEGEND] = implode('|', $chdl);
+    if ($is_pie) {
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_PIE_LABELS] =
+        implode('|', $chl);
+    }
+    else {
+      if (strpos($this->type, 'side') === FALSE) {
+        $scale_axis_identifier = 1;
+        $text_labels_axis_identifier = 0;
+        $y_legend_axis = ',y';
+      }
+      else {
+        $scale_axis_identifier = 0;
+        $text_labels_axis_identifier = 1;
+        $y_legend_axis = ',x';
+      }
+      if ($this->y_legend) {
+        $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_VISIBLE_AXIS_PARAMETER] .= $y_legend_axis;
+        $y_legend = '2:|' . drupal_urlencode($this->y_legend) . '|';
+        $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_LABEL_POSITION] = '2,50';
+      }
+      else {
+        $y_legend = '';
+      }
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_CUSTOM_AXIS_LABELS] =
+        $y_legend . $text_labels_axis_identifier . ':' . $this->_get_encoded_text_labels();
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_MIN_MAX_PER_SERIE_PARAMETER] = $chds;
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_VISIBLE_AXIS_PARAMETER] = 'x,y';
+
+      /**
+       * Applying user defined min and max y axis values.
+       */
+      if (isset($this->y_min)) {
+        $min_y = $this->y_min;
+      }
+      if (isset($this->y_max)) {
+        $max_y = $this->y_max;
+      }
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_AXIS_RANGE_PARAMETER] =
+        $scale_axis_identifier . ',' . drupal_urlencode($min_y) . ',' .
+        drupal_urlencode($max_y);
+      /**
+       * Applying user defined step for y axis values.
+       */
+      if (isset($this->y_step)) {
+        $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_AXIS_RANGE_PARAMETER] .= ',' . $this->y_step;
+      }
     }
 
     $colour_count = $this->colour_count_series ? count($series) : count(reset($series));
@@ -227,6 +231,32 @@ class ChartsGraphsGoogleCharts extends ChartsGraphsCanvas {
         $i++;
       }
       $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_MARKER_STYLE] = implode('|', $fill_colour);
+    }
+
+    if ($this->legend_pos) {
+      switch ($this->legend_pos) {
+        case 'top':
+          $chdlp = 't';
+          break;
+        case 'bottom':
+          $chdlp = 'b';
+          break;
+        case 'top_vert':
+          $chdlp = 'tv';
+          break;
+        case 'bottom_vert':
+          $chdlp = 'bv';
+          break;
+        case 'left':
+          $chdlp = 'l';
+          break;
+        default:
+          $chdlp = 'r';
+      }
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_LEGEND_POSITION] = $chdlp;
+    }
+    if ($this->title_colour) {
+      $this->parameters_to_send[CHARTS_GRAPHS_GOOGLE_CHARTS_CHART_TITLE_COLOUR] = $this->title_colour;
     }
   }
 

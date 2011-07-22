@@ -1,7 +1,39 @@
-; $Id: CHANGELOG.txt,v 1.1.2.30.2.67 2010/11/18 01:52:04 rsevero Exp $
+Charts and Graphs 6.x-2.7, 2011-05-10
+---------------------------
+task by rsevero: Updating CHANGELOG.txt for release.
+feature #1000718 by roborat and rsevero: Implemented title colour property for 
+  Google Charts.
+task #1133818 by rsevero: Updated amCharts installation instructions.
+feature #996690 by hish and rsevero: Implemented support for several different 
+  chart types on the same graph.
+feature #999460 by roborat and rsevero: Implemented legend position parameter 
+  for Google Charts.
+bug #992142 by roborat, dsnopek rsevero: Fixed scaling in Google Charts with 
+  several series.
+feature #996448 by justafish and rsevero: Created new general property "theme",
+  implemented it on the Bluff library, documented it on all charting libraries
+  and created new provider "themes" property to list all available themes for
+  each charting library.
+bug #957672 by rsevero: Implemented new 'orientation' parameter for Bluff 
+  library with which the user can force rows or columns to be mapped as data 
+  series.
+bug #1024734 by rsevero: Created INSTALL.TXT file for Open Flash Chart 2.
+bug #1024734 by btbroot and rsevero: Included bluff-src.js file.
+bug #1024734 by btbroot and rsevero: Removed open-flash-chart.swf file from
+  release as it's LGPL. Fixed Open Flash Chart 2 library name across the code.
+bug #1024738 by btbroot and rsevero: Removed .cvsignore files.
+bug #1024744 by btbroot and rsevero: Removed excessive license file from Bluff
+  directory.
+bug #1024730 by btbroot and rsevero: Removed excanvas.js as it's not GPL. Fixed 
+  Bluff's installation instructions also.
+bug #1003432 by rsevero: Fixed pie charts across graphing libraries.
+bug #1006054 by rsevero: Fixed amCharts pie charts when x_labels array keys
+  aren't 0, 1, 2 etc.
+bug #1006058 by rsevero: Fixed Open Flash pie charts when x_labels array keys
+  aren't 0, 1, 2 etc.
 
 
-Charts and Graphs 6.x-2.6, xxxx-xx-xx
+Charts and Graphs 6.x-2.6, 2010-11-17
 ---------------------------
 bug #943062 by mike234 and rsevero: Fixed data labels order in Google Charts
   side bar graph.

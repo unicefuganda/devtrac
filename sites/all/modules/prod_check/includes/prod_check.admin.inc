@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.admin.inc,v 1.7.2.2 2011/01/27 11:20:13 malc0mn Exp $
 
 /**
  * Build status page.
@@ -66,6 +65,16 @@ function prod_check_settings_form(&$form_state) {
     '#collapsed' => TRUE,
   );
 
+  // Cache full count threshold
+  $form['prod_check_apc']['prod_check_apc_expunge'] = array(
+    '#type' => 'textfield',
+    '#title' => t('APC cache full count threshold'),
+    '#default_value' => variable_get('prod_check_apc_expunge', 0),
+    '#size' => 2,
+    '#description' => t('Issue a critical error when the cache full count is greater than the number entered here.'),
+    '#required' => FALSE,
+  );
+  
   // APC userd.
   $form['prod_check_apc']['prod_check_apcuser'] = array(
     '#type' => 'textfield',
@@ -194,6 +203,35 @@ function prod_check_settings_form(&$form_state) {
         }
       }
     }
+
+    $form['prod_check_nagios']['nagios']['settings']['prod_check_nagios_takeover'] = array(
+      '#type' => 'textfield',
+      '#title' =>   t('Custom Nagios path'),
+      '#description' => t('If you wish to use a different path than the default /nagios path enabled by the Nagios module, then enter the desired path here. Leave blank to do disable the takover.'),
+      '#default_value' => variable_get('prod_check_nagios_takeover', ''),
+      '#required' => FALSE,
+    );
+
+    $form['prod_check_nagios']['nagios']['settings']['prod_check_nagios_unique'] = array(
+      '#type' => 'select',
+      '#title' =>   t('When Nagios unique ID not recieved'),
+      '#description' => t('Select what should happen when the Nagios unique ID is not recieved by the nagios page.'),
+      '#options' => array(
+        'default' => t('default Nagios module behavior'),
+        '404' => t('throw a 404 error'),
+        'home' => t('redirect to homepege'),
+      ),
+      '#default_value' => variable_get('prod_check_nagios_unique', 'default'),
+      '#required' => FALSE,
+    );
+
+    $form['prod_check_nagios']['nagios']['settings']['prod_check_nagios_verbose'] = array(
+      '#type' => 'checkbox',
+      '#title' =>   t('Show verbose status info'),
+      '#description' => t('Tick this box if you want to see detailed information about every check. Useful for debugging or first setup, but <strong>not recommended for production use!</strong>'),
+      '#default_value' => variable_get('prod_check_nagios_verbose', 0),
+      '#required' => FALSE,
+    );
   }
 
   // Submit buttons.
@@ -354,6 +392,10 @@ function prod_check_settings_form_validate($form, &$form_state) {
     }
   }
 
+  if (!is_numeric($form_state['values']['prod_check_apc_expunge'])) {
+    form_set_error('prod_check_apc_expunge', t('Cache full count threshold should be numeric!'));
+  }
+
   if ($form_state['values']['prod_check_enable_nagios']) {
     $checks = array();
     foreach ($form_state['values']['monitor_settings'] as $set => $data) {
@@ -365,6 +407,15 @@ function prod_check_settings_form_validate($form, &$form_state) {
     }
     if (empty($checks)) {
       form_set_error('monitor_settings', t('When enabling Nagios support, you <strong>must</strong> tick at least one of the checkboxes!'));
+    }
+    if (!empty($form_state['values']['prod_check_nagios_takeover'])) {
+      // Path can only contain alphanumeric chars, dash and underscore.
+      if (!preg_match('/^[a-zA-Z0-9\-_]*$/', $form_state['values']['prod_check_nagios_takeover'])) {
+        form_set_error('prod_check_nagios_takeover', t('The takover path can only contain alphanumeric characters, dash and underscore.'));
+      }
+      else if (strtolower($form_state['values']['prod_check_nagios_takeover']) == 'nagios') {
+        form_set_error('prod_check_nagios_takeover', t('The path should be different than the default Nagios module path!'));
+      }
     }
   }
 }
@@ -380,6 +431,7 @@ function prod_check_settings_form_submit($form, &$form_state) {
   switch ($form_state['values']['op']) {
     case t('Save configuration'):
       variable_set('prod_check_sitemail', $form_state['values']['prod_check_sitemail']);
+      variable_set('prod_check_apc_expunge', $form_state['values']['prod_check_apc_expunge']);
       variable_set('prod_check_apcuser', $form_state['values']['prod_check_apcuser']);
       if (!empty($form_state['values']['prod_check_apcpass'])) {
         variable_set('prod_check_apcpass', $form_state['values']['prod_check_apcpass']);
@@ -411,6 +463,14 @@ function prod_check_settings_form_submit($form, &$form_state) {
         // Enable.
         variable_set('prod_check_enable_nagios', $form_state['values']['prod_check_enable_nagios']);
         variable_set('prod_check_nagios_checks', $checks);
+        // Check to see if we need to do a menu_rebuild.
+        if (variable_get('prod_check_nagios_takeover', '') != $form_state['values']['prod_check_nagios_takeover'] ||
+            variable_get('prod_check_nagios_unique', 'default') != $form_state['values']['prod_check_nagios_unique']) {
+          variable_set('prod_check_nagios_takeover', $form_state['values']['prod_check_nagios_takeover']);
+          variable_set('prod_check_nagios_unique', $form_state['values']['prod_check_nagios_unique']);
+          menu_rebuild();
+        }
+        variable_set('prod_check_nagios_verbose', $form_state['values']['prod_check_nagios_verbose']);
       }
       else {
         // Disable.

@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs.module,v 1.1.2.15.2.12 2010/11/15 13:22:03 rsevero Exp $
 
 /**
  * @File
@@ -147,11 +146,11 @@ function charts_graphs_test($submodule = NULL, $type = 'bar', $title = 'The Titl
 
   $canvas = charts_graphs_get_graph($submodule);
 
-  if ((strpos($type, 'pie') !== FALSE) || (strpos($type, 'donut') !== FALSE)) {
-    $series = array(
-      reset(array_keys($series)) => reset(array_values($series)),
-    );
-  }
+//  if ((strpos($type, 'pie') !== FALSE) || (strpos($type, 'donut') !== FALSE)) {
+//    $series = array(
+//      reset(array_keys($series)) => reset(array_values($series)),
+//    );
+//  }
 
   $canvas->title = check_plain($title);
   $canvas->width = 500;

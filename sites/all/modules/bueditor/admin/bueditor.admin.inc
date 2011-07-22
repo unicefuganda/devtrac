@@ -1,10 +1,11 @@
 <?php
-// $Id: bueditor.admin.inc,v 1.10.2.13 2010/05/21 22:24:24 ufku Exp $
 
 /**
  * @file
  * Serves administration pages of BUEditor.
  */
+
+include_once './' . drupal_get_path('module', 'bueditor') . '/bueditor.inc';
 
 /**
  * Admin main page.
@@ -794,7 +795,7 @@ function bueditor_exec_editor_code($code) {
  */
 function bueditor_write_editor($editor, $buttons = array()) {
   if (isset($editor->spriteon) && $editor->spriteon) {
-    include_once(drupal_get_path('module', 'bueditor') . '/admin/bueditor.sprite.inc');
+    include_once './' . drupal_get_path('module', 'bueditor') . '/admin/bueditor.sprite.inc';
     $editor->spritename = bueditor_sprite($editor, $buttons);
   }
   if (drupal_write_record('bueditor_editors', $editor, bueditor_isupdate($editor, 'eid'))) {
@@ -827,13 +828,12 @@ function bueditor_sorted_roles() {
     $broles = variable_get('bueditor_roles', array());
     $broles[DRUPAL_ANONYMOUS_RID]['weight'] = 12;
     $broles[DRUPAL_AUTHENTICATED_RID]['weight'] = 11;
+    $keys = array('weight', 'editor', 'alt');
     foreach ($roles as $rid => $name) {
-      $sorted[$rid] = array(
-        'name' => $name,
-        'weight' => (int) $broles[$rid]['weight'],
-        'editor' => (int) $broles[$rid]['editor'],
-        'alt' => (int) $broles[$rid]['alt']
-      );
+      $sorted[$rid]['name'] = $name;
+      foreach ($keys as $key) {
+        $sorted[$rid][$key] = empty($broles[$rid][$key]) ? 0 : (int) $broles[$rid][$key];
+      }
     }
     uasort($sorted, 'bueditor_rolesort');
   }

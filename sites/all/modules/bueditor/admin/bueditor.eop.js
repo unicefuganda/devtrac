@@ -1,4 +1,3 @@
-// $Id: bueditor.eop.js,v 1.2 2009/10/09 22:08:28 ufku Exp $
 
 //Add editor name prompt for copy and add_default operations.
 //Confirm editor deletion without going to the confirmation page.

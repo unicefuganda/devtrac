@@ -1,5 +1,4 @@
 <?php
-// $Id: mobile_tools_cache.inc,v 1.1.2.5 2010/12/22 15:17:56 tdrycker Exp $
 
 /**
  * @file mobile_tools_cache.inc

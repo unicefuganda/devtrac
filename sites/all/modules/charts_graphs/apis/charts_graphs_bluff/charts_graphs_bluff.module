@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_bluff.module,v 1.1.2.1 2010/07/01 21:24:16 rsevero Exp $
 
 /**
  * @file drupal module file implementing bluff charting.
@@ -26,6 +25,14 @@ function charts_graphs_bluff_chartgraph_provider() {
       'mini_bar' => t('Small Bar'),
       'mini_pie' => t('Small Pie'),
       'mini_side_bar' => t('Small Side Bar'),
+    ),
+    'themes' => array(
+      'keynote' => t('Keynote'),
+      '37signals' => t('37 Signals'),
+      'rails_keynote'  => t('Rails Keynote'),
+      'odeo'  => t('Odeo'),
+      'pastel'  => t('Pastel'),
+      'greyscale'  => t('Greyscale'),
     ),
   );
 

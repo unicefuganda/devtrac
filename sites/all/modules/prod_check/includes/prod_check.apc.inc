@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.apc.inc,v 1.3 2011/01/14 20:41:27 malc0mn Exp $
 
 /*
   +----------------------------------------------------------------------+
@@ -24,7 +23,7 @@
 
  */
 
-$VERSION='$Id: prod_check.apc.inc,v 1.3 2011/01/14 20:41:27 malc0mn Exp $';
+$VERSION='$Id$';
 
 ////////// READ OPTIONAL CONFIGURATION FILE ////////////
 if (file_exists("apc.conf.php")) include("apc.conf.php");

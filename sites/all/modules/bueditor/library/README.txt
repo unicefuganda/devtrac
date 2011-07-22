@@ -1,4 +1,3 @@
-//$Id: README.txt,v 1.4 2009/10/13 01:48:26 ufku Exp $
 
 This directory contains custom library files(js or css) that extend bueditor functionality.
 In editor settings you can add these files into editor library in this format:

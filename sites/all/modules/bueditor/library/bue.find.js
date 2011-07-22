@@ -1,4 +1,3 @@
-// $Id: bue.find.js,v 1.4.2.10 2010/04/17 12:19:20 ufku Exp $
 //Introdue find & replace forms
 //Requires: bue.popup.js, bue.markup.js
 (function(E, $) {

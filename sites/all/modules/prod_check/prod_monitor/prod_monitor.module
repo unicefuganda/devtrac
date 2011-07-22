@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_monitor.module,v 1.7.2.12 2011/02/06 16:37:15 malc0mn Exp $
 
 /**
  * Our own definition of the core requirements states. These can be found in

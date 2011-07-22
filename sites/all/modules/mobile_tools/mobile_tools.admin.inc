@@ -16,21 +16,19 @@ function mobile_tools_configuration_form() {
   $form['mobile_tools_configuration'] = array(
     '#type' => 'fieldset',
     '#title' => 'General configuration',
-    '#description' => 'Enter the mobile and desktop url for your site. If both urls are equal there will be no redirection, but only theme switching. Go to "theme switching" to configure the theme',
+    '#description' => 'Enter the mobile and desktop url for your site. If both urls are equal there will be no redirection, but only theme switching. Go to "theme switching" to configure the theme.',
     '#collapsible' => TRUE,
   );
   
   $form['mobile_tools_configuration']['mobile_tools_mobile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Mobile URL'),
-    '#required' => TRUE,
     '#description' => t('Give the name of your mobile site. It is recommended to use the convention of m.domain .com or www.domain.mobi'),
     '#default_value' => variable_get('mobile_tools_mobile_url', mobile_tools_create_mobile_url($base_url)),
   );
   $form['mobile_tools_configuration']['mobile_tools_desktop_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Desktop URL'),
-    '#required' => TRUE,
     '#description' => t('Give the name of your regular website.'),
     '#collapsible' => TRUE,
     '#default_value' => variable_get('mobile_tools_desktop_url', $base_url)
@@ -48,7 +46,7 @@ function mobile_tools_configuration_form() {
     '#title' => t('Enable automatic redirection of the mobile user'),
     '#default_value' => variable_get('mobile_tools_redirect', FALSE),
     '#description' => 'Mobile visitors will automatically be redirected to the mobile site. But mobile users can also -- if they prefer --
-    view the desktop version. In order to do so, append ?mobile=false to the URL. The module
+    view the desktop version. In order to do so, append ?device=desktop to the URL. The module
     will set a cookie that remembers that the user does not want to be redirected. To undo, send the user to /gomobile. The module will redirect
     the user to the mobile site and reset the cookie!',
   );
@@ -56,7 +54,7 @@ function mobile_tools_configuration_form() {
   $form['mobile_tools_redirection']['mobile_tools_cookie_session'] = array (
     '#type' => 'textfield',
     '#title' => 'Redirection cookie    (seconds)',
-    '#description' => t('This field is only used when using the mobile=false setting. This is the lifetime of the cookie that determines how long the session is remembered. Choose 0 for only the session.'),
+    '#description' => t('This field is only used when using the ?device= setting. This is the lifetime of the cookie that determines how long the session is remembered. Choose 0 for only the session.'),
     '#default_value' => variable_get('mobile_tools_cookie_session', 3600*24*30),
   );
   
@@ -79,7 +77,7 @@ function mobile_tools_configuration_form() {
     '#title' => t('Mobile Tools block message options'),
     '#collapsed' => TRUE,
     '#collapsible' => TRUE,
-    '#description' => t('You can create a block with a different message on the mobile site than the desktop site. This can be for example used to create a link back to the deskop or mobile site (e.g. view Mobile | Desktop)'),
+    '#description' => t('You can create a block with a different message on the mobile site than the desktop site. This can be for example used to create a link back to the deskop or mobile site.'),
   );
 
   $form['mobile_tools_notification']['mobile_notification'] = array(
@@ -87,12 +85,14 @@ function mobile_tools_configuration_form() {
     '#rows' => 2,
     '#title' => t('On the Mobile site'),
     '#default_value' => variable_get('mobile_notification', MOBILE_NOTIFICATION),
+    '#description' => t('Available token is !desktop_url. This will create the url back to the desktop site using ?device=desktop and maintaining the current path'),
   );
   $form['mobile_tools_notification']['desktop_notification'] = array(
     '#type' => 'textarea',
     '#title' => t('On the desktops site'),
     '#rows' => 2,
     '#default_value' => variable_get('desktop_notification', DESKTOP_NOTIFICATION),
+    '#description' => t('Available token is !desktop_url. This will create the url back to the mobile site using ?device=mobile and maintaining the current path.'),
   ); 
   
   
@@ -113,7 +113,7 @@ function mobile_tools_configuration_form() {
   
   $form['extra'] = array(
     '#type' => 'fieldset',
-    '#title' => 'extra',
+    '#title' => t('Additional settings'),
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   );
@@ -198,25 +198,48 @@ function mobile_tools_themes_configuration_form() {
      '#description' => t('Select your default mobile theme. You can specify a different theme for different devices.'),
  //    '#prefix' => t('!configure your mobile theme', array('!configure' => l('Configure', 'admin/build/block/' . variable_get("mobile_tools_theme_name", FALSE)))),
   );
+  
+  $form['mobile_tools_theme_configuration']['mobile_tools_additional_config'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Additional mobile specific theming configuration')
+  );
+  
+  $form['mobile_tools_theme_configuration']['mobile_tools_additional_config']['mobile_tools_hide_address_bar'] = array(
+   '#type' => 'checkbox',
+   '#title' => t('Automatically hide address bar in mobile theme (uses javascript and only work on javascript enabled devices)'),
+   '#default_value' => variable_get('mobile_tools_hide_address_bar', 1),
+   '#description' => t('Enabling this injects some line of javascript to hide the address bar when the page is loaded'),
+  );
+  
+  $form['mobile_tools_theme_configuration']['mobile_tools_additional_config']['mobile_tools_add_header'] = array(
+   '#type' => 'checkbox',
+   '#title' => t('Add Mobile Tools header'),
+   '#default_value' => variable_get('mobile_tools_add_header', 1),
+   '#description' => t('Add mobile specific headers into the header tag. This includes viewport, touch-icon, HandheldFriendly, ... See theme/mobile-tools-header.tpl.php'),
+  );
 
    // for each group, checkbox and dropdown
    // Mobile
    $mobile_groups = module_invoke(variable_get('mobile-tools-device-detection', 'mobile_tools'), 'device_groups');
    $mobile_detection_module = variable_get('mobile-tools-device-detection', 'mobile_tools');
+   $form['mobile_tools_theme_configuration']['mobile_tools_group_config'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Configurations per device group'),
+   );
    foreach ($mobile_groups as $group => $group_title) {
-      $form['mobile_tools_theme_configuration'][$mobile_detection_module . '_' . $group] = array(
+      $form['mobile_tools_theme_configuration']['mobile_tools_group_config'][$mobile_detection_module . '_' . $group] = array(
         '#type' => 'fieldset',
         '#title' => $group_title,
         '#collapsible' => TRUE,
         
       );
-      $form['mobile_tools_theme_configuration'][$mobile_detection_module . '_' . $group][$mobile_detection_module . '_' . $group . '_enable'] = array(
+      $form['mobile_tools_theme_configuration']['mobile_tools_group_config'][$mobile_detection_module . '_' . $group][$mobile_detection_module . '_' . $group . '_enable'] = array(
         '#type' => 'checkbox',
         '#title' => t('Enable filter for this device group'),
         '#default_value' => variable_get($mobile_detection_module . '_' . $group . '_enable', ''),
         '#description' => t('Choose a theme for this device group'),
       );
-       $form['mobile_tools_theme_configuration'][$mobile_detection_module . '_' . $group][$mobile_detection_module . '_' . $group . '_theme'] = array(
+       $form['mobile_tools_theme_configuration']['mobile_tools_group_config'][$mobile_detection_module . '_' . $group][$mobile_detection_module . '_' . $group . '_theme'] = array(
          '#type' => 'select',
          '#title' => 'Mobile theme',
          '#default_value' => variable_get($mobile_detection_module . '_' . $group . '_theme', FALSE),

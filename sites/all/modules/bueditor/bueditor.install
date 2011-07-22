@@ -1,5 +1,4 @@
 <?php
-// $Id: bueditor.install,v 1.22.2.10 2010/06/05 07:59:14 ufku Exp $
 
 /**
  * @file
@@ -197,6 +196,12 @@ function bueditor_update_6000() {
     $button->content = strtr($button->content, $tr);
     db_query("UPDATE {bueditor_buttons} SET content = '%s' WHERE bid = %d", $button->content, $button->bid);
   }
+  // Update bueditor_roles variable
+  $roles = variable_get('bueditor_roles', array());
+  foreach ($roles as $rid => $role) {
+    $roles[$rid]['alt'] = 0;
+  }
+  variable_set('bueditor_roles', $roles);
   return $ret;
 }
 
@@ -206,7 +211,7 @@ function bueditor_update_6000() {
  * It now stores file paths rather than a directory path.
  */
 function bueditor_update_6200() {
-  require_once(drupal_get_path('module', 'bueditor') . '/bueditor.module');
+  require_once(drupal_get_path('module', 'bueditor') . '/bueditor.inc');
   $ret = array();
   $librarypath = array(
     'type' => 'text',

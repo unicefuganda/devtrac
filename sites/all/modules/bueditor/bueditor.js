@@ -1,4 +1,3 @@
-// $Id: bueditor.js,v 1.41.2.14 2010/11/08 07:41:41 ufku Exp $
 (function($) {
 
 var BUE = window.BUE = window.BUE || {preset: {}, templates: {}, instances: [], preprocess: {}, postprocess: {}};

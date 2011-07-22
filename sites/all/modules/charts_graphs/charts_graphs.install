@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs.install,v 1.1.2.10 2010/07/28 11:13:30 rsevero Exp $
 
 /**
  * @file
@@ -74,8 +73,8 @@ function charts_graphs_requirements($phase) {
     $file = $path . 'apis/charts_openflash';
     if (file_exists($file)) {
       $requirements['charts_graphs_old_path_openflash'] = array(
-        'title' => $t('Open Charts Flash 2 at old path'),
-        'description' => $t("You have Open Charts Flash 2 for Charts and Graphs
+        'title' => $t('Open Flash Chart 2 at old path'),
+        'description' => $t("You have Open Flash Chart 2 for Charts and Graphs
           available at it's old path: %old_path. Please remove it.",
           array('%old_path' => $file)
         ),

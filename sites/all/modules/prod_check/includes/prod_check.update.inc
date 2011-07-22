@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.update.inc,v 1.1.2.2 2011/01/25 16:05:44 malc0mn Exp $
 
 /**
  * ALL code here is taken from the Drupal core's update module. prod_check

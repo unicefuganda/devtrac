@@ -1,4 +1,3 @@
-// $Id: bue.imce.js,v 1.2.2.7 2010/03/17 22:24:37 ufku Exp $
 
 //IMCE integration. Introduces E.imce=BUE.imce
 //Requires: bue.popup.js
@@ -74,13 +73,17 @@ I.readyDefault = function(win, pop) {
       I.target && I.target.focus();
     };
   }
-  $(imce.FLW).focus();
+  !$.browser.opera && !$.browser.safari && $(imce.FLW).focus();
 };
 
 //IMCE onload function. Runs after first load of IMCE.
 window.bueImceLoad = function(win) {
   (I.win = win).imce.setSendTo(Drupal.t('Send to editor'), I.finish);
   I.ready(win, I.pop);
+  // Fix opera and webkit focus scrolling.
+  if (($.browser.opera || $.browser.safari) && $(I.pop).is(':visible')) {
+    $(I.win.imce.FLW).one('focus', function() {I.pop.close(); I.setPos();});
+  }
 };
 
 })(BUE.instance.prototype, jQuery);

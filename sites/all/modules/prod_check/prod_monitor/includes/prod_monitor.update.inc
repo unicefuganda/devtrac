@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_monitor.update.inc,v 1.1.2.6 2011/02/06 16:37:15 malc0mn Exp $
 
 /**
  * ALL code here is taken from the Drupal core's update module and MODIFIED for

@@ -1,24 +1,17 @@
-; $Id: INSTALL.TXT,v 1.1.2.2 2010/10/30 13:47:44 rsevero Exp $
-
 You need to download amCharts files from: 
 http://www.amcharts.com/download
 
-Unfortunately amCharts ships as several zips, so you need to download each one
-from the above path:
+At http://www.amcharts.com/download choose the 2.x amCharts Flash & JavaScript 
+bundle to download.
 
-* Column & Bar (e.g. amcolumn_x.x.x.x.zip)
-* Line & Area (e.g. amline_x.x.x.x.zip)
-* Pie & Donut (e.g. ampie_x.x.x.x.zip)
+From it you have to extrac the following files (they are at amcharts/flash):
+* amcolumn.swf
+* amline.swf
+* ampie.swf
 
-and within each of these zips you will find the following files:
-
-* amcolumn.swf (in the amcolumn directory of the amcolumn zip)
-* amline.swf (in the amline directory of the amline zip)
-* ampie.swf (in the ampie directory of the ampie zip)
-
-Download and place them in the downloaded folder of the Drupal Charts and Graphs
-module, directly, without any folder structure inside the downloaded folder
-(e.g. into sites/all/modules/charts_graphs/apis/charts_graphs_amcharts/downloaded)
+Place them in the charts_graphs/apis/charts_graphs_amcharts/downloaded</em> 
+folder of Charts and Graphs module directly, without any folder structure inside 
+the downloaded folder.
 
 Sorry for the inconvenience, but there's really nothing we
 can do about it due to licenses restrictions and Drupal policy
@@ -28,4 +21,4 @@ CAUTION: Do NOT assume you don't need swfobject.js since
 charts_graphs already requires swfobject Drupal module. Unfortunately,
 the versions of the two js files are different, so you can
 not re-use swfobject from the module file for amCharts the way
-you can re-use it for OFC2 
+you can re-use it for OFC2.

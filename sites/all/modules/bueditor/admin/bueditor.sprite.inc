@@ -1,5 +1,4 @@
 <?php
-// $Id: bueditor.sprite.inc,v 1.1.2.2 2010/03/17 22:22:10 ufku Exp $
 
 /**
  * @file

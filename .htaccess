@@ -87,22 +87,8 @@ DirectoryIndex index.php
   # To redirect all users to access the site WITH the 'www.' prefix,
   # (http://example.com/... will be redirected to http://www.example.com/...)
   # adapt and uncomment the following:
-RewriteCond %{HTTP_HOST} ^devtrac\.ug$ [NC]
-RewriteRule ^(.*)$ http://www.devtrac.ug/$1 [L,R=301]
-
-RewriteCond %{HTTP_HOST} ^devtrac\.org$ [NC]
-RewriteRule ^(.*)$ http://www.devtrac.ug/$1 [L,R=301]
-
-RewriteCond %{HTTP_HOST} ^www.devtrac\.org$ [NC]
-RewriteRule ^(.*)$ http://www.devtrac.ug/$1 [L,R=301]
-
-RewriteCond %{HTTP_HOST} ^devtrac\.net$ [NC]
-RewriteRule ^(.*)$ http://www.devtrac.net/$1 [L,R=301]
-
-RewriteCond %{HTTP_HOST} ^www.devtrac\.net$ [NC]
-RewriteRule ^(.*)$ http://www.devtrac.ug/$1 [L,R=301]
-
-
+  # RewriteCond %{HTTP_HOST} ^example\.com$ [NC]
+  # RewriteRule ^(.*)$ http://www.example.com/$1 [L,R=301]
   #
   # To redirect all users to access the site WITHOUT the 'www.' prefix,
   # (http://www.example.com/... will be redirected to http://example.com/...)
@@ -127,4 +113,4 @@ RewriteRule ^(.*)$ http://www.devtrac.ug/$1 [L,R=301]
   RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
 </IfModule>
 
-# $Id: .htaccess,v 1.90.2.5 2010/02/02 07:25:22 dries Exp $
+# $Id$

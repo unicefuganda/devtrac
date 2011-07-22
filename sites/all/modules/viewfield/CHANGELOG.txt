@@ -1,12 +1,22 @@
-$Id: CHANGELOG.txt,v 1.13 2010/08/24 16:36:58 sun Exp $
-
 Viewfield x.x-x.x, xxxx-xx-xx
 -----------------------------
-
 
 Viewfield 6.x-1.x, xxxx-xx-xx
 -----------------------------
 
+
+Viewfield 6.x-1.1, 2011-04-27 
+-----------------------------
+#416922 by keithm: Fixed update_6001 to check current size < 128 before update.
+#416922 by frjo, keithm: Fixed vname too short.
+#1052370 by Anclywen: Fixed unrestricted list of allowed views.
+#1120884 by keithm: Fixed viewfield creation notices.
+#647746 by sun: Fixed %author id of node not always passed to view.
+#571128 by sun: Fixed field setting labels and descriptions (UX).
+#535494 by sun, chaps2: Fixed view is processed twice for tokens.
+#831574 by sun: Fixed array_filter PHP warning.
+#510356 by etzel, sun: Fixed exposed filters submitting to front page.
+#477244 by muhleder, japanitrat, sun: Fixed empty view result output.
 
 Viewfield 6.x-1.0, 2010-08-24
 -----------------------------

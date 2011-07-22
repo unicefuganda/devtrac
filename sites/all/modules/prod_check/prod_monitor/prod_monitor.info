@@ -1,13 +1,12 @@
-; $Id: prod_monitor.info,v 1.1 2010/12/08 20:47:54 malc0mn Exp $
 
 name = "Production monitor"
 description = "Monitors sites which make use of the Production check module"
 package = "Monitoring"
 core = "6.x"
 
-; Information added by drupal.org packaging script on January 1, 1970 - 00:00
-version = "6.x-1.0-beta8"
+; Information added by drupal.org packaging script on 2011-06-29
+version = "6.x-1.0-beta13"
 core = "6.x"
 project = "prod_check"
-datestamp = "1297011117"
+datestamp = "1309381919"
 

@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_flash_canvas.class.inc,v 1.1.2.3 2010/07/09 21:46:59 rsevero Exp $
 
 /**
  * @file

@@ -1,5 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- $Id: bluff.html,v 1.1.2.7.2.7 2010/11/17 22:17:32 rsevero Exp $ -->
 <html>
   <head>
     <title>Charts and Graphs - Bluff</title>
@@ -11,13 +10,21 @@
       <a href="http://bluff.jcoglan.com">home page</a> and it's
       <a href="http://bluff.jcoglan.com/api.html">reference page</a>.</p>
     <h3>Installation</h3>
-    <p>Since version 3.6.1 Bluff is dual licensed - MIT and GPL - so all
-      necessary files to enable Bluff are now included with Charts and Graphs:</p>
+    <p>Since version 3.6.1 Bluff is dual licensed - MIT and GPL - so it's 
+      included with Charts and Graphs:</p>
     <ul>
       <li>bluff-min.js</li>
-      <li>excanvas.js</li>
       <li>js-class.js</li>
     </ul>
+    <p>Unfortunately, to implement IE support Bluff needs excanvas.js from 
+      Google and excanvas.js is licensed under the Apache License so excanvas.js 
+      can't be distributed with Charts and Graphs code.<br />
+      If you want IE support, please grab the excanvas_r3.zip file available at
+      http://code.google.com/p/explorercanvas/downloads/list.<br />
+      From this zipped file take excanvas.js or excanvas.compiled.js and place 
+      it at the DV_MODULE_PATH/apis/charts_graphs_bluff/bluff directory. Please 
+      remember to rename excanvas.compiled.js file to excanvas.js if you choose 
+      to use excanvas.compiled.js.</p>
     <h3>Usage</h3>
     <p>The quickest code to get something graphed using bluff:</p>
     <pre>
@@ -97,11 +104,12 @@ g.set_margins(12);
     <h3>Special parameters</h3>
       <p>Charts and Graphs supports the following special parameters for Bluff:</p>
       <dl>
-        <dt>transpose</dt>
-          <dd>the optional parameter <b>transpose</b>, if set to true, will cause
-            Bluff to pick the opposite data orientation to the one it would have
-            picked automatically. This orientation defines if each column or each
-            row is one data serie.</dd>
+        <dt>orientation</dt>
+          <dd>the optional parameter <b>orientation</b> will cause Bluff to 
+            automatically pick data orientation when set to 'auto' which is the 
+            default value. When set to 'rows' Bluff will map rows as data 
+            series. When set to 'columns' Bluff will map columns as data 
+            series.</dd>
       </dl>
     <h3>Unsupported properties</h3>
       <p>The Bluff charting library doesn't support the

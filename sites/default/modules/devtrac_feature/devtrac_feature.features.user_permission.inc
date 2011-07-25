@@ -368,6 +368,17 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_user_degree
+  $permissions['edit field_user_degree'] = array(
+    'name' => 'edit field_user_degree',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: edit field_user_department
   $permissions['edit field_user_department'] = array(
     'name' => 'edit field_user_department',
@@ -415,6 +426,17 @@ function devtrac_feature_user_default_permissions() {
   // Exported permission: edit field_user_surname
   $permissions['edit field_user_surname'] = array(
     'name' => 'edit field_user_surname',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: edit field_user_title
+  $permissions['edit field_user_title'] = array(
+    'name' => 'edit field_user_title',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'authenticated user',
@@ -805,6 +827,18 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view field_user_degree
+  $permissions['view field_user_degree'] = array(
+    'name' => 'view field_user_degree',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'unicef user',
+      '4' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: view field_user_department
   $permissions['view field_user_department'] = array(
     'name' => 'view field_user_department',
@@ -856,6 +890,18 @@ function devtrac_feature_user_default_permissions() {
   // Exported permission: view field_user_surname
   $permissions['view field_user_surname'] = array(
     'name' => 'view field_user_surname',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'unicef user',
+      '4' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: view field_user_title
+  $permissions['view field_user_title'] = array(
+    'name' => 'view field_user_title',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'anonymous user',

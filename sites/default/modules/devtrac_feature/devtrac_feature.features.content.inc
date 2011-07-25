@@ -2004,10 +2004,79 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'About Me',
-      'weight' => '34',
+      'weight' => '11',
       'description' => 'Tell us something about yourself that we did not know.',
       'type' => 'text_textarea',
       'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_user_degree
+  $fields['user_profile-field_user_degree'] = array(
+    'field_name' => 'field_user_degree',
+    'type_name' => 'user_profile',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'PhD
+MSc
+BSc',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Academic Degree(s)',
+      'weight' => '9',
+      'description' => '',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
@@ -2058,7 +2127,7 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'Department',
-      'weight' => '36',
+      'weight' => '13',
       'description' => '',
       'type' => 'content_taxonomy_select',
       'module' => 'content_taxonomy_options',
@@ -2108,7 +2177,7 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'First Name',
-      'weight' => '31',
+      'weight' => '6',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
@@ -2162,7 +2231,7 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'Function',
-      'weight' => '35',
+      'weight' => '12',
       'description' => '',
       'type' => 'content_taxonomy_select',
       'module' => 'content_taxonomy_options',
@@ -2216,7 +2285,7 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'Manager',
-      'weight' => '33',
+      'weight' => '10',
       'description' => '',
       'type' => 'realname_userreference_auto',
       'module' => 'realname_userreference',
@@ -2266,16 +2335,82 @@ return array(
       ),
       'default_value_php' => NULL,
       'label' => 'Surname',
-      'weight' => '32',
+      'weight' => '7',
       'description' => '',
       'type' => 'text_textfield',
       'module' => 'text',
     ),
   );
 
+  // Exported field: field_user_title
+  $fields['user_profile-field_user_title'] = array(
+    'field_name' => 'field_user_title',
+    'type_name' => 'user_profile',
+    'display_settings' => array(
+      'label' => array(
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'Prof.
+Dr.
+Mr.',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => NULL,
+      'default_value_php' => NULL,
+      'label' => 'Title',
+      'weight' => '8',
+      'description' => '',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
+    ),
+  );
+
   // Translatables
   // Included for use with string extractors like potx.
   t('About Me');
+  t('Academic Degree(s)');
   t('Contact');
   t('Date Visited');
   t('Department');
@@ -2308,6 +2443,7 @@ return array(
   t('Start and End Date');
   t('Status');
   t('Surname');
+  t('Title');
   t('Unique ID');
   t('User');
   t('Website');

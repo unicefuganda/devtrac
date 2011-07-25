@@ -1,4 +1,3 @@
-// $Id: bue.tab.js,v 1.4.2.4 2010/11/08 07:10:26 ufku Exp $
 
 //Introduce indent(TAB), unindent(Shift+TAB), and auto indent(ENTER) in textareas.
 //Requires: none

@@ -1,4 +1,3 @@
-// $Id: bue.misc.js,v 1.2.2.11 2010/08/29 03:27:07 ufku Exp $
 
 //Miscellaneous methods used in default editor: E.wrapLines(), E.toggleTag(), E.help(), E.tagChooser(), E.tagDialog()
 //Requires: bue.popup.js, bue.markup.js

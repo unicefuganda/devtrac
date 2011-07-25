@@ -1,4 +1,3 @@
-// $Id: bue.history.js,v 1.5.2.7 2010/11/08 07:10:25 ufku Exp $
 //Introduces cross-browser editor history with two new methods. E.undo() & E.redo()
 //Requires: none
 (function(E, $) {

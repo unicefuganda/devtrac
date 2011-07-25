@@ -1,5 +1,4 @@
 <?php
-// $Id: viewfield.theme.inc,v 1.6 2009/12/02 23:53:56 darrenoh Exp $
 
 /**
  * @file
@@ -11,23 +10,38 @@
  */
 function theme_viewfield_formatter_default($element) {
   global $_viewfield_stack;
+
+  $node = $element['#node'];
   // For safety's sake, we can only display 2 levels of viewfields.
-  if (count($_viewfield_stack) <= 2) {
+  if (!isset($_viewfield_stack[$node->nid]) && count($_viewfield_stack) <= 2) {
     list($view_name, $display) = explode('|', $element['#item']['vname'], 2);
     $view_args = _viewfield_get_view_args($element['#item']['token_enabled'], $element['#item']['vargs'], $element['#node']);
-    $node = $element['#node'];
-    // Need to prevent recursive views and node building, but don't need to do
-    // it on new node previews.
+
+    // Prevent infinite recursion.
     if ($node->nid) {
-      _viewfield_nodestack_push($node->nid);
+      $_viewfield_stack[$node->nid] = $node->nid;
     }
-    array_unshift($view_args, $view_name, $display);
-    $output = call_user_func_array('views_embed_view', $view_args);
+
+    // Render the view like Views would do.
+    // @see views_embed_view()
+    $view = views_get_view($view_name);
+    if ($view && $view->access($display)) {
+      // Override the view's path to the current path. Otherwise, exposed views
+      // filters would submit to the front page.
+      $view->override_path = $_GET['q'];
+
+      $output = $view->preview($display, $view_args);
+    }
+
     // This node is "safe" again.
     if ($node->nid) {
-      _viewfield_nodestack_pop();
+      unset($_viewfield_stack[$node->nid]);
     }
-    return $output;
+
+    // Only return an actual view result to not break empty value behavior.
+    if (isset($output)) {
+      return $output;
+    }
   }
 }
 
@@ -78,35 +92,15 @@ function _viewfield_get_view_args($token_enabled, $vargs, $node) {
       $tokens = TRUE;
     }
     // For backwards compatibility, we scan for %nid, etc.
-    global $user;
-    foreach ($args as $key => $a) {
-      $args[$key] = strtr($a, array('%nid' => $node->nid, '%author' => $node_values->uid, '%viewer' => $user->uid));
+    foreach ($args as $key => $value) {
+      $args[$key] = strtr($value, array(
+        '%nid' => $node->nid,
+        '%author' => isset($node->uid) ? $node->uid : (isset($node_values->uid) ? $node_values->uid : NULL),
+        '%viewer' => $GLOBALS['user']->uid,
+      ));
     }
   }
   return $args;
-}
-
-/**
- * Function for adding a node ID to the global stack of node IDs. This prevents
- * us from recursively building a node, with a view, with the node, with the
- * view...
- */
-function _viewfield_nodestack_push($nid) {
-  global $_viewfield_stack;
-  if (!isset($_viewfield_stack)) {
-    $_viewfield_stack = array();
-  }
-  $_viewfield_stack[] = $nid;
-}
-
-/**
- * Function for removing a node ID from the global stack of node IDs when there
- * is no longer a danger of building a node, with a view, with the node, with
- * the view...
- */
-function _viewfield_nodestack_pop() {
-  global $_viewfield_stack;
-  return array_pop($_viewfield_stack);
 }
 
 function theme_viewfield_select($element) {

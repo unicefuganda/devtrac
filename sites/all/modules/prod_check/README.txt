@@ -1,4 +1,3 @@
-$Id: README.txt,v 1.6.2.5 2011/01/28 08:51:00 malc0mn Exp $
 
 README file for the Production check & Production monitor Drupal modules.
 

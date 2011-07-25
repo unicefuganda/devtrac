@@ -1,4 +1,3 @@
-// $Id: bue.autocomplete.js,v 1.3.2.6 2010/11/08 07:10:25 ufku Exp $
 
 //Autocomplete user defined phrases as they are typed in the editor.
 //Requires: none

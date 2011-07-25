@@ -1,5 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- $Id: googlecharts.html,v 1.1.2.4 2010/10/29 20:11:44 rsevero Exp $ -->
 <html>
   <head>
     <title>Charts and Graphs - Google Charts</title>
@@ -29,7 +28,6 @@ function charts_graphs_test() {
   $canvas->type = 'line';
   $canvas->y_legend = 'Y Legend';
   $canvas->colour = '#808000';
-  $canvas->theme = 'keynote';
   $canvas->series = array(
     'Some Value' => array(9,6,7,9,5,7,6,9,7),
     'Page Views' => array(6,7,9,5,7,6,9,7,3),
@@ -40,6 +38,51 @@ function charts_graphs_test() {
 
   return $out;
 }
+</pre>
+      <h4>Specific parameters</h4>
+      <p>Google Charts has the following specific parameters (that work only 
+        with Google Charts):</p>
+      <ul>
+        <li><a href="#legend_pos">legend_pos</a></li>
+        <li><a href="#title_colour">title_colour</a></li>
+      </ul>
+        <h5><a name="legend_pos">legend_pos</a></h5>
+          <p>The <i>legend_pos</i> property specifies the position of the legend 
+            on the chart. You can choose one of the following values:
+            <dl>
+              <dt>bottom</dt>
+                <dd>legend at the bottom of the chart, legend entries in a 
+                  horizontal row.</dd>
+              <dt>bottom_vert</dt>
+                <dd>legend at the bottom of the chart, legend entries in a 
+                  vertical column.</dd>
+              <dt>left</dt>
+                <dd>legend to the left of the chart, legend entries in a 
+                  vertical column.</dd>
+              <dt>right</dt>
+                <dd>(default) legend to the right of the chart, legend entries 
+                  in a vertical column.</dd>
+              <dt>top</dt>
+                <dd>legend at the top of the chart, legend entries in a 
+                  horizontal row.</dd>
+              <dt>top_vert</dt>
+                <dd>legend at the top of the chart, legend entries in a vertical 
+                  column.</dd>
+            </dl>
+          </p>
+      <h5>Example:</h5>
+<pre>
+&lt;?php
+$canvas->legend_pos = 'bottom_vert'; // Places the legend the bottom of the 
+                                     // chart.
+</pre>
+      <h5><a name="title_colour">title_colour</a></h5>
+          <p>The <i>title_colour</i> property specifies the colour of the chart
+            title in RRGGBB hexadecimal format. Default color is black.</p>
+      <h5>Example:</h5>
+<pre>
+&lt;?php
+$canvas->title_colour = 'AAAAAA';
 </pre>
       <h4>Arbitrary parameters</h4>
       <p>Google Charts implementation for Charts and Graphs supports the
@@ -72,6 +115,9 @@ $canvas->parameters['chbh'] = "25,5,10";
       <dt>queued_bar</dt>
         <dd>Columns are positioned one behind another.</dd>
     </dl>
+    <h3>Unsupported properties</h3>
+      <p>Google Charts has no themes defined to be used with the 
+        <a href="general_reference#theme">theme</a> property.</p>
     <h3>Examples</h3>
     <ul>
       <li><a href="/charts_graphs/test/google-charts/line/Google Charts - Line example">Line example</a></li>

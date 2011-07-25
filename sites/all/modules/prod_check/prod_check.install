@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.install,v 1.3.2.1 2011/01/25 16:05:44 malc0mn Exp $
 
 /**
  * Implementation of hook_uninstall().

@@ -1,8 +1,7 @@
 <?php
-// $Id: charts_graphs_open_flash.module,v 1.1.2.1 2010/07/01 20:59:33 rsevero Exp $
 
 /**
-* @file drupal module file implementing Open Charts Flash 2 charting.
+* @file drupal module file implementing Open Flash Chart 2 charting.
 */
 
 /**
@@ -13,7 +12,7 @@ function charts_graphs_open_flash_chartgraph_provider() {
     'path' => dirname(__FILE__) . '/charts_graphs_open_flash.class.inc', //must be full path
     'clazz' => 'ChartsGraphsOpenFlash', //implementation class' name
     'name' => 'open-flash', //name used when invoking through a factroy method
-    'nice_name' => 'Open Flash Charts 2',
+    'nice_name' => 'Open Flash Chart 2',
     'chart_types' => array(
       'line' => t('Line'),
       'bar' => t('Bar'),
@@ -28,6 +27,7 @@ function charts_graphs_open_flash_chartgraph_provider() {
       'bar_sketch' => t('Sketched Bar'),
       'pie' => t('Pie'),
     ),
+    'themes' => array(),
   );
 
   return (object) $provider;

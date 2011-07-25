@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_google_charts.module,v 1.1.2.1 2010/07/01 13:20:43 rsevero Exp $
 
 /**
  * @file drupal module file implementing Google Charts charting.
@@ -25,6 +24,7 @@ function charts_graphs_google_charts_chartgraph_provider() {
       'queued_bar' => t('Queued Bar'),
       'stacked_bar' => t('Stacked Bar'),
     ),
+    'themes' => array(),
   );
 
   return (object) $provider;

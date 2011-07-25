@@ -1,4 +1,3 @@
-// $Id: bue.markup.js,v 1.1.2.3 2010/06/13 10:11:25 ufku Exp $
 
 //Html creating and parsing methods.
 //Requires: none

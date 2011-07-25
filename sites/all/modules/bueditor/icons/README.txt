@@ -1,4 +1,3 @@
-//$Id: README.txt,v 1.2 2009/10/13 01:48:26 ufku Exp $
 
 All icons in this directory(not including subdirectories) will be avaliable for
 editors that identify this directory as icon path.

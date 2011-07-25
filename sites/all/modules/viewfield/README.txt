@@ -1,4 +1,3 @@
-$Id: README.txt,v 1.4 2010/08/24 16:29:47 sun Exp $
 
 OVERVIEW
 

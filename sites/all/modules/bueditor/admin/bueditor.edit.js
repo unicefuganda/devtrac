@@ -1,4 +1,3 @@
-// $Id: bueditor.edit.js,v 1.5.2.10 2010/03/02 08:19:53 ufku Exp $
 (function($) {
 
 //Faster alternative to resizable textareas.

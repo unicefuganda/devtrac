@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_open_flash.class.inc,v 1.1.2.12 2010/11/18 01:52:04 rsevero Exp $
 
 /**
  * @file
@@ -46,6 +45,8 @@ class ChartsGraphsOpenFlash extends ChartsGraphsFlashCanvas {
     $this->title->style = 'font-size: 20px; color:#0000ff; font-family: Verdana; text-align: center;';
 
     $this->type = $canvas->translated_type;
+    
+    $is_pie = ($this->type === 'pie');
 
     $this->y_legend = new stdClass();
     $this->y_legend->text = $canvas->y_legend;
@@ -70,14 +71,18 @@ class ChartsGraphsOpenFlash extends ChartsGraphsFlashCanvas {
     /**
      * Some kind of bug: if labels are not PHP "strings" they do not render.
      * Sigh.
+     *
+     * Seizing the oportunity and also fixing x_labels arrays whoose keys aren't
+     * numeric: 0, 1, 2 etc.
      */
-    foreach ($canvas->x_labels as &$label) {
-      $label = (string) $label;
+    $x_labels = array();
+    foreach ($canvas->x_labels as $key => $label) {
+      $x_labels[] = (string) $label;
     }
 
-    $x->labels->labels = $canvas->x_labels;
+    $x->labels->labels = $x_labels;
     $this->x_axis = $x;
-
+    
     $series_colours = array_values($canvas->series_colours);
 
     /**
@@ -89,10 +94,13 @@ class ChartsGraphsOpenFlash extends ChartsGraphsFlashCanvas {
 
     $i = 0; // for colours
     foreach ($canvas->series as $key => $val) {
+      if ($is_pie && ($i > 0)) {
+        break;
+      }
       $obj = new stdClass();
       $val = $this->_preprocess_values($val);
       $obj->values = $val;
-      if ($this->type == 'pie') {
+      if ($is_pie) {
         $obj->tip = '#label# #val# (#percent#)';
         $obj->{'label - colour'} = '#432BAF';
       }
@@ -114,7 +122,7 @@ class ChartsGraphsOpenFlash extends ChartsGraphsFlashCanvas {
       $i++;
     }
 
-    if ($this->type != 'pie') {
+    if (!$is_pie) {
       $y_step = abs(($max_value - $min_value) / 10);
 
       $this->x_axis->{'3d'} = 5;

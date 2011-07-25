@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.drush.inc,v 1.5 2011/01/16 16:12:15 malc0mn Exp $
 
 /**
  * Implementation of hook_drush_command().

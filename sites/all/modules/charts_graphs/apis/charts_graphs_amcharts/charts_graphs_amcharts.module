@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_amcharts.module,v 1.1.2.3 2010/07/01 20:39:25 rsevero Exp $
 
 /**
  * @file drupal module file implementing amcharts.
@@ -31,6 +30,7 @@ function charts_graphs_amcharts_chartgraph_provider() {
       '100_stacked_side_bar' => t('100% Stacked Side Bar'),
       'side_bar_3d' => t('3D Side Bar'),
     ),
+    'themes' => array(),
   );    
   
   return (object) $provider;

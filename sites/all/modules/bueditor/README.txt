@@ -1,4 +1,3 @@
-// $Id: README.txt,v 1.21.2.16 2010/06/05 07:58:56 ufku Exp $
 
 - BUEditor:
 A plain textarea editor aiming to facilitate code writing.

@@ -1,4 +1,3 @@
-// $Id: bue.ctrl.js,v 1.3.2.6 2010/11/08 07:10:25 ufku Exp $
 
 //Register button accesskeys as Ctrl shortcuts.
 //Requires: none

@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_check.module,v 1.15.2.10 2011/02/06 16:37:15 malc0mn Exp $
 
 /**
  * This one is for use with the XMLRPC API, so that you have proper links when
@@ -22,15 +21,6 @@ define('REQUIREMENT_INFO', -1);
 define('REQUIREMENT_OK', 0);
 define('REQUIREMENT_WARNING', 1);
 define('REQUIREMENT_ERROR', 2);
-
-/**
- * Our own definition of the Nagios module's states. Don't see any other way to
- * do this. If you do, drop me a line in the issue queue.
- */
-define('NAGIOS_STATUS_OK', 0);
-define('NAGIOS_STATUS_UNKNOWN', 1);
-define('NAGIOS_STATUS_WARNING', 2);
-define('NAGIOS_STATUS_CRITICAL', 3);
 
 /**
  * Implementation of hook_help().
@@ -114,7 +104,6 @@ function prod_check_menu() {
     'file' => 'includes/prod_check.admin.inc',
   );
 
-
   $items['admin/reports/status/apc'] = array(
     'title' => t('APC'),
     'page callback' => 'prod_check_apc',
@@ -125,6 +114,44 @@ function prod_check_menu() {
   );
 
   return $items;
+}
+
+/**
+ * Implementation of hook_menu()
+ */
+function prod_check_menu_alter(&$items) {
+  if (variable_get('prod_check_enable_nagios', 0) && isset($items['nagios'])) {
+    // Change callback.
+    if (variable_get('prod_check_nagios_unique', 'default') != 'default') {
+      $items['nagios']['page callback'] = 'prod_check_nagios_status_page';
+    }
+    // Change the path.
+    $new_path = variable_get('prod_check_nagios_takeover', '');
+    if (!empty($new_path)) {
+      // Create custom Nagios path.
+      $items[$new_path] = $items['nagios'];
+      // Drop old Nagios path.
+      unset($items['nagios']);
+    }
+  }
+}
+
+/**
+ * Custom callback to override /nagios page.
+ */
+function prod_check_nagios_status_page() {
+  if ($_SERVER['HTTP_USER_AGENT'] != variable_get('nagios_ua', 'Nagios')) {
+    switch (variable_get('prod_check_nagios_unique', 'default')) {
+      case '404': drupal_not_found();
+        break;
+      case 'home': drupal_goto('<front>');
+        break;
+      default: nagios_status_page();
+    }
+  }
+  else {
+    nagios_status_page();
+  }
 }
 
 /**
@@ -253,6 +280,74 @@ function prod_check_nagios() {
         $status = array_merge($status, $func('nagios'));
       }
     }
+
+    // Not verbose? Then filter the output.
+    if (variable_get('prod_check_nagios_verbose', 0) == 0) {
+      $nagios = array(
+        'OK' => array(
+          'count' => 0,
+        ),
+        'Unknown' => array(
+          'count' => 0,
+          'items' => array(),
+        ),
+        'Warning' => array(
+          'count' => 0,
+          'items' => array(),
+        ),
+        'CRITICAL' => array(
+          'count' => 0,
+          'items' => array(),
+        ),
+      );
+      $highest = 0;
+      foreach ($status as $item => $check) {
+        switch ($check['status']) {
+          case NAGIOS_STATUS_OK:
+            $nagios['OK']['count']++;
+            break;
+          case NAGIOS_STATUS_UNKNOWN:
+            $nagios['Unknown']['count']++;
+            $nagios['Unknown']['items'][] = $item;
+            break;
+          case NAGIOS_STATUS_WARNING:
+            $nagios['Warning']['count']++;
+            $nagios['Warning']['items'][] = $item;
+            break;
+          case NAGIOS_STATUS_CRITICAL:
+            $nagios['CRITICAL']['count']++;
+            $nagios['CRITICAL']['items'][] = $item;
+            break;
+        }
+        if ($check['status'] > $highest) {
+          $highest = $check['status'];
+        }
+      }
+      // Build message.
+      $message = '[';
+      foreach ($nagios as $state => $value) {
+        // Ignore 0 values.
+        if (!$value['count']) {
+          continue;
+        }
+        $message .= '@'.strtolower($state).' '.$state;
+        if(isset($nagios[$state]['items'])) {
+          $message .= ': '.implode('|', $nagios[$state]['items']);
+        }
+        $message .= ', ';
+      }
+      // Remove last comma and space.
+      $message = rtrim($message, ', ');
+      $message .= ']';
+      // Reset status array.
+      $status = array();
+      $status['PRODCHK'] = array(
+        'status' => $highest,
+        'type' => 'state',
+        'text' => t($message, array('@ok' => $nagios['OK']['count'], '@unknown' => $nagios['Unknown']['count'], '@warning' => $nagios['Warning']['count'], '@critical' => $nagios['CRITICAL']['count'])),
+      );
+    }
+
     return $status;
   }
 }
@@ -387,6 +482,16 @@ function _prod_check_functions() {
       'block_cache' => 'Block cache',
       'preprocess_css' => 'Optimize CSS files',
       'preprocess_js' => 'Optimize JavaScript files',
+    ),
+  );
+
+  // Security
+  $functions['security'] = array(
+    'title' => 'Security',
+    'description' => 'Various security related checks.',
+    'functions' => array(
+      'user_pass' => 'User passwords',
+      'anonymous_rights' => 'Anonymous user rights',
     ),
   );
 
@@ -540,18 +645,25 @@ function _prod_check_apc($caller = 'internal') {
   }
 
   if (!function_exists('apc_cache_info')) {
-	  $desc_nok = t('!link does not appear to be running.', prod_check_link_array($title, $path));
+    $desc_nok = t('!link does not appear to be running.', prod_check_link_array($title, $path));
     $val_nok = t('Disabled');
     $error = TRUE;
   }
   else if ($cache = @apc_cache_info('opcode')) {
+    $apc_expunge = variable_get('prod_check_apc_expunge', 0);
+    $detailed_info = ': '.t('hits').': '.$cache['num_hits'].', '.t('misses').': '.$cache['num_misses'].', '.t('cache full count').': '.$cache['expunges'].'.';
     if ($cache['num_misses'] >= $cache['num_hits']) {
-  	  $desc_nok = t('!link not properly configured, too many misses', prod_check_link_array($title, $path)) .': '.t('hits').': '.$cache['num_hits'].', '.t('misses').': '.$cache['num_misses'].'.';
+      $desc_nok = t('!link not properly configured, too many misses', prod_check_link_array($title, $path)) . $detailed_info;
       $val_nok = t('Not functioning properly.');
       $error = TRUE;
     }
-    else if ($cache['num_misses'] < $cache['num_hits']) {
-  	  $desc_ok = t('!link running fine', prod_check_link_array($title, $path)) .': '.t('hits').': '.$cache['num_hits'].', '.t('misses').': '.$cache['num_misses'].'.';
+    else if ($cache['expunges'] > $apc_expunge) {
+      $desc_nok = t('!link not properly configured, cache size too small', prod_check_link_array($title, $path)) . $detailed_info;
+      $val_nok = t('Not functioning properly.');
+      $error = TRUE;
+    }
+    else {
+      $desc_ok = t('!link running fine', prod_check_link_array($title, $path)) . $detailed_info;
       $val_ok = t('Enabled');
       $error = FALSE;
     }
@@ -664,19 +776,30 @@ function _prod_check_page_cache($caller = 'internal') {
 // Page compression
 function _prod_check_page_compression($caller = 'internal') {
   $check = array();
+  $status = TRUE;
 
   $title = 'Page compression';
   $path = 'admin/settings/performance';
   if ($caller != 'internal') {
     $path = PRODCHECK_BASEURL . $path;
   }
+
+  // Adjust path if Boost is enabled.
   if (variable_get('boost_enabled', 0) == 1) {
     $path .= '/boost';
   }
 
+  if (variable_get('page_compression', 0) == 0) {
+    $status = FALSE;
+    // When using Varnish, turning off page compression is a good thing!
+    if (module_exists('varnish')) {
+      $status = TRUE;
+    }
+  }
+
   $check['prod_check_page_compression'] = array(
     '#title' => t($title),
-    '#state' => variable_get('page_compression', 0) != 0,
+    '#state' => $status,
     '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_CRITICAL : REQUIREMENT_ERROR,
     '#value_ok'  => t('Enabled'),
     '#value_nok'  => t('Disabled'),
@@ -800,16 +923,35 @@ function _prod_check_block_cache($caller = 'internal') {
 // Optimize CSS files
 function _prod_check_preprocess_css($caller = 'internal') {
   $check = array();
+  $state = TRUE;
 
   $title = 'Optimize CSS files';
   $path = 'admin/settings/performance';
+
+  // Check settings.
+  if (variable_get('preprocess_css', 0) == 0) {
+    $state = FALSE;
+    // Check if Advanced CSS/JS Aggregation is being used
+    if (module_exists('advagg')) {
+      $title = 'Advanced CSS Aggregation';
+      $path = 'admin/settings/advagg';
+      if (variable_get('advagg_enabled', 1) == 1) {
+        $state = TRUE;
+        // Check if the CSS compress submodule is used.
+        if (module_exists('advagg_css_compress')) {
+          $path .= '/css-compress';
+        }
+      }
+    }
+  }
+
   if ($caller != 'internal') {
     $path = PRODCHECK_BASEURL . $path;
   }
 
   $check['prod_check_preprocess_css'] = array(
     '#title' => t($title),
-    '#state' => variable_get('preprocess_css', 0) != 0,
+    '#state' => $state,
     '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_CRITICAL : REQUIREMENT_ERROR,
     '#value_ok'  => t('Enabled'),
     '#value_nok'  => t('Disabled'),
@@ -825,22 +967,110 @@ function _prod_check_preprocess_css($caller = 'internal') {
 // Optimize JavaScript files
 function _prod_check_preprocess_js($caller = 'internal') {
   $check = array();
+  $state = TRUE;
 
   $title = 'Optimize JavaScript files';
   $path = 'admin/settings/performance';
+
+  // Check settings.
+  if (variable_get('preprocess_js', 0) == 0) {
+    $state = FALSE;
+    // Check if Advanced CSS/JS Aggregation is being used
+    if (module_exists('advagg')) {
+      $title = 'Advanced JS Aggregation';
+      $path = 'admin/settings/advagg';
+      if (variable_get('advagg_enabled', 1) == 1) {
+        $state = TRUE;
+        // Check if the CSS compress submodule is used.
+        if (module_exists('advagg_js_compress')) {
+          $path .= '/js-compress';
+        }
+      }
+    }
+  }
+
   if ($caller != 'internal') {
     $path = PRODCHECK_BASEURL . $path;
   }
 
   $check['prod_check_preprocess_js'] = array(
     '#title' => t($title),
-    '#state' => variable_get('preprocess_js', 0) != 0,
+    '#state' => $state,
     '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_WARNING : REQUIREMENT_WARNING,
     '#value_ok'  => t('Enabled'),
     '#value_nok'  => t('Disabled'),
     '#description_ok'  => prod_check_ok_title($title, $path),
     '#description_nok' => t('Your !link settings are disabled, ideally they should be enabled on a producion environment but this requires testing first, since it can cause JavaScript errors in certain cases.', prod_check_link_array($title, $path)),
     '#nagios_key' => 'JCOMP',
+    '#nagios_type' => 'state',
+  );
+
+  return prod_check_execute_check($check, $caller);
+}
+
+// --- Security ---
+
+// Users
+function _prod_check_user_pass($caller = 'internal') {
+  $check = array();
+  $secure = TRUE;
+  $list = '';
+
+  $title = 'User passwords';
+  $path = '';
+  if ($caller != 'internal') {
+    $path = PRODCHECK_BASEURL;
+  }
+
+  // Be sure to omit the anonymous user with id 0.
+  $result = db_query('SELECT uid, name FROM {users} WHERE uid <> 0 && MD5(name) = pass');
+  while ($row = db_fetch_array($result)) {
+      $list .= l($row['name'], $path.'user/'.$row['uid'].'/edit', array('attributes' => array('title' => t('Edit user').' '.$row['name']))).', ';
+  }
+  if (!empty($list)) {
+    $secure = FALSE;
+    // Remove last comma and space.
+    $list = rtrim($list, ', ');
+  }
+  $check['prod_check_user_pass'] = array(
+    '#title' => t($title),
+    '#state' => $secure,
+    '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_CRITICAL : REQUIREMENT_ERROR,
+    '#value_ok'  => t('Secure'),
+    '#value_nok'  => t('Security risk!'),
+    '#description_ok'  => t('No security risk found.'),
+    '#description_nok' => t('Some users have a password that is identical to their username! You should check the following users:' .' '.$list.'.'),
+    '#nagios_key' => 'USRBD',
+    '#nagios_type' => 'state',
+  );
+
+  return prod_check_execute_check($check, $caller);
+}
+
+// Anonymous
+function _prod_check_anonymous_rights($caller = 'internal') {
+  $check = array();
+  $secure = TRUE;
+
+  $title = 'Anonymous user rights';
+  $path = 'admin/user/permissions';
+  if ($caller != 'internal') {
+    $path = PRODCHECK_BASEURL . $path;
+  }
+
+  $perms = db_result(db_query('SELECT perm FROM {permission} WHERE rid = 1'));
+  if (preg_match('/(access\sall|add|administer|change|clear|create|delete|edit|revert|save|send\smail|set\svariable|update|upload|PHP|devel)/i', $perms)) {
+    $secure = FALSE;
+  }
+  $check['prod_check_anonymous_rights'] = array(
+    '#title' => t($title),
+    '#state' => $secure,
+    '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_CRITICAL : REQUIREMENT_ERROR,
+    '#value_ok'  => t('Secure'),
+    '#value_nok'  => t('Security risk!'),
+    '#description_ok'  => t('No security risk found.'),
+    '#description_nok' => t('The anonymous user seems to have elevated privileges! Please check the !link.', prod_check_link_array('permissions page', $path)),
+    '#nagios_key' => 'ANON',
     '#nagios_type' => 'state',
   );
 
@@ -913,7 +1143,7 @@ function _prod_check_devel($caller = 'internal') {
       '#title' => t($title),
       '#state' => !$data['error'],
       '#severity' => ($caller == 'nagios') ? NAGIOS_STATUS_CRITICAL : REQUIREMENT_ERROR,
-      '#value_ok'  => t('Disbled'),
+      '#value_ok'  => t('Disabled'),
       '#value_nok'  => t('Enabled'),
       '#description_ok'  => t('Your settings are OK for production use.'),
       '#description_nok' => t('You have enabled the !link module. This should not be running on a production environment!', prod_check_link_array($title, $path)),

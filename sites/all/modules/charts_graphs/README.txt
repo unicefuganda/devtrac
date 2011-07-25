@@ -1,5 +1,3 @@
-/* $Id: README.txt,v 1.1.2.4.2.6 2010/08/03 09:43:17 rsevero Exp $ */
-
 -- SUMMARY --
 
 Charts and Graphs is a API for developers. It can easily be extended by
@@ -46,8 +44,9 @@ None
 * Install as usual, see http://drupal.org/node/70151 for further information.
 
 * There is additional information available at <http://drupal.org/node/681660>.
-  Bluff and Google Charts can be used right away. amCharts and Open Fharts Flash
-  2 require additional downloads/configuration to work.
+  Google Charts can be used right away. Bluff needs a additional download to 
+  work in IE. amCharts and Open Fharts Flash 2 require additional 
+  downloads/configuration to work.
 
 
 -- UPGRADE --

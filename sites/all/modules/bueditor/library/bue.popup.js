@@ -1,4 +1,3 @@
-// $Id: bue.popup.js,v 1.3.2.14 2010/11/08 07:10:26 ufku Exp $
 
 //Introduces editor popups: E.dialog & E.quickPop
 //Requires: none

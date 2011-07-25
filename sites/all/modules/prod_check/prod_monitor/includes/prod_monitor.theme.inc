@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_monitor.theme.inc,v 1.1.2.2 2011/01/25 22:34:23 malc0mn Exp $
 
 /**
  * Theme project status report.

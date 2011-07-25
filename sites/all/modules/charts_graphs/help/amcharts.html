@@ -1,5 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- $Id: amcharts.html,v 1.1.2.5.2.8 2010/11/02 13:16:36 rsevero Exp $ -->
 <html>
   <head>
     <title>Charts and Graphs - amCharts</title>
@@ -11,25 +10,19 @@
         <a href="http://www.amcharts.com/">home page</a> and it's
         <a href="http://www.amcharts.com/docs/">reference page</a>.</p>
     <h3>Instalation</h3>
-      <p>You need to download <a href="http://www.amcharts.com/download">amCharts</a>
-        files. Specifically	Column & Bar, Line & Area, Pie & Donut zip files.</p>
-      <p>Unfortunately amCharts ships as several zips, so you need to download
-        each one from the above path:</p>
+      <p>At <a href="http://www.amcharts.com/download">amCharts</a> choose the 
+        <em>2.x amCharts Flash & JavaScript bundle</em> to download.</p>
+      <p>From it you have to extrac the following files (they are at 
+        amcharts/flash):</p>
       <ul>
-        <li>Column & Bar (e.g. amcolumn_x.x.x.x.zip)</li>
-        <li>Line & Area (e.g. amline_x.x.x.x.zip)</li>
-        <li>Pie & Donut (e.g. ampie_x.x.x.x.zip)</li>
+        <li>amcolumn.swf</li>
+        <li>amline.swf</li>
+        <li>ampie.swf</li>
       </ul>
-      <p>and within each of these zips you will find the following files:</p>
-      <ul>
-        <li>amcolumn.swf (in the amcolumn directory of the amcolumn zip)</li>
-        <li>amline.swf (in the amline directory of the amline zip)</li>
-        <li>ampie.swf (in the ampie directory of the ampie zip)</li>
-      </ul>
-      <p>Download and place them in the downloaded folder of the Drupal Charts
-        and Graphs module, directly, without any folder structure inside the
-        downloaded folder (e.g. into
-        sites/all/modules/charts_graphs/apis/charts_graphs_amcharts/downloaded).</p>
+      <p>Place them in the 
+        <em>charts_graphs/apis/charts_graphs_amcharts/downloaded</em> folder of 
+        Charts and Graphs module directly, without any folder structure inside 
+        the downloaded folder.</p>
       <h4>Dependency</h4>
         <h5>SMFTools module</h5>
           <p>amCharts implementation for Charts and Graphs dependends on the
@@ -61,7 +54,6 @@ function charts_graphs_test() {
   $canvas->type = 'line';
   $canvas->y_legend = 'Y Legend';
   $canvas->colour = '#808000';
-  $canvas->theme = 'keynote';
   $canvas->series = array(
     'Some Value' => array(9,6,7,9,5,7,6,9,7),
     'Page Views' => array(6,7,9,5,7,6,9,7,3),
@@ -78,6 +70,87 @@ function charts_graphs_test() {
 <pre>
 &lt;?php
   $canvas->key = 'YOUR_KEY';
+</pre>
+      <h4>Multiple chart types on the same graph</h4>
+      <p>You can get several chart types on the same graph with amCharts.</p>
+        <h5>Example (thanks to hish):</h5>
+<pre>
+<$php
+$canvas = charts_graphs_get_graph('amcharts');
+$canvas->title = "AmCharts Chart";
+$canvas->type = "bar";
+$canvas->y_legend = "Test Y Legend";
+$canvas->colour = '#ffffff';
+$canvas->series = array('Some Value' => array(9, 8, 7, 9, 7, 7, 6, 8, 7, 9, 8, 7.5, 9.8),
+  'Page Views' => array(6, 7, 9, 5, 7, 6, 9, 7, 3, 2.5, 5, 15),
+  'New Value' => array(5, 1, 15, 4, 5, 9, 12, 2.9, 9, 11, 11.8, 1.5),
+);
+$canvas->width = 800;
+$canvas->height = 600;
+$canvas->x_labels = array(
+  'one',
+  'two',
+  'three',
+  'four',
+  'five',
+  'six',
+  'seven',
+  'eight',
+  'nine',
+  'ten',
+  'eleven',
+  'twelve'
+);
+
+$canvas->settings = array(
+  array('#id' => 'column',
+    '#children' => array(
+      array('#id' => 'sequenced_grow', '#value' => 'true'),
+      array('#id' => 'grow_time', '#value' => 5),
+      array('#id' => 'hover_brightness', '#value' => -20),
+      array('#id' => 'balloon_text', '#cdata' => '{series}: {value}'),
+      array('#id' => 'border_color', '#value' => '#999999'),
+      array('#id' => 'border_alpha', '#value' => 3)
+    )
+  ),
+  array('#id' => 'line',
+    '#children' => array(
+      array('#id' => 'hover_brightness', '#value' => -20),
+      array('#id' => 'bullet', '#value' => 'round'),
+      array('#id' => 'balloon_text', '#cdata' => '{series}: {value}'),
+      array('#id' => 'connect', '#value' => 'true'),
+    )
+  ),
+  array('#id' => 'balloon',
+    '#children' => array(
+      array('#id' => 'alpha', '#value' => 80),
+      array('#id' => 'text_color', '#value' => '#000000'),
+      array('#id' => 'corner_radius', '#value' => 5),
+      array('#id' => 'border_width', '#value' => 3),
+      array('#id' => 'border_alpha', '#value' => 50),
+      array('#id' => 'border_color', '#value' => '#000000'),
+    )
+  ),
+  array('#id' => 'graphs',
+    '#children' => array(
+      array('#id' => 'graph',
+        '#attributes' => array('gid' => 0),
+        '#children' => array(array('#id' => 'type', '#value' => 'line'),
+          array('#id' => 'line_width', '#value' => 2),)
+      ),
+      array('#id' => 'graph',
+        '#attributes' => array('gid' => 1),
+        '#children' => array(array('#id' => 'type', '#value' => 'column'),)
+      ),
+      array('#id' => 'graph',
+        '#attributes' => array('gid' => 2),
+        '#children' => array(array('#id' => 'type', '#value' => 'column'),)
+      ),
+    )
+  ),
+);
+$out = $canvas->get_chart();
+print $out;
 </pre>
       <h4>Arbitrary parameters</h4>
         <p>amCharts implementation for Charts and Graphs supports the
@@ -125,7 +198,9 @@ $canvas->parameters['chbh'] = "25,5,10";
       </dl>
     <h3>Unsupported properties</h3>
       <p>The amCharts charting library doesn't support the
-        <a href="general_reference#y_step">y_step</a> property.</p>
+        <a href="general_reference#y_step">y_step</a> property and it has no
+        themes defined to be used with the 
+        <a href="general_reference#theme">theme</a> property.</p>
     <h3>Examples</h3>
       <p>The examples below will only work if you have the amCharts submodule
         configured correctly.</p>

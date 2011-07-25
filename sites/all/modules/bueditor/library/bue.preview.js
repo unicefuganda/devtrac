@@ -1,4 +1,3 @@
-// $Id: bue.preview.js,v 1.2.2.8 2010/03/03 05:36:33 ufku Exp $
 
 //Introduces E.prv(), E.prvAjax()
 //Requires: none

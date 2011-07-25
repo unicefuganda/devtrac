@@ -1,6 +1,4 @@
 <?php
-// $Id: charts_graphs_bluff.class.inc,v 1.1.2.8 2010/11/17 23:19:02 rsevero Exp $
-
 /**
  * @file
  *   Implementation of abstract class ChartsGraphsCanvas for Bluff library.
@@ -26,15 +24,22 @@ class ChartsGraphsBluff extends ChartsGraphsCanvas {
   
   /**
    * Optional parameter.
-   * 
-   * If set to TRUE, will cause Bluff to pick the opposite data orientation to
-   * the one it would have picked automatically. This orientation defines if
-   * each column or each row is one data serie.
-   * 
-   * @var <bool> 
+   *
+   * It recognizes 3 different settings:
+   * - auto: default behaviour where Bluff tries to identify the proper
+   *   data orientation;
+   * - rows: rows are mapped as data series;
+   * - columns: columns are mapped as data series.
+   *
+   * @var string
    */
-  var $transpose = NULL;
+  var $orientation = NULL;
 
+  /**
+   * Converts the standard Charts and Graphs chart type to Bluff chart type.
+   *
+   * @return string
+   */
   protected function _get_translated_chart_type() {
     switch ($this->type) {
       case 'mini_bar':
@@ -71,7 +76,7 @@ class ChartsGraphsBluff extends ChartsGraphsCanvas {
     return $type;
   }
 
-  protected function _initialize_final_parameters($chart_id, $transpose) {
+  protected function _initialize_final_parameters($chart_id) {
     $parameters = array();
     $parameters['marker_font_size'] = 20;
     $parameters['hide_legend'] = 'true';
@@ -92,34 +97,39 @@ class ChartsGraphsBluff extends ChartsGraphsCanvas {
     if ($this->y_step)  {
       $parameters['y_axis_increment'] = $this->y_step;
     }
-
-    $series_colours = "['" . implode("', '", $this->series_colours) . "']";
-    $marker_colour = '#aea9a9';
-    $font_colour = '#000000';
-    $background_colour = isset($this->colour) ?
-      array($this->colour, $this->colour) :
-      array(
-        '#d1edf5',
-        '#ffffff',
+    
+    if (isset($this->theme) && !empty($this->theme)) {
+      $parameters['theme_' . $this->theme] = array();
+    }
+    else {
+      $series_colours = "['" . implode("', '", $this->series_colours) . "']";
+      $marker_colour = '#aea9a9';
+      $font_colour = '#000000';
+      $background_colour = isset($this->colour) ?
+        array($this->colour, $this->colour) :
+        array(
+          '#d1edf5',
+          '#ffffff',
+        );
+      $background_colour = "['" . implode("', '", $background_colour) . "']";
+      $set_theme = sprintf(
+        "{
+          colors: %s,
+          marker_color: '%s',
+          font_color: '%s',
+          background_colors: %s
+        }",
+        $series_colours,
+        $marker_colour,
+        $font_colour,
+        $background_colour
       );
-    $background_colour = "['" . implode("', '", $background_colour) . "']";
-    $set_theme = sprintf(
-      "{
-        colors: %s,
-        marker_color: '%s',
-        font_color: '%s',
-        background_colors: %s
-      }",
-      $series_colours,
-      $marker_colour,
-      $font_colour,
-      $background_colour
-    );
-    $parameters['set_theme'] = array($set_theme);
+      $parameters['set_theme'] = array($set_theme);
+    }
 
     $parameters['data_from_table'] = array(
       '"' . $chart_id . '"',
-      ($transpose) ? 'true' : 'false'
+      "{orientation: '" . (($this->orientation) ? $this->orientation : 'auto') . "'}",
     );
 
     if (is_array($this->parameters)) {
@@ -208,9 +218,11 @@ TABLE
 
     $is_pie_chart = ($this->type == 'pie');
 
-    $transpose = isset($this->transpose) ? $this->transpose : $is_pie_chart;
+    if ($this->orientation === NULL) {
+      $this->orientation = $is_pie_chart ? 'rows' : 'auto';
+    }
 
-    $this->_initialize_final_parameters($chart_id, $transpose);
+    $this->_initialize_final_parameters($chart_id);
     $html = implode('', $table);
 
     $javascript = '

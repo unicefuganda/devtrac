@@ -1,4 +1,3 @@
-// $Id: bueditor.import.js,v 1.1 2009/10/14 16:39:58 ufku Exp $
 (function($) {
 
 //quick import predefined editors.

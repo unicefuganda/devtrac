@@ -1,5 +1,4 @@
 <?php
-// $Id: charts_graphs_amcharts.class.inc,v 1.1.2.18 2010/11/17 02:37:03 rsevero Exp $
 
 /**
  * @file
@@ -57,15 +56,14 @@ class ChartsGraphsAmcharts extends ChartsGraphsFlashCanvas {
 
   function _preprocess_values_pie() {
     $pie_data = array();
-    $keys = array_keys($this->series);
-    $first_key = $keys[0];
-    $first_series = $this->series[$first_key];
+    $first_series = reset($this->series);
     $idx = 0;
     $max_val = max($first_series);
     $max_idx = -1;
+    $x_labels_keys = array_keys($this->x_labels);
     if (is_array($first_series)) {
       foreach ($first_series as $val) {
-        $pie_data[$this->x_labels[$idx]] = $val;
+        $pie_data[$this->x_labels[$x_labels_keys[$idx]]] = $val;
         if ($val == $max_val) {
           $max_idx = $idx;
         }
@@ -133,12 +131,15 @@ class ChartsGraphsAmcharts extends ChartsGraphsFlashCanvas {
       $ordered_series = ($this->type == 'side_bar') ?
         array_reverse($this->series, TRUE) :
         $this->series;
+
+      $gid = 0;
       foreach ($ordered_series as $name => $graph) {
         if (!is_array($graph)) {
           continue;
         }
         $j = 1;
         $values = array();
+
         /**
          * Making amCharts side bar graphs have the same orientation of side bar
          * graphs made with Bluff and Google Charts.
@@ -146,6 +147,7 @@ class ChartsGraphsAmcharts extends ChartsGraphsFlashCanvas {
         $ordered_graph = ($this->type == 'side_bar') ?
           array_reverse($graph, TRUE) :
           $graph;
+
         foreach ($ordered_graph as $val) {
           $values[] = array(
             '#id' => 'value',
@@ -161,6 +163,7 @@ class ChartsGraphsAmcharts extends ChartsGraphsFlashCanvas {
           '#attributes' => array(
             'title' => $this->encode_for_xml($name),
             'bullet' => 'round',
+            'gid' => $gid,
           ),
           '#children' => $values,
         );
@@ -168,6 +171,7 @@ class ChartsGraphsAmcharts extends ChartsGraphsFlashCanvas {
           $new_graph['#attributes']['fill_alpha'] = 50;
         }
         $graphs[] = $new_graph;
+        $gid++;
       }
     }
 

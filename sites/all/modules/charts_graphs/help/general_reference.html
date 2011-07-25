@@ -1,5 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<!-- $Id: general_reference.html,v 1.1.2.4.2.4 2010/11/17 22:17:32 rsevero Exp $ -->
 <html>
   <head>
     <title>Charts and Graphs - General Reference</title>
@@ -15,6 +14,7 @@
         <li><a href="#height">height</a></li>
         <li><a href="#series">series</a></li>
         <li><a href="#series_colours">series_colours</a></li>
+        <li><a href="#theme">theme</a></li>
         <li><a href="#title">title</a></li>
         <li><a href="#type">type</a></li>
         <li><a href="#width">width</a></li>
@@ -63,6 +63,13 @@ $canvas->series = array(
 <pre>
 &lt;?php
 $canvas->series_colours = array('#123456', '#654321); // This way you get a dark blue and a medium brown.
+</pre>
+      <h4><a name="theme">theme</a></h4>
+        <p>The <i>theme</i> property sets a library dependent theme.</p>
+        <h5>Example:</h5>
+<pre>
+&lt;?php
+$canvas->theme = 'keynote'; // This example works for Bluff.
 </pre>
       <h4><a name="title">title</a></h4>
         <p>The <i>title</i> property sets the graph title.</p>

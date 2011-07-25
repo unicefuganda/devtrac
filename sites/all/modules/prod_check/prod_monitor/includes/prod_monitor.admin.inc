@@ -1,5 +1,4 @@
 <?php
-// $Id: prod_monitor.admin.inc,v 1.3.2.13 2011/02/06 16:37:15 malc0mn Exp $
 
 /**
  * Build status page.

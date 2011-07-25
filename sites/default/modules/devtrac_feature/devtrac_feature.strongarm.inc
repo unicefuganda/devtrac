@@ -369,14 +369,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_ftritem';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '4',
-    'author' => '6',
-    'options' => '7',
-    'comment_settings' => '5',
+    'revision_information' => '5',
+    'author' => '7',
+    'options' => '8',
+    'comment_settings' => '6',
     'menu' => '3',
+    'taxonomy' => '-4',
     'book' => '10',
-    'path' => '8',
-    'print' => '30',
+    'path' => '9',
+    'print' => '12',
+    'custom_breadcrumbs' => '11',
   );
   $export['content_extra_weights_ftritem'] = $strongarm;
 

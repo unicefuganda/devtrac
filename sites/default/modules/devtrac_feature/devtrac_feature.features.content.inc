@@ -1029,6 +1029,85 @@ Published',
     ),
   );
 
+  // Exported field: field_ftritem_date_visited
+  $fields['ftritem-field_ftritem_date_visited'] = array(
+    'field_name' => 'field_ftritem_date_visited',
+    'type_name' => 'ftritem',
+    'display_settings' => array(
+      'weight' => '-1',
+      'parent' => '',
+      'label' => array(
+        'format' => 'inline',
+      ),
+      'teaser' => array(
+        'format' => 'medium',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'medium',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'date',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'date',
+    'active' => '1',
+    'granularity' => array(
+      'year' => 'year',
+      'month' => 'month',
+      'day' => 'day',
+    ),
+    'timezone_db' => '',
+    'tz_handling' => 'none',
+    'todate' => '',
+    'repeat' => 0,
+    'repeat_collapsed' => '',
+    'default_format' => 'medium',
+    'widget' => array(
+      'default_value' => 'now',
+      'default_value_code' => '',
+      'default_value2' => 'same',
+      'default_value_code2' => '',
+      'input_format' => 'D, d/m/Y',
+      'input_format_custom' => '',
+      'increment' => '1',
+      'text_parts' => array(),
+      'year_range' => '-3:+3',
+      'label_position' => 'above',
+      'label' => 'Date Visited',
+      'weight' => '-1',
+      'description' => '',
+      'type' => 'date_popup',
+      'module' => 'date',
+    ),
+  );
+
   // Exported field: field_ftritem_field_trip
   $fields['ftritem-field_ftritem_field_trip'] = array(
     'field_name' => 'field_ftritem_field_trip',
@@ -1154,7 +1233,7 @@ Published',
     'field_name' => 'field_ftritem_lat_long',
     'type_name' => 'ftritem',
     'display_settings' => array(
-      'weight' => '3',
+      'weight' => '4',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -1203,7 +1282,7 @@ Published',
       'default_value_php' => NULL,
       'position' => '10',
       'label' => 'Lat-Long',
-      'weight' => '3',
+      'weight' => '4',
       'description' => 'Results while geocoding based on address might vary. If you can not find a place, just navigate the map towards the location and click the pencil, and then the map to indicate the right location.',
       'type' => 'openlayers_geocoder_widget',
       'module' => 'openlayers_geocoder',
@@ -1215,7 +1294,7 @@ Published',
     'field_name' => 'field_ftritem_narrative',
     'type_name' => 'ftritem',
     'display_settings' => array(
-      'weight' => 0,
+      'weight' => '1',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -1271,7 +1350,7 @@ Published',
       ),
       'default_value_php' => NULL,
       'label' => 'Full Report',
-      'weight' => 0,
+      'weight' => '1',
       'description' => 'Your full Report Item content. This will be kept private and thus only available to people logged into DevTrack.',
       'type' => 'text_textarea',
       'module' => 'text',
@@ -1343,7 +1422,7 @@ Published',
     'field_name' => 'field_ftritem_public_summary',
     'type_name' => 'ftritem',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => 0,
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -1394,7 +1473,7 @@ Published',
       ),
       'default_value_php' => NULL,
       'label' => 'Public Summary',
-      'weight' => '-1',
+      'weight' => 0,
       'description' => 'Your summarized Trip Report content. This will be made PUBLIC and thus available to the general public.',
       'type' => 'text_textarea',
       'module' => 'text',
@@ -2198,6 +2277,7 @@ return array(
   // Included for use with string extractors like potx.
   t('About Me');
   t('Contact');
+  t('Date Visited');
   t('Department');
   t('Description');
   t('Due Date');

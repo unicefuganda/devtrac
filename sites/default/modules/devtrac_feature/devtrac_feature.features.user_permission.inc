@@ -198,6 +198,17 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_ftritem_date_visited
+  $permissions['edit field_ftritem_date_visited'] = array(
+    'name' => 'edit field_ftritem_date_visited',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: edit field_ftritem_field_trip
   $permissions['edit field_ftritem_field_trip'] = array(
     'name' => 'edit field_ftritem_field_trip',
@@ -601,6 +612,18 @@ function devtrac_feature_user_default_permissions() {
   // Exported permission: view field_fieldtrip_user
   $permissions['view field_fieldtrip_user'] = array(
     'name' => 'view field_fieldtrip_user',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'unicef user',
+      '4' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: view field_ftritem_date_visited
+  $permissions['view field_ftritem_date_visited'] = array(
+    'name' => 'view field_ftritem_date_visited',
     'roles' => array(
       '0' => 'administrator',
       '1' => 'anonymous user',

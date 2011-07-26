@@ -2061,22 +2061,23 @@ return array(
     'active' => '1',
     'text_processing' => '0',
     'max_length' => '',
-    'allowed_values' => 'PhD
-MSc
-BSc',
+    'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
       'default_value' => array(
         '0' => array(
           'value' => '',
+          '_error_element' => 'default_value_widget][field_user_degree][0][value',
         ),
       ),
       'default_value_php' => NULL,
+      'rows' => 5,
+      'size' => '60',
       'label' => 'Academic Degree(s)',
       'weight' => '9',
       'description' => '',
-      'type' => 'optionwidgets_select',
-      'module' => 'optionwidgets',
+      'type' => 'text_textfield',
+      'module' => 'text',
     ),
   );
 
@@ -2392,18 +2393,23 @@ BSc',
     'active' => '1',
     'text_processing' => '0',
     'max_length' => '',
-    'allowed_values' => 'Prof.
-Dr.
-Mr.',
+    'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
-      'default_value' => NULL,
+      'default_value' => array(
+        '0' => array(
+          'value' => '',
+          '_error_element' => 'default_value_widget][field_user_title][0][value',
+        ),
+      ),
       'default_value_php' => NULL,
+      'rows' => 5,
+      'size' => '60',
       'label' => 'Title',
       'weight' => '8',
       'description' => '',
-      'type' => 'optionwidgets_select',
-      'module' => 'optionwidgets',
+      'type' => 'text_textfield',
+      'module' => 'text',
     ),
   );
 

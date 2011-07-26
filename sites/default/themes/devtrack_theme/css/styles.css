@@ -713,10 +713,14 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayermiddle .tabs-secondary a:visited{
 	text-decoration: none;
 	font-weight:bold;
-} 
-.col-content_contentlayermiddle ul.secondary a.active {
-	background-color:#EA0001;
-	border-bottom:medium none;
+}
+
+.col-content_contentlayermiddle ul.secondary li.active a {
+}
+
+.col-content_contentlayermiddle ul.secondary li.active a{
+    background-color:#EA0001;
+ 	border-bottom:medium none;
 	color:#FFFFFF;
 	font-weight:bold;
 	padding:5px 10px 3px;

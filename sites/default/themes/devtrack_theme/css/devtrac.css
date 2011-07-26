@@ -393,3 +393,13 @@ body div.help {
   background: none;
   margin-bottom: 6px; /* was 1.5 em, far too much it seems */
 }
+
+
+.view view-my-homepage-my-action-items .views-field-title .marker {
+  float: left;
+  color:  #EA0001;
+}
+
+.view view-my-homepage-my-action-items .views-field-comment-count a{
+ float: left;
+}

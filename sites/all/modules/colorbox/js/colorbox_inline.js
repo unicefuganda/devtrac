@@ -1,7 +1,9 @@
-// $Id: colorbox_inline.js,v 1.1.2.1 2010/07/11 12:34:24 frjo Exp $
 (function ($) {
 
 Drupal.behaviors.initColorboxInline = function (context) {
+  if (!$.isFunction($.colorbox)) {
+    return;
+  }
   var settings = Drupal.settings.colorbox;
   $.urlParam = function(name, url){
     if (name == 'fragment') {
@@ -10,15 +12,23 @@ Drupal.behaviors.initColorboxInline = function (context) {
     else {
       var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(url);
     }
-    if (!results) { return 0; }
-    return results[1] || 0;
+    if (!results) { return ''; }
+    return results[1] || '';
   };
   $('a, area, input', context).filter('.colorbox-inline:not(.initColorboxInline-processed)').addClass('initColorboxInline-processed').colorbox({
     transition:settings.transition,
     speed:settings.speed,
     opacity:settings.opacity,
+    slideshow:settings.slideshow,
+    slideshowAuto:settings.slideshowAuto,
+    slideshowSpeed:settings.slideshowSpeed,
+    slideshowStart:settings.slideshowStart,
+    slideshowStop:settings.slideshowStop,
+    current:settings.current,
+    previous:settings.previous,
+    next:settings.next,
     close:settings.close,
-    overlayClose:settings.overlaycClose,
+    overlayClose:settings.overlayClose,
     maxWidth:settings.maxWidth,
     maxHeight:settings.maxHeight,
     innerWidth:function(){
@@ -26,6 +36,9 @@ Drupal.behaviors.initColorboxInline = function (context) {
     },
     innerHeight:function(){
       return $.urlParam('height', $(this).attr('href'));
+    },
+    title:function(){
+      return $.urlParam('title', $(this).attr('href'));
     },
     iframe:function(){
       return $.urlParam('iframe', $(this).attr('href'));

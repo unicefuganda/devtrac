@@ -2064,6 +2064,8 @@ return array(
     'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
+      'rows' => 5,
+      'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
@@ -2071,8 +2073,6 @@ return array(
         ),
       ),
       'default_value_php' => NULL,
-      'rows' => 5,
-      'size' => '60',
       'label' => 'Academic Degree(s)',
       'weight' => '9',
       'description' => '',
@@ -2396,6 +2396,8 @@ return array(
     'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
+      'rows' => 5,
+      'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
@@ -2403,8 +2405,6 @@ return array(
         ),
       ),
       'default_value_php' => NULL,
-      'rows' => 5,
-      'size' => '60',
       'label' => 'Title',
       'weight' => '8',
       'description' => '',

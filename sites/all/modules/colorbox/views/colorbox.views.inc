@@ -1,5 +1,4 @@
 <?php
-// $Id: colorbox.views.inc,v 1.1 2010/05/18 07:29:41 frjo Exp $
 
 /**
  * @file
@@ -7,7 +6,7 @@
  */
 
 /**
- * Implementation of hook_views_data()
+ * Implementation of hook_views_data().
  */
 function colorbox_views_data() {
 

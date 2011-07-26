@@ -9,6 +9,27 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'colorbox_imagecache_preset';
+  $strongarm->value = '0';
+  $export['colorbox_imagecache_preset'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'colorbox_imagefield_gallery';
+  $strongarm->value = '3';
+  $export['colorbox_imagefield_gallery'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'colorbox_inline';
+  $strongarm->value = 0;
+  $export['colorbox_inline'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'comment_actionitem';
   $strongarm->value = '2';
   $export['comment_actionitem'] = $strongarm;

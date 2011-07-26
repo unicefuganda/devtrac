@@ -480,6 +480,12 @@ function devtrac_feature_context_default_contexts() {
   $context->reactions = array(
     'block' => array(
       'blocks' => array(
+        'wms-0' => array(
+          'module' => 'wms',
+          'delta' => 0,
+          'region' => 'contentlayerleft',
+          'weight' => 0,
+        ),
         'openlayers_plus-blockswitcher' => array(
           'module' => 'openlayers_plus',
           'delta' => 'blockswitcher',
@@ -491,12 +497,6 @@ function devtrac_feature_context_default_contexts() {
           'delta' => 1,
           'region' => 'contentlayerright',
           'weight' => 1,
-        ),
-        'wms-0' => array(
-          'module' => 'wms',
-          'delta' => 0,
-          'region' => 'layerthree',
-          'weight' => 0,
         ),
       ),
     ),

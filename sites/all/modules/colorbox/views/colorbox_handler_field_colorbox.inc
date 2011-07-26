@@ -1,5 +1,4 @@
 <?php
-// $Id: colorbox_handler_field_colorbox.inc,v 1.1.2.1 2010/06/01 08:20:34 frjo Exp $
 
 /**
  * @file
@@ -88,7 +87,7 @@ class colorbox_handler_field_colorbox extends views_handler_field {
     $form['height'] = array(
       '#type' => 'textfield',
       '#title' => t('Height'),
-      '#description' => t('Specify the height of the Colorbox popup window.  Because the content is dynamic, we cannot detect this value automatically.'),
+      '#description' => t('Specify the height of the Colorbox popup window. Because the content is dynamic, we cannot detect this value automatically. Example: "100%", 500, "500px".'),
       '#default_value' => $this->options['height'],
       '#weight' => -7,
     );
@@ -96,7 +95,7 @@ class colorbox_handler_field_colorbox extends views_handler_field {
     $form['width'] = array(
       '#type' => 'textfield',
       '#title' => t('Width'),
-      '#description' => t('Specify the width of the Colorbox popup window.  Because the content is dynamic, we cannot detect this value automatically.'),
+      '#description' => t('Specify the width of the Colorbox popup window. Because the content is dynamic, we cannot detect this value automatically. Example: "100%", 500, "500px".'),
       '#default_value' => $this->options['width'],
       '#weight' => -6,
     );
@@ -120,7 +119,7 @@ class colorbox_handler_field_colorbox extends views_handler_field {
    */
   function render($values) {
     // Load the necessary js file for Colorbox activation.
-    if (_colorbox_active()) {
+    if (_colorbox_active() && !variable_get('colorbox_inline', 0)) {
       drupal_add_js(drupal_get_path('module', 'colorbox') .'/js/colorbox_inline.js');
     }
 
@@ -147,7 +146,7 @@ class colorbox_handler_field_colorbox extends views_handler_field {
 
     $i++;
 
-    $link_tag = l($link_text, '', array('html' => TRUE, 'fragment' => 'colorbox-inline-'. $i, 'query' => 'width='. $width .'&height='. $height .'&inline=true', 'attributes' => array('title' => $caption, 'class' => 'colorbox-inline', 'rel' => $gallery_id)));
+    $link_tag = l($link_text, '', array('html' => TRUE, 'fragment' => 'colorbox-inline-'. $i, 'query' => 'width='. $width .'&height='. $height .'&title='. $caption .'&inline=true', 'attributes' => array('class' => 'colorbox-inline', 'rel' => $gallery_id)));
 
     // The outside div is there to hide all of the divs because if the specific Colorbox
     // div is hidden it won't show up as a Colorbox.

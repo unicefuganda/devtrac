@@ -16,7 +16,7 @@ function devtrac_feature_openlayers_layers() {
     'base_url' => 'http://maps.u-map.it/wms',
     'params' => array(
       'isBaseLayer' => 0,
-      'buffer' => '2',
+      'buffer' => '0',
       'ratio' => '1.5',
       'singleTile' => 1,
     ),
@@ -93,7 +93,7 @@ function devtrac_feature_openlayers_layers() {
     'base_url' => 'http://maps.u-map.it/wms',
     'params' => array(
       'isBaseLayer' => 0,
-      'buffer' => '2',
+      'buffer' => '0',
       'ratio' => '1.5',
       'singleTile' => 1,
     ),
@@ -101,7 +101,7 @@ function devtrac_feature_openlayers_layers() {
       'srs' => 'EPSG:900913',
       'TRANSPARENT' => TRUE,
       'exceptions' => 'application/vnd.ogc.se_inimage',
-      'format' => 'image/png',
+      'format' => 'image/jpeg',
       'layers' => 'Devtrac:Schools,Devtrac:SchoolsNorth',
       'styles' => '',
     ),
@@ -144,7 +144,7 @@ function devtrac_feature_openlayers_layers() {
     'base_url' => 'http://maps.u-map.it/wms',
     'params' => array(
       'isBaseLayer' => 0,
-      'buffer' => '2',
+      'buffer' => '0',
       'ratio' => '1.5',
       'singleTile' => 1,
     ),

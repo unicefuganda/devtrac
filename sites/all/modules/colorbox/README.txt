@@ -59,6 +59,9 @@ Installation:
    usually be "sites/all/modules/").
 4. Go to "Administer" -> "Site building" -> "Modules" and enable the module.
 
+If you want to use Colorbox with the Embedded Media Field module
+please check "Enable Colorbox load" in the settings.
+
 
 Configuration:
 -------------
@@ -84,6 +87,26 @@ In the Colorbox settings select "None" as style. This will leave the
 styling of Colorbox up to your theme.
 
 
+Load content in a Colorbox:
+----------------------------------
+Check the "Enable Colorbox load" option in Colorbox settings.
+
+This enables custom links that can open content in a Colorbox. Add the class "colorbox-load" to the link and build the url like this "[path]?width=500&height=500&iframe=true" or "[path]?width=500&height=500" if you don't want an iframe.
+
+Other modules may activate this for easy Colorbox integration.
+
+
+Load inline content in a Colorbox:
+----------------------------------
+Check the "Enable Colorbox inline"  option in Colorbox settings.
+
+This enables custom links that can open inline content in a Colorbox. Inline in this context means some part/tag of the current page, e.g. a div. Replace "id-of-content" with the id of the tag you want to open.
+
+Add the class "colorbox-inline" to the link and build the url like this "?width=500&height=500&inline=true#id-of-content".
+
+Other modules may activate this for easy Colorbox integration.
+
+
 Load a selection of forms in a Colorbox:
 ----------------------------------------
 Check the "Enable Colorbox load" option in Colorbox settings.
@@ -97,12 +120,12 @@ The following form_id can be used:
 
 The links to open a form needs the class "colorbox-load". The URL should look like this.
 
-"/colorbox/form/[form_id]?width=[with_in_pixel]&height=[height_in_pixel]".
+"/colorbox/form/[form_id]?destination=[path_to_send_user_to_after_submit]&width=[with_in_pixel]&height=[height_in_pixel]".
 
 Here is an example where the user register form is opened in an
 500 by 250 pixel Colorbox.
 
-<a class="colorbox-load" href="/colorbox/form/user_register?width=500&height=250">Create new account</a>
+<a class="colorbox-load" href="/colorbox/form/user_register?destination=user&width=500&height=250">Create new account</a>
 
 
 Drush:
@@ -138,4 +161,3 @@ Contributions:
 
 Last updated:
 ------------
-$Id: README.txt,v 1.8.2.1 2010/06/28 17:30:26 frjo Exp $

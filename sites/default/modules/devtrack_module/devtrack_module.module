@@ -1461,7 +1461,6 @@ drupal_set_message("its a bbsync and we will do " . $op);
  * Implementation of hook_taxonomy_menu_path().
  */
 function devtrack_module_taxonomy_menu_path() {
-  drupal_set_message("rewriting the path");
 	$output = array(
     'devtrack_module_path_custom_path' => t('Devtrac Path'),
   );

@@ -1,17 +1,26 @@
-// $Id: colorbox_load.js,v 1.1.2.2 2010/07/11 12:45:59 frjo Exp $
 (function ($) {
 
 Drupal.behaviors.initColorboxLoad = function (context) {
+  if (!$.isFunction($.colorbox)) {
+    return;
+  }
   var settings = Drupal.settings.colorbox;
   $.urlParam = function(name, url){
     var results = new RegExp('[\\?&]' + name + '=([^&#]*)').exec(url);
-    if (!results) { return 0; }
-    return results[1] || 0;
+    if (!results) { return ''; }
+    return results[1] || '';
   };
   $('a, area, input', context).filter('.colorbox-load:not(.initColorboxLoad-processed)').addClass('initColorboxLoad-processed').colorbox({
     transition:settings.transition,
     speed:settings.speed,
     opacity:settings.opacity,
+    slideshowAuto:settings.slideshowAuto,
+    slideshowSpeed:settings.slideshowSpeed,
+    slideshowStart:settings.slideshowStart,
+    slideshowStop:settings.slideshowStop,
+    current:settings.current,
+    previous:settings.previous,
+    next:settings.next,
     close:settings.close,
     overlayClose:settings.overlayClose,
     maxWidth:settings.maxWidth,
@@ -24,6 +33,9 @@ Drupal.behaviors.initColorboxLoad = function (context) {
     },
     iframe:function(){
       return $.urlParam('iframe', $(this).attr('href'));
+    },
+    slideshow:function(){
+      return $.urlParam('slideshow', $(this).attr('href'));
     }
   });
 };

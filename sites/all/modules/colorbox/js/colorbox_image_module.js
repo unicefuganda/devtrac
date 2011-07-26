@@ -1,4 +1,3 @@
-// $Id: colorbox_image_module.js,v 1.4 2010/04/18 14:36:29 frjo Exp $
 (function ($) {
 
 Drupal.behaviors.initColorboxImageModule = function (context) {

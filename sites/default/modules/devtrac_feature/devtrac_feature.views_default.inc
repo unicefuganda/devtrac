@@ -8265,7 +8265,7 @@ watchdog(\'gallery views\', $theme_path);
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => '%1 District',
+      'title' => 'Locations in %1 District',
       'breadcrumb' => '',
       'default_argument_type' => 'taxonomy_tid',
       'default_argument' => '',
@@ -8281,6 +8281,8 @@ watchdog(\'gallery views\', $theme_path);
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
@@ -8288,6 +8290,8 @@ watchdog(\'gallery views\', $theme_path);
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'override' => array(
         'button' => 'Override',
@@ -8298,14 +8302,17 @@ watchdog(\'gallery views\', $theme_path);
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
         'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+        'testype' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
@@ -8351,13 +8358,15 @@ watchdog(\'gallery views\', $theme_path);
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('header', 'This map allows you to search and add places to your Trip Report. Please first look on the map to see if the location or facility you are looking for already exists within DevTrac. If you think it does, click on the location on the map, review the information posted below the map, and if this is the site you are / have visited, click the "add" link.
+  $handler->override_option('header_format', '1');
+  $handler->override_option('header_empty', 0);
+  $handler->override_option('footer', 'This map allows you to search and add places to your Trip Report. Please first look on the map to see if the location or facility you are looking for already exists within DevTrac. If you think it does, click on the location on the map, review the information posted below the map, and if this is the site you are / have visited, click the "add" link.
 If you are looking for a place, but cannot find it on the map, you can create the place yourself by clicking this <a href="/node/add/place">“Create New Place”</a> link.
 If you have found the place, but the location is wrong, please add the place to your Trip Report first, and then move the place marker to the right location in the place location page which you can access directly from your Trip Report.
 
 This map shows places. You can not find Reports here. Reports you can find from the <a href="/">homepage</a>.');
-  $handler->override_option('header_format', '1');
-  $handler->override_option('header_empty', 0);
+  $handler->override_option('footer_format', '1');
+  $handler->override_option('footer_empty', 1);
   $handler->override_option('empty', 'Sorry, this district is unknown to us');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 1);
@@ -8617,7 +8626,6 @@ This map shows places. You can not find Reports here. Reports you can find from 
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('header', '');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 20);
   $handler->override_option('use_pager', '1');

@@ -131,6 +131,18 @@ Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
 Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo = {};
 
 Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.beforegetfeatureinfo = function(request) {
+  if(typeof $.colorbox == 'function') {
+    $.colorbox({
+      Title: "Click Add to add this place to your Field Trip.",
+      height: "500px",
+      width: "80%",
+      opacity: ".25",
+      inline: true,
+      href:"#" + Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.getfeatureinfo_htmlelement}
+    );
+  } else {
+    $("#" + Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.getfeatureinfo_htmlelement).parent().css("display", "block");
+  }
   if (Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.getfeatureinfo_usevisiblelayers == false) { 
     document.getElementById(Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.getfeatureinfo_htmlelement).innerHTML = Drupal.t('Searching...');
     return; 

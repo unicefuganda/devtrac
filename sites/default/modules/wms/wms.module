@@ -145,7 +145,7 @@ function wms_block($op = 'list', $delta = 0, $edit = array()) {
       switch ($delta) {
         case 0:
            $block['subject'] = "";
-           $block['content'] = '<div id="getfeatureinfo">'. t('Click a feature on the map to see the details') . '</div>';
+           $block['content'] = '<div style="display: none"><div id="getfeatureinfo">'. t('Click a feature on the map to see the details') . '</div></div>';
            return $block;
           break;
       }

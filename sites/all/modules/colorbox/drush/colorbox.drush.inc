@@ -1,5 +1,4 @@
 <?php
-// $Id: colorbox.drush.inc,v 1.4.2.1 2010/07/07 05:03:02 frjo Exp $
 
 /**
  * @file
@@ -21,7 +20,7 @@ define('COLORBOX_DOWNLOAD_URI', 'http://colorpowered.com/colorbox/colorbox.zip')
  * Notice how this structure closely resembles how
  * you define menu hooks.
  *
- * @See drush_parse_command() for a list of recognized keys.
+ * See `drush topic docs-commands` for a list of recognized keys.
  *
  * @return
  *   An associative array describing your command(s).
@@ -33,9 +32,11 @@ function colorbox_drush_command() {
   $items['colorbox-plugin'] = array(
     'callback' => 'drush_colorbox_plugin',
     'description' => dt("Downloads the Colorbox plugin."),
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH, // No bootstrap.
     'arguments' => array(
       'path' => dt('Optional. A path where to install the Colorbox plugin. If omitted Drush will use the default location.'),
     ),
+    'aliases' => array('colorboxplugin'),
   );
 
   return $items;
@@ -61,15 +62,17 @@ function colorbox_drush_help($section) {
 }
 
 /**
- * Example drush command callback.
- *
- * This is where the action takes place.
- *
- * In this function, all of Drupals API is (usually) available, including
- * any functions you have added in your own modules/themes.
- *
- * To print something to the terminal window, use drush_print().
- *
+ * Implements drush_MODULE_post_pm_enable().
+ */
+// function drush_colorbox_post_pm_enable() {
+//   $modules = func_get_args();
+//   if (in_array('colorbox', $modules)) {
+//     drush_colorbox_plugin();
+//   }
+// }
+
+/**
+ * Command to download the Colorbox plugin.
  */
 function drush_colorbox_plugin() {
   if (!drush_shell_exec('type unzip')) {

@@ -83,6 +83,22 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_fieldtrip_approval_date
+  $permissions['edit field_fieldtrip_approval_date'] = array(
+    'name' => 'edit field_fieldtrip_approval_date',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit field_fieldtrip_approved_by
+  $permissions['edit field_fieldtrip_approved_by'] = array(
+    'name' => 'edit field_fieldtrip_approved_by',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit field_fieldtrip_duration
   $permissions['edit field_fieldtrip_duration'] = array(
     'name' => 'edit field_fieldtrip_duration',
@@ -519,6 +535,30 @@ function devtrac_feature_user_default_permissions() {
       '1' => 'authenticated user',
       '2' => 'unicef user',
       '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: view field_fieldtrip_approval_date
+  $permissions['view field_fieldtrip_approval_date'] = array(
+    'name' => 'view field_fieldtrip_approval_date',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'unicef user',
+      '4' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: view field_fieldtrip_approved_by
+  $permissions['view field_fieldtrip_approved_by'] = array(
+    'name' => 'view field_fieldtrip_approved_by',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'anonymous user',
+      '2' => 'authenticated user',
+      '3' => 'unicef user',
+      '4' => 'unicef user (Mobile)',
     ),
   );
 

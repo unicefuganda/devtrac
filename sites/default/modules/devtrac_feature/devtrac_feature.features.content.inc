@@ -406,12 +406,169 @@ function devtrac_feature_content_default_fields() {
     ),
   );
 
+  // Exported field: field_fieldtrip_approval_date
+  $fields['fieldtrip-field_fieldtrip_approval_date'] = array(
+    'field_name' => 'field_fieldtrip_approval_date',
+    'type_name' => 'fieldtrip',
+    'display_settings' => array(
+      'weight' => '7',
+      'parent' => '',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'date',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'date',
+    'active' => '1',
+    'granularity' => array(
+      'year' => 'year',
+      'month' => 'month',
+      'day' => 'day',
+    ),
+    'timezone_db' => '',
+    'tz_handling' => 'none',
+    'todate' => '',
+    'repeat' => 0,
+    'repeat_collapsed' => '',
+    'default_format' => 'medium',
+    'widget' => array(
+      'default_value' => 'now',
+      'default_value_code' => '',
+      'default_value2' => 'same',
+      'default_value_code2' => '',
+      'input_format' => 'D, d/m/Y',
+      'input_format_custom' => '',
+      'increment' => '1',
+      'text_parts' => array(),
+      'year_range' => '-3:+3',
+      'label_position' => 'above',
+      'label' => 'Approval Date',
+      'weight' => '7',
+      'description' => '',
+      'type' => 'date_popup',
+      'module' => 'date',
+    ),
+  );
+
+  // Exported field: field_fieldtrip_approved_by
+  $fields['fieldtrip-field_fieldtrip_approved_by'] = array(
+    'field_name' => 'field_fieldtrip_approved_by',
+    'type_name' => 'fieldtrip',
+    'display_settings' => array(
+      'weight' => '6',
+      'parent' => '',
+      'label' => array(
+        'format' => 'inline',
+      ),
+      'teaser' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'userreference',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'userreference',
+    'active' => '1',
+    'referenceable_roles' => array(
+      '2' => 0,
+      '3' => 0,
+      '4' => 0,
+      '5' => 0,
+      '6' => 0,
+    ),
+    'referenceable_status' => '',
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'widget' => array(
+      'autocomplete_match' => 'contains',
+      'size' => '60',
+      'reverse_link' => 0,
+      'default_value' => array(
+        '0' => array(
+          'uid' => NULL,
+          '_error_element' => 'default_value_widget][field_fieldtrip_approved_by][0][uid][uid',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Approved By',
+      'weight' => '6',
+      'description' => '',
+      'type' => 'realname_userreference_auto',
+      'module' => 'realname_userreference',
+    ),
+  );
+
   // Exported field: field_fieldtrip_duration
   $fields['fieldtrip-field_fieldtrip_duration'] = array(
     'field_name' => 'field_fieldtrip_duration',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => '-1',
+      'weight' => '5',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -447,7 +604,7 @@ function devtrac_feature_content_default_fields() {
       'default_value' => NULL,
       'default_value_php' => NULL,
       'label' => 'Duration',
-      'weight' => '4',
+      'weight' => '5',
       'description' => '',
       'type' => 'computed',
       'module' => 'computed_field',
@@ -459,19 +616,20 @@ function devtrac_feature_content_default_fields() {
     'field_name' => 'field_fieldtrip_narrative',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
+      'weight' => '-1',
+      'parent' => '',
       'label' => array(
         'format' => 'above',
-        'exclude' => 0,
-      ),
-      '5' => array(
-        'format' => 'default',
-        'exclude' => 0,
       ),
       'teaser' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
       'full' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '5' => array(
         'format' => 'default',
         'exclude' => 0,
       ),
@@ -525,7 +683,7 @@ function devtrac_feature_content_default_fields() {
     'field_name' => 'field_fieldtrip_places',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => '4',
+      'weight' => 0,
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -638,7 +796,7 @@ function devtrac_feature_content_default_fields() {
     'field_name' => 'field_fieldtrip_public_summary',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => '1',
+      'weight' => '-2',
       'parent' => '',
       'label' => array(
         'format' => 'above',
@@ -840,14 +998,14 @@ function devtrac_feature_content_default_fields() {
     'widget' => array(
       'default_value' => array(
         '0' => array(
-          'value' => '',
+          'value' => NULL,
         ),
       ),
       'default_value_php' => NULL,
       'label' => 'Purpose',
       'weight' => '37',
       'description' => '',
-      'type' => 'optionwidgets_select',
+      'type' => 'optionwidgets_buttons',
       'module' => 'optionwidgets',
     ),
   );
@@ -857,7 +1015,7 @@ function devtrac_feature_content_default_fields() {
     'field_name' => 'field_fieldtrip_start_end_date',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => '-2',
+      'weight' => '4',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -904,7 +1062,7 @@ function devtrac_feature_content_default_fields() {
       'year_range' => '-3:+3',
       'label_position' => 'above',
       'label' => 'Start and End Date',
-      'weight' => '3',
+      'weight' => '4',
       'description' => '',
       'type' => 'date_popup',
       'module' => 'date',
@@ -916,7 +1074,7 @@ function devtrac_feature_content_default_fields() {
     'field_name' => 'field_fieldtrip_status',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => 0,
+      'weight' => '2',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -979,7 +1137,7 @@ Published',
     'field_name' => 'field_fieldtrip_user',
     'type_name' => 'fieldtrip',
     'display_settings' => array(
-      'weight' => '-3',
+      'weight' => '1',
       'parent' => '',
       'label' => array(
         'format' => 'inline',
@@ -2417,6 +2575,8 @@ return array(
   // Included for use with string extractors like potx.
   t('About Me');
   t('Academic Degree(s)');
+  t('Approval Date');
+  t('Approved By');
   t('Contact');
   t('Date Visited');
   t('Department');

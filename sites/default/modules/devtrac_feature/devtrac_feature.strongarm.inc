@@ -372,15 +372,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_fieldtrip';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '7',
-    'author' => '9',
-    'options' => '10',
-    'comment_settings' => '8',
-    'menu' => '6',
+    'revision_information' => '9',
+    'author' => '11',
+    'options' => '12',
+    'comment_settings' => '10',
+    'menu' => '8',
     'taxonomy' => '-3',
-    'book' => '12',
-    'path' => '11',
-    'print' => '13',
+    'book' => '14',
+    'path' => '13',
+    'print' => '15',
+    'custom_breadcrumbs' => '16',
   );
   $export['content_extra_weights_fieldtrip'] = $strongarm;
 

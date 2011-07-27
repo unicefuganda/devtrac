@@ -67,11 +67,8 @@ function devtrac_feature_fieldgroup_default_groups() {
         'description' => '',
       ),
       'display' => array(
-        'description' => '',
-        '5' => array(
-          'format' => 'fieldset',
-          'exclude' => 0,
-        ),
+        'weight' => '3',
+        'label' => 'above',
         'teaser' => array(
           'format' => 'fieldset_collapsible',
           'exclude' => 1,
@@ -79,6 +76,11 @@ function devtrac_feature_fieldgroup_default_groups() {
         'full' => array(
           'format' => 'fieldset_collapsible',
           'exclude' => 1,
+        ),
+        'description' => '',
+        '5' => array(
+          'format' => 'fieldset',
+          'exclude' => 0,
         ),
         '4' => array(
           'format' => 'fieldset',
@@ -96,7 +98,6 @@ function devtrac_feature_fieldgroup_default_groups() {
           'format' => 'fieldset',
           'exclude' => 0,
         ),
-        'label' => 'above',
       ),
     ),
     'weight' => '3',

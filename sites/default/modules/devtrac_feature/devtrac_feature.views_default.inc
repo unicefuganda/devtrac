@@ -17962,6 +17962,12 @@ return TRUE;',
       'reduce_duplicates' => 0,
     ),
   ));
+  $handler->override_option('access', array(
+    'type' => 'role',
+    'role' => array(
+      '5' => 5,
+    ),
+  ));
   $handler->override_option('title', 'Action Items');
   $handler->override_option('empty', 'There are no Action Items yet.');
   $handler->override_option('empty_format', '1');

@@ -428,16 +428,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_user_profile';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '-1',
-    'author' => '0',
-    'options' => '1',
-    'comment_settings' => '2',
-    'menu' => '-3',
-    'taxonomy' => '-4',
-    'book' => '-2',
-    'path' => '3',
-    'print' => '5',
-    'custom_breadcrumbs' => '4',
+    'revision_information' => '7',
+    'author' => '8',
+    'options' => '9',
+    'comment_settings' => '10',
+    'menu' => '4',
+    'taxonomy' => '5',
+    'book' => '6',
+    'path' => '11',
+    'print' => '13',
+    'custom_breadcrumbs' => '12',
   );
   $export['content_extra_weights_user_profile'] = $strongarm;
 

@@ -83,6 +83,7 @@ function devtrack_module_uninstall() {
 function devtrack_module_update_6001() {
   // Declare new modules
   $new_modules = array(
+    'jquery_update',
     'colorbox',
     'environment',
   );  

@@ -16,17 +16,24 @@ button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-c
 	background-color: #000;
 	border: #f2f2f2 solid 1px;
 }
+
 button:hover ,
 input.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   background-color: #CCCCCC;
 }
+
 #footermenubar {
 	background-color:#000 !important;	
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
 	display: inline-block;
 }
+
 #footer-message {
 	margin-top:-10px;
 }
+
+.page-user .description {
+  margin-top: 10px;
+}  

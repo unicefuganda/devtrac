@@ -3068,8 +3068,8 @@ else {
         'suffix' => '',
         'target' => '',
         'help' => '',
-        'trim' => 0,
-        'max_length' => '',
+        'trim' => 1,
+        'max_length' => '50',
         'word_boundary' => 1,
         'ellipsis' => 1,
         'html' => 0,
@@ -3369,7 +3369,7 @@ else {
       'alter' => array(
         'alter_text' => 1,
         'text' => '[field_ftritem_images_fid]
-<p>[title] ([created])<br />[field_ftritem_public_summary_value]</p>',
+<p>[title] ([field_ftritem_date_visited_value])<br />[field_ftritem_public_summary_value]</p>',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',

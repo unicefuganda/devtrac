@@ -542,18 +542,26 @@ background-image: -moz-linear-gradient(
 .openlayers-views-map .olPopupCloseBox {
   background-image: url('/sites/default/themes/devtrack_theme/images/close.png');
 }
+
+#popup {
+  width: 400px; /* this is not working, code is making this 600px which is ugly */
+}
+
 .openlayers-popup img {
 	margin-top:4px;
 	float: right;
 	border:2px solid #fff;
 }
+
 #popup_GroupDiv{
 	z-index:10;
 }
+
 #popup_contentDiv .openlayers-popup-name a,
 #popup_contentDiv .openlayers-popup-description{
 	 color: #FFFFFF
 }
+
 #popup_contentDiv .openlayers-popup-description a{ 
 	color: #DDDDDD;
 	text-decoration: underline; 
@@ -783,4 +791,8 @@ body.page-placetypes .col-content_contentlayerright{ margin-top: 40px;
 }
 .openlayers-views-map .olControlLayerSwitcher .layersDiv{
 	background-color: #000000;
-} 
+}
+
+body a.getfeatureaddlink:link {
+  color: #EA0001;
+ }

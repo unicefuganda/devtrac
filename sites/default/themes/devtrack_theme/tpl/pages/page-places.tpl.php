@@ -10,7 +10,7 @@
   <?php print $scripts ?>
   <?php print $head; ?>
   <?php print $styles; ?>
-  <!--[if lte IE 7]>
+  <!--[if lte IE 8]>
     <link rel="stylesheet" href="<?php print $path; ?>blueprint/blueprint/ie.css" type="text/css" media="screen, projection">
     <link href="<?php print $path; ?>css/ie.css" rel="stylesheet"  type="text/css"  media="screen, projection" />
   <![endif]-->  

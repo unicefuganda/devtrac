@@ -9,10 +9,7 @@
   <?php print $meta; ?>
   <?php print $head; ?>
   <?php print $styles; ?>
-  <!--[if lt IE 9]>
-     <script src="http://ie7-js.googlecode.com/svn/version/2.1(beta4)/IE9.js"></script>
-  <![endif]-->
-  <!--[if lte IE 7]>
+  <!--[if lte IE 8]>
     <link rel="stylesheet" href="<?php print $path; ?>blueprint/blueprint/ie.css" type="text/css" media="screen, projection">
     <link href="<?php print $path; ?>css/ie.css" rel="stylesheet"  type="text/css"  media="screen, projection" />
   <![endif]-->  

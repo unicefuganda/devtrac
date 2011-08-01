@@ -3068,8 +3068,8 @@ else {
         'suffix' => '',
         'target' => '',
         'help' => '',
-        'trim' => 0,
-        'max_length' => '',
+        'trim' => 1,
+        'max_length' => '50',
         'word_boundary' => 1,
         'ellipsis' => 1,
         'html' => 0,
@@ -3369,7 +3369,7 @@ else {
       'alter' => array(
         'alter_text' => 1,
         'text' => '[field_ftritem_images_fid]
-<p>[title] ([created])<br />[field_ftritem_public_summary_value]</p>',
+<p>[title] ([field_ftritem_date_visited_value])<br />[field_ftritem_public_summary_value]</p>',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -10498,7 +10498,7 @@ return TRUE;',
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 1);
-  $handler->override_option('use_more_text', 'more Action Items');
+  $handler->override_option('use_more_text', 'All Action Items');
   $handler->override_option('link_display', 'page_5');
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
@@ -10807,6 +10807,7 @@ if (arg(1) == \'me\') {
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('use_more', 0);
+  $handler->override_option('use_more_text', 'more Action Items');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'All Action Items on Node Block', 'block_3');
@@ -10943,7 +10944,6 @@ if (arg(1) == \'me\') {
   $handler->override_option('empty', 'This place has no open Action Items');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
-  $handler->override_option('use_more_text', 'All Action Items');
   $handler->override_option('link_display', 'page_1');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);

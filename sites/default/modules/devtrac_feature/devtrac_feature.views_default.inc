@@ -17157,7 +17157,7 @@ return TRUE;',
   $handler->override_option('inherit_arguments', 0);
   $handler->override_option('inherit_exposed_filters', FALSE);
   $handler->override_option('inherit_pager', FALSE);
-  $handler->override_option('render_pager', TRUE);
+  $handler->override_option('render_pager', 0);
   $handler->override_option('displays', array(
     'page_2' => 'page_2',
     'default' => 0,
@@ -17945,6 +17945,7 @@ return TRUE;',
       'operator' => 'or',
       'value' => array(
         '1' => '1',
+        '2' => '2',
       ),
       'group' => '0',
       'exposed' => FALSE,
@@ -17959,19 +17960,14 @@ return TRUE;',
         'button' => 'Use default',
       ),
       'relationship' => 'none',
-      'reduce_duplicates' => 0,
-    ),
-  ));
-  $handler->override_option('access', array(
-    'type' => 'role',
-    'role' => array(
-      '5' => 5,
+      'reduce_duplicates' => 1,
     ),
   ));
   $handler->override_option('title', 'Action Items');
   $handler->override_option('empty', 'There are no Action Items yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 0);
+  $handler->override_option('distinct', 1);
   $handler->override_option('style_plugin', 'default');
   $handler->override_option('style_options', array(
     'grouping' => 'title_1',
@@ -17980,7 +17976,7 @@ return TRUE;',
   $handler->override_option('inherit_arguments', 0);
   $handler->override_option('inherit_exposed_filters', FALSE);
   $handler->override_option('inherit_pager', FALSE);
-  $handler->override_option('render_pager', TRUE);
+  $handler->override_option('render_pager', 0);
   $handler->override_option('displays', array(
     'page_2' => 'page_2',
     'default' => 0,

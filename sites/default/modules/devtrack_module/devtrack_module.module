@@ -116,12 +116,14 @@ function devtrack_module_view($node, $teaser = FALSE, $page = FALSE) {
     
     $button = "";
     if (!$node->synced) {
-      if (_devtrack_module_isinternetexplorer()) {
+/*      if (_devtrack_module_isinternetexplorer()) {
         $button = l('<div class="form-submit">Sync</div>', "devtrac/bbsync/". $node->nid, Array('html'=> TRUE));
       }
       else {
         $button .= l('<button class="form-submit" type="button">Sync</button>', "devtrac/bbsync/". $node->nid, Array('html'=> TRUE));
       }
+      */
+      $button = _devtrack_module_getbutton('Sync', "devtrac/bbsync/". $node->nid);
       $node->content['syncbutton'] = array(
         '#value' => $button,
         '#weight' => 5,
@@ -563,6 +565,16 @@ function devtrack_module_firejson($jsonarray) {
 
 function devtrack_module_init() {
   global $user;
+  // Make sure the content_access per_node option is set for node type fieldtrip.
+  // It is required for the fieldtrip approval workflow.
+  if (module_exists(content_access)) {
+    $content_access_settings = content_access_get_settings();
+    if (content_access_get_settings('per_node', 'fieldtrip') == 0) {
+      $content_access_settings['per_node']['fieldtrip'] = 1;
+      // $content_access_settings['priority']['fieldtrip'] = 1;
+      content_access_set_settings($content_access_settings);
+    }
+  }
   // Suppress the admin menu on the mobile website.
   if (devtrack_module_ismobile()) {
     admin_menu_suppress(); 
@@ -570,7 +582,7 @@ function devtrack_module_init() {
   // redirect the /user page to the user profile page
   $arg1 = arg(1);
   if ((arg(0) == 'user') && !isset($arg1) && $user->uid > 0) {
-   drupal_goto('user/me');
+    drupal_goto('user/me');
   }
   
 }
@@ -657,6 +669,22 @@ function devtrack_module_menu() {
     'access arguments' => array(1),
     'type' => MENU_LOCAL_TASK,
     'weight' => 4,
+  );
+  $items['node/%node/setstatus/%'] = array(
+    'title' => 'Set Status',
+    'page callback' => 'devtrack_module_fieldtrip_setstatus',
+    'page arguments' => array(1, 3),
+    'access callback' => 'devtrack_module_fieldtrip_setstatus_access',
+    'access arguments' => array(1, 3),
+    'type' => MENU_CALLBACK,
+  );
+  $items['admin/content/node/publish_all/%'] = array(
+    'title' => 'Set Status',
+    'page callback' => 'devtrack_module_fieldtrip_publish_all',
+    'page arguments' => array(4),
+    'access callback' => 'devtrack_module_fieldtrip_publish_all_access',
+    'access arguments' => array(4),
+    'type' => MENU_CALLBACK,
   );
   return $items;
 }
@@ -966,6 +994,9 @@ function devtrack_module_fieldtrip_hide_user_field(&$form) {
   }
   $form[field_fieldtrip_user]['#suffix'] = '</div>';
   
+  $form[field_fieldtrip_status]['#prefix'] = '<div class="devtrachidefield">';
+  $form[field_fieldtrip_status]['#suffix'] = '</div>';
+
   $form[field_fieldtrip_places]['#prefix'] = '<div class="devtrachidefield">';
   $form[field_fieldtrip_places]['#suffix'] = '</div>';
   
@@ -1013,6 +1044,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[0]['info'] = t('Devtrac Create Links');
       $blocks[1]['info'] = t('Devtrac Legend');
       $blocks[2]['info'] = t('Upload Picture Reminder');
+      $blocks[3]['info'] = t('Fieldtrip Approval Workflow');
       return $blocks;
       break;
     case 'view' :
@@ -1046,12 +1078,14 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                     $options['edit[field_actionitem_resp_place][0][nid][nid]']  = '[nid:'. $localnode->field_ftritem_place[0][nid] . ']';
                   }
 
-                  if (_devtrack_module_isinternetexplorer()) {
+/*                  if (_devtrack_module_isinternetexplorer()) {
                     $result .= '<li>' . l('<div class="form-submit">Add Action Item</div>', 'node/add/actionitem', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
                   }
                   else {
                     $result .= '<li>' . l('<button type="button">Add Action Item</button>', 'node/add/actionitem', Array('query'=> $options, 'html'  => TRUE)) . '</li>';
                   }
+                  */
+                  $result .= _devtrack_module_getbutton('Add Action Item', 'node/add/actionitem', $options);
                 }
               }
             }
@@ -1059,12 +1093,14 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             if (user_access('submit questions')) {
               if( $localusername == $user->name ) {
                 if ( $localnode->type == 'ftritem') {
-                  if (_devtrack_module_isinternetexplorer()) {
+/*                  if (_devtrack_module_isinternetexplorer()) {
                     $result .= '<li>' . l('<div class="form-submit">Answer Questions</div>', 'node/'. $localnode->nid .'/questions/addsubmission', Array('html'=> TRUE)) . '</li>';
                   }
                   else {
                     $result .= '<li>' . l('<button type="button">Answer Questions</button>', 'node/'. $localnode->nid .'/questions/addsubmission', Array('html'  => TRUE)) . '</li>';
                   }
+                  */
+                  $result .= _devtrack_module_getbutton('Answer Questions', 'node/'. $localnode->nid .'/questions/addsubmission');
                 }
               }
             }
@@ -1113,12 +1149,14 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                 'edit[field_fieldtrip_user][0][uid][uid]'  => $localuser->name,
                 'html'  => TRUE,
               );
-              if (_devtrack_module_isinternetexplorer()) {
+/*              if (_devtrack_module_isinternetexplorer()) {
                 $result .= '<li>'. l('<div class="form-submit">Create Field Trip</div>', 'node/add/fieldtrip', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
               }
               else {
                 $result .= '<li>'. l('<button type="button">Create Field Trip</button>', 'node/add/fieldtrip', Array('query'=> $options, 'html'  => TRUE)). '</li>';
               }
+              */
+              $result .= _devtrack_module_getbutton('Create Field Trip', 'node/add/fieldtrip', $options);
             }
           }
           if ($result) {
@@ -1140,12 +1178,55 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             return $block;
         	} 
           break;
-        
-      
+        case 3:
+          // Do the approval workflow.
+          $arg2 = arg(2);
+          if ((user_is_logged_in()) && (arg(0) == 'node') && (is_numeric(arg(1)))&& (!isset($arg2))) {
+            $localnode = node_load(arg(1));
+            if ($localnode->type == 'fieldtrip') {
+              switch ($localnode->field_fieldtrip_status[0]['value']) {
+                case 'In Progress':
+                  if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
+// We put the following code in a new function called function _devtrack_module_getbutton().
+//                    if (_devtrack_module_isinternetexplorer()) {
+//                      $result .= '<li>' . l('<div class="form-submit">Submit Fieldtrip</div>', 'node/'. $localnode->nid .'/edit', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
+//                    }
+//                    else {
+//                      $result .= '<li>' . l('<button type="button">Submit Fieldtrip</button>', 'node/'. $localnode->nid .'/edit', Array('query'=> $options, 'html'  => TRUE)) . '</li>';
+//                    }
+// TO DO: Workflow: Redo when implementing the manager workflow
+//                    $result .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $localnode->nid .'/setstatus/submit');
+                    $result .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $localnode->nid .'/setstatus/approve');
+                  }
+                  break;
+                case 'Submitted':
+                  $profile = content_profile_load('user_profile', $localnode->field_fieldtrip_user[0]['uid']);
+                  $manager = user_load($profile->field_user_superior[0]['uid']);
+                  if ($manager->uid == $user->uid) { // Manager of the user that took the fieldtrip is the current user
+// Comment out the previous 2 lines and uncomment the following line to have the buttons show on the fieldtrip user page instead of the manager page.
+// Maybe we want to move this completely and approve in 1 step.                    
+                  // if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
+                    $result .= _devtrack_module_getbutton('Approve Field Trip', 'node/'. $localnode->nid .'/setstatus/approve');
+                    $result .= _devtrack_module_getbutton('Reject Field Trip', 'node/'. $localnode->nid .'/setstatus/reject');
+                  }
+                  break;
+                case 'Approved':
+                case 'Published':
+                  break;
+              }
+            }
+          }
+          if ($result) {
+            $result  = "<ul>". $result . "</ul>";
+          }
+          $block['title'] = "Fieldtrip Approval Workflow";
+          $block['content'] = $result;
+          return $block;
+          break;
       }
-    break;
+      break;
   }
-}      
+}
 
 function devtrack_module_currentfieldtrip_access() {
 	$result = devtrack_module_getcurrentfieldtrip() > 0;
@@ -1418,15 +1499,57 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     	break;
     }
   }
-  if (($node->type == 'fieldtrip') && ($op == 'delete')) {
-    $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
-    $db_result = db_query(db_rewrite_sql($sql), $node->nid);
-    $result = array();
-    while ($ftritemnid = db_fetch_object($db_result)) {
-      $ftritem = node_load($ftritemnid->nid);
-      node_delete($ftritemnid->nid);
+  if ($node->type == 'fieldtrip') {
+    switch ($op) {
+      case 'load':
+        $node->oldstatus = $node->field_fieldtrip_status[0]['value'];
+        break;
+      case 'presave':
+        if (!isset($node->oldstatus)) {
+          break;
+        }
+//        drupal_set_message('Status was '. $node->oldstatus);
+        $owner = user_load($node->uid);
+        $profile = content_profile_load('user_profile', $node->field_fieldtrip_user[0]['uid']);
+        $localuser = user_load($node->field_fieldtrip_user[0]['uid']);
+        $manager = user_load($profile->field_user_superior[0]['uid']);
+        module_load_include('inc', 'content_access', 'content_access.rules');
+        $status = $node->field_fieldtrip_status[0]['value'];
+//        drupal_set_message('Status changed to '. $status);
+        if ($node->oldstatus != $status) {
+          switch ($status) {
+            case 'In Progress':
+              devtrack_module_fieldtrip_revoke_update($node, $manager);
+              devtrack_module_fieldtrip_grant_update($node, $localuser);
+              devtrack_module_fieldtrip_grant_update($node, $owner);
+              drupal_set_message("Field Trip is editable.");
+              break;
+            case 'Submitted':
+              devtrack_module_fieldtrip_grant_update($node, $manager);
+              drupal_set_message("Field Trip submitted for approval.");
+              break;
+            case 'Approved':
+              devtrack_module_fieldtrip_publish($node, TRUE);
+              devtrack_module_fieldtrip_revoke_update($node, $manager);
+              devtrack_module_fieldtrip_revoke_update($node, $localuser);
+              devtrack_module_fieldtrip_revoke_update($node, $owner);
+              drupal_set_message("Field Trip published.");
+              break;
+          }
+        }
+        unset($node->oldstatus);
+        break;
+      case 'delete':
+        $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
+        $db_result = db_query(db_rewrite_sql($sql), $node->nid);
+        $result = array();
+        while ($ftritemnid = db_fetch_object($db_result)) {
+          $ftritem = node_load($ftritemnid->nid);
+          node_delete($ftritemnid->nid);
+        }
+        $_REQUEST['destination'] = 'user/me';
+        break;
     }
-    $_REQUEST['destination'] = 'user/me';
   }
   if ($node->type == 'place') {
     switch ($op) {
@@ -1477,10 +1600,20 @@ function devtrack_module_getcontext($nid) {
 	return $node->field_ftritem_place[0]['nid'];
 }
 
+function _devtrack_module_getbutton($text, $path, $options) {
+  if (_devtrack_module_isinternetexplorer()) {
+    $result .= '<li>' . l('<div class="form-submit">'. $text .'</div>', $path, Array('query'=> $options, 'html'=> TRUE)) . '</li>';
+  }
+  else {
+    $result .= '<li>' . l('<button type="button">'. $text .'</button>', $path, Array('query'=> $options, 'html'  => TRUE)) . '</li>';
+  }
+  return $result;
+}
 
 function _devtrack_module_isinternetexplorer() {
         // $version = 6
-    if ((isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0 ))) {
+//    drupal_set_message($_SERVER['HTTP_USER_AGENT']);
+    if (isset($_SERVER['HTTP_USER_AGENT']) && ((strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0) || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
         return true;
     } else {
         return false;
@@ -1508,14 +1641,14 @@ function devtrack_module_environment() {
     'description' => t('Jans Development Machine.'),
     'allowed' => array(
       'default' => TRUE,
-    ),       
+    ),
   );
   $environments['reinier'] = array(
     'label' => t('Reinier'),
     'description' => t('Reiniers Development Machine.'),
     'allowed' => array(
       'default' => TRUE,
-    ),       
+    ),
   );
   return $environments;
   
@@ -1557,7 +1690,7 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set ("environment_indicator_color", "#45FA12");
       variable_set ("environment_indicator_enabled", "1");
       variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Development Server");      
+      variable_set ("environment_indicator_text", "Development Server");
       return;
     case 'jan':
       module_enable($devel_modules);
@@ -1568,7 +1701,7 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set ("environment_indicator_color", "green");
       variable_set ("environment_indicator_enabled", "1");
       variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Jan Development Server");      
+      variable_set ("environment_indicator_text", "Jan Development Server");
       return;
     case 'reinier':
       module_enable($devel_modules);
@@ -1579,7 +1712,201 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set ("environment_indicator_color", "red");
       variable_set ("environment_indicator_enabled", "1");
       variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Reinier Development Server");      
+      variable_set ("environment_indicator_text", "Reinier Development Server");
       return;
   }
 }
+
+function devtrack_module_fieldtrip_setstatus($node, $method) {
+  $status = $node->field_fieldtrip_status[0]['value'];
+//  drupal_set_message('Set Status to '. $status);
+  switch ($method) {
+    case 'submit':
+//        drupal_set_message('submitting');
+      if ($status == 'In Progress') {
+//        drupal_set_message('changing value');
+        $node->field_fieldtrip_status[0]['value'] = 'Submitted';
+        node_save($node);
+      }
+      else {
+        drupal_set_message('Already submitted.');
+      }
+      break;
+    case 'approve':
+      if ($status == 'In Progress') {
+        $node->field_fieldtrip_status[0]['value'] = 'Approved';
+        node_save($node);
+      }
+// TO DO: Workflow: Redo when implementing the manager workflow
+/*      if ($status == 'Submitted') {
+        $node->field_fieldtrip_status[0]['value'] = 'Approved';
+        node_save($node);
+      }
+*/
+      else {
+        drupal_set_message('Already approved.');
+      }
+      break;
+    case 'reject':
+      if ($status == 'Submitted') {
+        $node->field_fieldtrip_status[0]['value'] = 'In Progress';
+        node_save($node);
+      }
+      else {
+        drupal_set_message('Already rejected.');
+      }
+      break;
+  }
+  drupal_goto('node/'. $node->nid);
+}
+
+function devtrack_module_fieldtrip_setstatus_access($node, $status) {
+  return TRUE;
+}
+
+function devtrack_module_fieldtrip_grant_update($node, $user) {
+  if ($node->type == 'fieldtrip') {
+    $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
+    $db_result = db_query(db_rewrite_sql($sql), $node->nid);
+    $result = array();
+    $op = 'update';
+    module_load_include('inc', 'content_access', 'content_access.admin');
+    while ($ftritemnid = db_fetch_object($db_result)) {
+      $ftritem = node_load($ftritemnid->nid);
+      $acl_id = content_access_get_acl_id($ftritem, $op);
+      acl_add_user($acl_id, $user->uid);
+      acl_node_add_acl($ftritem->nid, $acl_id, $op == 'view', $op == 'update', $op == 'delete', content_access_get_settings('priority', $node->type));
+    }
+    $acl_id = content_access_get_acl_id($node, $op);
+    acl_add_user($acl_id, $user->uid);
+    acl_node_add_acl($node->nid, $acl_id, $op == 'view', $op == 'update', $op == 'delete', content_access_get_settings('priority', $node->type));
+  }
+}
+
+function devtrack_module_fieldtrip_revoke_update($node, $user) {
+  if ($node->type == 'fieldtrip') {
+    $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
+    $db_result = db_query(db_rewrite_sql($sql), $node->nid);
+    module_load_include('inc', 'content_access', 'content_access.admin');
+    $op = 'update';
+    $result = array();
+    while ($ftritemnid = db_fetch_object($db_result)) {
+      $ftritem = node_load($ftritemnid->nid);
+      $acl_id = content_access_get_acl_id($ftritem, $op);
+      acl_remove_user($acl_id, $user->uid);
+    }
+    $acl_id = content_access_get_acl_id($node, $op);
+    acl_remove_user($acl_id, $user->uid);
+  }
+}
+
+function devtrack_module_fieldtrip_publish(&$node, $state = TRUE) {
+  if ($node->type == 'fieldtrip') {
+    $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
+    $db_result = db_query(db_rewrite_sql($sql), $node->nid);
+    $result = array();
+    while ($ftritemnid = db_fetch_object($db_result)) {
+      $ftritem = node_load($ftritemnid->nid);
+      $ftritem->status = $state;
+      node_save($ftritem);
+    }
+    $node->status = $state;
+  }
+}
+
+function devtrack_module_node_grants($account, $op) {
+  $grants['devtrac_rid'] = array_keys($account->roles);
+  return $grants;
+}
+
+function devtrack_module_node_access_records($node) {
+  if (!$node->nid) {
+    return;
+  }
+  
+  if (($node->type == 'fieldtrip') || ($node->type == 'ftritem')) {
+    global $user;
+    $grants = array();
+    if ($node->type == 'ftritem') {
+      $fieldtrip = node_load($node->field_ftritem_field_trip[0]['value']);
+    }
+    else {
+      $fieldtrip = $node;
+    }
+//    $result = db_query("SELECT * FROM {node_access} WHERE nid = %d", $node->nid);
+//    while ($grant = db_fetch_array($result)) {
+      if ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') {
+        //just deny access
+        $grants[] = array(
+          'realm' => 'devtrac_rid',
+          'gid' => 1,
+          'grant_view' => 0,
+          'grant_update' => 0,
+          'grant_delete' => 0,
+          'priority' => 26,
+        );
+        $grants[] = array(
+          'realm' => 'devtrac_rid',
+          'gid' => 5,
+          'grant_view' => 1,
+          'grant_update' => 0,
+          'grant_delete' => 0,
+          'priority' => 26,
+        );
+      }
+      else {
+        $grants[] = array(
+          'realm' => 'all',
+          'gid' => 0,
+          'grant_view' => 1,
+          'grant_update' => 0,
+          'grant_delete' => 0,
+          'priority' => 0,
+        );
+      }
+//    }
+  }
+  return $grants;
+}
+
+function devtrack_module_fieldtrip_publish_all($node_type) {
+  if (($node_type == 'fieldtrip') || ($node_type == 'ftritem')) {
+    $sql = "SELECT nid FROM {node} WHERE type = '%s'";
+    $result = db_query($sql, $node_type);
+    while ($node = db_fetch_object($result)) {
+      $current_node = node_load($node->nid);
+      $current_node->status = 1;
+      node_save($current_node);
+    }
+  }
+  else {
+    drupal_set_message("Wrong node type. Please try 'fieldtrip' or 'ftritem'");
+  }
+}
+
+function devtrack_module_fieldtrip_publish_all_access($node_type) {
+  global $user;
+  if (in_array('administrator', $user->roles)) {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+
+/*
+function devtrack_module_popups () {
+  return array(
+    'fieldtrip_node_form' => array( // The field trip node edit form
+      '#edit-delete' => array(
+        'href' => 'node/'. arg(1) . '/delete',
+      ),
+    ),
+    'ftritem_node_form' => array( // The report item node edit form
+      '#edit-delete' => array(
+        'href' => 'node/'. arg(1) . '/delete',
+      ),
+    ),
+  );
+}
+*/
+

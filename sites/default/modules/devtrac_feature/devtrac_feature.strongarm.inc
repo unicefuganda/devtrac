@@ -352,6 +352,46 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'content_access_settings';
+  $strongarm->value = array(
+    'view' => array(
+      'ftritem' => array(
+        0 => 1,
+        1 => 2,
+        2 => 3,
+      ),
+      'fieldtrip' => array(
+        0 => 1,
+        1 => 2,
+        2 => 3,
+      ),
+    ),
+    'view_own' => array(
+      'ftritem' => array(
+        0 => 1,
+        1 => 2,
+        2 => 3,
+      ),
+      'fieldtrip' => array(
+        0 => 1,
+        1 => 2,
+        2 => 3,
+      ),
+    ),
+    'per_node' => array(
+      'ftritem' => 0,
+      'fieldtrip' => 1,
+    ),
+    'priority' => array(
+      'ftritem' => '0',
+      'fieldtrip' => '0',
+    ),
+  );
+  $export['content_access_settings'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'content_extra_weights_actionitem';
   $strongarm->value = array(
     'title' => '-5',
@@ -428,16 +468,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_user_profile';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '7',
-    'author' => '8',
-    'options' => '9',
-    'comment_settings' => '10',
-    'menu' => '4',
-    'taxonomy' => '5',
-    'book' => '6',
-    'path' => '11',
-    'print' => '13',
-    'custom_breadcrumbs' => '12',
+    'revision_information' => '-1',
+    'author' => '0',
+    'options' => '1',
+    'comment_settings' => '2',
+    'menu' => '-3',
+    'taxonomy' => '-4',
+    'book' => '-2',
+    'path' => '3',
+    'print' => '5',
+    'custom_breadcrumbs' => '4',
   );
   $export['content_extra_weights_user_profile'] = $strongarm;
 
@@ -501,7 +541,9 @@ function devtrac_feature_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'node_options_ftritem';
-  $strongarm->value = array();
+  $strongarm->value = array(
+    0 => 'status',
+  );
   $export['node_options_ftritem'] = $strongarm;
 
   $strongarm = new stdClass;
@@ -531,6 +573,13 @@ function devtrac_feature_strongarm() {
     1 => 'promote',
   );
   $export['node_options_user_profile'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'print_pdf_page_orientation';
+  $strongarm->value = 'portrait';
+  $export['print_pdf_page_orientation'] = $strongarm;
 
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

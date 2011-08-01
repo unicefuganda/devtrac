@@ -678,14 +678,6 @@ function devtrack_module_menu() {
     'access arguments' => array(1, 3),
     'type' => MENU_CALLBACK,
   );
-  $items['admin/content/node/publish_all/%'] = array(
-    'title' => 'Set Status',
-    'page callback' => 'devtrack_module_fieldtrip_publish_all',
-    'page arguments' => array(4),
-    'access callback' => 'devtrack_module_fieldtrip_publish_all_access',
-    'access arguments' => array(4),
-    'type' => MENU_CALLBACK,
-  );
   return $items;
 }
 
@@ -1869,27 +1861,20 @@ function devtrack_module_node_access_records($node) {
   return $grants;
 }
 
-function devtrack_module_fieldtrip_publish_all($node_type) {
-  if (($node_type == 'fieldtrip') || ($node_type == 'ftritem')) {
-    $sql = "SELECT nid FROM {node} WHERE type = '%s'";
-    $result = db_query($sql, $node_type);
-    while ($node = db_fetch_object($result)) {
-      $current_node = node_load($node->nid);
-      $current_node->status = 1;
-      node_save($current_node);
+function devtrack_module_fieldtrip_publish_all_field_trips() {
+  $sql = "SELECT nid FROM {node} WHERE type = '%s' OR type = '%s'";
+  $result = db_query($sql, 'fieldtrip', 'ftritem');
+  while ($node = db_fetch_object($result)) {
+    $current_node = node_load($node->nid);
+    $current_node->status = 1;
+    if ($current_node->type == 'fieldtrip') {
+      $current_node->field_fieldtrip_status[0]['value'] = 'Approved';
     }
+    else { // node type is ftritem
+      $current_node->field_ftritem_date_visited[0]['value'] = date('Y-m-j', $current_node->created);
+    }
+    node_save($current_node);
   }
-  else {
-    drupal_set_message("Wrong node type. Please try 'fieldtrip' or 'ftritem'");
-  }
-}
-
-function devtrack_module_fieldtrip_publish_all_access($node_type) {
-  global $user;
-  if (in_array('administrator', $user->roles)) {
-    return TRUE;
-  }
-  return FALSE;
 }
 
 

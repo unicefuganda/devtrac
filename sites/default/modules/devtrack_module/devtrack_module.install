@@ -1,5 +1,5 @@
 <?php
-// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $ 
+// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $
 
 /**
  * @file
@@ -56,12 +56,12 @@ function devtrack_module_schema() {
       ),
     ),
     'primary key' => array('nid'),
-    'indexes' => array(
+      'indexes' => array(
       'vid' => array('vid'),
     ),
   );
 
-        return $schema;
+  return $schema;
 }
 
 
@@ -75,6 +75,7 @@ function devtrack_module_install() {
 
 /**
  * Implementation of hook_uninstall().
+
  */
 function devtrack_module_uninstall() {
   drupal_uninstall_schema('devtrac_bbsync');
@@ -83,13 +84,19 @@ function devtrack_module_uninstall() {
 function devtrack_module_update_6001() {
   // Declare new modules
   $new_modules = array(
-    'jquery_update',
     'colorbox',
     'environment',
+    'jquery_update',
   );  
   module_enable($new_modules);
-  $ret = array('success' => TRUE, 'query' => 'enabled colorbox and environment modules' );
+
+  // Publish all Field Trips and Report Items.
+  // Also change Status of Field Trips to Approved
+  // and default the Date Visited on Report Items to Date Created.
+  devtrack_module_fieldtrip_publish_all_field_trips();
+
+  $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all report items' );
   return $ret;
   
 }
-
+   

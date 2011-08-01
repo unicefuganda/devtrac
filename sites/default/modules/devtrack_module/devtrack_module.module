@@ -570,7 +570,7 @@ function devtrack_module_init() {
   // redirect the /user page to the user profile page
   $arg1 = arg(1);
   if ((arg(0) == 'user') && !isset($arg1) && $user->uid > 0) {
-    drupal_goto('user/me');
+   drupal_goto('user/me');
   }
   
 }
@@ -1501,20 +1501,85 @@ function _devtrack_module_array_to_object($array = array()) {
     return false;
 }
 
-
-/*
-function devtrack_module_popups () {
-  return array(
-    'fieldtrip_node_form' => array( // The field trip node edit form
-      '#edit-delete' => array(
-        'href' => 'node/'. arg(1) . '/delete',
-      ),
-    ),
-    'ftritem_node_form' => array( // The report item node edit form
-      '#edit-delete' => array(
-        'href' => 'node/'. arg(1) . '/delete',
-      ),
-    ),
+function devtrack_module_environment() {
+  $environments = array();
+  $environments['jan'] = array(
+    'label' => t('Jan'),
+    'description' => t('Jans Development Machine.'),
+    'allowed' => array(
+      'default' => TRUE,
+    ),       
   );
+  $environments['reinier'] = array(
+    'label' => t('Reinier'),
+    'description' => t('Reiniers Development Machine.'),
+    'allowed' => array(
+      'default' => TRUE,
+    ),       
+  );
+  return $environments;
+  
 }
+/**
+* Implementation of hook_environment_switch().
 */
+function devtrack_module_environment_switch($target_env, $current_env) {
+  // Declare each optional development-related module
+  $devel_modules = array(
+    'bulk_export',
+    'context_ui',
+    'devel',
+    'devel_generate',
+    'devel_node_access',
+    'imagecache_ui',
+    'update',
+    'spaces_ui',
+    'views_ui',
+    'stage_file_proxy',
+    'environment_indicator',
+    'openlayers_ui',
+    'diff',
+    'views_clone_display'
+  );
+
+  switch ($target_env) {
+    case 'production':
+      module_disable($devel_modules);
+      variable_set ("environment_indicator_enabled", "0");
+      drupal_set_message('Disabled development modules');
+      return;
+    case 'development':
+      module_enable($devel_modules);
+      drupal_set_message('Enabled development modules');
+      /* Tell Mobile Tools where the site is */
+      variable_set ("mobile_tools_desktop_url",  "http://devtrac.mountbatten.net:8001");
+      /* Enable Environment Indicator */
+      variable_set ("environment_indicator_color", "#45FA12");
+      variable_set ("environment_indicator_enabled", "1");
+      variable_set ("environment_indicator_position", "left");
+      variable_set ("environment_indicator_text", "Development Server");      
+      return;
+    case 'jan':
+      module_enable($devel_modules);
+      drupal_set_message('Enabled development modules');
+      /* Tell Mobile Tools where the site is */
+      variable_set ("mobile_tools_desktop_url",  "http://devtrac.jan");
+      /* Enable Environment Indicator */
+      variable_set ("environment_indicator_color", "green");
+      variable_set ("environment_indicator_enabled", "1");
+      variable_set ("environment_indicator_position", "left");
+      variable_set ("environment_indicator_text", "Jan Development Server");      
+      return;
+    case 'reinier':
+      module_enable($devel_modules);
+      drupal_set_message('Enabled development modules');
+      /* Tell Mobile Tools where the site is */
+      variable_set ("mobile_tools_desktop_url",  "http://devtrac2.rei");
+      /* Enable Environment Indicator */
+      variable_set ("environment_indicator_color", "red");
+      variable_set ("environment_indicator_enabled", "1");
+      variable_set ("environment_indicator_position", "left");
+      variable_set ("environment_indicator_text", "Reinier Development Server");      
+      return;
+  }
+}

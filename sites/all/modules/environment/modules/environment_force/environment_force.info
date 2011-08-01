@@ -1,0 +1,12 @@
+; $Id: environment_force.info,v 1.1.2.1 2010/12/15 16:17:21 grayside Exp $
+name = "Environment Force"
+description = "Resets the environment to that specified in settings.php on every page load."
+core = "6.x"
+dependencies[] = "environment"
+
+; Information added by drupal.org packaging script on January 1, 1970 - 00:00
+version = "6.x-1.0-alpha1"
+core = "6.x"
+project = "environment"
+datestamp = "1297277277"
+

@@ -61,7 +61,7 @@ function devtrack_module_schema() {
     ),
   );
 
-	return $schema;
+        return $schema;
 }
 
 
@@ -77,8 +77,18 @@ function devtrack_module_install() {
  * Implementation of hook_uninstall().
  */
 function devtrack_module_uninstall() {
-	drupal_uninstall_schema('devtrac_bbsync');
+  drupal_uninstall_schema('devtrac_bbsync');
 }
 
-
+function devtrack_module_update_6001() {
+  // Declare new modules
+  $new_modules = array(
+    'colorbox',
+    'environment',
+  );  
+  module_enable($new_modules);
+  $ret = array('success' => TRUE, 'query' => 'enabled colorbox and environment modules' );
+  return $ret;
+  
+}
 

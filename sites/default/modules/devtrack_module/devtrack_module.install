@@ -90,11 +90,6 @@ function devtrack_module_update_6001() {
   );  
   module_enable($new_modules);
 
-  // Publish all Field Trips and Report Items.
-  // Also change Status of Field Trips to Approved
-  // and default the Date Visited on Report Items to Date Created.
-  devtrack_module_fieldtrip_publish_all_field_trips();
-
   $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all report items' );
   return $ret;
   

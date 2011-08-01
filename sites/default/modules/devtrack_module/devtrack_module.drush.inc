@@ -30,7 +30,6 @@ function devtrack_module_drush_help($section) {
 
 
 function drush_devtrack_module_publishfieldtrips() {
-//function drush_publishfieldtrips() {
   drush_print("going to update");
   devtrack_module_fieldtrip_publish_all_field_trips();
   drush_print("published all field trips");

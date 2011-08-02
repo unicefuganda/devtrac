@@ -852,7 +852,7 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           $ftr->field_ftritem_public_summary[0]['value'] = t('Please Provide a small summary for the public.');
           $ftr->field_ftritem_narrative[0]['value'] = t('Please provide a full report.'); 
           $ftr->uid = $user->uid;
-          $ftr->status = 0;
+          $ftr->status = 1;
           $ftr->comment = 0;
           
           node_save($ftr);
@@ -1673,6 +1673,12 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set ("environment_indicator_enabled", "0");
       drupal_set_message('Disabled development modules');
       return;
+    case 'stage':
+      module_disable($devel_modules);
+      variable_set ("environment_indicator_enabled", "0");
+      drupal_set_message('disabled development modules');
+      /* Tell Mobile Tools where the site is */
+      variable_set ("mobile_tools_desktop_url",  "http://stage.devtrac.org");
     case 'development':
       module_enable($devel_modules);
       drupal_set_message('Enabled development modules');
@@ -1847,14 +1853,14 @@ function devtrack_module_node_access_records($node) {
         );
       }
       else {
-        $grants[] = array(
+/*        $grants[] = array(
           'realm' => 'all',
-          'gid' => 0,
+          'gid' => 1,
           'grant_view' => 1,
           'grant_update' => 0,
           'grant_delete' => 0,
           'priority' => 0,
-        );
+        );*/
       }
 //    }
   }

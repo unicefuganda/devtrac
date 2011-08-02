@@ -1851,22 +1851,6 @@ function devtrack_module_node_access_records($node) {
           'priority' => 26,
         );
       }
-      else {
-/*        $grants[] = array(
-          'realm' => 'all',
-          'gid' => 1,
-          'grant_view' => 1,
-          'grant_update' => 0,
-          'grant_delete' => 0,
-          'priority' => 0,
-<<<<<<< HEAD
-        );
-*/      }
-=======
-        );*/
-      }
-//    }
->>>>>>> p2-s1-v2-lastfixesreinier
   }
   return $grants;
 }

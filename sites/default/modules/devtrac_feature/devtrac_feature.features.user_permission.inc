@@ -461,6 +461,14 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: grant own content access
+  $permissions['grant own content access'] = array(
+    'name' => 'grant own content access',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: view field_actionitem_due_date
   $permissions['view field_actionitem_due_date'] = array(
     'name' => 'view field_actionitem_due_date',

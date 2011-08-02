@@ -852,7 +852,7 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           $ftr->field_ftritem_public_summary[0]['value'] = t('Please Provide a small summary for the public.');
           $ftr->field_ftritem_narrative[0]['value'] = t('Please provide a full report.'); 
           $ftr->uid = $user->uid;
-          $ftr->status = 0;
+          $ftr->status = 1;
           $ftr->comment = 0;
           
           node_save($ftr);
@@ -1521,7 +1521,7 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
               drupal_set_message("Field Trip submitted for approval.");
               break;
             case 'Approved':
-              devtrack_module_fieldtrip_publish($node, TRUE);
+//              devtrack_module_fieldtrip_publish($node, TRUE);
               devtrack_module_fieldtrip_revoke_update($node, $manager);
               devtrack_module_fieldtrip_revoke_update($node, $localuser);
               devtrack_module_fieldtrip_revoke_update($node, $owner);
@@ -1530,6 +1530,10 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
           }
         }
         unset($node->oldstatus);
+        break;
+      case 'update':
+        // Moved this from pre-save to update. It updates the node_access table. Pre-save is to early for that.
+        devtrack_module_fieldtrip_publish($node);
         break;
       case 'delete':
         $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
@@ -1792,17 +1796,15 @@ function devtrack_module_fieldtrip_revoke_update($node, $user) {
   }
 }
 
-function devtrack_module_fieldtrip_publish(&$node, $state = TRUE) {
+function devtrack_module_fieldtrip_publish(&$node) {
   if ($node->type == 'fieldtrip') {
     $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
     $db_result = db_query(db_rewrite_sql($sql), $node->nid);
-    $result = array();
     while ($ftritemnid = db_fetch_object($db_result)) {
       $ftritem = node_load($ftritemnid->nid);
-      $ftritem->status = $state;
-      node_save($ftritem);
+      node_access_acquire_grants($ftritem);
     }
-    $node->status = $state;
+    node_access_acquire_grants($node);
   }
 }
 
@@ -1819,7 +1821,7 @@ function devtrack_module_node_access_records($node) {
   if (($node->type == 'fieldtrip') || ($node->type == 'ftritem')) {
     $grants = array();
     if ($node->type == 'ftritem') {
-      $fieldtrip = node_load($node->field_ftritem_field_trip[0]['nid']);
+      $fieldtrip = node_load($node->field_ftritem_field_trip[0]['nid'], NULL, TRUE);
     }
     else {
       $fieldtrip = $node;

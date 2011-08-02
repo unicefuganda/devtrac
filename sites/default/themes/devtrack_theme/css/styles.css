@@ -21,8 +21,8 @@ html, body {
 }
 
 html body{
-	font-family:Tahoma, Geneva, sans-serif;
-	font-size: 12px; /* 0.916666666667em; /* this should be 11px, but it isnt. we need to read the blueprint readme very properly one day */
+  font-family:Tahoma, Geneva, sans-serif;
+  font-size: 12px; /* 0.916666666667em; /* this should be 11px, but it isnt. we need to read the blueprint readme very properly one day */
   background-image:url("/sites/default/themes/devtrack_theme/images/devtrav_bkgd.gif");
   background-position:center top;
   background-repeat:repeat-y;
@@ -58,6 +58,19 @@ body a:hover, body .link a:hover {
 body a:visited {
 	color:#840000;
 }*/
+
+.view-my-homepage-my-action-items .views-field-title span.marker {
+ display: block;
+}
+
+.view-my-homepage-my-action-items .views-field-comment-count a {
+ display: block;
+ color: #EA0001;
+}
+
+.block .view-my-homepage-my-action-items .views-field-title {
+  width: 50%;
+}
 
 body .more-link a, body .node-links a, .view-my-homepage-my-action-items .more-link a,
 .view-my-homepage-my-action-items .view-footer a{

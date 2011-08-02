@@ -1817,16 +1817,13 @@ function devtrack_module_node_access_records($node) {
   }
   
   if (($node->type == 'fieldtrip') || ($node->type == 'ftritem')) {
-    global $user;
     $grants = array();
     if ($node->type == 'ftritem') {
-      $fieldtrip = node_load($node->field_ftritem_field_trip[0]['value']);
+      $fieldtrip = node_load($node->field_ftritem_field_trip[0]['nid']);
     }
     else {
       $fieldtrip = $node;
     }
-//    $result = db_query("SELECT * FROM {node_access} WHERE nid = %d", $node->nid);
-//    while ($grant = db_fetch_array($result)) {
       if ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') {
         //just deny access
         $grants[] = array(
@@ -1847,7 +1844,7 @@ function devtrack_module_node_access_records($node) {
         );
       }
       else {
-        $grants[] = array(
+/*        $grants[] = array(
           'realm' => 'all',
           'gid' => 0,
           'grant_view' => 1,
@@ -1855,8 +1852,7 @@ function devtrack_module_node_access_records($node) {
           'grant_delete' => 0,
           'priority' => 0,
         );
-      }
-//    }
+*/      }
   }
   return $grants;
 }

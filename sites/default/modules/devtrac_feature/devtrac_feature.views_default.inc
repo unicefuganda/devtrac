@@ -11634,7 +11634,7 @@ if (arg(1) == \'me\') {
 //  } else {
 //    $uid = arg(1);
 //  }
-  return l(\'All My Team Action Items\', \'user/\'. arg(1) . \'/actionitems/myteam\');
+//  return l(\'All My Team Action Items\', \'user/\'. $uid . \'/actionitems/myteam\');
 //} 
 ?>');
   $handler->override_option('footer_format', '3');
@@ -11642,8 +11642,14 @@ if (arg(1) == \'me\') {
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 5);
   $handler->override_option('use_pager', 'mini');
+<<<<<<< HEAD
   $handler->override_option('use_more', 0);
   $handler->override_option('use_more_text', 'more Action Items');
+=======
+  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more_always', 1);
+  $handler->override_option('use_more_text', 'All my Team Action Items');
+>>>>>>> p2-s1
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'All Action Items on Node Block', 'block_3');
@@ -11683,6 +11689,319 @@ if (arg(1) == \'me\') {
         'button' => 'Use default',
       ),
       'relationship' => 'none',
+<<<<<<< HEAD
+=======
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+    'field_actionitem_followuptask_value' => array(
+      'label' => 'Follow-up Task',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '80',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_followuptask_value',
+      'table' => 'node_data_field_actionitem_followuptask',
+      'field' => 'field_actionitem_followuptask_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'body' => array(
+      'label' => 'Follow-Up Task',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '80',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'body',
+      'table' => 'node_revisions',
+      'field' => 'body',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_due_date_value' => array(
+      'label' => 'Due Date',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => TRUE,
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'both',
+      ),
+      'exclude' => 1,
+      'id' => 'field_actionitem_due_date_value',
+      'table' => 'node_data_field_actionitem_due_date',
+      'field' => 'field_actionitem_due_date_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_status_value' => array(
+      'label' => 'Status',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 1,
+      'id' => 'field_actionitem_status_value',
+      'table' => 'node_data_field_actionitem_status',
+      'field' => 'field_actionitem_status_value',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_severity_value' => array(
+      'label' => 'Severity',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_severity_value',
+      'table' => 'node_data_field_actionitem_severity',
+      'field' => 'field_actionitem_severity_value',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_responsible_uid' => array(
+      'label' => 'Responsible',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => 1,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => 0,
+      ),
+      'exclude' => 1,
+      'id' => 'field_actionitem_responsible_uid',
+      'table' => 'node_data_field_actionitem_responsible',
+      'field' => 'field_actionitem_responsible_uid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array(
+    'field_actionitem_resp_place_nid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => '',
+      'breadcrumb' => '',
+      'default_argument_type' => 'node',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+>>>>>>> p2-s1
       'default_options_div_prefix' => '',
       'default_argument_fixed' => '',
       'default_argument_user' => 0,
@@ -11696,6 +12015,706 @@ if (arg(1) == \'me\') {
         'page' => 0,
         'story' => 0,
         'user_profile' => 0,
+<<<<<<< HEAD
+=======
+      ),
+      'validate_argument_node_access' => 1,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'actionitem' => 'actionitem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'field_actionitem_status_value_many_to_one' => array(
+      'operator' => 'or',
+      'value' => array(
+        '1' => '1',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => 'field_actionitem_status_value_many_to_one_op',
+        'label' => 'Content: Status (field_actionitem_status) - Allowed values',
+        'use_operator' => FALSE,
+        'identifier' => 'field_actionitem_status_value_many_to_one',
+        'remember' => FALSE,
+        'single' => TRUE,
+        'optional' => TRUE,
+        'reduce' => FALSE,
+      ),
+      'id' => 'field_actionitem_status_value_many_to_one',
+      'table' => 'node_data_field_actionitem_status',
+      'field' => 'field_actionitem_status_value_many_to_one',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'reduce_duplicates' => 0,
+    ),
+  ));
+  $handler->override_option('title', 'Action Items');
+  $handler->override_option('footer', '<?php
+/*
+  global $user;
+  $localnode = node_load(arg(1));
+  $localuseruid = $localnode->uid;
+  if (user_access(\'create actionitem content\')) {
+    if ($localuseruid == $user->uid) {
+      $options = Array(
+        \'edit[field_actionitem_resp_place][nid][value]\'  => $localnode->nid,
+        \'edit[field_actionitem_responsible][uid][value]\' => $localuseruid,
+        \'html\'  => TRUE,
+      );
+      print l(\'<button type="button">Add Action Item</button>\', \'node/add/actionitem\', Array(\'query\'=> $options, \'html\'  => TRUE)) .\'<br />\';
+    }
+  }
+  print l(\'<button type="button">View Detailed List</button>\', \'node/\'. arg(1) .\'/place_action_items\', Array(\'html\' => TRUE));
+*/
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 1);
+  $handler->override_option('empty', 'This place has no open Action Items');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', 'mini');
+  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more_always', 1);
+  $handler->override_option('use_more_text', 'All Action Items');
+  $handler->override_option('link_display', 'page_1');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('page', 'All Action Items for Node Page', 'page_1');
+  $handler->override_option('relationships', array(
+    'field_actionitem_resp_place_nid' => array(
+      'label' => 'Responsible Place',
+      'required' => 1,
+      'delta' => -1,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'nodereferer_referers' => array(
+      'label' => 'Referencing Nodes',
+      'required' => 1,
+      'referrer_delta' => '-1',
+      'referrer_field' => 'field_fieldtrip_places',
+      'id' => 'nodereferer_referers',
+      'table' => 'node',
+      'field' => 'nodereferer_referers',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'field_actionitem_resp_place_nid',
+    ),
+  ));
+  $handler->override_option('fields', array(
+    'field_actionitem_resp_place_nid' => array(
+      'label' => 'Location',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'field_actionitem_followuptask_value' => array(
+      'label' => 'Follow-up Task',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '80',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_followuptask_value',
+      'table' => 'node_data_field_actionitem_followuptask',
+      'field' => 'field_actionitem_followuptask_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'body' => array(
+      'label' => 'Follow-Up Task',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '80',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'body',
+      'table' => 'node_revisions',
+      'field' => 'body',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_due_date_value' => array(
+      'label' => 'Due Date',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => TRUE,
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'both',
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_due_date_value',
+      'table' => 'node_data_field_actionitem_due_date',
+      'field' => 'field_actionitem_due_date_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_status_value' => array(
+      'label' => 'Status',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_status_value',
+      'table' => 'node_data_field_actionitem_status',
+      'field' => 'field_actionitem_status_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_severity_value' => array(
+      'label' => 'Priority',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_severity_value',
+      'table' => 'node_data_field_actionitem_severity',
+      'field' => 'field_actionitem_severity_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_actionitem_responsible_uid' => array(
+      'label' => 'Responsible',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => 1,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => 0,
+      ),
+      'exclude' => 0,
+      'id' => 'field_actionitem_responsible_uid',
+      'table' => 'node_data_field_actionitem_responsible',
+      'field' => 'field_actionitem_responsible_uid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'phpcode' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'value' => '<?php
+  global $user;
+  if ($user->uid == 0) {
+    return \'\';
+  }
+  $action_item = node_load($data->nid);
+  if ($action_item->uid != $user->uid) {
+    return \'\';
+  }
+//  $result .= \'<ul><li>\';
+    $result .= l(\'<button type="button">Edit</button>\', \'node/\'. $action_item->nid .\'/edit\', Array(\'html\' => TRUE));
+//    $result .= \'</li></ul>\';
+  return $result;
+?>
+',
+      'exclude' => 0,
+      'id' => 'phpcode',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array(
+    'nid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => 'Field Trip: %1\'s All Action Items',
+      'breadcrumb' => '',
+      'default_argument_type' => 'node',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'nid',
+      'table' => 'node',
+      'field' => 'nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'nodereferer_referers',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'fieldtrip' => 'fieldtrip',
+        'actionitem' => 0,
+        'book' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'place' => 0,
+        'story' => 0,
+        'user_profile' => 0,
+      ),
+      'validate_argument_node_access' => 0,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'actionitem' => 'actionitem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
+  $handler->override_option('title', 'All Action Items');
+  $handler->override_option('footer', '<?php
+//  print l(\'<button type="button">Back to Field Trip</button>\', \'node/\'. arg(1), Array(\'html\'  => TRUE));
+ // print l(\'<button type="button">Pdf</button>\', \'printpdf/\'. arg(1). \'/fieldtrip_action_items_pdf\', Array(\'html\'  => TRUE));
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('empty', 'This place has no  Action Items yet.');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('path', 'node/%/action_items');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Action Items',
+    'description' => 'All Action Items',
+    'weight' => '4',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'tab',
+    'title' => 'Open Action Items',
+    'description' => 'Open Action Items for this Place',
+    'weight' => '2',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('block', 'This Report Action Items', 'block_4');
+  $handler->override_option('relationships', array());
+  $handler->override_option('fields', array(
+    'field_actionitem_resp_place_nid' => array(
+      'label' => 'Responsible Place',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 1,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+    'field_actionitem_followuptask_value' => array(
+      'label' => 'Follow-up Task',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '80',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+>>>>>>> p2-s1
       ),
       'validate_argument_node_access' => 1,
       'validate_argument_nid_type' => 'nid',
@@ -12007,6 +13026,29 @@ if (arg(1) == \'me\') {
     ),
   ));
   $handler->override_option('title', 'Open Action Items');
+<<<<<<< HEAD
+=======
+  $handler->override_option('footer', '<?php
+  global $user;
+  $localnode = node_load(arg(1));
+  $localuser = user_load($localnode->uid);
+  $localusername = $localuser->name;
+  if (user_access(\'create actionitem content\')) {
+    if ($localuser->uid == $user->uid) {
+      $options = Array(
+        \'edit[field_actionitem_resp_place][0][nid][nid]\'  => \'[nid:\'. $localnode->field_ftritem_place[0][nid] . \']\',
+        \'edit[field_actionitem_ftreportitem][0][nid][nid]\'  => \'[nid:\'. $localnode->nid . \']\',
+        \'edit[field_actionitem_responsible][0][uid][uid]\' => $localusername,
+        \'html\'  => TRUE,
+      );
+//      print l(\'<button type="button">Add Action Item</button>\', \'node/add/actionitem\', Array(\'query\'=> $options, \'html\'  => TRUE)) .\'<br />\';
+    }
+  }
+//  print l(\'<button type="button">View Detailed List</button>\', \'node/\'. arg(1) .\'/ftritem_action_items\', Array(\'html\' => TRUE));
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 1);
+>>>>>>> p2-s1
   $handler->override_option('empty', 'This Report Item has no open Action Items.');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 0);
@@ -13907,7 +14949,11 @@ return TRUE;',
     ),
   ));
   $handler->override_option('arguments', array(
+<<<<<<< HEAD
     'nid' => array(
+=======
+    'field_actionitem_responsible_uid' => array(
+>>>>>>> p2-s1
       'default_action' => 'default',
       'style_plugin' => 'default_summary',
       'style_options' => array(),
@@ -13946,7 +14992,10 @@ return TRUE;',
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+<<<<<<< HEAD
         'fieldtrip' => 'fieldtrip',
+=======
+>>>>>>> p2-s1
         'actionitem' => 0,
         'book' => 0,
         'ftritem' => 0,
@@ -13958,6 +15007,10 @@ return TRUE;',
       'validate_argument_node_access' => 1,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
+<<<<<<< HEAD
+=======
+        '6' => 0,
+>>>>>>> p2-s1
         '4' => 0,
         '5' => 0,
         '2' => 0,
@@ -13966,7 +15019,13 @@ return TRUE;',
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
       'validate_user_restrict_roles' => 0,
+<<<<<<< HEAD
       'validate_argument_php' => '',
+=======
+      'validate_argument_php' => 'watchdog("reinier", "just checking" . $argument);
+$handler->argument = "11";
+return TRUE;',
+>>>>>>> p2-s1
       'me_validate_user_restrict_roles' => 0,
     ),
   ));
@@ -14845,6 +15904,7 @@ return TRUE;',
     'alignment' => 'vertical',
     'fill_single_line' => 1,
   ));
+<<<<<<< HEAD
   $handler->override_option('attachment_position', 'before');
   $handler->override_option('inherit_arguments', TRUE);
   $handler->override_option('inherit_exposed_filters', FALSE);
@@ -14867,6 +15927,37 @@ return TRUE;',
     'block_6' => 0,
   ));
   $handler = $view->new_display('page', 'All Action Items for Field Trip', 'page_8');
+=======
+  $handler->override_option('title', 'Action Items');
+  $handler->override_option('footer', '<?php
+  global $user;
+  $localnode = node_load(arg(1));
+  $localuseruid = $localnode->uid;
+  if (user_access(\'create actionitem content\')) {
+    if ($localuseruid == $user->uid) {
+      $options = Array(
+        \'edit[field_actionitem_resp_place][nid][value]\'  => $localnode->nid,
+        \'edit[field_actionitem_responsible][uid][value]\' => $localuseruid,
+        \'html\'  => TRUE,
+      );
+//      print l(\'<button type="button">Add Action Item</button>\', \'node/add/actionitem\', Array(\'query\'=> $options, \'html\'  => TRUE)) .\'<br />\';
+    }
+  }
+//  print l(\'<button type="button">View Detailed List</button>\', \'node/\'. arg(1) .\'/place_action_items\', Array(\'html\' => TRUE));
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 1);
+  $handler->override_option('empty', 'This Field Trip has no open Action Items');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('items_per_page', 5);
+  $handler->override_option('use_pager', 'mini');
+  $handler->override_option('use_more', 1);
+  $handler->override_option('use_more_always', 1);
+  $handler->override_option('link_display', 'page_1');
+  $handler->override_option('block_description', '');
+  $handler->override_option('block_caching', -1);
+  $handler = $view->new_display('page', 'Pre-Trip Report Preview', 'page_7');
+>>>>>>> p2-s1
   $handler->override_option('relationships', array(
     'field_actionitem_resp_place_nid' => array(
       'label' => 'Responsible Place',
@@ -15181,6 +16272,27 @@ return TRUE;',
       'fromto' => array(
         'fromto' => 'value2',
       ),
+<<<<<<< HEAD
+=======
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'value' => '<?php
+  global $user;
+  if ($user->uid == 0) {
+    return \'\';
+  }
+  $action_item = node_load($data->nid);
+  if ($action_item->uid != $user->uid) {
+    return \'\';
+  }
+//  $result .= \'<ul><li>\';
+    $result .= l(\'<button type="button">Edit Action item</button>\', \'node/\'. $action_item->nid .\'/edit\', Array(\'html\' => TRUE));
+//    $result .= \'</li></ul>\';
+  return $result;
+?>
+',
+>>>>>>> p2-s1
       'exclude' => 0,
       'id' => 'field_fieldtrip_start_end_date_value2',
       'table' => 'node_data_field_fieldtrip_start_end_date',
@@ -15309,6 +16421,7 @@ return TRUE;',
       ),
     ),
   ));
+<<<<<<< HEAD
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -15354,6 +16467,45 @@ return TRUE;',
       'id' => 'date_filter',
       'table' => 'node',
       'field' => 'date_filter',
+=======
+  $handler->override_option('filters', array());
+  $handler->override_option('title', 'Pre-trip Report');
+  $handler->override_option('footer', '<?php
+//  print l(\'<button type="button">Back to Field Trip</button>\', \'node/\'. arg(1), Array(\'html\'  => TRUE));
+ // print l(\'<button type="button">Pdf</button>\', \'printpdf/\'. arg(1). \'/fieldtrip_action_items_pdf\', Array(\'html\'  => TRUE));
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('empty', 'This place has no Action Items yet.');
+  $handler->override_option('items_per_page', 0);
+  $handler->override_option('use_pager', '0');
+  $handler->override_option('style_plugin', 'views_two_column_table');
+  $handler->override_option('style_options', array());
+  $handler->override_option('path', 'node/%/pretripreportpreview');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Pre-Trip Report',
+    'description' => 'Pre-Trip Report Preview',
+    'weight' => '9',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'tab',
+    'title' => 'Open Action Items',
+    'description' => 'Open Action Items for this Place',
+    'weight' => '2',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('attachment', 'Places Attachment to Pre-TripReport', 'attachment_1');
+  $handler->override_option('relationships', array(
+    'field_fieldtrip_places_nid' => array(
+      'label' => 'Places',
+      'required' => 1,
+      'delta' => '-1',
+      'id' => 'field_fieldtrip_places_nid',
+      'table' => 'node_data_field_fieldtrip_places',
+      'field' => 'field_fieldtrip_places_nid',
+>>>>>>> p2-s1
       'override' => array(
         'button' => 'Override',
       ),
@@ -19639,6 +20791,7 @@ if ($user->uid == arg(1)) {
 
 ?>');
   $handler->override_option('footer_format', '3');
+<<<<<<< HEAD
   $handler->override_option('empty', '<?php
 if (arg(0) != \'user\' | !is_numeric(arg(1))) {
   return \'\';
@@ -19651,6 +20804,20 @@ if ($user->uid == arg(1)) {
   return "This user does not have a profile yet.";
 }
 
+=======
+  $handler->override_option('empty', '<?php
+if (arg(0) != \'user\' | !is_numeric(arg(1))) {
+  return \'\';
+}
+
+global $user;
+if ($user->uid == arg(1)) {
+  return l(\'Create your User Profile\', \'node/add/user-profile\');
+} else {
+  return "This user does not have a profile yet.";
+}
+
+>>>>>>> p2-s1
 ?>');
   $handler->override_option('empty_format', '3');
   $handler->override_option('use_ajax', TRUE);

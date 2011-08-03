@@ -101,12 +101,16 @@ function drush_devel_download() {
  * Implements drush_MODULE_post_COMMAND().
  */
 function drush_devel_post_pm_enable() {
+<<<<<<< HEAD
   $extensions = func_get_args();
   // Deal with comma delimited extension list.
   if (strpos($extensions[0], ',') !== FALSE) {
     $extensions = explode(',', $extensions[0]);
   }
 
+=======
+  $extensions = pm_parse_arguments(func_get_args());
+>>>>>>> p2-s1
   if (in_array('devel', $extensions) && !drush_get_option('skip')) {
     drush_devel_download();
   }

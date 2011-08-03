@@ -852,6 +852,7 @@ function devtrac_feature_user_default_permissions() {
       '1' => 'authenticated user',
       '2' => 'unicef user',
       '3' => 'unicef user (Mobile)',
+<<<<<<< HEAD
     ),
   );
 
@@ -864,6 +865,8 @@ function devtrac_feature_user_default_permissions() {
       '2' => 'authenticated user',
       '3' => 'unicef user',
       '4' => 'unicef user (Mobile)',
+=======
+>>>>>>> p2-s1
     ),
   );
 

@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile-display-view.tpl.php,v 1.1.2.2 2009/01/04 11:46:29 fago Exp $
 
 /**
  * @file content-profile-display-view.tpl.php

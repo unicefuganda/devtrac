@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.theme.inc,v 1.1.2.9 2009/09/15 15:35:47 fago Exp $
 
 /**
  * @file
@@ -12,7 +11,7 @@
 function theme_content_profile_display_add_link($element) {
   $type = $element['#content_type'];
   $uid = $element['#admin'] ? 'uid='. intval($element['#uid']) .'&' : '';
-  $text = t($element['#admin'] ? "Create the user's @profile_node." : "Create your @profile_node.", array('@profile_node' => node_get_types('name', $type)));
+  $text = $element['#admin'] ? t("Create the user's @profile_node.", array('@profile_node' => node_get_types('name', $type))) : t("Create your @profile_node.", array('@profile_node' => node_get_types('name', $type)));
   return l($text, content_profile_get_add_path($type, $element['#uid']), array('query' => $uid . drupal_get_destination(), 'html' => TRUE));
 }
 
@@ -71,6 +70,29 @@ function theme_content_profile_display_tab_edit($node) {
   if (node_access('update', $node)) {
     return l(t('Edit'), content_profile_get_edit_path($node), array('query' => drupal_get_destination()));
   }
+}
+
+/**
+ * Imagecache formatter.
+ */
+function theme_content_profile_imagecache_formatter_userlink($element) {
+  // Inside a view $element may contain NULL data. In that case, just return.
+  if (empty($element['#item']['fid'])) {
+    return '';
+  }
+
+  // Extract the preset name from the formatter name.
+  $presetname = substr($element['#formatter'], 0, strrpos($element['#formatter'], '_'));
+  $style = 'userlink';
+
+  $item = $element['#item'];
+  $item['data']['alt'] = isset($item['data']['alt']) ? $item['data']['alt'] : '';
+  $item['data']['title'] = isset($item['data']['title']) ? $item['data']['title'] : NULL;
+
+  $imagetag = theme('imagecache', $presetname, $item['filepath'], $item['data']['alt'], $item['data']['title']);
+  $path = empty($item['uid']) ? '' : 'user/'. $item['uid'];
+  $class = "imagecache imagecache-$presetname imagecache-$style imagecache-{$element['#formatter']}";
+  return l($imagetag, $path, array('attributes' => array('class' => $class), 'html' => TRUE));
 }
 
 /**

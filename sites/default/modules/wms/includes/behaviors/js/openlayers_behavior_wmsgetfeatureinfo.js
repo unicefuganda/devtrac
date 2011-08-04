@@ -131,7 +131,7 @@ Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
 Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo = {};
 
 Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.beforegetfeatureinfo = function(request) {
-  if(typeof $.colorbox == 'function') {
+  if((typeof $.colorbox == 'function') && ($("#popup").length == 0)) {
     $.colorbox({
       Title: "Click Add to add this place to your Field Trip.",
       height: "500px",
@@ -187,6 +187,9 @@ Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.getfeatureinfo = functio
   for (feature in response.features) {
     var row = [];
     tpftype = response.features[feature].fid.substring(0, response.features[feature].fid.indexOf("."));
+    /*
+     * For every layer create a new table for each layer
+     */
     if ((isheader == false) && (ftype != tpftype)) {
       html = html + "<h5>"+ ftype + "</h5>" + Drupal.theme('table', header, rows);
       header = [];

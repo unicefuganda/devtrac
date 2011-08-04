@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.rules_defaults.inc,v 1.1.2.2 2009/01/26 15:33:00 fago Exp $
 /**
  * @file Rules default rules
  */

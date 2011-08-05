@@ -91,6 +91,12 @@ function custom_breadcrumbs_taxonomy_schema() {
         'not null' => FALSE,
         'description' => 'An optional name for the custom breadcrumb.',
       ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'description' => 'The unique machine name for the custom breadcrumb.',
+      ),
       'titles' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -129,6 +135,9 @@ function custom_breadcrumbs_taxonomy_schema() {
       'language' => array('language'),
       'tid_language' => array('tid', 'language'),
     ),
+    'unique keys' => array(
+      'machine_name'  => array('machine_name'),
+    ),
     'primary key' => array('bid'),
   );
   
@@ -141,11 +150,17 @@ function custom_breadcrumbs_taxonomy_schema() {
         'not null' => TRUE,
         'description' => 'Unique identifier for the {custom_breadcrumbs_taxonomy} breadcrumbs.',
       ),
-    'name' => array(
+      'name' => array(
         'type' => 'varchar',
         'length' => 128,
         'not null' => FALSE,
         'description' => 'An optional name for the custom breadcrumb.',
+      ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'description' => 'The unique machine name for the custom breadcrumb.',
       ),
       'titles' => array(
         'type' => 'varchar',
@@ -184,6 +199,9 @@ function custom_breadcrumbs_taxonomy_schema() {
       'language' => array('language'),
       'vid_language' => array('vid', 'language'),
     ),
+    'unique keys' => array(
+      'machine_name'  => array('machine_name'),
+    ),
     'primary key' => array('bid'),
   );
 
@@ -212,5 +230,36 @@ function custom_breadcrumbs_taxonomy_update_6200() {
   db_add_field($ret, 'custom_breadcrumbs_taxonomy_term', 'name', array('type' => 'varchar', 'length' => 128, 'NOT NULL' => FALSE, 'description' => 'An optional name for the custom breadcrumb.'));
   db_add_field($ret, 'custom_breadcrumbs_taxonomy_vocabulary', 'name', array('type' => 'varchar', 'length' => 128, 'NOT NULL' => FALSE, 'description' => 'An optional name for the custom breadcrumb.'));
  
+  return $ret;
+}
+
+/**
+ * Adds unique machine name field for integration with features to custom breadcrumbs taxonomy term
+ */
+function custom_breadcrumbs_taxonomy_update_6201() {
+  $ret = array();
+  db_add_field($ret, 'custom_breadcrumbs_taxonomy_term', 'machine_name', array('type' => 'varchar', 'length' => 256, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
+  db_add_unique_key($ret, 'custom_breadcrumbs_taxonomy_term', 'machine_name', array('machine_name'));
+  
+  $result = db_query("SELECT * FROM {custom_breadcrumbs_taxonomy_term}");
+  while ($crumb = db_fetch_object($result)) {
+    $term = taxonomy_get_term($breadcrumb->tid);
+    db_query("UPDATE {custom_breadcrumbs_taxonomy_term} SET machine_name = '%s' WHERE bid = %d", $term->vid .'-'. $crumb->tid .'-'. $crumb->bid, $crumb->bid);
+  }
+  return $ret;
+}
+
+/**
+ * Adds unique machine name field for integration with features to custom breadcrumbs taxonomy vocabulary
+ */
+function custom_breadcrumbs_taxonomy_update_6202() {
+  $ret = array();
+  db_add_field($ret, 'custom_breadcrumbs_taxonomy_vocabulary', 'machine_name', array('type' => 'varchar', 'length' => 256, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
+  db_add_unique_key($ret, 'custom_breadcrumbs_taxonomy_vocabulary', 'machine_name', array('machine_name'));
+  
+  $result = db_query("SELECT * FROM {custom_breadcrumbs_taxonomy_vocabulary}");
+  while ($crumb = db_fetch_object($result)) {
+    db_query("UPDATE {custom_breadcrumbs_taxonomy_vocabulary} SET machine_name = '%s' WHERE bid = %d", $crumb->vid .'-'. $crumb->bid, $crumb->bid);
+  }
   return $ret;
 }

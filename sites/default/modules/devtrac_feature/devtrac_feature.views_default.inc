@@ -3,6 +3,7 @@
 /**
  * Implementation of hook_views_default_views().
  */
+
 function devtrac_feature_views_default_views() {
   $views = array();
 

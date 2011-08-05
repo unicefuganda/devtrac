@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.pageroute.inc,v 1.1.2.1 2010/01/12 13:50:39 fago Exp $
 
 /**
  * @file

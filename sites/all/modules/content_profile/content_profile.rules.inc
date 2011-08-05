@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.rules.inc,v 1.1.2.2 2009/03/30 10:20:01 fago Exp $
 
 /**
  * @file

@@ -31,6 +31,12 @@ function custom_breadcrumbsapi_schema() {
         'not null' => FALSE,
         'description' => 'An optional name for the custom breadcrumb.',
       ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'description' => 'The unique machine name for the custom breadcrumb.',
+      ),
       'titles' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -68,6 +74,9 @@ function custom_breadcrumbsapi_schema() {
       'language' => array('language'),
       'module_language' => array('module_page', 'language'),
     ),
+    'unique keys' => array(
+      'machine_name'  => array('machine_name'),
+    ),
     'primary key' => array('bid'),
   );
   return $schema;
@@ -80,6 +89,21 @@ function custom_breadcrumbsapi_schema() {
 function custom_breadcrumbsapi_update_6200() {
   $ret = array();
   db_add_field($ret, 'custom_breadcrumbsapi', 'name', array('type' => 'varchar', 'length' => 128, 'NOT NULL' => FALSE, 'description' => 'An optional name for the custom breadcrumb.'));
+  return $ret;
+}
+
+/**
+ * Adds unique machine name field for integration with features
+ */
+function custom_breadcrumbsapi_update_6201() {
+  $ret = array();
+  db_add_field($ret, 'custom_breadcrumbsapi', 'machine_name', array('type' => 'varchar', 'length' => 256, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
+  db_add_unique_key($ret, 'custom_breadcrumbsapi', 'machine_name', array('machine_name'));
+  
+  $result = db_query("SELECT * FROM {custom_breadcrumbsapi}");
+  while ($crumb = db_fetch_object($result)) {
+    db_query("UPDATE {custom_breadcrumbsapi} SET machine_name = '%s' WHERE bid = %d", $crumb->module_page .'-'. $crumb->bid, $crumb->bid);
+  }
   return $ret;
 }
 

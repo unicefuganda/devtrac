@@ -16,6 +16,7 @@ module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs_common');
  *   'field' a unique field of the database table used to identify the breadcrumb,
  *   'type' a string used for indicating the breadcrumb type on the admin list,
  *   'name_constructor' a function which generates the breadcrumb name from the breadcrumb.
+ *   'machine_name_constructor' a function which generates the machine name for use with features from the breadcrumb.
  */
 function custom_breadcrumbs_paths_cb_breadcrumb_info() {
   $breadcrumb_type_info = array();
@@ -24,6 +25,7 @@ function custom_breadcrumbs_paths_cb_breadcrumb_info() {
     'field' => 'specific_path',
     'type' => 'path',
     'name_constructor' => '_custom_breadcrumbs_paths_breadcrumb_name',
+    'machine_name_constructor' => '_custom_breadcrumbs_paths_breadcrumb_machine_name',
   );
   return $breadcrumb_type_info;
 }
@@ -40,6 +42,21 @@ function custom_breadcrumbs_paths_cb_breadcrumb_info() {
 function _custom_breadcrumbs_paths_breadcrumb_name($breadcrumb) {
   if (isset($breadcrumb->specific_path)) {
     return $breadcrumb->specific_path;
+  }
+}
+
+/**
+ * Constructs a unique default machine name to use with features.
+ *
+ * @param $breadcrumb
+ *   The breadcrumb object.
+ *
+ * @return
+ *   A text string that will be used with features.
+ */
+function _custom_breadcrumbs_paths_breadcrumb_machine_name($breadcrumb) {
+  if (isset($breadcrumb->specific_path)) {
+    return str_replace('*', 'all', $breadcrumb->specific_path) .'-'. $breadcrumb->bid;
   }
 }
 
@@ -300,4 +317,21 @@ function custom_breadcrumbs_paths_form_alter(&$form, $form_state, $form_id) {
       '#weight'        => -20,
     );
   }
+}
+
+/**
+ * Implementation of hook_features_api
+ *
+ * Here we define the components that we want to make exportable.  For this
+ * particular module, we want to make the configurations exportable.
+ */
+function custom_breadcrumbs_paths_features_api() {
+  return array(
+    'custom_breadcrumbs_paths_config' => array(
+      'name' => 'Custom Breadcrumbs Paths',
+      'file' => drupal_get_path('module', 'custom_breadcrumbs_paths') .'/custom_breadcrumbs_paths.features.inc',
+      'default_hook' => 'custom_breadcrumbs_paths_config_features_default_settings',
+      'feature_source' => TRUE,
+    ),
+  );
 }

@@ -53,6 +53,12 @@ function custom_breadcrumbs_paths_schema() {
         'not null' => FALSE,
         'description' => 'An optional name for the custom breadcrumb.',
       ),
+      'machine_name' => array(
+        'type' => 'varchar',
+        'length' => 256,
+        'not null' => TRUE,
+        'description' => 'The unique machine name for the custom breadcrumb.',
+      ),
       'titles' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -90,6 +96,9 @@ function custom_breadcrumbs_paths_schema() {
       'language' => array('language'),
       'path_language' => array('specific_path', 'language'),
     ),
+    'unique keys' => array(
+      'machine_name'  => array('machine_name'),
+    ),
     'primary key' => array('bid'),
   );
   return $schema;
@@ -113,6 +122,21 @@ function custom_breadcrumbs_paths_update_6200() {
   $ret = array();
   db_add_field($ret, 'custom_breadcrumbs_paths', 'name', array('type' => 'varchar', 'length' => 128, 'NOT NULL' => FALSE, 'description' => 'An optional name for the custom breadcrumb.'));
   db_drop_field($ret, 'custom_breadcrumbs_paths', 'set_active_menu');
+  return $ret;
+}
+
+/**
+ * Adds unique machine name field for integration with features
+ */
+function custom_breadcrumbs_paths_update_6201() {
+  $ret = array();
+  db_add_field($ret, 'custom_breadcrumbs_paths', 'machine_name', array('type' => 'varchar', 'length' => 256, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
+  db_add_unique_key($ret, 'custom_breadcrumbs_paths', 'machine_name', array('machine_name'));
+  
+  $result = db_query("SELECT * FROM {custom_breadcrumbs_paths}");
+  while ($crumb = db_fetch_object($result)) {
+    db_query("UPDATE {custom_breadcrumbs_paths} SET machine_name = '%s' WHERE bid = %d", str_replace('*', 'all', $crumb->specific_path) .'-'. $crumb->bid, $crumb->bid);
+  }
   return $ret;
 }
 

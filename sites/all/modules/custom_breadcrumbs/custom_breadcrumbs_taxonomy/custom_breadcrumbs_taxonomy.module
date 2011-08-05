@@ -48,6 +48,7 @@ define('CUSTOM_BREADCRUMBS_TAXONOMY_NODE_TYPES_DEFAULT', 'book');
  *   'field' a field of the database table used to identify the breadcrumb,
  *   'type' a string used for indicating the breadcrumb type on the admin list,
  *   'name_constructor' a function which generates the breadcrumb name from the breadcrumb.
+ *   'machine_name_constructor' a function which generates the machine name for use with features from the breadcrumb
  */
 function custom_breadcrumbs_taxonomy_cb_breadcrumb_info() {
   $breadcrumb_type_info = array();
@@ -55,13 +56,15 @@ function custom_breadcrumbs_taxonomy_cb_breadcrumb_info() {
     'table' => 'custom_breadcrumbs_taxonomy_vocabulary', 
     'field' => 'vid', 
     'type' => 'taxonomy_vocabulary',
-    'name_constructor' => '_custom_breadcrumbs_taxonomy_vocabulary_breadcrumb_name'
+    'name_constructor' => '_custom_breadcrumbs_taxonomy_vocabulary_breadcrumb_name',
+    'machine_name_constructor' => '_custom_breadcrumbs_taxonomy_vocabulary_breadcrumb_machine_name',
   );
   $breadcrumb_type_info['taxonomy_term'] = array(
     'table' => 'custom_breadcrumbs_taxonomy_term', 
     'field' => 'tid', 
     'type' => 'taxonomy_term',
-    'name_constructor' => '_custom_breadcrumbs_taxonomy_term_breadcrumb_name'
+    'name_constructor' => '_custom_breadcrumbs_taxonomy_term_breadcrumb_name',
+    'machine_name_constructor' => '_custom_breadcrumbs_taxonomy_term_breadcrumb_machine_name',
   );
   return $breadcrumb_type_info;
 }
@@ -101,6 +104,34 @@ function _custom_breadcrumbs_taxonomy_term_breadcrumb_name($breadcrumb) {
 function _custom_breadcrumbs_taxonomy_vocabulary_breadcrumb_name($breadcrumb) {
   $vocabulary = taxonomy_vocabulary_load($breadcrumb->vid);
   return $vocabulary->name;
+}
+
+/**
+ * Constructs a default machine name from the taxonomy vocabulary for features integration.
+ *
+ * @param $breadcrumb
+ *   The breadcrumb object.
+ * 
+ * @return
+ *   A text string that will be used for feature integration.
+ */
+function _custom_breadcrumbs_taxonomy_term_breadcrumb_machine_name($breadcrumb) {
+  $term = taxonomy_get_term($breadcrumb->tid);
+  return $term->vid .'-'. $breadcrumb->tid . '-'. $breadcrumb->bid;
+}
+
+/**
+ * Constructs a default machine name from the taxonomy vocabulary for features integration.
+ *
+ * @param $breadcrumb
+ *   The breadcrumb object.
+ * 
+ * @return
+ *   A text string that will be used for feature integration.
+ */
+function _custom_breadcrumbs_taxonomy_vocabulary_breadcrumb_machine_name($breadcrumb) {
+  $vocabulary = taxonomy_vocabulary_load($breadcrumb->vid);
+  return $breadcrumb->vid . '-'. $breadcrumb->bid;
 }
 
 /**
@@ -526,4 +557,21 @@ function custom_breadcrumbs_taxonomy_minimum_module_weight() {
   $weights = _custom_breadcrumbs_get_module_weight($modules);
   $max_weight = array_pop($weights);
   return $max_weight + 1;
+}
+
+/**
+ * Implementation of hook_features_api
+ *
+ * Here we define the components that we want to make exportable.  For this
+ * particular module, we want to make the configurations exportable.
+ */
+function custom_breadcrumbs_taxonomy_features_api() {
+  return array(
+    'custom_breadcrumbs_taxonomy_config' => array(
+      'name' => 'Custom Breadcrumbs Taxonomy',
+      'file' => drupal_get_path('module', 'custom_breadcrumbs_taxonomy') .'/custom_breadcrumbs_taxonomy.features.inc',
+      'default_hook' => 'custom_breadcrumbs_taxonomy_config_features_default_settings',
+      'feature_source' => TRUE,
+    ),
+  );
 }

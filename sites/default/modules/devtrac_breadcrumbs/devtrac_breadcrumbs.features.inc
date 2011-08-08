@@ -7,39 +7,57 @@ function devtrac_breadcrumbs_custom_breadcrumbs_config_features_default_settings
   $custom_breadcrumbs_configs = array();
 
   $custom_breadcrumbs_configs[] = array(
-    'actionitem-5' => array(
+    'actionitem-7' => array(
       'name' => 'actionitem',
-      'titles' => '[title]',
-      'paths' => 'node/[nid]',
+      'titles' => '<?php
+  $actionitem = node_load(arg(1));
+  $reportitem = node_load($actionitem->field_actionitem_ftreportitem[0][\'nid\']);
+  $location = node_load($actionitem->field_actionitem_resp_place[0][\'nid\']);
+  $fieldtrip = node_load($reportitem->field_ftritem_field_trip[0][\'nid\']);
+  return array(
+    \'Field Trip (\' .$fieldtrip->title .\')\',
+    \'Location (\'. $location->title .\')\',
+    \'Site Report (\'. $reportitem->title .\')\',
+  );
+?>',
+      'paths' => '<?php
+  $actionitem = node_load(arg(1));
+  $reportitem = node_load($actionitem->field_actionitem_ftreportitem[0][\'nid\']);
+  return array(
+    \'node/\'. $reportitem->field_ftritem_field_trip[0][\'nid\'],
+    \'node/\'. $actionitem->field_actionitem_resp_place[0][\'nid\'],
+    \'node/\'. $reportitem->nid,
+  );
+?>',
       'visibility_php' => '',
       'node_type' => 'actionitem',
       'language' => '',
-      'machine_name' => 'actionitem-5',
+      'machine_name' => 'actionitem-7',
     ),
   );
   $custom_breadcrumbs_configs[] = array(
-    'fieldtrip-4' => array(
+    'fieldtrip-10' => array(
       'name' => 'fieldtrip',
-      'titles' => '[title]',
+      'titles' => 'Field Trip ([title])',
       'paths' => 'node/[nid]',
       'visibility_php' => '',
       'node_type' => 'fieldtrip',
       'language' => '',
-      'machine_name' => 'fieldtrip-4',
+      'machine_name' => 'fieldtrip-10',
     ),
   );
   $custom_breadcrumbs_configs[] = array(
-    'ftritem-1' => array(
+    'ftritem-9' => array(
       'name' => 'ftritem',
-      'titles' => '[field_ftritem_field_trip-title]
-[field_ftritem_place-title]',
+      'titles' => 'Field Trip ([field_ftritem_field_trip-title])
+Location ([field_ftritem_place-title])',
       'paths' => 'node/[field_ftritem_field_trip-nid]
 node/[field_ftritem_place-nid]
 ',
       'visibility_php' => '',
       'node_type' => 'ftritem',
       'language' => '',
-      'machine_name' => 'ftritem-1',
+      'machine_name' => 'ftritem-9',
     ),
   );
   return $custom_breadcrumbs_configs;
@@ -180,10 +198,10 @@ return $result;',
       'titles' => '<?php
 $ri = node_load(arg(1));
 $ft = node_load($ri->field_ftritem_field_trip[0][\'nid\']);
-$p = node_load($ri->field_ftritem_place[0][\'nid\']);
+$l = node_load($ri->field_ftritem_place[0][\'nid\']);
 return array(
-  $ft->title,
-  $p->title,
+  \'Field Trip (\'. $ft->title .\')\',
+  \'Location (\'. $l->title .\')\',
 );
 ?>',
       'paths' => '<?php
@@ -232,16 +250,16 @@ return (in_array(\'unicef user (Mobile)\', $user->roles));',
     'user/all-5' => array(
       'name' => 'user/*',
       'titles' => '<?php
-$user = user_load(arg(1));
-$realname = $user->realname;
-return array (
-  $realname,
-);
+  $user = user_load(arg(1));
+  $realname = $user->realname;
+  return array (
+    $realname,
+  );
 ?>',
       'paths' => '<?php
-return array (
-  \'user/\'. arg(1),
-);
+  return array (
+    \'user/\'. arg(1),
+  );
 ?>',
       'visibility_php' => '',
       'specific_path' => 'user/*',
@@ -284,7 +302,7 @@ function devtrac_breadcrumbs_custom_breadcrumbs_views_config_features_default_se
       'titles' => '<?php
 $fieldtrip = node_load(arg(2));
 return array(
-  $fieldtrip->title,
+  \'Field Trip (\'. $fieldtrip->title .\')\',
 );
 ?>',
       'paths' => '<?php

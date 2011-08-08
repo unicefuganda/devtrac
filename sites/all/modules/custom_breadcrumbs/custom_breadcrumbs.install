@@ -34,20 +34,20 @@ function custom_breadcrumbs_schema() {
       ),
       'machine_name' => array(
         'type' => 'varchar',
-        'length' => 256,
+        'length' => 255,
         'not null' => TRUE,
         'description' => 'The unique machine name for the custom breadcrumb.',
       ),
       'titles' => array(
         'type' => 'varchar',
-        'length' => 255,
+        'length' => 1023,
         'not null' => TRUE,
         'default' => '',
         'description' => 'A return-delimited list of titles for the breadcrumb links.',
       ),
       'paths' => array(
         'type' => 'varchar',
-        'length' => 255,
+        'length' => 1023,
         'not null' => FALSE,
         'description' => 'A return-delimited list of url paths for the breadcrumb links.',
       ),
@@ -206,7 +206,9 @@ function custom_breadcrumbs_update_6203() {
  */
 function custom_breadcrumbs_update_6204() {
   $ret = array();
-  db_add_field($ret, 'custom_breadcrumb', 'machine_name', array('type' => 'varchar', 'length' => 256, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
+  db_change_field($ret, 'custom_breadcrumb', 'titles', 'titles', array('type' => 'varchar', 'length' => 1023, 'NOT NULL' => TRUE, 'default' => '', 'description' => 'A return-delimited list of titles for the breadcrumb links.'));
+  db_change_field($ret, 'custom_breadcrumb', 'paths', 'paths', array('type' => 'varchar', 'length' => 1023, 'NOT NULL' => FALSE, 'description' => 'A return-delimited list of url paths for the breadcrumb links.'));
+  db_add_field($ret, 'custom_breadcrumb', 'machine_name', array('type' => 'varchar', 'length' => 255, 'NOT NULL' => TRUE, 'description' => 'The unique machine name for the custom breadcrumb.'));
   db_add_unique_key($ret, 'custom_breadcrumb', 'machine_name', array('machine_name'));
   
   $result = db_query("SELECT * FROM {custom_breadcrumb}");

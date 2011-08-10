@@ -307,7 +307,7 @@ Use PHP in breadcrumb titles and paths
 --------------------------------------
 If this advanced option is enabled at admin/settings/custom-breadcrumbs, then
 users given 'use php in custom breadcrumbs' permission can include small php
-code snippets (less than 250 characters)in the titles and/or paths fields of
+code snippets in the titles and/or paths fields of
 the add breadcrumb form. Be careful when enabling this option, as the incorrect
 use of php can break your site.
 
@@ -340,7 +340,7 @@ array is not returned, then the module defaults to the standard operation of
 using each line of the titles and paths text fields to define a part of the
 breadcrumb.
 
-For longer code snippets (greater than 250 characters), you can save your code
+For longer code snippets, you can save your code
 snippet in an include file and use a php require_once statement in the titles
 and/or paths section of your custom breadcrumb to include and evaluate your
 code. See http://drupal.org/node/654766 for an example of this.

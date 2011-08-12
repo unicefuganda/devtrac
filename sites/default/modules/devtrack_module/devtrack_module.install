@@ -94,4 +94,14 @@ function devtrack_module_update_6001() {
   return $ret;
   
 }
-   
+      
+function devtrack_module_update_6002() {
+  // Declare new modules
+  $new_modules = array(
+    'spamspan',
+    'search_config',
+  );  
+  module_enable($new_modules);
+  
+  db_query("INSERT INTO {filters} (fid, format, module, delta, weight) VALUES ('11', '1', 'spamspan', '0', '10')");  
+}

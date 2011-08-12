@@ -1675,7 +1675,7 @@ function devtrack_module_environment_switch($target_env, $current_env) {
     'environment_indicator',
     'openlayers_ui',
     'diff',
-    'views_clone_display'
+    'views_clone_display',
     'upgrade_status'
   );
 

@@ -94,7 +94,7 @@ function devtrack_module_update_6001() {
   return $ret;
   
 }
-      
+
 function devtrack_module_update_6002() {
   // Declare new modules
   $new_modules = array(
@@ -104,4 +104,25 @@ function devtrack_module_update_6002() {
   module_enable($new_modules);
   
   db_query("INSERT INTO {filters} (fid, format, module, delta, weight) VALUES ('11', '1', 'spamspan', '0', '10')");  
+}
+
+function devtrack_module_update_6003() {
+  // Clear all custom_breadcrumbs tables
+  db_query("TRUNCATE TABLE custom_breadcrumb");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_panels");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_paths");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_taxonomy_term");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_taxonomy_vocabulary");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_views");
+  db_query("TRUNCATE TABLE custom_breadcrumbsapi");
+  
+  // Declare new modules
+  $new_modules = array(
+    'devtrac_breadcrumbs',
+  );  
+  module_enable($new_modules);
+
+  $ret = array('success' => TRUE, 'query' => 'cleared all custom_breadcrumbs tables; enabled devtrac_breabcrumbs module');
+  return $ret;
+  
 }

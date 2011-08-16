@@ -7,12 +7,17 @@
  */
 
 print '<div class="layers">';
-foreach ($tables as $name => $table) {
-  $name = str_replace(":", " ", $name);
-  print '<div class="layer ' . $name . '">';
-  print theme_table($table['header'], $table['rows'], Array('class' => $name), $name, NULL, TRUE, t("No results"));
-  print '</div>';
-}
+if ($tables)
+  foreach ($tables as $name => $table) {
+    $name = str_replace(":", " ", $name);
+    print '<div class="layer ' . $name . '">';
+    print theme_table($table['header'], $table['rows'], Array('class' => $name), $name, NULL, TRUE, t("No results"));
+    print '</div>';
+  }
+  else {
+    print t("No results found");
+  }
+
 print '</div>';
 
 

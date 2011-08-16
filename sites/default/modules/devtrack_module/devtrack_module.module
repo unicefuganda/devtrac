@@ -930,94 +930,133 @@ function devtrack_module_form_ftritem_node_form_alter(&$form, &$form_state) {
 }
 
 function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
-  // PHASE II
   // Change title depending on the type of Site Report we're creating.
-  $destination = drupal_get_destination();
-  if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem") && (trim($destination) != "")) {
-    $args = explode("%2F", $destination);
-    $params = explode("%26", $args[2]);
-    $tid = substr($params[0], strpos($params[0], '%3D') + 3);
-    $reporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
-    drupal_set_title(t('Create @name', array('@name' => $reporttype->name)));
+  if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
+    $destination = drupal_get_destination();
+    if (trim($destination) != "") {
+      if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem") && (trim($destination) != "")) {
+        $args = explode("%2F", $destination);
+        $params = explode("%26", $args[2]);
+        $tid = substr($params[0], strpos($params[0], '%3D') + 3);
+        $addreporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
+        drupal_set_title(t('Create @name', array('@name' => $addreporttype->name)));
+      }
+    }
   }
 
-  // Change the text on the more button under the images field.
+  // We're editing an existing site report
+  if ((arg(0) == "node") && (is_numeric(arg(1))) && (arg(2) == "edit")) {
+    $vids = array();
+    $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
+    foreach ($vocabularies as $vocabulary) {
+      $vids[$vocabulary->vid] = $vocabulary->vid;
+      if ($vocabulary->name == 'Site Report Type') {
+        $editreporttype = new stdClass();
+        $editreporttype->vid = $vocabulary->vid;
+        $terms = array_values($form['#node']->taxonomy);
+        $editreporttype->name = $terms[0]->name;
+      }
+    }
+  }
+
+  // Change the text on the more button under the images field
   $form['field_ftritem_images']['field_ftritem_images_add_more']['#value'] = 'Add another photo';
 
-  // Admin is allowed to see everything, so return immediately.
+  // We are going to hide some fields. Admin is allowed to see everything, so return the form immediately.
   global $user;
-  if (in_array('administrator', array_values($user->roles))) {
+  if (in_array('administrator', array_values($user->roles))) { // OR with ($user->uid == 1) to also include site admin
     return $form;
   }
 
-  // Hide/Show certain fields according to the Type of Site Report we're creating
+  // We're back at creating a new site report
   if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
-    switch ($reporttype->name) {
+    // Hide/Show certain fields according to the Type of Site Report we're creating
+    switch ($addreporttype->name) {
       case 'Site Visit':
+        // Is done in code, so no hiding/showing
         break;
       case 'Roadside Observation':
-	      $form[field_ftritem_place]['#prefix'] = '<div class="devtrachidefield">';
-        $form[field_ftritem_lat_long]['#prefix'] = '<div class="devtracshowfield">';
-	      $form[taxonomy]['#prefix'] = '<div class="devtrachidefield">';
-        $form[field_ftritem_place]['#suffix'] = '</div>';
-        $form[field_ftritem_lat_long]['#suffix'] = '</div>';
-        $form[taxonomy]['#suffix'] = '</div>';
+	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy']['#suffix'] = '</div>';
 	      break;
       case 'Human Interest Story':
-	      $form[field_ftritem_place]['#prefix'] = '<div class="devtracshowfield">';
-        $form[field_ftritem_lat_long]['#prefix'] = '<div class="devtrachidefield">';
-	      $form[taxonomy][1]['#prefix'] = '<div class="devtracshowfield">';
-	      $form[taxonomy][$reporttype->vid]['#prefix'] = '<div class="devtrachidefield">';
-	      $form[field_ftritem_place]['#suffix'] = '</div>';
-        $form[field_ftritem_lat_long]['#suffix'] = '</div>';
-        $form[taxonomy][1]['#suffix'] = '</div>';
-        $form[taxonomy][$reporttype->vid]['#suffix'] = '</div>';
+	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy']['#suffix'] = '</div>';
         break;
     }
   }
 
-  // Hide/Show certain fields according to the Type of Site Report we're editing
+  // We're editing an existing site report
   if ((arg(0) == "node") && (is_numeric(arg(1))) && (arg(2) == "edit")) {
-    if (isset($form['field_ftritem_place'][0]['nid']['nid']) && ($form[field_ftritem_place][0]['nid']['nid']['#value'] != '')) {
-      $form[field_ftritem_place]['#prefix'] = '<div class="devtrachidefield">';
-      $form[field_ftritem_lat_long]['#prefix'] = '<div class="devtrachidefield">';
-    }
-    else {
-      $form[field_ftritem_place]['#prefix'] = '<div class="devtracshowfield">';
-      $form[field_ftritem_lat_long]['#prefix'] = '<div class="devtracshowfield">';
-    }
-    if (($form['taxonomy'][1]['#value'] != array()) && ($form['taxonomy'][8]['#value'] != array())) {
-	    $form[taxonomy]['#prefix'] = '<div class="devtrachidefield">';
-      $form[taxonomy]['#suffix'] = '</div>';
-    }
-    else {
-      $vids = array();
-      foreach ($form['#node']->taxonomy as $term) {
-        $vids[$term->vid] = $term->vid;
-      }
-      foreach ($vids as $vid) {
-        if ($form['taxonomy'][$vid]['#value'] != array()) {
-	        $form[taxonomy][$vid]['#prefix'] = '<div class="devtrachidefield">';
+    // Hide/Show certain fields according to the Type of Site Report we're editing
+    switch ($editreporttype->name) {
+      case 'Site Visit':
+        if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
+          $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+          $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
         }
         else {
-          $form[taxonomy][$vid]['#prefix'] = '<div class="devtracshowfield">';
+          $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+          $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
         }
-        $form[taxonomy][$vid]['#suffix'] = '</div>';
-      }
+        $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+
+        $show_taxonomy = FALSE;
+        foreach ($vids as $vid) { // $vids was set earlier
+          if ($form['taxonomy'][$vid]['#value'] != array()) {
+            $form['taxonomy'][$vid]['#prefix'] = '<div class="devtrachidefield">';
+          }
+          else {
+            $form['taxonomy'][$vid]['#prefix'] = '<div class="devtracshowfield">';
+            $show_taxonomy = TRUE;
+          }
+          $form['taxonomy'][$vid]['#suffix'] = '</div>';
+        }
+        if ($show_taxonomy) {
+          $form['taxonomy']['#prefix'] = '<div class="devtracshowfield">';
+        }
+        else {
+          $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+        }
+        $form['taxonomy']['#suffix'] = '</div>';
+        break;
+      case 'Roadside Observation':
+	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy']['#suffix'] = '</div>';
+	      break;
+      case 'Human Interest Story':
+	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy']['#suffix'] = '</div>';
+        break;
     }
-    $form[field_ftritem_place]['#suffix'] = '</div>';
-    $form[field_ftritem_lat_long]['#suffix'] = '</div>';
   }
 
   // Never show the Field Trip field.
-  if (isset($form[field_ftritem_field_trip][0]['nid']['nid']['#value']) && ($form[field_ftritem_field_trip][0]['nid']['nid']['#value'] != '')) {
-  	$form[field_ftritem_field_trip]['#prefix'] = '<div class="devtrachidefield">';
+  if (isset($form['field_ftritem_field_trip'][0]['nid']['nid']['#value']) && ($form['field_ftritem_field_trip'][0]['nid']['nid']['#value'] != '')) {
+  	$form['field_ftritem_field_trip']['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-  	$form[field_ftritem_field_trip]['#prefix'] = '<div class="devtracshowfield">';
+  	$form['field_ftritem_field_trip']['#prefix'] = '<div class="devtracshowfield">';
   }
-  $form[field_ftritem_field_trip]['#suffix'] = '</div>';
-
+  $form['field_ftritem_field_trip']['#suffix'] = '</div>';
+  
   return $form;
 }
 
@@ -1426,7 +1465,6 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
 	  '#value' => "Select Place to visit for Field Trip: ". $fieldtrip->title,
 	);
 	
-  // PHASE II
   $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
   foreach ($vocabularies as $vocabulary) {
     if ($vocabulary->name == 'Site Report Type') {
@@ -1491,7 +1529,6 @@ function devtrack_module_addplaceform_validate($form, &$form_state) {
 
 function devtrack_module_addplaceform_submit($form, &$form_state) {
 
-  // PHASE II
   $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
   foreach ($vocabularies as $vocabulary) {
     if ($vocabulary->name == 'Site Report Type') {
@@ -1529,7 +1566,6 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
   		break;
   }
   
-
 }
 
 
@@ -1553,7 +1589,7 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
  *   An array of matching term objects.
  */
 function devtrack_module_get_term_by_name_vid($name, $vid) {
-  $db_result = db_query(db_rewrite_sql("SELECT t.tid, t.name FROM {term_data} t WHERE LOWER(t.name) = LOWER('%s') AND t.vid = %d", 't', 'tid'), trim($name), $vid);
+  $db_result = db_query(db_rewrite_sql("SELECT * FROM {term_data} t WHERE LOWER(t.name) = LOWER('%s') AND t.vid = %d", 't', 'tid'), trim($name), $vid);
   $result = array();
   while ($term = db_fetch_object($db_result)) {
     $result[] = $term;

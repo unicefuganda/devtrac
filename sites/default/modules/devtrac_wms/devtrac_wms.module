@@ -1,0 +1,97 @@
+<?php
+
+
+/* 
+ * TODO lets see if we can rename this
+ */
+
+function devtrac_wms_init() {
+  drupal_add_js(drupal_get_path('module', 'devtrac_wms') . '/devtrac_wms.js');
+}
+
+
+function devtrac_wms_menu() {
+  $items['openlayers/wms/wmsgetfeatureinfo_process'] = array(
+    'page callback' => 'devtrac_wms_ajax_wmsgetfeatureinfo_process',
+    'type' => MENU_CALLBACK,
+    'access callback' => 'wms_check_perm_getfeatureinfo',
+  );
+  
+  return $items;
+}
+
+
+
+function devtrac_wms_preprocess_wms_getfeatureinfo(&$variables) {
+  
+  /* Add the add link*/
+  foreach ($variables['result'] as $layer => $data) {
+    $i = 0;
+    $variables['tables'][$layer]['header'][] = t('Add');
+    foreach ($data as $row) {
+      foreach ($row as $headername => $field) {
+        if ($headername == 'the_geom') {  // this is an ugly rename of the geo column other code expects it to be called 'geometry'
+          $the_geom = $field;
+        } else {
+          $params[$headername] = $field;
+        }
+      }
+
+      $params['layer'] = $layer;
+      $params['geometry'] = $the_geom;
+      $referrer = $_SERVER['HTTP_REFERER'];
+      $q = substr($referrer, strpos($referrer, '/', 7) + 1);
+      $q = substr($q ,0, strpos($q, '?'));
+      $params['arg'] = $q; // i need this, the args of the original page request, and this seems the most generic way to implement.  
+      
+      $attribs = Array (
+         'attributes' => Array(
+           'class' => 'getfeatureaddlink'
+         ),
+         'query' => $params
+      );
+      
+      $link = l(t('Add'), 'openlayers/wms/wmsgetfeatureinfo_process', $attribs);
+      $variables['tables'][$layer]['rows'][$i][] = Array('data' => $link, 'class' => 'add');
+      $i++;
+      unset($params);
+      unset($attribs);    }
+  }
+  
+  
+  
+  
+}
+
+
+function devtrac_wms_ajax_wmsgetfeatureinfo_process() {
+  $result = FALSE;
+  $geometry = $_GET['geometry'];
+  $layer = $_GET['layer'];
+  /*
+   *  these are the arg of the original page request
+   */
+  $arg = $_GET['arg'];
+  $args = explode('/', $arg);
+  
+  $params = $_GET;
+  unset($params['geometry']);
+  unset($params['layer']);
+  unset($params['arg']);
+  $messages = "";
+  foreach (module_implements('process_getfeatureinfo') as $module) {
+    $function = $module .'_process_getfeatureinfo';
+    /* this is tricky, what if a module does something and invokes a goto? Or what if it doesnt
+     * Feel free to comment on this */
+    
+    $result =  call_user_func_array($function, Array($layer, $geometry, $params, $args));
+    $messages .= $result; 
+  }
+    // make sure sensible headers etc are sent
+    drupal_set_header('Content-Type: text; charset=utf-8');
+    $object = new stdClass();
+    $object->content = $messages;
+    drupal_json($object);
+    exit();
+}
+

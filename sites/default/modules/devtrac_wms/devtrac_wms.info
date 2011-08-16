@@ -1,0 +1,6 @@
+;$Id$
+name = "Devtrac WMS"
+description = "Provides a WMS Getfeatureinfo for Devtrac"
+package = Devtrac
+dependencies[] = wms
+core = "6.x"

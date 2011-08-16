@@ -1259,7 +1259,7 @@ function devtrack_module_search_block_form($form) {
 
 
 function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $args) {
-  global $user; // this is needed to set the uid on the nodes we are abou to create.
+  global $user; // this is needed to set the uid on the nodes we are about to create.
   $message = '';
   $mytrip = $args[2];
   $fieldtrip = node_load($mytrip);

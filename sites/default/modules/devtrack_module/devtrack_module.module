@@ -875,8 +875,6 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
         $form['preview'] = NULL;
       }
       break;
-    case 'fieldtrip_node_form':
-    case 'ftritem_node_form':
     case 'place_node_form':
       // Set default district on create location page.
       $destination = drupal_get_destination();
@@ -885,6 +883,11 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
         $district = $args[1];
         $form['taxonomy'][6]['#default_value'] = $district;
       }
+      // Make the Place Type field required on places/locations
+      $form['taxonomy'][1]['#required'] = 1;
+      $form['taxonomy'][1]['#attributes'] = array('class' => 'required');
+    case 'fieldtrip_node_form':
+    case 'ftritem_node_form':
     case 'actionitem_node_form':
   	  $arg3 = arg(3);
       if ((arg(0) == 'node') && (is_numeric(arg(1))) && (arg(2) == 'edit')) {

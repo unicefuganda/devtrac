@@ -806,6 +806,49 @@ body.page-placetypes .col-content_contentlayerright{ margin-top: 40px;
 	background-color: #000000;
 }
 
+/*
+* Getfeature info functionality
+*/
+
 body a.getfeatureaddlink:link {
   color: #EA0001;
  }
+
+#getfeatureinfo {
+ height: 90%;
+}
+
+#getfeatureinfo .the_geom {
+  display: none;
+}
+
+#getfeatureinfo div {
+ float: left;
+ overflow: hidden;
+}
+
+#getfeatureinfo div.layers {
+ height: 89%;
+ overflow: scroll;
+ overflow-y:scroll;
+ overflow-x:hidden;
+ float: left;
+ width: 100%;
+}
+
+#getfeatureinfo div.layer {
+ float: left;
+ width: 100%;
+}
+
+#getfeatureinfo ul {
+ display: block;
+ float: right;
+ width: 95%;
+}
+
+#getfeatureinfo li {
+ display: block;
+ float: right;
+ list-style-image: none;
+}

@@ -829,16 +829,15 @@ body a.getfeatureaddlink:link {
 
 #getfeatureinfo div.layers {
  height: 89%;
- overflow: scroll;
- overflow-y:scroll;
- overflow-x:hidden;
+ overflow: visible;
+/* overflow-y:scroll;
+ overflow-x:scroll;*/
  float: left;
  width: 100%;
 }
 
 #getfeatureinfo div.layer {
  float: left;
- width: 100%;
 }
 
 #getfeatureinfo ul {

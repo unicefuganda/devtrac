@@ -1475,7 +1475,7 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
     }
   }
   $reporttypes = array();
-  $terms = db_query("SELECT * FROM {term_data} WHERE vid = %d", $vid);
+  $terms = db_query("SELECT * FROM {term_data} WHERE vid = %d ORDER BY weight ASC", $vid);
   while ($term = db_fetch_object($terms)) {
     $reporttypes[] = $term->name;
   }

@@ -5,6 +5,7 @@
  */
 function devtrac_find_openlayers_presets() {
   $export = array();
+
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -77,7 +78,7 @@ function devtrac_find_openlayers_presets() {
       'temporary' => 'placetype',
     ),
   );
-
   $export['tripreports'] = $openlayers_presets;
+
   return $export;
 }

@@ -1600,6 +1600,20 @@ function devtrack_module_get_term_by_name_vid($name, $vid) {
   return $result;
 }
 
+/*
+ * Return the vocabulary object with the given name
+ * or NULL if there is no vocabulary with the given name
+ */
+function devtrack_module_get_vocabulary_by_name($name) {
+  $vocabularies = taxonomy_get_vocabularies();
+  foreach ($vocabularies as $vocabulary) {
+    if ($vocabulary->name == $name) {
+      return $vocabulary;
+    }
+  }
+  return NULL;
+}
+
 
 function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   if ($node->type == 'ftritem') {

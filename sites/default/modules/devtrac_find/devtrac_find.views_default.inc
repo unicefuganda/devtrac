@@ -285,6 +285,29 @@ function devtrac_find_views_default_views() {
         'button' => 'Override',
       ),
     ),
+    'tid_1' => array(
+      'operator' => 'or',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => FALSE,
+        'operator' => 'tid_1_op',
+        'identifier' => 'tid_1',
+        'label' => 'Taxonomy: Term',
+        'remember' => FALSE,
+        'single' => TRUE,
+        'optional' => TRUE,
+        'reduce' => FALSE,
+      ),
+      'type' => 'select',
+      'limit' => TRUE,
+      'vid' => '7',
+      'id' => 'tid_1',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'hierarchy' => 0,
+    ),
   ));
   $handler->override_option('access', array(
     'type' => 'role',
@@ -299,6 +322,7 @@ function devtrac_find_views_default_views() {
   $handler->override_option('title', 'Trip Reports');
   $handler->override_option('empty', 'Sorry, there are no Trip Reports that match these criteria');
   $handler->override_option('empty_format', '1');
+  $handler->override_option('items_per_page', 50);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('exposed_block', TRUE);
   $handler = $view->new_display('openlayers', 'trip_report_search_data', 'openlayers_1');
@@ -372,6 +396,34 @@ function devtrac_find_views_default_views() {
       'relationship' => 'field_ftritem_place_nid',
       'reduce_duplicates' => 0,
     ),
+    'tid_1' => array(
+      'operator' => 'or',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'tid_1_op',
+        'identifier' => 'sitereporttype',
+        'label' => 'Site Report Type',
+        'optional' => 1,
+        'single' => 1,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'type' => 'select',
+      'limit' => TRUE,
+      'vid' => '7',
+      'id' => 'tid_1',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'hierarchy' => 0,
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'reduce_duplicates' => 1,
+    ),
     'date_filter' => array(
       'operator' => 'between',
       'value' => array(
@@ -392,7 +444,7 @@ function devtrac_find_views_default_views() {
         'remember' => 0,
       ),
       'date_fields' => array(
-        'node.changed' => 'node.changed',
+        'node_data_field_ftritem_date_visited.field_ftritem_date_visited_value' => 'node_data_field_ftritem_date_visited.field_ftritem_date_visited_value',
       ),
       'date_method' => 'AND',
       'granularity' => 'month',
@@ -447,6 +499,141 @@ function devtrac_find_views_default_views() {
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
   $handler = $view->new_display('page', 'Trip Report Search Map', 'page_1');
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'ftritem' => 'ftritem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'tid' => array(
+      'operator' => 'or',
+      'value' => '',
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'tid_op',
+        'identifier' => 'district',
+        'label' => 'District',
+        'optional' => 1,
+        'single' => 1,
+        'remember' => 0,
+      ),
+      'type' => 'textfield',
+      'limit' => TRUE,
+      'vid' => '6',
+      'id' => 'tid',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'hierarchy' => 0,
+      'relationship' => 'field_ftritem_place_nid',
+      'reduce_duplicates' => 1,
+    ),
+    'term_node_tid_depth' => array(
+      'operator' => 'or',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'term_node_tid_depth_op',
+        'identifier' => 'placetype',
+        'label' => 'Location Type',
+        'optional' => 1,
+        'single' => 1,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'type' => 'select',
+      'limit' => TRUE,
+      'vid' => '1',
+      'depth' => '3',
+      'id' => 'term_node_tid_depth',
+      'table' => 'node',
+      'field' => 'term_node_tid_depth',
+      'hierarchy' => 1,
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'field_ftritem_place_nid',
+      'reduce_duplicates' => 0,
+    ),
+    'tid_1' => array(
+      'operator' => 'or',
+      'value' => array(),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'use_operator' => 0,
+        'operator' => 'tid_1_op',
+        'identifier' => 'sitereporttype',
+        'label' => 'Site Report Type',
+        'optional' => 1,
+        'single' => 1,
+        'remember' => 0,
+        'reduce' => 0,
+      ),
+      'type' => 'select',
+      'limit' => TRUE,
+      'vid' => '7',
+      'id' => 'tid_1',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'hierarchy' => 0,
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'reduce_duplicates' => 1,
+    ),
+    'date_filter' => array(
+      'operator' => 'between',
+      'value' => array(
+        'min' => NULL,
+        'max' => NULL,
+        'value' => NULL,
+        'default_date' => 'now -1 month',
+        'default_to_date' => 'now',
+      ),
+      'group' => '0',
+      'exposed' => TRUE,
+      'expose' => array(
+        'operator' => 'date_filter_op',
+        'label' => 'Last Updated',
+        'use_operator' => 0,
+        'identifier' => 'date_filter',
+        'optional' => 1,
+        'remember' => 0,
+      ),
+      'date_fields' => array(
+        'node_data_field_ftritem_date_visited.field_ftritem_date_visited_value' => 'node_data_field_ftritem_date_visited.field_ftritem_date_visited_value',
+      ),
+      'date_method' => 'AND',
+      'granularity' => 'month',
+      'form_type' => 'date_select',
+      'default_date' => 'now -1 month',
+      'default_to_date' => 'now',
+      'year_range' => '-1:+0',
+      'id' => 'date_filter',
+      'table' => 'node',
+      'field' => 'date_filter',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
+    ),
+  ));
   $handler->override_option('style_plugin', 'openlayers_map');
   $handler->override_option('style_options', array(
     'preset' => 'tripreports',

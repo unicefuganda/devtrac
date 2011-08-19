@@ -238,3 +238,22 @@ function devtrack_module_update_6004() {
   $ret[] = array('success' => TRUE, 'query' => 'created Site Report Type vocabulary and updated all report items');
   return $ret;
 }
+
+function devtrack_module_update_6005() {
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type');
+  $vid = $vocabulary->vid;
+
+  // Save the original module from the vocabulary
+  $original = db_result(db_query("SELECT module FROM {vocabulary} WHERE vid = %d", $vid));
+
+  // Update the vocabulary
+  db_query("UPDATE {vocabulary} SET module = '%s' WHERE vid = %d", 'taxonomy_redirect', $vid);
+
+  // Add an entry to vocabulary_redirect table
+  db_query("INSERT INTO {taxonomy_redirect} (vid, tid, module, path, separator_replace, remove_text, filter, path_case)
+            VALUES (%d, NULL, '%s', '%s', '%s', '%s', %d, '%s')", $vid, $original, 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform');
+
+  $ret[] = array('success' => TRUE, 'query' => 'added entry to taxonomy_redirect');
+  return $ret;
+
+}

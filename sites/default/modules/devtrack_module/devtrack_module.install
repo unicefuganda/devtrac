@@ -257,3 +257,29 @@ function devtrack_module_update_6005() {
   return $ret;
 
 }
+
+/*
+ *  https://www.pivotaltracker.com/story/show/16239085
+ *  Add Youth Centre
+ */
+function devtrack_module_update_6006() {
+  $term = array(
+    'name' => t('Youth Centre'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '49',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 2,
+    'vid' => 1, // placetype
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/1/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+}

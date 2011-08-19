@@ -1548,16 +1548,16 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
   	case 0:
       switch ($form_state['values']['placetype']) {
   	    case 0:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTTFFT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTFFT');
       		break;
     	  case 1:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTFTFT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFTFT');
     	  	break;
       	case 2:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTFFTT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFFTT');
   	  	  break;
         case 3:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTFFFT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFFFT');
          break;
       }
   		break;

@@ -541,7 +541,6 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
-          'funding_partner_sites_openlayers_1' => 0,
         ),
       ),
       'openlayers_behavior_fullscreen' => array(
@@ -599,9 +598,9 @@ function devtrac_feature_openlayers_presets() {
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'placetype',
-      'select' => 'placetype',
-      'temporary' => 'placetype',
+      'default' => 'default',
+      'select' => 'default_select',
+      'temporary' => 'default',
     ),
   );
   $export['uganda_map'] = $openlayers_presets;

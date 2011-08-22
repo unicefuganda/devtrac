@@ -9197,10 +9197,10 @@ watchdog(\'gallery views\', $theme_path);
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Places Map Page', 'page_2');
-  $handler->override_option('header', '<ul><li><?php echo l(\'Create New Place\', \'node/add/place\', array(\'query\' => array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2)))); ?></li>
+  $handler->override_option('footer', '<ul><li><?php echo  _devtrack_module_getbutton(\'Create New Place\', \'node/add/place\', array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2))); ?></li>
 <!-- <li><?php // echo l(\'Back to Field Trip\', \'node/\' . arg(2)); ?></li> -->
 </ul>');
-  $handler->override_option('header_format', '3');
+  $handler->override_option('footer_format', '3');
   $handler->override_option('style_plugin', 'openlayers_map');
   $handler->override_option('style_options', array(
     'preset' => 'places',

@@ -851,3 +851,10 @@ body a.getfeatureaddlink:link {
  float: right;
  list-style-image: none;
 }
+
+.view-findplaces-districts ul,
+.view-findplaces-districts li
+{
+ list-style-type: none;
+ list-style-image: none;
+}

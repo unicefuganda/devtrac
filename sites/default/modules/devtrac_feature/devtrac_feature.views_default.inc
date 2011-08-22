@@ -9378,7 +9378,7 @@ watchdog(\'gallery views\', $theme_path);
 $arr = array (
   \'attributes\' => array (
     \'class\' => \'getfeatureaddlink\',
-    \'onClick\' => \'return Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.click(this);\', 
+    \'onClick\' => \'return Drupal.devtracwms.click(this);\', 
   )
 );
 

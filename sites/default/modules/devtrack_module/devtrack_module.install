@@ -283,3 +283,10 @@ function devtrack_module_update_6006() {
   );
   taxonomy_save_term($term);
 }
+
+function devtrack_module_update_6007() {
+  $new_modules = array(
+    'devtrac_wms',
+  );  
+  module_enable($new_modules);
+}

@@ -291,6 +291,14 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_ftritem_status
+  $permissions['edit field_ftritem_status'] = array(
+    'name' => 'edit field_ftritem_status',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit field_place_email
   $permissions['edit field_place_email'] = array(
     'name' => 'edit field_place_email',
@@ -771,6 +779,14 @@ function devtrac_feature_user_default_permissions() {
       '2' => 'authenticated user',
       '3' => 'unicef user',
       '4' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: view field_ftritem_status
+  $permissions['view field_ftritem_status'] = array(
+    'name' => 'view field_ftritem_status',
+    'roles' => array(
+      '0' => 'administrator',
     ),
   );
 

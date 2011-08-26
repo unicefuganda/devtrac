@@ -290,3 +290,334 @@ function devtrack_module_update_6007() {
   );  
   module_enable($new_modules);
 }
+
+/*
+ * https://www.pivotaltracker.com/story/show/16939181
+ * Create OECD Sector Code vocab
+ * 
+ * https://www.pivotaltracker.com/story/show/14972339
+ * Add Child Protection to Department vocab
+ */
+function devtrack_module_update_6008() {
+  // Create the OECD Sector Code vocabulary
+  $vocabulary = array(
+    'name' => t('OECD Sector Code'), // ALERT: Hardcoded vocabulary name
+    'description' => t(''),
+    'help' => t(''),
+    'nodes' => array(
+      'actionitem' => 'actionitem', // ALERT: Hardcoded node_type machine name
+      'ftritem' => 'ftritem', // ALERT: Hardcoded node_type machine name
+    ),
+    'tags' => 0,
+    'multiple' => 0,
+    'required' => 0,
+    'weight' => 0,
+    'hierarchy' => 0,
+    'relations' => 1,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'form_id' => taxonomy_form_vocabulary,
+  );
+  taxonomy_save_vocabulary($vocabulary);
+  $vid = $vocabulary['vid'];
+
+  // Add terms to the vocabulary
+  $term = array(
+    'name' => t('UNICEF'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '0',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 0,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $unicef = $term['tid'];
+
+  $term = array(
+    'name' => t('Alive'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $alive = $term['tid'];
+
+  $term = array(
+    'name' => t('Learning'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $learning = $term['tid'];
+
+  $term = array(
+    'name' => t('Safe'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $safe = $term['tid'];
+
+  $term = array(
+    'name' => t('Basic nutrition'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Infectious disease control'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Water and sanitation'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+      1 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Early childhood education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Primary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Secondary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Post-secondary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 1,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Birth registration'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Child protection'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add Child Protection to Department Vocab
+  $term = array(
+    'name' => t('Child Protection'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '29',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/1/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Submit all Site Reports that belong to Approved Fieldtrips
+  $sql = "SELECT nid FROM {content_type_fieldtrip} WHERE field_fieldtrip_status_value = 'Approved'";
+  $fieldtripnids = db_query($sql);
+  while ($fieldtripnid = db_fetch_object($fieldtripnids)) {
+    $sql = "SELECT nid FROM {content_type_ftritem} WHERE field_ftritem_field_trip_nid = %d";
+    $sitereportnids = db_query($sql, $fieldtripnid->nid);
+    while ($sitereportnid = db_fetch_object($sitereportnids)) {
+      $sitereport = node_load($sitereportnid->nid);
+      $sitereport->field_ftritem_status[0]['value'] = 'Submitted';
+      node_save($sitereport);
+    }
+  }
+}

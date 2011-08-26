@@ -1126,7 +1126,6 @@ function devtrack_module_actionitem_hide_place_and_ftritem_fields(&$form) {
 
 function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
   global $user;
-  global $base_path;
   global $base_url;
   switch ($op) {
     case 'list' :
@@ -1134,6 +1133,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[1]['info'] = t('Devtrac Legend');
       $blocks[2]['info'] = t('Upload Picture Reminder');
       $blocks[3]['info'] = t('Fieldtrip Approval Workflow');
+      $blocks[4]['info'] = t('Fieldtrip Status');
       return $blocks;
       break;
     case 'view' :
@@ -1309,6 +1309,42 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             $result  = "<ul>". $result . "</ul>";
           }
           $block['title'] = "Fieldtrip Approval Workflow";
+          $block['content'] = $result;
+          return $block;
+          break;
+        case 4:
+          // Print the Fieldtrip Status block.
+//          $arg2 = arg(2);
+          if ((user_is_logged_in()) && (arg(0) == 'node') && (is_numeric(arg(1)))) { // && (!isset($arg2))) {
+            $localnode = node_load(arg(1));
+            if ($localnode->type == 'fieldtrip') {
+              switch ($localnode->field_fieldtrip_status[0]['value']) {
+                case 'In Progress':
+                  if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
+                    $result .= devtrac_module_get_fieldtrip_status($localnode);
+                  }
+                  break;
+                case 'Submitted':
+//                  $profile = content_profile_load('user_profile', $localnode->field_fieldtrip_user[0]['uid']);
+//                  $manager = user_load($profile->field_user_superior[0]['uid']);
+//                  if ($manager->uid == $user->uid) { // Manager of the user that took the fieldtrip is the current user
+// Comment out the previous 2 lines and uncomment the following line to have the buttons show on the fieldtrip user page instead of the manager page.
+// Maybe we want to move this completely and approve in 1 step.                    
+//                  // if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
+//                    $result .= _devtrack_module_getbutton('Approve Field Trip', 'node/'. $localnode->nid .'/setstatus/approve');
+//                    $result .= _devtrack_module_getbutton('Reject Field Trip', 'node/'. $localnode->nid .'/setstatus/reject');
+//                  }
+                  break;
+                case 'Approved':
+                case 'Published':
+                  break;
+              }
+            }
+          }
+//          if ($result) {
+//            $result  = "<ul>". $result . "</ul>";
+//          }
+          $block['title'] = "Fieldtrip Status";
           $block['content'] = $result;
           return $block;
           break;
@@ -1628,7 +1664,7 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 // re-adding inserts the trip report.
           $place = node_load($placenid);
           if (strlen($fieldtrip->title) > 0) {
-            drupal_set_message('Removed ' . $place->title . ' from ' . $fieldtrip->title );
+            drupal_set_message('Removed ' . $place->title . ' from ' . $fieldtrip->title);
           }
         }
         $_REQUEST['destination'] = 'node/' . $fieldtripnid;
@@ -1669,15 +1705,31 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
               devtrack_module_fieldtrip_revoke_update($node, $manager);
               devtrack_module_fieldtrip_revoke_update($node, $localuser);
               devtrack_module_fieldtrip_revoke_update($node, $owner);
-              drupal_set_message("Field Trip published.");
+              break;
+          }
+        }
+//        unset($node->oldstatus);
+        break;
+      case 'update':
+        // Moved this from pre-save to update. It updates the node_access table. Pre-save is to early for that.
+        if (!isset($node->oldstatus)) {
+          break;
+        }
+        $status = $node->field_fieldtrip_status[0]['value'];
+//        drupal_set_message('Status changed to '. $status);
+        if ($node->oldstatus != $status) {
+          switch ($status) {
+            case 'In Progress':
+              break;
+            case 'Submitted':
+              break;
+            case 'Approved':
+              devtrack_module_fieldtrip_publish($node);
+              drupal_set_message("Field Trip submitted.");
               break;
           }
         }
         unset($node->oldstatus);
-        break;
-      case 'update':
-        // Moved this from pre-save to update. It updates the node_access table. Pre-save is to early for that.
-        devtrack_module_fieldtrip_publish($node);
         break;
       case 'delete':
         $sql = "SELECT n.nid FROM {node} n LEFT JOIN {content_type_ftritem} ftr ON n.nid=ftr.nid WHERE ftr.field_ftritem_field_trip_nid = %d";
@@ -1901,15 +1953,18 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
         $node->field_fieldtrip_status[0]['value'] = 'Approved';
         node_save($node);
       }
-// TO DO: Workflow: Redo when implementing the manager workflow
+      else {
+        drupal_set_message('Already submitted.');
+      }
+      // TO DO: Workflow: Redo when implementing the manager workflow
 /*      if ($status == 'Submitted') {
         $node->field_fieldtrip_status[0]['value'] = 'Approved';
         node_save($node);
       }
-*/
       else {
         drupal_set_message('Already approved.');
       }
+*/
       break;
     case 'reject':
       if ($status == 'Submitted') {
@@ -1970,6 +2025,8 @@ function devtrack_module_fieldtrip_publish(&$node) {
     $db_result = db_query(db_rewrite_sql($sql), $node->nid);
     while ($ftritemnid = db_fetch_object($db_result)) {
       $ftritem = node_load($ftritemnid->nid);
+      $ftritem->field_ftritem_status[0]['value'] = 'Submitted';
+      node_save($ftritem);
       node_access_acquire_grants($ftritem);
     }
     node_access_acquire_grants($node);
@@ -2043,6 +2100,137 @@ function devtrack_module_fieldtrip_publish_all_field_trips() {
   }
 }
 
+/*
+ * Gather information about the status of a fieldtrip
+ * including all site reports and their action items
+ */
+function devtrac_module_get_fieldtrip_status($node) {
+  $output = '<div class="title">Fieldtrip Status</div><div class ="caption">Fieldtrip</div>';
+  $output .= '<ul>'. l($node->title, 'node/'. $node->nid .'/edit', array('html' => TRUE));
+  $fieldtripstatus = TRUE;
+  // Gather information on the Field Trip
+  if (!isset($node->field_fieldtrip_narrative[0]['value']) || empty($node->field_fieldtrip_narrative[0]['value'])) {
+    $fieldtripstatus = FALSE;
+    $output .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-fieldtrip-narrative-0-value-wrapper', 'external' => TRUE, 'html' => TRUE)) .'</li>';
+  }
+  else {
+    $output .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
+  }
+  $output .= '</ul>';
+
+  // Gather information on all Site Reports (Action Items inclusive)
+  $sql = "SELECT nid FROM {content_type_ftritem} WHERE field_ftritem_field_trip_nid = %d ORDER BY field_ftritem_date_visited_value DESC";
+  $nids = db_query($sql, $node->nid);
+  $output .= '<div class="caption">Site Reports</div>';
+  $sitereportsstatus = TRUE;
+  while ($nid = db_fetch_object($nids)) {
+//    $sitereportstatus = TRUE;
+    $result = devtrac_module_get_site_report_status(node_load($nid->nid));
+    $output .= $result['output'];
+    $sitereportsstatus = $sitereportsstatus && $result['status'];
+  }
+
+  // Conditionally add a submit text and button to the output
+  if ($fieldtripstatus && $sitereportsstatus) {
+    $output .= '<div>All fields on the Field Trip and all of its Site Reports are ready to be submitted.</div>';
+    $output .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $node->nid .'/setstatus/approve');
+  }
+  return $output;
+}
+
+/*
+ * Gather information about the status of a site report
+ * including all its action items
+ */
+function devtrac_module_get_site_report_status($node) {
+  // Gather information on all Site Reports (Action Items inclusive)
+  $result = array(
+    'status' => TRUE,
+    'output' => ''
+  );
+  $result['output'] .= '<ul>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE));
+  switch ($node->field_ftritem_status[0]['value']) {
+    case 'Submitted':
+//      break;
+    case 'Submittable':
+//      break;
+    case 'In Progress':
+    default:
+      if (!isset($node->field_ftritem_public_summary[0]['value']) || empty($node->field_ftritem_public_summary[0]['value']) ||
+          ($node->field_ftritem_public_summary[0]['value'] == t('Please Provide a small summary for the public.'))) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the Public Summary', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-public-summary-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      if (!isset($node->field_ftritem_narrative[0]['value']) || empty($node->field_ftritem_narrative[0]['value']) ||
+          ($node->field_ftritem_narrative[0]['value'] == t('Please provide a full report.'))) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-narrative-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      $sector_codes = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
+      $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $sector_codes->vid));
+      if (!isset($terms) || empty($terms)) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      if (!isset($node->field_ftritem_date_visited[0]['value']) || is_null($node->field_ftritem_date_visited[0]['value'])) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the Date Visited', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-date-visited-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      $report_types = devtrack_module_get_vocabulary_by_name(t('Site Report Type'));
+      $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $report_types->vid));
+      if ((($terms[0]->name == 'Roadside Observation') || ($terms[0]->name == 'Human Interest Story')) && ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      if ($result['status']) {
+        $result['output'] .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
+      }
+      // Gather information on all Action Items for a Site Report
+      // First get all the Site Reports that belong to this Field Trip
+      $sql = "SELECT nid FROM {content_type_actionitem} WHERE field_actionitem_ftreportitem_nid = %d ORDER BY field_actionitem_due_date_value DESC";
+      $nids = db_query($sql, $node->nid);
+      $actionitemsstatus = TRUE;
+      if ($nids->num_rows > 0) {
+        $result['output'] .= '<li><div class="caption">Action Items</div>';
+        while ($nid = db_fetch_object($nids)) {
+          $airesult = devtrac_module_get_action_item_status(node_load($nid->nid));
+          $result['output'] .= $airesult['output'];
+          $actionitemsstatus = $actionitemsstatus && $airesult['status'];
+        }
+      }
+      break;
+  }
+  $result['status'] = $result['status'] && $actionitemsstatus;
+  $result['output'] .= '</ul>';
+  return $result;
+}
+
+/*
+ * Gather information about the status of an action item
+ */
+function devtrac_module_get_action_item_status($node) {
+  // Gather information on all Action Items
+  $result = array(
+    'status' => TRUE,
+    'output' => ''
+  );
+  $result['output'] .= '<ul>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE));
+  if (!isset($node->field_actionitem_resp_place[0]['nid']) || is_null($node->field_actionitem_resp_place[0]['nid'])) {
+    $result['status'] = FALSE;
+    $result['output'] .= '<li>'. l('Provide the Location', $node->nid .'/edit', array('fragment' => 'edit-field-actionitem-resp-place-0-nid-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+  }
+  $sector_codes = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
+  $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $sector_codes->vid));
+  if (!isset($terms) || empty($terms)) {
+    $result['status'] = FALSE;;
+    $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+  }
+  if ($result['status']) {
+    $result['output'] .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Follow-up Task.</li>';
+  }
+  $result['output'] .= '</ul>';
+  return $result;
+}
 
 /*
 function devtrack_module_popups () {

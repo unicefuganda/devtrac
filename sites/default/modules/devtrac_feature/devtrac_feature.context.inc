@@ -435,16 +435,16 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerright',
           'weight' => 2,
         ),
-        'devtrack_module-3' => array(
-          'module' => 'devtrack_module',
-          'delta' => 3,
-          'region' => 'layeroneleft',
-          'weight' => 0,
-        ),
         'views-8656ee277feb02e7dab0daebd8ae7663' => array(
           'module' => 'views',
           'delta' => '8656ee277feb02e7dab0daebd8ae7663',
           'region' => 'layertwoleft',
+          'weight' => 0,
+        ),
+        'devtrack_module-4' => array(
+          'module' => 'devtrack_module',
+          'delta' => 4,
+          'region' => 'layertworight',
           'weight' => 0,
         ),
         'views-field_trip_report_items-block_1' => array(

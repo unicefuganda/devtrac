@@ -431,16 +431,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_ftritem';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '5',
-    'author' => '7',
-    'options' => '8',
-    'comment_settings' => '6',
+    'revision_information' => '6',
+    'author' => '8',
+    'options' => '9',
+    'comment_settings' => '7',
     'menu' => '3',
     'taxonomy' => '-4',
-    'book' => '10',
-    'path' => '9',
-    'print' => '12',
-    'custom_breadcrumbs' => '11',
+    'book' => '11',
+    'path' => '10',
+    'print' => '13',
+    'custom_breadcrumbs' => '12',
   );
   $export['content_extra_weights_ftritem'] = $strongarm;
 

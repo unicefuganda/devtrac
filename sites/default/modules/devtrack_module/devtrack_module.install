@@ -626,3 +626,27 @@ function devtrack_module_update_6008() {
   $ret[] = array('success' => TRUE, 'query' => 'submitted all Site Reports that belong to Approved Fieldtrips');
   return $ret;
 }
+
+/*
+ * https://www.pivotaltracker.com/story/show/16939181
+ * Replace "Trip Report at" with "Site Visit at" for all Site Visits
+ */
+function devtrack_module_update_6009() {
+  // Change the title of all Site Visits
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type');
+  $terms = devtrack_module_get_term_by_name_vid('Site Visit', $vocabulary->vid);
+  $sql = "SELECT ctf.nid FROM {content_type_ftritem} ctf INNER JOIN {term_node} tn ON tn.nid = ctf.nid WHERE tn.tid = %d";
+  $sitevisitnids = db_query($sql, $terms[0]->tid);
+  $count = 0;
+  while ($sitevisitnid = db_fetch_object($sitevisitnids)) {
+    $sitevisit = node_load($sitevisitnid->nid);
+    if ((substr($sitevisit->title, 0, 14) == 'Trip Report at') || (substr($sitevisit->title, 0, 14) == 'Site Report at')) {
+      $sitevisit->title = 'Site Visit at'. substr($sitevisit->title, 14);
+      node_save($sitevisit);
+      $count++;
+    }
+  }
+
+  $ret[] = array('success' => TRUE, 'query' => 'changed the title of '. $count .' Site Visits');
+  return $ret;
+}

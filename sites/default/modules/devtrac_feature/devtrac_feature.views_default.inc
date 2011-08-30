@@ -743,7 +743,7 @@ function devtrac_feature_views_default_views() {
   $view = new view;
   $view->name = 'field_trip_report_item_details';
   $view->description = 'View to show the Field Trip Report Item on its own page';
-  $view->tag = 'field trip report items';
+  $view->tag = 'site report';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -902,7 +902,7 @@ function devtrac_feature_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler = $view->new_display('block', 'Field Trip Report Item Body', 'block_1');
+  $handler = $view->new_display('block', 'Field Trip Site Report Body', 'block_1');
   $handler->override_option('fields', array(
     'field_ftritem_public_summary_value' => array(
       'label' => 'Summary',
@@ -1021,7 +1021,7 @@ function devtrac_feature_views_default_views() {
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('block', 'Field Trip Report Item Fields', 'block_2');
+  $handler = $view->new_display('block', 'Field Trip Site Report Fields', 'block_2');
   $handler->override_option('fields', array(
     'field_ftritem_field_trip_nid' => array(
       'label' => 'Field Trip',
@@ -1404,7 +1404,7 @@ function devtrac_feature_views_default_views() {
   $view = new view;
   $view->name = 'field_trip_report_items';
   $view->description = 'Field Trip Report Items';
-  $view->tag = 'field trip, field trip report items';
+  $view->tag = 'field trip, site reports';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -1679,7 +1679,7 @@ function devtrac_feature_views_default_views() {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent %1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -1696,12 +1696,18 @@ function devtrac_feature_views_default_views() {
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'relationship' => 'field_ftritem_place_nid',
       'default_options_div_prefix' => '',
@@ -1709,22 +1715,27 @@ function devtrac_feature_views_default_views() {
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '1' => 1,
-        '3' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tids',
       'validate_argument_transform' => 0,
@@ -1846,7 +1857,7 @@ function devtrac_feature_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('title', 'Field Trip Site Reports');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 1);
   $handler->override_option('distinct', 0);
@@ -1881,7 +1892,7 @@ function devtrac_feature_views_default_views() {
     ),
     'default' => '-1',
   ));
-  $handler = $view->new_display('block', 'Field Trip Report Items Block', 'block_1');
+  $handler = $view->new_display('block', 'Field Trip Site Reports Block', 'block_1');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -2311,8 +2322,8 @@ function devtrac_feature_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array());
-  $handler->override_option('title', 'Report Items');
-  $handler->override_option('empty', 'There are no trip report items for this field trip yet.');
+  $handler->override_option('title', 'Site Reports');
+  $handler->override_option('empty', 'There are no Site Reports for this field trip yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
@@ -2382,7 +2393,7 @@ function devtrac_feature_views_default_views() {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Latest %1 reports from the field',
+      'title' => 'Latest %1 Site Reports from the field',
       'breadcrumb' => '',
       'default_argument_type' => 'taxonomy_tid',
       'default_argument' => '',
@@ -2399,12 +2410,18 @@ function devtrac_feature_views_default_views() {
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -2415,21 +2432,27 @@ function devtrac_feature_views_default_views() {
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '1' => 1,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -2542,7 +2565,7 @@ function devtrac_feature_views_default_views() {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent %1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -2560,6 +2583,8 @@ function devtrac_feature_views_default_views() {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
@@ -2567,6 +2592,8 @@ function devtrac_feature_views_default_views() {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'relationship' => 'field_ftritem_place_nid',
       'default_options_div_prefix' => '',
@@ -2574,23 +2601,27 @@ function devtrac_feature_views_default_views() {
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
-        'book' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '2' => 2,
         '1' => 1,
-        '6' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tids',
       'validate_argument_transform' => 0,
@@ -2817,7 +2848,7 @@ function devtrac_feature_views_default_views() {
   $handler->override_option('use_pager', 'mini');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('block', 'Last Items', 'block_4');
+  $handler = $view->new_display('block', 'Last Site Reports', 'block_4');
   $handler->override_option('fields', array(
     'picture' => array(
       'label' => '',
@@ -3100,7 +3131,7 @@ function devtrac_feature_views_default_views() {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent %1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'php',
       'default_argument' => '',
@@ -3117,12 +3148,18 @@ function devtrac_feature_views_default_views() {
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -3140,22 +3177,27 @@ else {
   }
 }',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '2' => 2,
         '1' => 1,
-        '3' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -3184,8 +3226,8 @@ else {
       'relationship' => 'field_ftritem_place_nid',
     ),
   ));
-  $handler->override_option('title', 'Last Reports');
-  $handler->override_option('empty', 'No Last Items Yet.');
+  $handler->override_option('title', 'Last Site Reports');
+  $handler->override_option('empty', 'No Site Reports Yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 1);
   $handler->override_option('use_more', 1);
@@ -3198,7 +3240,7 @@ else {
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('openlayers', 'Field Trip Reports Page', 'openlayers_3');
+  $handler = $view->new_display('openlayers', 'Field Trip Site Reports Page', 'openlayers_3');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -3578,7 +3620,7 @@ else {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent %1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -3596,6 +3638,8 @@ else {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
@@ -3603,6 +3647,8 @@ else {
         '2' => 0,
         '3' => 0,
         '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'relationship' => 'field_ftritem_place_nid',
       'default_options_div_prefix' => '',
@@ -3610,23 +3656,27 @@ else {
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
-        'book' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '2' => 2,
         '1' => 1,
-        '6' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tids',
       'validate_argument_transform' => 0,
@@ -3693,7 +3743,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Field Trip Reports Data');
+  $handler->override_option('title', 'Field Trip Site Reports Data');
   $handler->override_option('items_per_page', 200);
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(
@@ -3889,7 +3939,7 @@ else {
     ),
   ));
   $handler->override_option('title', 'School Reports');
-  $handler->override_option('empty', 'No School Reports Yet.');
+  $handler->override_option('empty', 'No Site Reports on School yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
@@ -4083,7 +4133,7 @@ else {
     ),
   ));
   $handler->override_option('title', 'Health Reports');
-  $handler->override_option('empty', 'No Health Reports Yet.');
+  $handler->override_option('empty', 'No Site Reports on Health yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
@@ -4263,7 +4313,7 @@ else {
     ),
   ));
   $handler->override_option('title', 'Wash Reports');
-  $handler->override_option('empty', 'No Wash Reports Yet.');
+  $handler->override_option('empty', 'No Site Reports on Wash yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
@@ -4591,8 +4641,8 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Report Items');
-  $handler->override_option('empty', 'No Reports Yet.');
+  $handler->override_option('title', 'Site Reports');
+  $handler->override_option('empty', 'No Site Reports Yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', 'mini');
@@ -5006,7 +5056,7 @@ else {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => 'Field Trip: %1\'s Report Items',
+      'title' => 'Field Trip: %1\'s Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'node',
       'default_argument' => '',
@@ -5032,6 +5082,7 @@ else {
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
         'fieldtrip' => 'fieldtrip',
+        'bbsync' => 0,
         'actionitem' => 0,
         'book' => 0,
         'ftritem' => 0,
@@ -5048,7 +5099,9 @@ else {
         '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
         '1' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -5087,7 +5140,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Report Items');
+  $handler->override_option('title', 'Site Reports');
   $handler->override_option('footer', '<?php
   global $user;
   $node = node_load(arg(1));
@@ -5172,7 +5225,7 @@ else {
   $view = new view;
   $view->name = 'field_trip_report_items_images';
   $view->description = 'Field Trip Report Items images';
-  $view->tag = 'field trip, field trip report items';
+  $view->tag = 'field trip, site reports';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -5411,7 +5464,7 @@ else {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('title', 'Site Reports');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('use_ajax', TRUE);
@@ -5425,7 +5478,7 @@ else {
   $handler->override_option('style_options', array(
     'grouping' => '',
   ));
-  $handler = $view->new_display('block', 'Gallery Block (Report Item)', 'block_5');
+  $handler = $view->new_display('block', 'Gallery Block (Site Report)', 'block_5');
   $handler->override_option('fields', array(
     'field_ftritem_images_fid' => array(
       'label' => '',
@@ -5619,7 +5672,7 @@ else {
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Report',
+        'text' => 'Site Report',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -5858,7 +5911,7 @@ watchdog(\'gallery views\', $theme_path);
   print \'        <div class="views-content-field-ftritem-images-data">\';
   print \'          "There are no images yet."\';
   if ($user->uid > 0 ) {
-    print \'<br/>These should be added directly to report items.\';
+    print \'<br/>These should be added directly to site reports.\';
   }
   print \'        </div>\';
   print \'      </div>\';
@@ -6075,7 +6128,7 @@ watchdog(\'gallery views\', $theme_path);
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Report',
+        'text' => 'Site Report',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -6305,7 +6358,7 @@ watchdog(\'gallery views\', $theme_path);
   print \'        <div class="views-content-field-ftritem-images-data">\';
   print \'          "There are no images yet. "\';
   if ($user->uid > 0 ) {
-    print \'<br/>These should be added directly to report items.\';
+    print \'<br/>These should be added directly to site reports.\';
   }
   print \'        </div>\';
   print \'      </div>\';
@@ -6563,7 +6616,7 @@ watchdog(\'gallery views\', $theme_path);
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Report',
+        'text' => 'Site Report',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -6753,7 +6806,7 @@ watchdog(\'gallery views\', $theme_path);
   print \'        <div class="views-content-field-ftritem-images-data">\';
   print \'          "There are no images yet. "\';
   if ($user->uid > 0 ) {
-    print \'<br/>These should be added directly to report items.\';
+    print \'<br/>These should be added directly to site reports.\';
   }
   print \'        </div>\';
   print \'      </div>\';
@@ -6968,7 +7021,7 @@ watchdog(\'gallery views\', $theme_path);
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Report',
+        'text' => 'Site Report',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -7212,7 +7265,7 @@ watchdog(\'gallery views\', $theme_path);
   print \'        <div class="views-content-field-ftritem-images-data">\';
   print \'          "There are no images yet. "\';
   if ($user->uid > 0 ) {
-    print \'<br/>These should be added directly to report items.\';
+    print \'<br/>These should be added directly to site reports.\';
   }
   print \'        </div>\';
   print \'      </div>\';
@@ -8029,7 +8082,7 @@ watchdog(\'gallery views\', $theme_path);
     ),
   ));
   $handler->override_option('title', 'Photo Gallery');
-  $handler->override_option('empty', 'This Field Trip has no Gallery Images Yet.');
+  $handler->override_option('empty', 'This Site Field has no Gallery Images Yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', FALSE);
   $handler->override_option('items_per_page', 0);
@@ -8274,7 +8327,7 @@ watchdog(\'gallery views\', $theme_path);
     ),
   ));
   $handler->override_option('title', 'Photo Gallery');
-  $handler->override_option('empty', 'This Report Item has no Gallery Images Yet.');
+  $handler->override_option('empty', 'This Site Report has no Gallery Images Yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', FALSE);
   $handler->override_option('items_per_page', 0);
@@ -9321,6 +9374,9 @@ watchdog(\'gallery views\', $theme_path);
       'table' => 'node_data_field_place_unique_id',
       'field' => 'field_place_unique_id_value',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'title' => array(
       'label' => 'Title',
@@ -9394,7 +9450,7 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'relationship' => 'none',
     ),
     'tid' => array(
-      'label' => 'PlaceType',
+      'label' => 'Place Type',
       'alter' => array(
         'alter_text' => 1,
         'text' => '/sites/default/themes/devtrack_theme/icons/[tid-name]_c.png',
@@ -9422,10 +9478,12 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'limit' => 1,
       'vids' => array(
         '1' => 1,
-        '6' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'exclude' => 0,
       'id' => 'tid',
@@ -9887,7 +9945,7 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       ),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent %1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -9904,20 +9962,25 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'default_argument_fixed' => '',
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_vocabulary' => array(
         '2' => 2,
-        '3' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
+        '9' => 0,
         '1' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_php' => '',
@@ -9925,12 +9988,18 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'override' => array(
         'button' => 'Override',
@@ -19095,10 +19164,10 @@ return TRUE;',
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('attachment', 'Attachment - Report Items', 'attachment_1');
+  $handler = $view->new_display('attachment', 'Attachment - Site Reports', 'attachment_1');
   $handler->override_option('fields', array(
     'title' => array(
-      'label' => 'Report Item',
+      'label' => 'Site Report',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -19522,8 +19591,8 @@ return TRUE;',
       ),
     ),
   ));
-  $handler->override_option('title', 'Report Items');
-  $handler->override_option('empty', 'There are no Report Items yet.');
+  $handler->override_option('title', 'Site Reports');
+  $handler->override_option('empty', 'There are no Site Reports yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 0);
   $handler->override_option('link_display', 'page_1');
@@ -25923,7 +25992,7 @@ else {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('title', 'Site Reports');
   $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
@@ -25946,7 +26015,7 @@ else {
     ),
     'default' => '-1',
   ));
-  $handler = $view->new_display('block', 'Place Block Map', 'block_2');
+  $handler = $view->new_display('block', 'Location Block Map', 'block_2');
   $handler->override_option('relationships', array());
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array());
@@ -25961,7 +26030,7 @@ else {
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('openlayers', 'Place Block Data', 'openlayers_2');
+  $handler = $view->new_display('openlayers', 'Location Block Data', 'openlayers_2');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'tid' => array(
@@ -26178,7 +26247,7 @@ else {
     ),
   ));
   $handler->override_option('filters', array());
-  $handler->override_option('title', 'Place Block Data');
+  $handler->override_option('title', 'Location Block Data');
   $handler->override_option('items_per_page', 200);
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(
@@ -26200,7 +26269,7 @@ else {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
-  $handler = $view->new_display('openlayers', 'Report Items Block Data (Location)', 'openlayers_1');
+  $handler = $view->new_display('openlayers', 'Site Reports Block Data (Location)', 'openlayers_1');
   $handler->override_option('fields', array(
     'tid' => array(
       'label' => 'All terms',
@@ -26246,7 +26315,7 @@ else {
       'relationship' => 'field_ftritem_place_nid',
     ),
     'title' => array(
-      'label' => 'Report Item',
+      'label' => 'Site Report',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -26526,7 +26595,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Report Item Map');
+  $handler->override_option('title', 'Site Report Map');
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(
     'grouping' => '',
@@ -26547,7 +26616,7 @@ else {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
-  $handler = $view->new_display('block', 'Report Items Block Map (Location)', 'block_1');
+  $handler = $view->new_display('block', 'Site Reports Block Map (Location)', 'block_1');
   $handler->override_option('relationships', array());
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array());
@@ -26558,11 +26627,11 @@ else {
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('openlayers', 'Report Items Block Data (Report Item)', 'openlayers_3');
+  $handler = $view->new_display('openlayers', 'Site Reports Block Data (Site Report)', 'openlayers_3');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
-      'label' => 'Report Item',
+      'label' => 'Site Report',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -26809,7 +26878,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Report Item Map');
+  $handler->override_option('title', 'Site Report Map');
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(
     'grouping' => '',
@@ -26830,7 +26899,7 @@ else {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
-  $handler = $view->new_display('block', 'Report Items Block Map (Report Item)', 'block_3');
+  $handler = $view->new_display('block', 'Site Reports Block Map (Site Report)', 'block_3');
   $handler->override_option('relationships', array());
   $handler->override_option('arguments', array());
   $handler->override_option('filters', array());
@@ -27267,7 +27336,7 @@ else {
   $view = new view;
   $view->name = 'user_report_items_map';
   $view->description = 'User Report Items on map';
-  $view->tag = 'User field trip, field trip report items';
+  $view->tag = 'User field trip, site reports';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -27361,7 +27430,7 @@ else {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('title', 'Site Reports');
   $handler->override_option('footer_format', '1');
   $handler->override_option('footer_empty', 0);
   $handler->override_option('distinct', 0);
@@ -27940,12 +28009,12 @@ else {
   $handler->override_option('title', 'Report Items');
   $handler->override_option('footer', '<?php
 //  print \'<ul><li>\';
-//  print l(\'<button type="button">View All Trip Reports</button>\', \'node/\'. arg(1) .\'/all_field_reports\', Array(\'html\' => TRUE));
+//  print l(\'<button type="button">View All Site Reports</button>\', \'node/\'. arg(1) .\'/all_field_reports\', Array(\'html\' => TRUE));
 //  print \'</li></ul>\';
 ?>');
   $handler->override_option('footer_format', '3');
   $handler->override_option('footer_empty', 1);
-  $handler->override_option('empty', 'No reports yet.');
+  $handler->override_option('empty', 'No site reports yet.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 3);
@@ -28022,7 +28091,7 @@ else {
   ));
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
-  $handler = $view->new_display('openlayers', 'User Trip Report Data', 'openlayers_3');
+  $handler = $view->new_display('openlayers', 'User Site Report Data', 'openlayers_3');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -28493,7 +28562,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'User Trip Report Data');
+  $handler->override_option('title', 'User Site Report Data');
   $handler->override_option('items_per_page', 200);
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(
@@ -28587,7 +28656,7 @@ else {
       'me_validate_user_restrict_roles' => 0,
     ),
   ));
-  $handler->override_option('title', 'My Latest Report Items On a Map');
+  $handler->override_option('title', 'My Latest Site Reports On a Map');
   $handler->override_option('items_per_page', 200);
   $handler->override_option('use_pager', '0');
   $handler->override_option('style_plugin', 'openlayers_map');
@@ -28609,7 +28678,7 @@ else {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'All field reports (Place)', 'page_2');
+  $handler = $view->new_display('page', 'All site reports (Place)', 'page_2');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -29106,8 +29175,8 @@ else {
       ),
     ),
   ));
-  $handler->override_option('title', 'All Report Items');
-  $handler->override_option('empty', 'No field reports yet, Please check again later.');
+  $handler->override_option('title', 'All Site Reports');
+  $handler->override_option('empty', 'No site reports yet, Please check again later.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
@@ -29182,7 +29251,7 @@ else {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('openlayers', 'User Trip Reports Roadside Data', 'openlayers_1');
+  $handler = $view->new_display('openlayers', 'User Site Reports Roadside Data', 'openlayers_1');
   $handler->override_option('relationships', array());
   $handler->override_option('fields', array(
     'title' => array(
@@ -29318,7 +29387,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'User Trip Reports Roadside Data');
+  $handler->override_option('title', 'User Site Reports Roadside Data');
   $handler->override_option('items_per_page', 100);
   $handler->override_option('style_plugin', 'openlayers_data');
   $handler->override_option('style_options', array(

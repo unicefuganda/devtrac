@@ -90,7 +90,7 @@ function devtrack_module_update_6001() {
   );  
   module_enable($new_modules);
 
-  $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all report items' );
+  $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all site reports' );
   return $ret;
   
 }
@@ -211,7 +211,7 @@ function devtrack_module_update_6004() {
   );
   taxonomy_save_term($term);
 
-  // Now update the existing report items
+  // Now update the existing site reports
   $nids = db_query("SELECT nid FROM {node} WHERE type = '%s'", 'ftritem'); // ALERT: Hardcoded node_type machine name
   while ($nid = db_fetch_object($nids)) {
     $node = node_load($nid->nid);
@@ -235,7 +235,7 @@ function devtrack_module_update_6004() {
     node_save($node);
   }
 
-  $ret[] = array('success' => TRUE, 'query' => 'created Site Report Type vocabulary and updated all report items');
+  $ret[] = array('success' => TRUE, 'query' => 'created Site Report Type vocabulary and updated all site reports');
   return $ret;
 }
 
@@ -620,4 +620,9 @@ function devtrack_module_update_6008() {
       node_save($sitereport);
     }
   }
+
+  $ret[] = array('success' => TRUE, 'query' => 'created the OECD Sector Code vocabulary');
+  $ret[] = array('success' => TRUE, 'query' => 'added Child Protection to Department vocabulary');
+  $ret[] = array('success' => TRUE, 'query' => 'submitted all Site Reports that belong to Approved Fieldtrips');
+  return $ret;
 }

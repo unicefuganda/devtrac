@@ -99,7 +99,7 @@ function devtrac_mobile_app_views_default_views() {
       'alter' => array(
         'alter_text' => 1,
         'text' => 'Place: [field_actionitem_resp_place_nid]<br />
-Report Item: [field_actionitem_ftreportitem_nid]',
+Site Report: [field_actionitem_ftreportitem_nid]',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -707,7 +707,7 @@ Report Item: [field_actionitem_ftreportitem_nid]',
       'alter' => array(
         'alter_text' => 1,
         'text' => 'Place: [field_actionitem_resp_place_nid]<br />
-Report Item: [field_actionitem_ftreportitem_nid]',
+Site Report: [field_actionitem_ftreportitem_nid]',
         'make_link' => 0,
         'path' => '',
         'link_class' => '',
@@ -3034,7 +3034,7 @@ Priority: [field_actionitem_severity_value]',
   $view = new view;
   $view->name = 'mobile_field_trip_report_items';
   $view->description = 'Mobile Field Trip Report Items';
-  $view->tag = 'mobile, field trip, field trip report items';
+  $view->tag = 'mobile, field trip, site reports';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -3257,7 +3257,7 @@ Priority: [field_actionitem_severity_value]',
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => '',
-      'title' => 'Recent %1 Field Trip Reports',
+      'title' => 'Recent Site Reports to Location %1',
       'breadcrumb' => '',
       'default_argument_type' => 'fixed',
       'default_argument' => '',
@@ -3274,12 +3274,18 @@ Priority: [field_actionitem_severity_value]',
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'relationship' => 'field_ftritem_place_nid',
       'default_options_div_prefix' => '',
@@ -3287,22 +3293,27 @@ Priority: [field_actionitem_severity_value]',
       'default_argument_user' => 0,
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
+        'bbsync' => 0,
         'actionitem' => 0,
+        'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '1' => 1,
-        '3' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tids',
       'validate_argument_transform' => 0,
@@ -3423,7 +3434,7 @@ Priority: [field_actionitem_severity_value]',
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Field Trip Report Items');
+  $handler->override_option('title', 'Field Trip Site Reports');
   $handler->override_option('use_pager', '0');
   $handler->override_option('distinct', 0);
   $handler->override_option('style_plugin', 'table');
@@ -3457,7 +3468,7 @@ Priority: [field_actionitem_severity_value]',
     ),
     'default' => '-1',
   ));
-  $handler = $view->new_display('page', 'Mobile Field Trip Report Items', 'page_2');
+  $handler = $view->new_display('page', 'Mobile Field Trip Site Reports', 'page_2');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -3634,7 +3645,7 @@ Priority: [field_actionitem_severity_value]',
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => '%1 Report Items',
+      'title' => '%1 Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'node',
       'default_argument' => '',
@@ -3660,22 +3671,26 @@ Priority: [field_actionitem_severity_value]',
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
         'fieldtrip' => 'fieldtrip',
+        'bbsync' => 0,
         'actionitem' => 0,
         'book' => 0,
         'ftritem' => 0,
         'page' => 0,
         'place' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
         'story' => 0,
       ),
       'validate_argument_node_access' => 1,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
-        '6' => 0,
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '9' => 0,
         '1' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -4005,7 +4020,7 @@ Priority: [field_actionitem_severity_value]',
   $view = new view;
   $view->name = 'mobile_report_item';
   $view->description = 'Mobile Report Item';
-  $view->tag = 'mobile, report item';
+  $view->tag = 'mobile, site report';
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = FALSE;
@@ -4014,7 +4029,7 @@ Priority: [field_actionitem_severity_value]',
   $handler = $view->new_display('default', 'Defaults', 'default');
   $handler->override_option('fields', array(
     'field_ftritem_field_trip_nid' => array(
-      'label' => 'Field Trip',
+      'label' => 'Site Report',
       'alter' => array(
         'alter_text' => 0,
         'text' => '',
@@ -4037,7 +4052,7 @@ Priority: [field_actionitem_severity_value]',
       'hide_empty' => 0,
       'empty_zero' => 0,
       'link_to_node' => 0,
-      'label_type' => 'widget',
+      'label_type' => 'custom',
       'format' => 'plain',
       'multiple' => array(
         'group' => TRUE,
@@ -4055,7 +4070,7 @@ Priority: [field_actionitem_severity_value]',
       'label' => '',
       'alter' => array(
         'alter_text' => 1,
-        'text' => 'Field Trip: [field_ftritem_field_trip_nid]<br />
+        'text' => 'Site Report: [field_ftritem_field_trip_nid]<br />
 Place: [field_ftritem_place_nid]',
         'make_link' => 0,
         'path' => '',
@@ -4089,6 +4104,9 @@ Place: [field_ftritem_place_nid]',
       'table' => 'node_data_field_ftritem_place',
       'field' => 'field_ftritem_place_nid',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'field_ftritem_narrative_value' => array(
       'label' => 'Narrative',

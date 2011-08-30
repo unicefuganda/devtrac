@@ -319,13 +319,13 @@ function devtrac_find_views_default_views() {
   $handler->override_option('cache', array(
     'type' => 'none',
   ));
-  $handler->override_option('title', 'Trip Reports');
-  $handler->override_option('empty', 'Sorry, there are no Trip Reports that match these criteria');
+  $handler->override_option('title', 'Site Reports');
+  $handler->override_option('empty', 'Sorry, there are no Site Reports that match these criteria');
   $handler->override_option('empty_format', '1');
   $handler->override_option('items_per_page', 50);
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('exposed_block', TRUE);
-  $handler = $view->new_display('openlayers', 'trip_report_search_data', 'openlayers_1');
+  $handler = $view->new_display('openlayers', 'site_report_search_data', 'openlayers_1');
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -498,7 +498,7 @@ function devtrac_find_views_default_views() {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
-  $handler = $view->new_display('page', 'Trip Report Search Map', 'page_1');
+  $handler = $view->new_display('page', 'Site Report Search Map', 'page_1');
   $handler->override_option('filters', array(
     'type' => array(
       'operator' => 'in',
@@ -653,7 +653,7 @@ function devtrac_find_views_default_views() {
     'weight' => '0',
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'Trip Report Search List', 'page_2');
+  $handler = $view->new_display('page', 'Site Report Search List', 'page_2');
   $handler->override_option('path', 'tripreports/list');
   $handler->override_option('menu', array(
     'type' => 'tab',
@@ -669,7 +669,7 @@ function devtrac_find_views_default_views() {
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('block', 'Trip Report Search List Block', 'block_1');
+  $handler = $view->new_display('block', 'Site Report Search List Block', 'block_1');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
 

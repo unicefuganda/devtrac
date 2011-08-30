@@ -850,7 +850,10 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           $ftr->field_ftritem_field_trip[0]['nid'] = $fieldtrip->nid;
           $ftr->field_ftritem_place[0]['nid'] = $placenid;
           $ftr->field_ftritem_public_summary[0]['value'] = t('Please Provide a small summary for the public.');
-          $ftr->field_ftritem_narrative[0]['value'] = t('Please provide a full report.'); 
+          $ftr->field_ftritem_narrative[0]['value'] = t('Please provide a full report.');
+          $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type'); // Alert:  Hardcode vocabulary name
+          $terms = devtrack_module_get_term_by_name_vid('Site Visit', $vocabulary->vid); // Alert:  Hardcode term name
+          $ftr->taxonomy = array($terms[0]->tid => $terms[0]);
           $ftr->uid = $user->uid;
           $ftr->status = 1;
           $ftr->comment = 0;
@@ -981,18 +984,18 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
       case 'Roadside Observation':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy']['#suffix'] = '</div>';
+        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
 	      break;
       case 'Human Interest Story':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
-        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
-	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
 	      $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy']['#suffix'] = '</div>';
+        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         break;
     }
   }
@@ -1004,54 +1007,41 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
       case 'Site Visit':
         if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
           $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+	        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+          $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
         }
         else {
           $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+          $form['taxonomy'][1]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
         }
+	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-
-        $show_taxonomy = FALSE;
-        foreach ($vids as $vid) { // $vids was set earlier
-          if ($form['taxonomy'][$vid]['#value'] != array()) {
-            $form['taxonomy'][$vid]['#prefix'] = '<div class="devtrachidefield">';
-          }
-          else {
-            $form['taxonomy'][$vid]['#prefix'] = '<div class="devtracshowfield">';
-            $show_taxonomy = TRUE;
-          }
-          $form['taxonomy'][$vid]['#suffix'] = '</div>';
-        }
-        if ($show_taxonomy) {
-          $form['taxonomy']['#prefix'] = '<div class="devtracshowfield">';
-        }
-        else {
-          $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
-        }
-        $form['taxonomy']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         break;
       case 'Roadside Observation':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy']['#suffix'] = '</div>';
+        $form['taxonomy'][7]['#suffix'] = '</div>';
 	      break;
       case 'Human Interest Story':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
-        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
-	      $form['taxonomy']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
 	      $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy']['#suffix'] = '</div>';
+        $form['taxonomy'][7]['#suffix'] = '</div>';
         break;
     }
   }
 
-  // Never show the Field Trip field.
+  // Only show the Field Trip field if it's empty
   if (isset($form['field_ftritem_field_trip'][0]['nid']['nid']['#value']) && ($form['field_ftritem_field_trip'][0]['nid']['nid']['#value'] != '')) {
   	$form['field_ftritem_field_trip']['#prefix'] = '<div class="devtrachidefield">';
   }

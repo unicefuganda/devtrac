@@ -68,9 +68,9 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerleft',
           'weight' => 0,
         ),
-        'views-field_trip_report_items-block_8' => array(
-          'module' => 'views',
-          'delta' => 'field_trip_report_items-block_8',
+        'devtrack_module-5' => array(
+          'module' => 'devtrack_module',
+          'delta' => 5,
           'region' => 'contentlayerright',
           'weight' => 0,
         ),

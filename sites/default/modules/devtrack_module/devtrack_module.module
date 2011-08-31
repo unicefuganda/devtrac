@@ -1124,6 +1124,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
       $blocks[2]['info'] = t('Upload Picture Reminder');
       $blocks[3]['info'] = t('Fieldtrip Approval Workflow');
       $blocks[4]['info'] = t('Fieldtrip Status');
+      $blocks[5]['info'] = t('Homepage Counters');
       return $blocks;
       break;
     case 'view' :
@@ -1303,7 +1304,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
           return $block;
           break;
         case 4:
-          // Print the Fieldtrip Status block.
+          // The Fieldtrip Status block.
 //          $arg2 = arg(2);
           if ((user_is_logged_in()) && (arg(0) == 'node') && (is_numeric(arg(1)))) { // && (!isset($arg2))) {
             $localnode = node_load(arg(1));
@@ -1335,6 +1336,14 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
 //            $result  = "<ul>". $result . "</ul>";
 //          }
           $block['title'] = "Fieldtrip Status";
+          $block['content'] = $result;
+          return $block;
+          break;
+        case 5:
+          // The Homepage Counter Block.
+          $result = devtrack_module_get_report_counts();
+          $block['title'] = "Site Reports";
+          $block['subject'] = "Site Reports";
           $block['content'] = $result;
           return $block;
           break;
@@ -2220,6 +2229,62 @@ function devtrac_module_get_action_item_status($node) {
   }
   $result['output'] .= '</ul>';
   return $result;
+}
+
+function devtrack_module_get_report_counts() {
+//  $output = '<div class="block with-block-editing">';
+//  $output .= '<h3>Site Reports</h3>';
+//  $output .= '<div class="content">';
+  $output .= '<div class="view-field-trip-report-items">';
+  $output .= '<div class="view-content">';
+  $output .= '<table class="views-table">';
+  $output .= '<thead><tr></tr></thead>';
+  $output .= '<tbody>';
+
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Place Type');
+  $sql_count = "SELECT COUNT(nid) FROM {term_node} WHERE tid = %d";
+  $sql_children = "SELECT tid FROM {term_hierarchy} WHERE parent = %d";
+
+  $result = devtrack_module_get_term_by_name_vid('Health Facilities', $vocabulary->vid);
+  $count = db_result(db_query($sql_count, $result[0]->tid));
+  $children = db_query($sql_children, $result[0]->tid);
+  while ($child = db_fetch_object($children)) {
+    $count += db_result(db_query($sql_count, $child->tid));
+  }
+  $output .= '<tr class="odd views-row-first">';
+  $output .= '<td class="views-field-nid">'. $count .'</td>';
+  $output .= '<td class="views-field-name">';
+  $output .= '<a href="/tripreports/map?placetype='. $result[0]->tid .'">'. $result[0]->name .'</a>';
+  $output .= '</td></tr>';
+
+  $result = devtrack_module_get_term_by_name_vid('Schools', $vocabulary->vid);
+  $count = db_result(db_query($sql_count, $result[0]->tid));
+  $children = db_query($sql_children, $result[0]->tid);
+  while ($child = db_fetch_object($children)) {
+    $count += db_result(db_query($sql_count, $child->tid));
+  }
+  $output .= '<tr class="even">';
+  $output .= '<td class="views-field-nid">'. $count .'</td>';
+  $output .= '<td class="views-field-name">';
+  $output .= '<a href="/tripreports/map?placetype='. $result[0]->tid .'">'. $result[0]->name .'</a>';
+  $output .= '</td></tr>';
+
+  $result = devtrack_module_get_term_by_name_vid('Water Points', $vocabulary->vid);
+  $count = db_result(db_query($sql_count, $result[0]->tid));
+  $children = db_query($sql_children, $result[0]->tid);
+  while ($child = db_fetch_object($children)) {
+    $count += db_result(db_query($sql_count, $child->tid));
+  }
+  $output .= '<tr class="odd views-row-last">';
+  $output .= '<td class="views-field-nid">'. $count .'</td>';
+  $output .= '<td class="views-field-name">';
+  $output .= '<a href="/tripreports/map?placetype='. $result[0]->tid .'">'. $result[0]->name .'</a>';
+  $output .= '</td></tr>';
+  
+  $output .= '</tbody></table></div>';
+//  $output .= '</div></div></div>';
+
+  return $output;
 }
 
 /*

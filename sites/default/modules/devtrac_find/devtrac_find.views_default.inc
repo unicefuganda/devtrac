@@ -641,8 +641,8 @@ function devtrac_find_views_default_views() {
   $handler->override_option('path', 'tripreports/map');
   $handler->override_option('menu', array(
     'type' => 'default tab',
-    'title' => 'Trip Reports',
-    'description' => 'Trip Reports Map',
+    'title' => 'Site Reports',
+    'description' => 'Site Reports Map',
     'weight' => '0',
     'name' => 'navigation',
   ));
@@ -658,7 +658,7 @@ function devtrac_find_views_default_views() {
   $handler->override_option('menu', array(
     'type' => 'tab',
     'title' => 'List',
-    'description' => 'Trip Reports List',
+    'description' => 'Site Reports List',
     'weight' => '1',
     'name' => 'navigation',
   ));

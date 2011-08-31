@@ -5206,8 +5206,8 @@ else {
   $handler->override_option('path', 'node/%/fieldtripreports');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Report Items',
-    'description' => 'Report Items',
+    'title' => 'Site Reports',
+    'description' => 'Site Reports',
     'weight' => '3',
     'name' => 'navigation',
   ));
@@ -29239,8 +29239,8 @@ else {
   $handler->override_option('path', 'node/%/place_ftritems');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Report Items',
-    'description' => 'Report Items for this Location',
+    'title' => 'Site Reports',
+    'description' => 'Site Reports for this Location',
     'weight' => '3',
     'name' => 'navigation',
   ));

@@ -656,7 +656,7 @@ function devtrac_feature_openlayers_presets() {
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'default',
+      'default' => 'devtrac_default',
       'select' => 'default_select',
       'temporary' => 'default',
     ),

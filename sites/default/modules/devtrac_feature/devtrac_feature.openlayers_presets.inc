@@ -62,6 +62,11 @@ function devtrac_feature_openlayers_presets() {
       'field_trip_places_to_visit_openlayers_1' => 'field_trip_places_to_visit_openlayers_1',
     ),
     'layer_styles' => array(
+      'field_trip_places_to_visit_openlayers_2' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
       'field_trip_places_to_visit_openlayers_1' => array(
         'default' => 'placetype',
         'select' => 'placetype',
@@ -127,7 +132,23 @@ function devtrac_feature_openlayers_presets() {
       'u-map-it-wash' => 'u-map-it-wash',
       'u-map-it-schools' => 'u-map-it-schools',
     ),
-    'layer_styles' => array(),
+    'layer_styles' => array(
+      'u-map-it-health' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'u-map-it-wash' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'u-map-it-schools' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+    ),
     'layer_activated' => array(),
     'layer_switcher' => array(
       'u-map-it-health' => 'u-map-it-health',
@@ -220,6 +241,21 @@ function devtrac_feature_openlayers_presets() {
         'default' => 'invisible',
         'select' => 'invisible',
         'temporary' => 'invisible',
+      ),
+      'u-map-it-schoolsWMS' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'UgandaHealthWMS' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'u-map-it-washWMS' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
       ),
     ),
     'layer_activated' => array(
@@ -364,9 +400,9 @@ function devtrac_feature_openlayers_presets() {
     ),
     'layer_styles' => array(
       'side_block_map_openlayers_3' => array(
-        'default' => 'default',
-        'select' => 'default',
-        'temporary' => 'default',
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
       ),
     ),
     'layer_activated' => array(
@@ -486,6 +522,8 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_keyboarddefaults' => array(),
       'openlayers_behavior_layerswitcher' => array(
         'ascending' => 1,
+        'roundedCorner' => 1,
+        'roundedCornerColor' => 'darkblue',
       ),
       'openlayers_behavior_navigation' => array(
         'zoomWheelEnabled' => 0,
@@ -494,11 +532,16 @@ function devtrac_feature_openlayers_presets() {
     ),
     'default_layer' => 'osm_mapnik',
     'layers' => array(
-      'wms_uganda_basemap' => 'wms_uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
       'place_openlayers_1' => 'place_openlayers_1',
     ),
-    'layer_styles' => array(),
+    'layer_styles' => array(
+      'place_openlayers_1' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+    ),
     'layer_activated' => array(
       'place_openlayers_1' => 'place_openlayers_1',
     ),
@@ -579,6 +622,21 @@ function devtrac_feature_openlayers_presets() {
         'default' => 'School',
         'select' => 'School',
         'temporary' => 'School',
+      ),
+      'u-map-it-health' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'u-map-it-schools' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'u-map-it-wash' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
       ),
       'field_trip_report_items_openlayers_3' => array(
         'default' => 'placetype',
@@ -665,6 +723,11 @@ function devtrac_feature_openlayers_presets() {
         'default' => 'placetype',
         'select' => 'placetype',
         'temporary' => 'placetype',
+      ),
+      'user_report_items_map_openlayers_1' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
       ),
       'user_report_items_map_openlayers_3' => array(
         'default' => 'placetype',

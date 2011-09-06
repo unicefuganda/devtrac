@@ -53,15 +53,15 @@ function devtrac_find_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
     ),
     'layer_styles' => array(
       'trip_reports_search_openlayers_1' => array(
-        'default' => 'default',
-        'select' => 'default',
-        'temporary' => 'default',
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
       ),
     ),
     'layer_activated' => array(

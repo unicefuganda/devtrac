@@ -650,3 +650,26 @@ function devtrack_module_update_6009() {
   $ret[] = array('success' => TRUE, 'query' => 'changed the title of '. $count .' Site Visits');
   return $ret;
 }
+
+/*
+ * https://www.pivotaltracker.com/story/show/17875097
+ * The word "Nzerea II" under place type - should be removed
+ */
+function devtrack_module_update_6010() {
+  // First remove the term from all nodes
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Place Type');
+  $terms = devtrack_module_get_term_by_name_vid('Nzerea II', $vocabulary->vid);
+  $sql = "SELECT n.nid FROM {node} n INNER JOIN {term_node} tn ON n.nid = tn.nid WHERE tn.tid = %d";
+  $nids = db_query($sql, $terms[0]->tid);
+  while ($nid = db_fetch_object($nids)) {
+    $node = node_load($nid->nid);
+    unset($node->taxonomy[$terms[0]->tid]);
+    node_save($node);
+  }
+
+  // Now remove the term from the vocabulary
+  taxonomy_del_term($terms[0]->tid);
+
+  $ret[] = array('success' => TRUE, 'query' => 'removed Nzerea II from Place Types');
+  return $ret;
+}

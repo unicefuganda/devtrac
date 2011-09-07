@@ -1804,7 +1804,7 @@ function _devtrack_module_getbutton($text, $path, $options) {
 function _devtrack_module_isinternetexplorer() {
         // $version = 6
 //    drupal_set_message($_SERVER['HTTP_USER_AGENT']);
-    if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) } // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
+    if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) { // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
         return true;
     } else {
         return false;

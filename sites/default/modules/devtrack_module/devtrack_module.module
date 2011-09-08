@@ -797,15 +797,15 @@ function devtrack_module_gotofieldtrip() {
  *   Adds a place to a fieldtrip, not ajax-proof, just a URL
  */ 
 
-function devtrack_module_addplacefieldtotrip($placenid, $fieldtripnid = NULL) {
-  $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid);
+function devtrack_module_addplacefieldtotrip($placenid, $fieldtripnid = NULL, $reporttype = NULL) {
+  $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid, $reporttype);
 	$object = new stdClass();
   $object->content = $message;// $html.drupal_render($node->content[$field_name]);
   drupal_json($object);
   exit();
 }
 
-function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = NULL) {
+function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = NULL, $reporttype = NULL) {
   global $user;
   $message = "";  
   $place = node_load($placenid);
@@ -823,12 +823,18 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
       } else {
         foreach($fieldtrip->field_fieldtrip_places as $tpplace) {
           if ($tpplace['nid'] == $placenid) {
-            
-            $sql = "SELECT ftr.nid FROM content_type_ftritem ftr WHERE ftr.field_ftritem_field_trip_nid = %d AND ftr.field_ftritem_place_nid = %d";
-            $ftrnid = db_result(db_query($sql, $fieldtripnid, $placenid));
+//            $sql = "SELECT ftr.nid FROM content_type_ftritem ftr WHERE ftr.field_ftritem_field_trip_nid = %d AND ftr.field_ftritem_place_nid = %d";
+//            $ftrnid = db_result(db_query($sql, $fieldtripnid, $placenid));
+//            watchdog("reinier", "ftrnid " . $ftrnid);
+//            if ($ftrnid > 0) {
+//              $message .= "This place is already attached to the field trip " . $fieldtrip->title;
+//            } 
+            $sql = "SELECT ftr.nid FROM {content_type_ftritem} ftr INNER JOIN {term_node} tn ON ftr.nid = tn.nid WHERE ftr.field_ftritem_field_trip_nid = %d AND ftr.field_ftritem_place_nid = %d AND tn.tid = %d";
+            $ftrnid = db_result(db_query($sql, $fieldtripnid, $placenid, $reporttype));
             watchdog("reinier", "ftrnid " . $ftrnid);
             if ($ftrnid > 0) {
-              $message .= "This place is already attached to the field trip " . $fieldtrip->title;
+              $term = taxonomy_get_term($reporttype);
+              $message .= "There is already a ". $term->name ." planned to this place during the field trip " . $fieldtrip->title;
             } 
             break;
           }
@@ -846,14 +852,17 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           }
           $ftr = new stdClass();
           $ftr->type = 'ftritem';
-          $ftr->title = 'Site Visit at '. $place->title . $placetype;
+//          $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type'); // Alert:  Hardcode vocabulary name
+//          $terms = devtrack_module_get_term_by_name_vid('Site Visit', $vocabulary->vid); // Alert:  Hardcode term name
+//          $ftr->taxonomy = array($terms[0]->tid => $terms[0]);
+          $term = taxonomy_get_term($reporttype);
+          $ftr->title = $term->name .' at '. $place->title . $placetype;
+          $ftr->taxonomy = array($reporttype => $term);
           $ftr->field_ftritem_field_trip[0]['nid'] = $fieldtrip->nid;
           $ftr->field_ftritem_place[0]['nid'] = $placenid;
           $ftr->field_ftritem_public_summary[0]['value'] = t('Please Provide a small summary for the public.');
           $ftr->field_ftritem_narrative[0]['value'] = t('Please provide a full report.');
-          $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type'); // Alert:  Hardcode vocabulary name
-          $terms = devtrack_module_get_term_by_name_vid('Site Visit', $vocabulary->vid); // Alert:  Hardcode term name
-          $ftr->taxonomy = array($terms[0]->tid => $terms[0]);
+          $ftr->field_ftritem_status[0]['value'] = 'In Progress';
           $ftr->uid = $user->uid;
           $ftr->status = 1;
           $ftr->comment = 0;
@@ -861,7 +870,7 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           node_save($ftr);
           
           // for when we go ajax messages:  $message .= "Attached the " .$place->title . ' to '. l($fieldtrip->title, 'node/'. $fieldtrip->nid);
-          $message .= "Attached the " .$place->title . ' to '. $fieldtrip->title;
+          $message .= "Attached location " .$place->title . ' to '. $fieldtrip->title;
         }
       }
     }
@@ -984,17 +993,21 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
       case 'Roadside Observation':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+  	    $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
 	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
 	      break;
       case 'Human Interest Story':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
 	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
 	      $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         break;
     }
@@ -1007,16 +1020,15 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
       case 'Site Visit':
         if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
           $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
-	        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-          $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+          $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
         }
         else {
           $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
-          $form['taxonomy'][1]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	        $form['taxonomy'][7]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
         }
-	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
         $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
@@ -1025,17 +1037,21 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
       case 'Roadside Observation':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
+	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>';
 	      break;
       case 'Human Interest Story':
 	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
 	      $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>';
         break;
     }
@@ -1394,6 +1410,7 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
   global $user; // this is needed to set the uid on the nodes we are about to create.
   $message = '';
   $mytrip = $args[2];
+  $reporttype = $args[3];
   $fieldtrip = node_load($mytrip);
   if ($fieldtrip->type != 'fieldtrip') {
     return ("This is not a fieldtrip that you are linking the place to.");
@@ -1417,13 +1434,13 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
     $placenid = db_result(db_query(db_rewrite_sql($sql), $uid, $layer, $uri));
     if ($placenid > 0) {
       $message .= "The place was already known\n";
-      foreach($fieldtrip->field_fieldtrip_places as $place) {
-        if ($place['nid'] == $placenid) {
-          return "This place is already attached to the field trip " . $fieldtrip->title;
-        }
-      }
+//      foreach($fieldtrip->field_fieldtrip_places as $place) {
+//        if ($place['nid'] == $placenid) {
+//          return "This place is already attached to the field trip " . $fieldtrip->title;
+//        }
+//      }
       // got that out of the way, let's move on
-	} else {
+    } else {
       // Going to Create Place
       // First, let's make sure the placetype taxonomy term exists.
       if (!isset($placetypeterm[0]->tid)) {
@@ -1434,7 +1451,7 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
         $placetypeterm = devtrack_module_get_term_by_name_vid($placetype, 1);
       }
       $district = ucfirst(strtolower($params['district']));
-      $vid = 6; // That is Placetype
+      $vid = 6; // That is District
       $districtterm = devtrack_module_get_term_by_name_vid($district, $vid); 
       unset($params['district']);
       $body = "";
@@ -1450,7 +1467,7 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
       $node->field_place_sourcelayer[0]['value'] = $layer;
       $node->field_place_sourceuri[0]['value'] = $uri;
       $node->uid = $user->uid;
-      $node->field_place_lat_long[0]['openlayers_wkt'] = "GEOMETRYCOLLECTION(". $geometry . ")";
+      $node->field_place_lat_long[0]['openlayers_wkt'] = "GEOMETRYCOLLECTION(". str_replace(',', ' ', $geometry) . ")";
       $node->taxonomy = array($districtterm[0]->tid, $placetypeterm[0]->tid);
       $actionitem->comment = 0;
       
@@ -1474,7 +1491,7 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
     $ftr->uid = $user->uid;
     node_save($ftr);
 */
-    $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $mytrip ); 
+    $message .= _devtrack_module_addplacefieldtotrip_helper($placenid, $mytrip, $reporttype); 
     return $message;
   } else {
     $message .= 'You have to have selected a fieldtrip before selecting pages.';
@@ -1529,19 +1546,20 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
   $form['district'] = array(
     '#title' => t('District'),
     '#type' => 'select',
-    '#description' => "If you are creating a site visit, select the district where you want to search for places.",
+    '#description' => 'If you are creating a site visit or a human interest story, select the district where you want to search for places. (This field will be ignored for roadside observations.)',
     '#options' => $districts,
   );
 
   $placetypes = array();
-  $placetypes[0] = 'School';
-  $placetypes[1] = 'Health Clinic';
-  $placetypes[2] = 'Waterpoint';
+  $placetypes[0] = 'Schools';
+  $placetypes[1] = 'Health Facilities';
+  $placetypes[2] = 'Water Points';
   $placetypes[3] = 'Other Locations';
+  $placetypes[4] = 'None';
   $form['placetype'] = array(
     '#title' => t('Place Type'),
     '#type' => 'radios',
-    '#description' => 'If you are creating a site visit, select the type of the place you are looking for.',
+    '#description' => 'If you are creating a site visit or human interest story, select the type of the place you are looking for. "None" has no meaning for site visits and will behave as if you selected "Other Locations". (This field will be ignored for roadside observations.)',
     '#options' => $placetypes,
     '#default_value' => 0,
   );
@@ -1569,38 +1587,62 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
 
   $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
   foreach ($vocabularies as $vocabulary) {
+    if ($vocabulary->name == 'Place Type') {
+      $vidpt = $vocabulary->vid;
+    }
     if ($vocabulary->name == 'Site Report Type') {
-      $vid = $vocabulary->vid;
+      $vidsrt = $vocabulary->vid;
     }
   }
+  $placetypes = array();
+  $terms = db_query("SELECT td.* FROM {term_data} td INNER JOIN {term_hierarchy} th ON td.tid = th.tid WHERE td.vid = %d AND th.parent = 0 ORDER BY td.weight DESC", $vidpt);
+  while ($term = db_fetch_object($terms)) {
+    $placetypes[] = $term->tid;
+  }
   $reporttypes = array();
-  $terms = db_query("SELECT * FROM {term_data} WHERE vid = %d ORDER BY weight ASC", $vid);
+  $terms = db_query("SELECT * FROM {term_data} WHERE vid = %d ORDER BY weight ASC", $vidsrt);
   while ($term = db_fetch_object($terms)) {
     $reporttypes[] = $term->tid;
   }
-  $keys = array_keys($reporttypes);
   switch ($form_state['values']['reporttype']) {
-  	case 0:
+  	case 0: // Site Visit
       switch ($form_state['values']['placetype']) {
   	    case 0:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TTFFT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TTFFT');
       		break;
     	  case 1:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFTFT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFTFT');
     	  	break;
       	case 2:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFFTT');
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFFTT');
   	  	  break;
         case 3:
-          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] , 'layers=B0TFFFT');
-         break;
+        case 4:
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFFFT');
+          break;
       }
   		break;
   	case 1:
-  		drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vid .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+  		drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
   		break;
   	case 2:
-  		drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vid .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+      switch ($form_state['values']['placetype']) {
+  	    case 0:
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TTFFT');
+      		break;
+  	    case 1:
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFTFT');
+    	  	break;
+  	    case 2:
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFTT');
+  	  	  break;
+        case 3:
+          drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFFT');
+          break;
+  	  	case 4:
+          drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+          break;
+      }
   		break;
   }
   
@@ -1748,13 +1790,16 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $placenid = $node->nid;
         $nodearray = (array)$node;
         $destination = drupal_get_destination();
-        $fieldtripnid = substr($destination, strrpos($destination, '%2F') + 3);
-        if (is_numeric($fieldtripnid)) {
+//        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
+//        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos($destination, '%2F') + 3));
+        $fieldtripnid = arg(2);
+        $reporttype = arg(3);
+        if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place 
           // because we now either created the ftritem automatically here in this function
           // or, when coming from the mobile bb application, the BB will create an ftritem
           drupal_set_message("attaching the place to the fieldtrip");
-          $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid);
+          $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid, $reporttype);
           drupal_set_message($message);
         }
         break;
@@ -2165,9 +2210,9 @@ function devtrac_module_get_site_report_status($node) {
         $result['status'] = FALSE;
         $result['output'] .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-narrative-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
-      $sector_codes = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
-      $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $sector_codes->vid));
-      if (!isset($terms) || empty($terms)) {
+      $vocabularysc = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
+      $sector_codes = array_values(taxonomy_node_get_terms_by_vocabulary($node, $vocabularysc->vid));
+      if (!isset($sector_codes) || empty($sector_codes)) {
         $result['status'] = FALSE;
         $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
@@ -2175,11 +2220,19 @@ function devtrac_module_get_site_report_status($node) {
         $result['status'] = FALSE;
         $result['output'] .= '<li>'. l('Provide the Date Visited', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-date-visited-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
-      $report_types = devtrack_module_get_vocabulary_by_name(t('Site Report Type'));
-      $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $report_types->vid));
-      if ((($terms[0]->name == 'Roadside Observation') || ($terms[0]->name == 'Human Interest Story')) && ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
+      $vocabularysrt = devtrack_module_get_vocabulary_by_name(t('Site Report Type'));
+      $report_types = array_values(taxonomy_node_get_terms_by_vocabulary($node, $vocabularysrt->vid));
+      if (($report_types[0]->name == 'Site Visit') AND ($node->field_ftritem_place[0]['nid'] == NULL)) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide the Place', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-place-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      if (($report_types[0]->name == 'Roadside Observation') && ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
         $result['status'] = FALSE;
         $result['output'] .= '<li>'. l('Provide the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+      }
+      if (($report_types[0]->name == 'Human Interest Story') AND ($node->field_ftritem_place[0]['nid'] == NULL) AND ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
+        $result['status'] = FALSE;
+        $result['output'] .= '<li>'. l('Provide either the Place or the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
       if ($result['status']) {
         $result['output'] .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';

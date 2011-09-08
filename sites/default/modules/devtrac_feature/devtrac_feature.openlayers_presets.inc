@@ -467,8 +467,8 @@ function devtrac_feature_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
       'side_block_map_openlayers_2' => 'side_block_map_openlayers_2',
     ),
     'layer_styles' => array(

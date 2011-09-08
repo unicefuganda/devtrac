@@ -9440,7 +9440,7 @@ $arr = array (
   )
 );
 
-return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\' . arg(2), $arr);
+return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\'. $data->nid .\'/\'. arg(2) .\'/\'. arg(3), $arr);
 
 ?>',
       'exclude' => 0,
@@ -9448,6 +9448,9 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'table' => 'customfield',
       'field' => 'phpcode',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'tid' => array(
       'label' => 'Place Type',

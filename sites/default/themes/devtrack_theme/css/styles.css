@@ -302,7 +302,8 @@ div.olMapViewport {
 .col-content_layertworight .block h3, 
 .col-content_contentlayerright .block h3,
 .block h3, 
-.col-content_contentlayermiddle caption{
+.col-content_contentlayermiddle caption,
+.col-content_layertworight div.block .title{
 	background-image: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png");
 	background-repeat:repeat-x;
 	background-color:#FFF9CD;
@@ -729,10 +730,6 @@ background-image: -moz-linear-gradient(
 	text-decoration: none;
 	font-weight:bold;
 }
-
-.col-content_contentlayermiddle ul.secondary li.active a {
-}
-
 .col-content_contentlayermiddle ul.secondary li.active a{
     background-color:#EA0001;
  	border-bottom:medium none;
@@ -757,13 +754,17 @@ background-image: -moz-linear-gradient(
     top: 33px;
 }
 .col-content_contentlayermiddle .view-header a:hover{color: #9B9B9A;}
-
-/*
-.not-front .views-table tr td:first-child {
-    border-right: 1px solid #FFF9CD;
-}*/
 .col-content_layertworight .views-table tr td {
     border-right: none;
+}
+/*..... New field trip status block ...*/
+.col-content_layertworight div.block .title{
+	border-bottom: 1px solid #FFF;
+	font-weight: bold;
+}
+.col-content_layertworight .block-devtrack_module .caption{
+	color: #00cc00;
+	background-color: #FFF9CD;
 }
 .not-front .views-table tr td {
     border-bottom: 1px solid #FFF9CD;
@@ -852,3 +853,7 @@ body a.getfeatureaddlink:link {
  list-style-type: none;
  list-style-image: none;
 }
+/*
+.col-content_contentlayerright div#block-views-my_homepage_picture-block_5{
+	margin-bottom: 0.4em;
+}*/

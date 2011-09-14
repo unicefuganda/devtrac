@@ -295,7 +295,6 @@ div.olMapViewport {
 }
 .views-label-field-fieldtrip-public-summary-value{ line-height:30px; }
 
-/*...temporary...can be pasted in reiniers css file.........*/
 .col-content_layertworight .block h3, 
 .col-content_contentlayerright .block h3 {
 	border-bottom: 2px solid #ea0001;
@@ -598,13 +597,9 @@ background-image: -moz-linear-gradient(
 .col-content_layerthree .content p,
 #getfeatureinfo,
 .front .clear-block p,
-.clearfix h2/*,
-.not-front .col-content_contentlayerright .block-devtrack_module*/{
+.clearfix h2{
 	padding-left: 10px;
 }
-/*#user-login, #contentcontainer h2, .node .content, .col-content_contentlayerleft .meta, .context-block p,
-.view-my-homepage-my-field-trips .views-row, #contact-mail-page, .view-empty, .tabaslist, .block-devtrack_module li*/
-
 .node-form .standard,
 .col-content_contentlayerright .openlayers-views-map{
 	margin-right: 10px;
@@ -617,10 +612,9 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft .view-field-trip-report-item-details{
 	padding-right: 3px;
  }
-
-
-.col-content_contentlayerright .block-devtrack_module h3{margin-bottom:8px; margin-top:-8px;}
-
+.col-content_contentlayerright .block-devtrack_module h3{
+	margin-bottom: 0.4em;
+}
 .view-devtrac-frontpage .node{
 	background-color: #FFF9EB; 
 	padding:5px 10px 10px 0px;

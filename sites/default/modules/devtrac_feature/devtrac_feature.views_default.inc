@@ -9275,6 +9275,87 @@ watchdog(\'gallery views\', $theme_path);
     'weight' => 0,
     'name' => 'navigation',
   ));
+  $handler = $view->new_display('openlayers', 'Place Zoom District', 'openlayers_2');
+  $handler->override_option('arguments', array(
+    'tid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => 'Locations in %1 District',
+      'breadcrumb' => '',
+      'default_argument_type' => 'php',
+      'default_argument' => '',
+      'validate_type' => 'taxonomy_term',
+      'validate_fail' => 'empty',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'tid',
+      'table' => 'term_data',
+      'field' => 'tid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '$destination = drupal_get_destination();
+if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "place") && (trim($destination) != "")) {
+  $args = explode("%2F", $destination);
+}
+return $args[1];',
+      'validate_argument_node_type' => array(
+        'bbsync' => 0,
+        'actionitem' => 0,
+        'book' => 0,
+        'fieldtrip' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'place' => 0,
+        'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+      ),
+      'validate_argument_node_access' => 0,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '6' => 6,
+        '4' => 0,
+        '5' => 0,
+        '2' => 0,
+        '8' => 0,
+        '1' => 0,
+        '7' => 0,
+      ),
+      'validate_argument_type' => 'tids',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('title', 'Add Place Zoom District');
+  $handler->override_option('row_plugin', '');
+  $handler->override_option('displays', array());
 
   $views[$view->name] = $view;
 
@@ -9440,7 +9521,7 @@ $arr = array (
   )
 );
 
-return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\'. $data->nid .\'/\'. arg(2) .\'/\'. arg(3), $arr);
+return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\' . arg(2), $arr);
 
 ?>',
       'exclude' => 0,
@@ -9448,9 +9529,6 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\'. $data->nid .\'/\'. 
       'table' => 'customfield',
       'field' => 'phpcode',
       'relationship' => 'none',
-      'override' => array(
-        'button' => 'Override',
-      ),
     ),
     'tid' => array(
       'label' => 'Place Type',

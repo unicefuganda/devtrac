@@ -34,6 +34,9 @@ function devtrac_find_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+          'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+          'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
+          'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
         ),
       ),
       'openlayers_behavior_keyboarddefaults' => array(),
@@ -56,19 +59,43 @@ function devtrac_find_openlayers_presets() {
       'osm_mapnik' => 'osm_mapnik',
       'uganda_basemap' => 'uganda_basemap',
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'layer_styles' => array(
       'trip_reports_search_openlayers_1' => array(
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
+      ),
+      'trip_reports_search_openlayers_2' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
+      'trip_reports_search_openlayers_4' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'trip_reports_search_openlayers_3' => array(
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
+      ),
     ),
     'layer_activated' => array(
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'layer_switcher' => array(
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'projection' => '900913',
     'displayProjection' => '4326',

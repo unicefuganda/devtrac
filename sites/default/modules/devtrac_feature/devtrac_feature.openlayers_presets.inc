@@ -123,22 +123,27 @@ function devtrac_feature_openlayers_presets() {
         'zoomWheelEnabled' => 0,
       ),
       'openlayers_behavior_panzoombar' => array(),
+      'openlayers_behavior_zoomtolayer' => array(
+        'zoomtolayer' => 'findplaces_districts_openlayers_2',
+        'point_zoom_level' => '5',
+      ),
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
       'osm_mapnik' => 'osm_mapnik',
       'uganda_basemap' => 'uganda_basemap',
-      'u-map-it-health' => 'u-map-it-health',
-      'u-map-it-wash' => 'u-map-it-wash',
       'u-map-it-schools' => 'u-map-it-schools',
+      'u-map-it-health' => 'u-map-it-health',
+      'findplaces_districts_openlayers_2' => 'findplaces_districts_openlayers_2',
+      'u-map-it-wash' => 'u-map-it-wash',
     ),
     'layer_styles' => array(
-      'u-map-it-health' => array(
+      'u-map-it-wash' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
-      'u-map-it-wash' => array(
+      'u-map-it-health' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
@@ -148,11 +153,18 @@ function devtrac_feature_openlayers_presets() {
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
+      'findplaces_districts_openlayers_2' => array(
+        'default' => 'invisible',
+        'select' => 'invisible',
+        'temporary' => 'invisible',
+      ),
     ),
-    'layer_activated' => array(),
+    'layer_activated' => array(
+      'findplaces_districts_openlayers_2' => 'findplaces_districts_openlayers_2',
+    ),
     'layer_switcher' => array(
-      'u-map-it-health' => 'u-map-it-health',
       'u-map-it-wash' => 'u-map-it-wash',
+      'u-map-it-health' => 'u-map-it-health',
       'u-map-it-schools' => 'u-map-it-schools',
     ),
     'projection' => '900913',
@@ -467,8 +479,8 @@ function devtrac_feature_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'osm_mapnik' => 'osm_mapnik',
       'uganda_basemap' => 'uganda_basemap',
+      'osm_mapnik' => 'osm_mapnik',
       'side_block_map_openlayers_2' => 'side_block_map_openlayers_2',
     ),
     'layer_styles' => array(
@@ -584,6 +596,7 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
+          'findplaces_districts_openlayers_1' => 0,
         ),
       ),
       'openlayers_behavior_fullscreen' => array(
@@ -607,10 +620,10 @@ function devtrac_feature_openlayers_presets() {
     'layers' => array(
       'osm_mapnik' => 'osm_mapnik',
       'uganda_basemap' => 'uganda_basemap',
-      'u-map-it-health' => 'u-map-it-health',
       'u-map-it-schools' => 'u-map-it-schools',
       'u-map-it-wash' => 'u-map-it-wash',
       'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
+      'u-map-it-health' => 'u-map-it-health',
     ),
     'layer_styles' => array(
       'user_report_items_map_openlayers_3' => array(
@@ -622,6 +635,11 @@ function devtrac_feature_openlayers_presets() {
         'default' => 'School',
         'select' => 'School',
         'temporary' => 'School',
+      ),
+      'field_trip_report_items_openlayers_3' => array(
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
       ),
       'u-map-it-health' => array(
         'default' => 'devtrac_default',
@@ -638,25 +656,20 @@ function devtrac_feature_openlayers_presets() {
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
-      'field_trip_report_items_openlayers_3' => array(
-        'default' => 'placetype',
-        'select' => 'placetype',
-        'temporary' => 'placetype',
-      ),
     ),
     'layer_activated' => array(
       'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
     ),
     'layer_switcher' => array(
+      'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
       'u-map-it-health' => 'u-map-it-health',
       'u-map-it-schools' => 'u-map-it-schools',
       'u-map-it-wash' => 'u-map-it-wash',
-      'field_trip_report_items_openlayers_3' => 'field_trip_report_items_openlayers_3',
     ),
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
-      'default' => 'devtrac_default',
+      'default' => 'default',
       'select' => 'default_select',
       'temporary' => 'default',
     ),

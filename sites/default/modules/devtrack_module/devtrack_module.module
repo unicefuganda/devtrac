@@ -2291,7 +2291,7 @@ function devtrack_module_get_report_counts() {
   $output .= '<div class="view-field-trip-report-items">';
   $output .= '<div class="view-content">';
   $output .= '<table class="views-table">';
-  $output .= '<thead><tr></tr></thead>';
+  $output .= '<thead><tr><td></td></tr></thead>';
   $output .= '<tbody>';
 
   $vocabulary = devtrack_module_get_vocabulary_by_name('Place Type');
@@ -2334,7 +2334,7 @@ function devtrack_module_get_report_counts() {
   $output .= '<a href="/tripreports/map?placetype='. $result[0]->tid .'">'. $result[0]->name .'</a>';
   $output .= '</td></tr>';
   
-  $output .= '</tbody></table></div>';
+  $output .= '</tbody></table></div></div>';
 //  $output .= '</div></div></div>';
 
   return $output;

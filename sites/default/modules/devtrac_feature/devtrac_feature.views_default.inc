@@ -22110,7 +22110,7 @@ if ($user->uid == arg(1)) {
   $sql = "SELECT path FROM {term_image} WHERE tid = %d";
   $path = db_fetch_object(db_query($sql, $root_tid));
   if (isset($path->path)) {
-    $output = \'<div class="picture"><img width="290" height="auto" class="imagecache imagecache-authoring-organisation-logo" title="Authoring organization" src="http://www.devtrac.ug/sites/default/files/imagecache/authoring-organisation-logo/category_pictures/\'. $path->path .\'"></div>\';
+    $output = \'<img width="290" height="auto" class="imagecache imagecache-authoring-organisation-logo" alt="Authoring organization" title="Authoring organization" src="http://www.devtrac.ug/sites/default/files/imagecache/authoring-organisation-logo/category_pictures/\'. $path->path .\'" />\';
   }
   else {
     $output = \'No image yet.\';

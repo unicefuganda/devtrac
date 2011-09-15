@@ -339,7 +339,7 @@ div.olMapViewport {
 	margin-bottom: -2px;
 }
 .col-content_contentlayerleft {
-	min-height: 50px;
+	min-height: 100px;
 }
 
 .views-row .picture {
@@ -357,7 +357,7 @@ div.olMapViewport {
 	margin:0 10px 12px;
 	float: left;
 }
-.col-content_layeroneright ul li,
+.col-content_layeroneright ul li, 
 .col-content_layeroneright .item-list ul li{
 	background-color: #fff9cd;
 	/*float: left;*/
@@ -593,7 +593,7 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft dl,
 .col-content_contentlayerleft.span-6,
 .col-content_contentlayerleft .views-exposed-widgets,
-.col-content_layertwoleft .view-field-trip-report-item-details,
+.col-content_layertwoleft .block-views,
 .col-content_layertworight .content,
 .col-content_layerthree .content p,
 #getfeatureinfo,
@@ -763,13 +763,12 @@ background-image: -moz-linear-gradient(
 	font-weight: bold;
 }
 .col-content_layertworight .block-devtrack_module .caption{
-	color: #00cc00;
 	background-color: #FFF9CD;
+    padding-left: 10px;
 }
 .not-front .views-table tr td {
     border-bottom: 1px solid #FFF9CD;
 }
-
 /*  ........pager..........*/
 .clearfix .block ul.pager a, .clearfix .block ul.pager li.pager-current, .clearfix .block ul.pager a:hover {
     border: 1px solid #FFF9CD;
@@ -846,14 +845,17 @@ body a.getfeatureaddlink:link {
  float: right;
  list-style-image: none;
 }
-
 .view-findplaces-districts ul,
 .view-findplaces-districts li
 {
  list-style-type: none;
  list-style-image: none;
 }
-/*
-.col-content_contentlayerright div#block-views-my_homepage_picture-block_5{
-	margin-bottom: 0.4em;
-}*/
+.col-content_contentlayerright table th.views-field-label-title, thead th{
+	width: 20%;
+	border-bottom: 0;
+	background-color: 
+}
+.col-content_contentlayerright table tr{
+	border-bottom: 3px solid #FFF9CD;
+}

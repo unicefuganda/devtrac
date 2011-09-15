@@ -991,21 +991,21 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
         // Is done in code, so no hiding/showing
         break;
       case 'Roadside Observation':
-	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-  	    $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
         $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-	      break;
+        break;
       case 'Human Interest Story':
-	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+        $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-	      $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-	      $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
         $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
@@ -1026,7 +1026,7 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
         else {
           $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	        $form['taxonomy'][7]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
+          $form['taxonomy'][7]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
         }
         $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['field_ftritem_place']['#suffix'] = '</div>';
@@ -1035,21 +1035,21 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
         $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         break;
       case 'Roadside Observation':
-	      $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+        $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
         $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>';
-	      break;
+        break;
       case 'Human Interest Story':
-	      $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
+        $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-	      $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
-	      $form['field_ftritem_place']['#suffix'] = '</div>';
+        $form['field_ftritem_place']['#suffix'] = '</div>';
         $form['field_ftritem_lat_long']['#suffix'] = '</div>';
         $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         $form['taxonomy'][7]['#suffix'] = '</div>';
@@ -1059,10 +1059,10 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
 
   // Only show the Field Trip field if it's empty
   if (isset($form['field_ftritem_field_trip'][0]['nid']['nid']['#value']) && ($form['field_ftritem_field_trip'][0]['nid']['nid']['#value'] != '')) {
-  	$form['field_ftritem_field_trip']['#prefix'] = '<div class="devtrachidefield">';
+    $form['field_ftritem_field_trip']['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-  	$form['field_ftritem_field_trip']['#prefix'] = '<div class="devtracshowfield">';
+    $form['field_ftritem_field_trip']['#prefix'] = '<div class="devtracshowfield">';
   }
   $form['field_ftritem_field_trip']['#suffix'] = '</div>';
   
@@ -1082,10 +1082,10 @@ function devtrack_module_fieldtrip_hide_user_field(&$form) {
   } 
 	
   if (isset($form[field_fieldtrip_user][0]['#value']['uid'])) {
-  	$form[field_fieldtrip_user]['#prefix'] = '<div class="devtrachidefield">';
+    $form[field_fieldtrip_user]['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-  	$form[field_fieldtrip_user]['#prefix'] = '<div class="devtracshowfield">';
+    $form[field_fieldtrip_user]['#prefix'] = '<div class="devtracshowfield">';
   }
   $form[field_fieldtrip_user]['#suffix'] = '</div>';
   
@@ -1094,9 +1094,7 @@ function devtrack_module_fieldtrip_hide_user_field(&$form) {
 
   $form[field_fieldtrip_places]['#prefix'] = '<div class="devtrachidefield">';
   $form[field_fieldtrip_places]['#suffix'] = '</div>';
-  
-  
-  
+
   return $form;
 }
 
@@ -1113,18 +1111,18 @@ function devtrack_module_actionitem_hide_place_and_ftritem_fields(&$form) {
   } 
 	
   if (isset($form[field_actionitem_resp_place][0]['nid']['nid']['#value'])) {
-  	$form[field_actionitem_resp_place]['#prefix'] = '<div class="devtrachidefield">';
+    $form[field_actionitem_resp_place]['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-  	$form[field_actionitem_resp_place]['#prefix'] = '<div class="devtracshowfield">';
+    $form[field_actionitem_resp_place]['#prefix'] = '<div class="devtracshowfield">';
   }
   $form[field_actionitem_resp_place]['#suffix'] = '</div>';
   
   if (isset($form[field_actionitem_ftreportitem][0]['nid']['nid']['#value'])) {
-  	$form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtrachidefield">';
+    $form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-  	$form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtracshowfield">';
+    $form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtracshowfield">';
   }
   $form[field_actionitem_ftreportitem]['#suffix'] = '</div>';
   return $form;
@@ -1268,11 +1266,11 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
           return $block;
         break;
         case 2:
-        	if ((user_is_logged_in()) && (!($user->picture != "")) && (arg(1) === $user->uid)) {
+          if ((user_is_logged_in()) && (!($user->picture != "")) && (arg(1) === $user->uid)) {
             $block['subject'] = "";
             $block['content'] .= "Don't forget to Upload your " . l('Picture', '/user/'. $user->uid ."/edit", array('fragment' => 'edit-pass-pass2', 'external' => TRUE));
             return $block;
-        	} 
+          } 
           break;
         case 3:
           // Do the approval workflow.
@@ -1495,7 +1493,7 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
     return $message;
   } else {
     $message .= 'You have to have selected a fieldtrip before selecting pages.';
-   	return $message;
+    return $message;
   }
   $message .= "oh that is not good we did a getfeatureinfo request and had no outcome.";
   return $message;
@@ -1503,8 +1501,8 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
 
 function devtrack_module_pageaddplaceform_access($fieldtrip = NULL) {
 	
-	$result = ($fieldtrip->type == "fieldtrip");
-	$result = $result && node_access("update", $fieldtrip);
+  $result = ($fieldtrip->type == "fieldtrip");
+  $result = $result && node_access("update", $fieldtrip);
   return $result;	
 }
 
@@ -1515,10 +1513,10 @@ function devtrack_module_pageaddplaceform($fieldtrip = NULL) {
 
 function devtrack_module_addplaceform($form_state, $fieldtrip) {
 
-	$form['title'] = array(
-	  '#title' => "title",
-	  '#value' => "Select Place to visit for Field Trip: ". $fieldtrip->title,
-	);
+  $form['title'] = array(
+    '#title' => "title",
+    '#value' => "Select Place to visit for Field Trip: ". $fieldtrip->title,
+  );
 	
   $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
   foreach ($vocabularies as $vocabulary) {
@@ -1539,10 +1537,10 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
     '#default_value' => 0,
   );
 
-	$districts = array();
-	foreach ($fieldtrip->taxonomy as $district) {
-		$districts[$district->tid] = $district->name;
-	}
+  $districts = array();
+  foreach ($fieldtrip->taxonomy as $district) {
+    $districts[$district->tid] = $district->name;
+  }
   $form['district'] = array(
     '#title' => t('District'),
     '#type' => 'select',
@@ -1605,45 +1603,47 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
     $reporttypes[] = $term->tid;
   }
   switch ($form_state['values']['reporttype']) {
-  	case 0: // Site Visit
+    case 0: // Site Visit
       switch ($form_state['values']['placetype']) {
-  	    case 0:
+        case 0:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TTFFT');
-      		break;
-    	  case 1:
+      	  break;
+        case 1:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFTFT');
-    	  	break;
+          break;
       	case 2:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFFTT');
-  	  	  break;
+          break;
         case 3:
         case 4:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFFFT');
           break;
       }
-  		break;
-  	case 1:
-  		drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
-  		break;
-  	case 2:
+      break;
+    case 1:
+      drupal_goto('node/add/ftritem', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+//      drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+      break;
+    case 2:
       switch ($form_state['values']['placetype']) {
-  	    case 0:
+        case 0:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TTFFT');
-      		break;
-  	    case 1:
+      	  break;
+        case 1:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFTFT');
-    	  	break;
-  	    case 2:
+          break;
+        case 2:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFTT');
-  	  	  break;
+          break;
         case 3:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFFT');
           break;
-  	  	case 4:
-          drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+        case 4:
+          drupal_goto('node/add/ftritem/', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+//          drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
           break;
       }
-  		break;
+    break;
   }
   
 }
@@ -1820,7 +1820,7 @@ drupal_set_message("its a bbsync and we will do " . $op);
  * Implementation of hook_taxonomy_menu_path().
  */
 function devtrack_module_taxonomy_menu_path() {
-	$output = array(
+  $output = array(
     'devtrack_module_path_custom_path' => t('Devtrac Path'),
   );
 
@@ -1828,12 +1828,12 @@ function devtrack_module_taxonomy_menu_path() {
 }
 
 function devtrack_module_path_custom_path($vid, $tid) {
-	return 'tripreports/map?placetype=' . $tid;
+  return 'tripreports/map?placetype=' . $tid;
 }
 
 function devtrack_module_getcontext($nid) {
-	$node = node_load($nid);
-	return $node->field_ftritem_place[0]['nid'];
+  $node = node_load($nid);
+  return $node->field_ftritem_place[0]['nid'];
 }
 
 function _devtrack_module_getbutton($text, $path, $options) {
@@ -1850,24 +1850,24 @@ function _devtrack_module_isinternetexplorer() {
         // $version = 6
 //    drupal_set_message($_SERVER['HTTP_USER_AGENT']);
     if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) { // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
-        return true;
+      return true;
     } else {
-        return false;
+      return false;
     }
 }
 
 function _devtrack_module_array_to_object($array = array()) {
-    if (!empty($array)) {
-        $data = false;
+  if (!empty($array)) {
+    $data = false;
 
-        foreach ($array as $akey => $aval) {
-            $data -> {$akey} = $aval;
-        }
-
-        return $data;
+    foreach ($array as $akey => $aval) {
+      $data -> {$akey} = $aval;
     }
 
-    return false;
+    return $data;
+  }
+
+  return false;
 }
 
 function devtrack_module_environment() {

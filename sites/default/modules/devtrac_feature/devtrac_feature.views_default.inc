@@ -9252,7 +9252,7 @@ watchdog(\'gallery views\', $theme_path);
   $handler = $view->new_display('page', 'Places Map Page', 'page_2');
   $handler->override_option('header', 'Please select a location to add from the map below.');
   $handler->override_option('footer', 'If the location does not exist, choose
-<ul><li><?php echo  _devtrack_module_getbutton(\'Create New Place\', \'node/add/place\', array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2))); ?></li>
+<ul><li><?php echo  _devtrack_module_getbutton(\'Create New Place\', \'node/add/place\', array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2) .\'/\'. arg(3))); ?></li>
 <!-- <li><?php // echo l(\'Back to Field Trip\', \'node/\' . arg(2)); ?></li> -->
 </ul>');
   $handler->override_option('footer_format', '3');
@@ -9275,7 +9275,7 @@ watchdog(\'gallery views\', $theme_path);
     'weight' => 0,
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('openlayers', 'Place Zoom District', 'openlayers_2');
+  $handler = $view->new_display('openlayers', 'Zoom District on edit', 'openlayers_2');
   $handler->override_option('arguments', array(
     'tid' => array(
       'default_action' => 'default',
@@ -9319,7 +9319,7 @@ watchdog(\'gallery views\', $theme_path);
       'default_argument_fixed' => '',
       'default_argument_user' => 0,
       'default_argument_php' => '$destination = drupal_get_destination();
-if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "place") && (trim($destination) != "")) {
+if ((arg(0) == "node") && (arg(1) == "add") && ((arg(2) == "place") || (arg(2) == "ftritem")) && (trim($destination) != "")) {
   $args = explode("%2F", $destination);
 }
 return $args[1];',
@@ -9353,7 +9353,7 @@ return $args[1];',
       'me_validate_user_restrict_roles' => 0,
     ),
   ));
-  $handler->override_option('title', 'Add Place Zoom District');
+  $handler->override_option('title', 'Zoom District on edit');
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
 

@@ -45,7 +45,7 @@ function devtrack_theme_preprocess_views_view(&$vars) {
 
 function devtrack_theme_preprocess_views_view__Questions(&$vars) {
   if($vars['display_id'] == 'block_1') {
-    $vars['more'] = '<div class="more-link">'. l(t('more'), 'node/'. arg(1) .'/questions/questionaire', array()) .'</div';
+    $vars['more'] = '<div class="more-link">'. l(t('more'), 'node/'. arg(1) .'/questions/questionaire', array()) .'</div>';
   }
 }
 

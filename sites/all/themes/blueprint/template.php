@@ -153,9 +153,9 @@ function blueprint_preprocess_comment(&$vars) {
     $vars['author_comment'] = TRUE;
   }
   // only show links for users that can administer links
-  if (!user_access('administer comments')) {
-    $vars['links'] = '';
-  }
+//  if (!user_access('administer comments')) {
+//    $vars['links'] = '';
+//  }
   // If comment subjects are disabled, don't display them.
   if (variable_get('comment_subject_field_' . $vars['node']->type, 1) == 0) {
     $vars['title'] = '';

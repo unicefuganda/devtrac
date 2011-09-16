@@ -2340,6 +2340,13 @@ function devtrack_module_get_report_counts() {
   return $output;
 }
 
+function devtrack_module_link_alter(&$links, $node, $comment = NULL) {
+  // Remove all comment links except the hidden_comment ones
+  if ($comment != NULL) {
+    $links = array_intersect_key($links, array('hidden_comment_show' => TRUE, 'hidden_comment_hide' => TRUE));
+  }
+}
+
 /*
 function devtrack_module_popups () {
   return array(

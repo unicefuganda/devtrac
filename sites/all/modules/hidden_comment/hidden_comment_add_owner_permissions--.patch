@@ -1,0 +1,73 @@
+diff --git a/hidden_comment.module b/hidden_comment.module
+index d159859..cb41adb 100644
+--- a/hidden_comment.module
++++ b/hidden_comment.module
+@@ -9,7 +9,7 @@
+  * Implementation of hook_perm().
+  */
+ function hidden_comment_perm() {
+-  return array('hide comments', 'hide personal comments', 'administer hidden comments', 'administer personal comments');
++  return array('hide comments', 'hide personal comments', 'hide own comments', 'administer hidden comments', 'administer personal comments', 'administer own comments');
+ }
+ 
+ /**
+@@ -137,14 +137,51 @@ function hidden_comment_access($op, $cid, $account = NULL) {
+     $account =& $GLOBALS['user'];
+   }
+ 
+-  if (user_access(($op == 'hide' ? 'hide' : 'hide personal') .' comments')) {
+-    return TRUE;
+-  }
+-  if (user_access(($op == 'unhide' ? 'administer hidden' : 'administer personal') .' comments')) {
+-    if ($nid = db_result(db_query('SELECT nid FROM {comments} WHERE cid=%d', $cid))) {
+-      $node = node_load($nid);
+-      return $node->uid == $account->uid;
+-    }
++//  if (user_access(($op == 'hide' ? 'hide' : 'hide personal') .' comments')) {
++//    return TRUE;
++//  }
++//  if (user_access(($op == 'unhide' ? 'administer hidden' : 'administer personal') .' comments')) {
++//    if ($nid = db_result(db_query('SELECT nid FROM {comments} WHERE cid=%d', $cid))) {
++//      $node = node_load($nid);
++//      return $node->uid == $account->uid;
++//    }
++//  }
++  
++  switch ($op) {
++    case 'hide':
++      if (user_access('hide comments', $account)) {
++        return TRUE;
++      }
++      $comment = db_fetch_object(db_query('SELECT * FROM {comments} WHERE cid=%d', $cid));
++      if (user_access('hide own comments', $account)) {
++        if ($comment->uid == $account->uid) {
++          return TRUE;
++        }
++      }
++      if (user_access('hide personal comments', $account)) {
++        $node = node_load($comment->nid);
++        if ($node->uid == $account->uid) {
++          return TRUE;
++        }
++      }
++      break;
++    case 'unhide':
++      if (user_access('administer hidden comments', $account)) {
++        return TRUE;
++      }
++      $comment = db_fetch_object(db_query('SELECT * FROM {comments} WHERE cid=%d', $cid));
++      if (user_access('administer own comments', $account)) {
++        if ($comment->uid == $account->uid) {
++          return TRUE;
++        }
++      }
++      if (user_access('administer personal comments', $account)) {
++        $node = node_load($comment->nid);
++        if ($node->uid == $account->uid) {
++          return TRUE;
++        }
++      }
++      break;
+   }
+ 
+   return FALSE;

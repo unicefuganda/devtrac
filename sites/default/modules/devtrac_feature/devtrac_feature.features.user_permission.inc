@@ -6,6 +6,16 @@
 function devtrac_feature_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: administer own comments
+  $permissions['administer own comments'] = array(
+    'name' => 'administer own comments',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: edit field_actionitem_due_date
   $permissions['edit field_actionitem_due_date'] = array(
     'name' => 'edit field_actionitem_due_date',
@@ -474,6 +484,16 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'grant own content access',
     'roles' => array(
       '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: hide own comments
+  $permissions['hide own comments'] = array(
+    'name' => 'hide own comments',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
     ),
   );
 

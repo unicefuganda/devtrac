@@ -1501,9 +1501,9 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
 }
 
 function devtrack_module_pageaddplaceform_access($fieldtrip = NULL) {
-	
   $result = ($fieldtrip->type == "fieldtrip");
   $result = $result && node_access("update", $fieldtrip);
+  $result = $result && ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') && ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Published');
   return $result;	
 }
 
@@ -1718,6 +1718,10 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'load':
         $node->oldstatus = $node->field_fieldtrip_status[0]['value'];
         break;
+      case 'insert':
+        $localuser = user_load($node->field_fieldtrip_user[0]['uid']);
+        devtrack_module_fieldtrip_grant_update($node, $localuser);
+        break;
       case 'presave':
         if (!isset($node->oldstatus)) {
           break;
@@ -1735,7 +1739,7 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
             case 'In Progress':
               devtrack_module_fieldtrip_revoke_update($node, $manager);
               devtrack_module_fieldtrip_grant_update($node, $localuser);
-              devtrack_module_fieldtrip_grant_update($node, $owner);
+//              devtrack_module_fieldtrip_grant_update($node, $owner);
               drupal_set_message("Field Trip is editable.");
               break;
             case 'Submitted':
@@ -1746,7 +1750,7 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 //              devtrack_module_fieldtrip_publish($node, TRUE);
               devtrack_module_fieldtrip_revoke_update($node, $manager);
               devtrack_module_fieldtrip_revoke_update($node, $localuser);
-              devtrack_module_fieldtrip_revoke_update($node, $owner);
+//              devtrack_module_fieldtrip_revoke_update($node, $owner);
               break;
           }
         }
@@ -1995,7 +1999,10 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
       break;
     case 'approve':
       if ($status == 'In Progress') {
+        global $user;
         $node->field_fieldtrip_status[0]['value'] = 'Approved';
+        $node->field_fieldtrip_approved_by[0]['uid'] = $user->uid;
+        $node->field_fieldtrip_approval_date[0]['value'] = date('Y-m-j');
         node_save($node);
       }
       else {
@@ -2040,10 +2047,12 @@ function devtrack_module_fieldtrip_grant_update($node, $user) {
       $acl_id = content_access_get_acl_id($ftritem, $op);
       acl_add_user($acl_id, $user->uid);
       acl_node_add_acl($ftritem->nid, $acl_id, $op == 'view', $op == 'update', $op == 'delete', content_access_get_settings('priority', $node->type));
+      node_access_acquire_grants($ftritem);
     }
     $acl_id = content_access_get_acl_id($node, $op);
     acl_add_user($acl_id, $user->uid);
     acl_node_add_acl($node->nid, $acl_id, $op == 'view', $op == 'update', $op == 'delete', content_access_get_settings('priority', $node->type));
+    node_access_acquire_grants($node);
   }
 }
 
@@ -2058,9 +2067,13 @@ function devtrack_module_fieldtrip_revoke_update($node, $user) {
       $ftritem = node_load($ftritemnid->nid);
       $acl_id = content_access_get_acl_id($ftritem, $op);
       acl_remove_user($acl_id, $user->uid);
+      acl_node_remove_acl($ftritem, $acl_id);
+      node_access_acquire_grants($ftritem);
     }
     $acl_id = content_access_get_acl_id($node, $op);
     acl_remove_user($acl_id, $user->uid);
+    acl_node_remove_acl($node, $acl_id);
+    node_access_acquire_grants($node);
   }
 }
 
@@ -2080,6 +2093,7 @@ function devtrack_module_fieldtrip_publish(&$node) {
 
 function devtrack_module_node_grants($account, $op) {
   $grants['devtrac_rid'] = array_keys($account->roles);
+  $grants['devtrac_author'] = array($account->uid);
   return $grants;
 }
 
@@ -2096,35 +2110,35 @@ function devtrack_module_node_access_records($node) {
     else {
       $fieldtrip = $node;
     }
-      if ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') {
-        //just deny access
-        $grants[] = array(
-          'realm' => 'devtrac_rid',
-          'gid' => 1,
-          'grant_view' => 0,
-          'grant_update' => 0,
-          'grant_delete' => 0,
-          'priority' => 26,
-        );
-        $grants[] = array(
-          'realm' => 'devtrac_rid',
-          'gid' => 5,
-          'grant_view' => 1,
-          'grant_update' => 0,
-          'grant_delete' => 0,
-          'priority' => 26,
-        );
-      }
-      else {
-/*        $grants[] = array(
-          'realm' => 'all',
-          'gid' => 0,
-          'grant_view' => 1,
-          'grant_update' => 0,
-          'grant_delete' => 0,
-          'priority' => 0,
-        );
-*/      }
+    if ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') {
+      //just deny access
+      $grants[] = array(
+        'realm' => 'devtrac_rid',
+        'gid' => 1,
+        'grant_view' => 0,
+        'grant_update' => 0,
+        'grant_delete' => 0,
+        'priority' => 26,
+      );
+      $grants[] = array(
+        'realm' => 'devtrac_rid',
+        'gid' => 5,
+        'grant_view' => 1,
+        'grant_update' => 0,
+        'grant_delete' => 0,
+        'priority' => 26,
+      );
+      $grants[] = array(
+        'realm' => 'devtrac_author',
+        'gid' => $fieldtrip->field_fieldtrip_user[0]['uid'],
+        'grant_view' => 0,
+        'grant_update' => 1,
+        'grant_delete' => 0,
+        'priority' => 26,
+      );
+    }
+    else {
+    }
   }
   return $grants;
 }

@@ -355,36 +355,36 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_access_settings';
   $strongarm->value = array(
     'view' => array(
-      'ftritem' => array(
+      'fieldtrip' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
-      'fieldtrip' => array(
+      'ftritem' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
     ),
     'view_own' => array(
-      'ftritem' => array(
+      'fieldtrip' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
-      'fieldtrip' => array(
+      'ftritem' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
     ),
     'per_node' => array(
-      'ftritem' => 0,
       'fieldtrip' => 1,
+      'ftritem' => 0,
     ),
     'priority' => array(
-      'ftritem' => '0',
       'fieldtrip' => '0',
+      'ftritem' => '0',
     ),
   );
   $export['content_access_settings'] = $strongarm;

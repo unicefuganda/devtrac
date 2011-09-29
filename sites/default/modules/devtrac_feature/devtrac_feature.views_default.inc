@@ -9492,7 +9492,7 @@ return $args[1];',
     'phpcode' => array(
       'label' => '',
       'alter' => array(
-        'alter_text' => 1,
+        'alter_text' => 0,
         'text' => '',
         'make_link' => 0,
         'path' => '',
@@ -9521,7 +9521,7 @@ $arr = array (
   )
 );
 
-return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\' . arg(2), $arr);
+return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\'. $data->nid .\'/\'. arg(2) .\'/\'. arg(3), $arr);
 
 ?>',
       'exclude' => 0,
@@ -9529,6 +9529,9 @@ return  l(\'Add to Trip\', \'devtrac/addplacetofieldtrip/\' . $data->nid . \'/\'
       'table' => 'customfield',
       'field' => 'phpcode',
       'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
     ),
     'tid' => array(
       'label' => 'Place Type',
@@ -19167,6 +19170,47 @@ return TRUE;',
       ),
       'relationship' => 'none',
     ),
+    'field_fieldtrip_status_value' => array(
+      'label' => 'Status',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_fieldtrip_status_value',
+      'table' => 'node_data_field_fieldtrip_status',
+      'field' => 'field_fieldtrip_status_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('sorts', array());
   $handler->override_option('arguments', array(
@@ -19235,6 +19279,15 @@ return TRUE;',
   ));
   $handler->override_option('filters', array());
   $handler->override_option('title', '');
+  $handler->override_option('footer', '<?php
+  global $user;
+  $node = node_load(arg(1));
+  if (($user->uid != 0) && ($node->field_fieldtrip_status[0][\'value\'] == \'Approved\') || ($node->field_fieldtrip_status[0][\'value\'] == \'Published\')) {
+    echo \'This Field trip has been published and made available to the general public. It can not be changed anymore.\';
+  }
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
   $handler->override_option('use_more', 0);
   $handler->override_option('use_more_always', 1);
   $handler->override_option('use_more_text', 'Full Report');

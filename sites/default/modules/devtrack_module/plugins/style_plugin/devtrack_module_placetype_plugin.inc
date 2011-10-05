@@ -1,9 +1,8 @@
 <?php
-// $Id$
 
 /**
  * @file
- * Test 
+ * Test
  */
 
 // Define plugin for CTools
@@ -19,9 +18,7 @@ $plugin = array(
 /**
  * Style Plugin for testing purposes.
  */
-class devtrack_module_placetype_plugin extends 
-
-  openlayers_style_plugin {
+class devtrack_module_placetype_plugin extends openlayers_style_plugin {
   /**
    * Provide initial values for options.
    */
@@ -35,13 +32,13 @@ class devtrack_module_placetype_plugin extends
       'point_radius_max' => 12,
     );
   }
-  
+
   /**
    * Options form.
    */
   function options_form($defaults = array()) {
     $form = array();
-    
+
     $form['point_radius_min'] = array(
       '#type' => 'textfield',
       '#title' => t('Min radius'),
@@ -63,7 +60,7 @@ class devtrack_module_placetype_plugin extends
       '#default_value' => isset($defaults['feature_weight']) ?
         $defaults['feature_weight'] : 2,
     );
-    
+
     return $form;
   }
 
@@ -76,7 +73,7 @@ class devtrack_module_placetype_plugin extends
     foreach ($this->options['context_properties'] as $prop => $callback) {
       $style->data[$prop] = '${' . 'devtrack_module_placetype_plugin_' . $callback . '}';
     }
-    
+
     // Add JS
     drupal_add_js(drupal_get_path('module', 'devtrack_module') .
       '/plugins/style_plugin/devtrack_module_placetype_plugin.js');

@@ -6,7 +6,7 @@
 //function devtrack_module_ctools_plugin_api($module, $api) {
 //}
 
-/* 
+/*
   if (_devtrack_module_isinternetexplorer()) {
     $output .= l('<div class="form-submit">Click to submit</div>', "user/". $applicant->uid ."/submit/confirm", Array('html'=> TRUE));
   }
@@ -17,8 +17,8 @@
  */
 
 function devtrack_module_node_info() {
-  return array (
-    'bbsync' => array (
+  return array(
+    'bbsync' => array(
       'name' => t('Blackberry Synchronization'),
       'module' => 'devtrack_module',
       'description' => t('Node type to store Big all-in-one json collections from the Blackberry'),
@@ -45,37 +45,37 @@ function devtrack_module_access($op, $node, $account) {
 function devtrack_module_form(&$node, $form_state) {
   $type = node_get_types('type', $node);
   $form['title'] = array(
-    '#type' => 'textfield', 
-    '#title' => check_plain($type->title_label), 
+    '#type' => 'textfield',
+    '#title' => check_plain($type->title_label),
     '#required' => TRUE,
     '#default_value' => $node->title,
   );
   $form['body'] = array(
-    '#type' => 'textarea', 
-    '#title' => check_plain($type->body_label), 
-    '#rows' => 20, 
+    '#type' => 'textarea',
+    '#title' => check_plain($type->body_label),
+    '#rows' => 20,
     '#required' => TRUE,
     '#default_value' => $node->body,
   );
   if ($node->error) {
     $form['error'] = array(
-      '#value' => "There was an error during the sync.", 
+      '#value' => t("There was an error during the sync."),
     );
   }
   if ($node->synced) {
     $form['synced'] = array(
-      '#value' => t("This node has been synced"), 
+      '#value' => t("This node has been synced"),
     );
     $form['result'] = array(
-      '#title' => t("Result"), 
-      '#value' => $node->result, 
+      '#title' => t("Result"),
+      '#value' => t('@result', array('@result' => $node->result)),
     );
   }
   if (is_numeric($node->ftnid)) {
     $tripnode = node_load($node->ftnid);
     $form['ftnid'] = array(
-      '#title' => t("Field Trip"), 
-      '#value' => l($tripnode->title, 'node/'.$node->ftnid), 
+      '#title' => t("Field Trip"),
+      '#value' => l($tripnode->title, 'node/'. $node->ftnid),
     );
   };
   return $form;
@@ -88,7 +88,7 @@ function devtrack_module_insert($node) {
 function devtrack_module_update($node) {
   if ($node->revision) {
     devtrac_module_insert($node);
-  } 
+  }
   else {
     db_query("UPDATE {devtrac_bbsync} SET result = '%s', synced = %d, error = %d  WHERE vid = %d", $node->result, $node->synced, $node->error, $node->vid);
   }
@@ -102,18 +102,17 @@ function devtrack_module_load($node) {
   return db_fetch_object(db_query('SELECT synced, error, result , ftnid from {devtrac_bbsync} WHERE vid = %d', $node->vid));
 }
 
-
 function devtrack_module_view($node, $teaser = FALSE, $page = FALSE) {
   if (!$teaser) {
     $node = node_prepare($node, $teaser);
     if (is_numeric($node->ftnid)) {
       $tripnode = node_load($node->ftnid);
       $form['ftnid'] = array(
-        '#title' => t("Field Trip"), 
-        '#value' => l($tripnode->title, 'node/'.$node->ftnid), 
+        '#title' => t("Field Trip"),
+        '#value' => l($tripnode->title, 'node/'. $node->ftnid),
       );
     };
-    
+
     $button = "";
     if (!$node->synced) {
 /*      if (_devtrack_module_isinternetexplorer()) {
@@ -145,14 +144,14 @@ function devtrack_module_view($node, $teaser = FALSE, $page = FALSE) {
       '#weight' => 8,
     );
     return $node;
-  } 
+  }
 }
 
 function devtrack_module_bbsync($node) {
   $placenid = 0;
   $ftritemnid = 0;
   $jsoncollection = $node->body;
-  $jsons = json_decode($jsoncollection, true);
+  $jsons = json_decode($jsoncollection, TRUE);
   foreach ($jsons as $jsonitem) {
     $jsonarray = (array)$jsonitem;
     $methodname = trim($jsonarray['method'], '"');
@@ -165,19 +164,19 @@ function devtrack_module_bbsync($node) {
       elseif ($jsonarray['node']['type'] == 'ftritem') {
         $ftritemnid = $result_small;
       }
-           
+
       if (is_numeric($result_small)) {
         $node = node_load($result_small);
         if ($jsonarray['node']['changed']) {
-          $result .= "Updated ". l($node->title, 'node/'. $node->nid);  
+          $result .= "Updated ". l($node->title, 'node/'. $node->nid);
         }
         else {
-          $result .= "Created ". l($node->title, 'node/'. $node->nid);  
+          $result .= "Created ". l($node->title, 'node/'. $node->nid);
         }
       }
       else {
-        $result .= "Error ". $result_small;  
-        drupal_set_message('Error: "' . $result_small, 'error');
+        $result .= "Error ". $result_small;
+        drupal_set_message(t('Error: @result_small' . array('@result_small' => $result_small)), 'error');
         break;
       }
     }
@@ -191,49 +190,49 @@ function devtrack_module_bbsync($node) {
         $result .= "Error submitting questions:  " . $result_small . " for Site Visit " . l($qnode->title, 'node/'. $qnode->nid) . " And Location " . l($cnode->title, 'node/'. $cnode->nid);
       }
     }
-    
+
     $result .= "<br/><br/>";
   }
-  
+
   $node->result = $result;
   $node->synced = 1;
   node_save($node);
-  
+
   return $result;
 }
 
 function devtrack_module_executejson($jsonarray, $placenid, $ftritemnid) {
-    $methodname = trim($jsonarray['method'], '"');
+  $methodname = trim($jsonarray['method'], '"');
   if ($methodname == "node.save") {
-    // This is temporary code that allows us to resave the data over and over again 
+    // This is temporary code that allows us to resave the data over and over again
     if ($jsonarray['node']['changed']) {
-      $jsonarray['node']['changed'] = (string) time() ; 
+      $jsonarray['node']['changed'] = (string) time();
     }
     else {
-      $jsonarray['node']['created'] = (string) time() ;
+      $jsonarray['node']['created'] = (string) time();
     }
-    
-     if (($jsonarray['node']['type'] == 'ftritem') && (is_numeric($placenid))) {
-       if (strpos($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'], 'PLACEID')) {
-         $jsonarray['node']['field_ftritem_place'][0]['nid']['nid'] = "[nid:" . $placenid . "]"; 
-       }
-     }
-        
-     if (($jsonarray['node']['type'] == 'actionitem') && is_numeric($ftritemnid)){
-       if (strpos($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'], 'REPORTITEMID')) {
-         $jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'] = "[nid:" . $ftritemnid . "]"; 
-       }
-     }
-     
-     if (($jsonarray['node']['type'] == 'actionitem') && is_numeric($ftritemnid)){
-       if (strpos($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'], 'PLACEID')) {
-         $jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'] = "[nid:" . $placenid . "]"; 
-       }
-     }
-     
+
+    if (($jsonarray['node']['type'] == 'ftritem') && (is_numeric($placenid))) {
+      if (strpos($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'], 'PLACEID')) {
+        $jsonarray['node']['field_ftritem_place'][0]['nid']['nid'] = "[nid:" . $placenid . "]";
+      }
+    }
+
+    if (($jsonarray['node']['type'] == 'actionitem') && is_numeric($ftritemnid)) {
+      if (strpos($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'], 'REPORTITEMID')) {
+        $jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'] = "[nid:" . $ftritemnid . "]";
+      }
+    }
+
+    if (($jsonarray['node']['type'] == 'actionitem') && is_numeric($ftritemnid)) {
+      if (strpos($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'], 'PLACEID')) {
+        $jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'] = "[nid:" . $placenid . "]";
+      }
+    }
+
     /* old code
-     * This was using services api but it failed horribly on the nodererrer fields 
-     * //    print_r(kpr( $jsonarray['node'], true));
+     * This was using services api but it failed horribly on the nodererrer fields
+     * //    print_r(kpr( $jsonarray['node'], TRUE));
      *
      * this is where stuff gets seriously ugly
      * here we do things because we know not because we like them
@@ -242,12 +241,12 @@ function devtrack_module_executejson($jsonarray, $placenid, $ftritemnid) {
      * Load the required includes for drupal_execute
      */
 //     module_load_include('inc', 'node_service', 'node_service');
-     module_load_include('inc', 'node', 'node.pages');
-  
-     /*
-      *  Change working directory to drupal root to call drupal function,
-      *  then change it back to server module root to handle return.
-      */ 
+    module_load_include('inc', 'node', 'node.pages');
+
+    /*
+     *  Change working directory to drupal root to call drupal function,
+     *  then change it back to server module root to handle return.
+     */
 //      $server_root = getcwd();
 //      $server_info = services_get_server_info();
 
@@ -258,102 +257,99 @@ function devtrack_module_executejson($jsonarray, $placenid, $ftritemnid) {
 //        if ($server_info) {
 //          chdir($server_root);
 //        }
-    
 
-     /*
-      * This code is all to prepare our node to be saved using node.save
-      * This works, but A. Requires a lot of code B. is not flexible at all
-      */
-     
-     /*
-      * Find the images and attach them to the node properly
-      */
-     if (is_array($jsonarray['node']['field_ftritem_images'])) {
-       $c = 0;
-       foreach ($jsonarray['node']['field_ftritem_images'] as $file) {
-         $fid = $file['fid'];
-         $lresult = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid = %d", $fid));
-         $file['fid'] = $fid;
-          $file['title'] = basename($lresult->filename);
-          $file['filename'] = $lresult->filename;
-          $file['filepath'] = $lresult->filepath;
-          $file['filesize'] = $lresult->filesize;
-          $file['mimetype'] = $lresult->filemime;
-          $file['status'] = 1;
-          if (isset($jsonarray['node']['field_ftritem_images'][$c]['data']['description'])) {
-            $file['data'] = array(
-              'description' => $jsonarray['node']['field_ftritem_images'][$c]['data']['description'],
-            );
-          }
-          $file['list'] = 1;
-         $jsonarray['node']['field_ftritem_images'][$c] = $file;
-          $c++;
-       }
-     }
-     
-     
-     
-     /*
-      * Rewrite the stuff we used for the nodereferrer module to node_save format
-      * Yes, for each field that we use
-      */
-     if (substr($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'],0 , 5) == '[nid:') {
-       $jsonarray['node']['field_actionitem_ftreportitem'][0]['nid'] = substr($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'],5 , strlen($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid']) -2);      
-     }
-     if (substr($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'],0 , 5) == '[nid:') {
-       $jsonarray['node']['field_ftritem_place'][0]['nid'] = substr($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'],5 , strlen($jsonarray['node']['field_ftritem_place'][0]['nid']['nid']) -2);      
-     }
-     if (substr($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid'],0 , 5) == '[nid:') {
-       $jsonarray['node']['field_ftritem_field_trip'][0]['nid'] = substr($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid'],5 , strlen($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid']) -2);      
-     }
-     if (substr($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'],0 , 5) == '[nid:') {
-       $jsonarray['node']['field_actionitem_resp_place'][0]['nid'] = substr($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'],5 , strlen($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid']) -2);      
-     }
-     if (isset($jsonarray['node']['field_actionitem_due_date'])) {
-       $jsonarray['node']['field_actionitem_due_date'][0]['value'] =  date("c", strtotime($jsonarray['node']['field_actionitem_due_date'][0]['value']['date']));      
-     }
-     if (isset($jsonarray['node']['field_actionitem_responsible'])) {
-       $uid = substr($jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid'],5 , strlen($jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid']) -2);
-       $uid = $jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid'];
-       watchdog("devtrac", "uid #1 = " . $uid);
-       
-       if (is_numeric($uid)) {
-         $jsonarray['node']['field_actionitem_responsible'][0]['uid'] = $uid;
-       }
-       else {
-         $uid = db_result(db_query("SELECT uid FROM {users} WHERE name = '%s'", $uid));
-       watchdog("devtrac", "uid #2 = " . $uid);
-                  
-         
-         if ($uid > 0) {
-         $jsonarray['node']['field_actionitem_responsible'][0]['uid'] = $uid;
-         }
-       }      
-     }
-     
-     /*
-      * New nodes have no nid and need to be cast to an array
-      * 
-      * Old object need to be loaded and then overridden
-      */
-     
-     if ($jsonarray['node']['nid'] == 0) {
-       unset ($jsonarray['node']['nid']);
-       $nodeobject = _devtrack_module_array_to_object($jsonarray['node']);
-     } else {
-       $nodeobject = node_load($jsonarray['node']['nid']);
-       foreach ($jsonarray['node'] as $key => $value) {
-         $nodeobject->$key = $value;
-       }
-     }
-     /*
-      * Press the button!
-      */
-     node_save($nodeobject);
-     $result = $nodeobject->nid;
+    /*
+     * This code is all to prepare our node to be saved using node.save
+     * This works, but A. Requires a lot of code B. is not flexible at all
+     */
+
+    /*
+     * Find the images and attach them to the node properly
+     */
+    if (is_array($jsonarray['node']['field_ftritem_images'])) {
+      $c = 0;
+      foreach ($jsonarray['node']['field_ftritem_images'] as $file) {
+        $fid = $file['fid'];
+        $lresult = db_fetch_object(db_query("SELECT * FROM {files} WHERE fid = %d", $fid));
+        $file['fid'] = $fid;
+        $file['title'] = basename($lresult->filename);
+        $file['filename'] = $lresult->filename;
+        $file['filepath'] = $lresult->filepath;
+        $file['filesize'] = $lresult->filesize;
+        $file['mimetype'] = $lresult->filemime;
+        $file['status'] = 1;
+        if (isset($jsonarray['node']['field_ftritem_images'][$c]['data']['description'])) {
+          $file['data'] = array(
+            'description' => $jsonarray['node']['field_ftritem_images'][$c]['data']['description'],
+          );
+        }
+        $file['list'] = 1;
+        $jsonarray['node']['field_ftritem_images'][$c] = $file;
+        $c++;
+      }
+    }
+
+    /*
+     * Rewrite the stuff we used for the nodereferrer module to node_save format
+     * Yes, for each field that we use
+     */
+    if (drupal_substr($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'], 0 , 5) == '[nid:') {
+      $jsonarray['node']['field_actionitem_ftreportitem'][0]['nid'] = drupal_substr($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid'], 5 , drupal_strlen($jsonarray['node']['field_actionitem_ftreportitem'][0]['nid']['nid']) -2);
+    }
+    if (drupal_substr($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'], 0 , 5) == '[nid:') {
+      $jsonarray['node']['field_ftritem_place'][0]['nid'] = drupal_substr($jsonarray['node']['field_ftritem_place'][0]['nid']['nid'], 5 , drupal_strlen($jsonarray['node']['field_ftritem_place'][0]['nid']['nid']) -2);
+    }
+    if (drupal_substr($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid'], 0 , 5) == '[nid:') {
+      $jsonarray['node']['field_ftritem_field_trip'][0]['nid'] = drupal_substr($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid'], 5 , drupal_strlen($jsonarray['node']['field_ftritem_field_trip'][0]['nid']['nid']) -2);
+    }
+    if (drupal_substr($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'], 0 , 5) == '[nid:') {
+      $jsonarray['node']['field_actionitem_resp_place'][0]['nid'] = drupal_substr($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid'], 5 , drupal_strlen($jsonarray['node']['field_actionitem_resp_place'][0]['nid']['nid']) -2);
+    }
+    if (isset($jsonarray['node']['field_actionitem_due_date'])) {
+      $jsonarray['node']['field_actionitem_due_date'][0]['value'] =  date("c", strtotime($jsonarray['node']['field_actionitem_due_date'][0]['value']['date']));
+    }
+    if (isset($jsonarray['node']['field_actionitem_responsible'])) {
+      $uid = drupal_substr($jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid'], 5 , drupal_strlen($jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid']) -2);
+      $uid = $jsonarray['node']['field_actionitem_responsible'][0]['uid']['uid'];
+      watchdog("devtrac", "uid #1 = " . $uid);
+
+      if (is_numeric($uid)) {
+        $jsonarray['node']['field_actionitem_responsible'][0]['uid'] = $uid;
+      }
+      else {
+        $uid = db_result(db_query("SELECT uid FROM {users} WHERE name = '%s'", $uid));
+        watchdog("devtrac", "uid #2 = " . $uid);
+
+        if ($uid > 0) {
+          $jsonarray['node']['field_actionitem_responsible'][0]['uid'] = $uid;
+        }
+      }
+    }
+
+    /*
+     * New nodes have no nid and need to be cast to an array
+     *
+     * Old object need to be loaded and then overridden
+     */
+
+    if ($jsonarray['node']['nid'] == 0) {
+      unset($jsonarray['node']['nid']);
+      $nodeobject = _devtrack_module_array_to_object($jsonarray['node']);
+    }
+    else {
+      $nodeobject = node_load($jsonarray['node']['nid']);
+      foreach ($jsonarray['node'] as $key => $value) {
+        $nodeobject->$key = $value;
+      }
+    }
+    /*
+     * Press the button!
+     */
+    node_save($nodeobject);
+    $result = $nodeobject->nid;
   }
   elseif ($methodname == "questionnaire.submit") {
-    /* 
+    /*
      * This function is called directly in the module
      */
     if ($jsonarray['qnid'] == "%REPORTITEMID%") {
@@ -365,11 +361,11 @@ function devtrack_module_executejson($jsonarray, $placenid, $ftritemnid) {
     /*
      * Result is the submission id. The submission id does not have a page of its own yet.
      */
-    $result = questionaire_question_submitquestions($jsonarray['questions'],$jsonarray['qnid'],$jsonarray['contextnid'] );
+    $result = questionaire_question_submitquestions($jsonarray['questions'], $jsonarray['qnid'], $jsonarray['contextnid']);
   }
-  
+
   // reset the errors in the form we just posted. (though we now use node_save, still just to be sure
-  // we stored that value in the $result where is_numeric = good & is_string = not so good  
+  // we stored that value in the $result where is_numeric = good & is_string = not so good
   form_set_error(NULL, '', TRUE);
   node_load(0, NULL, TRUE);
   return $result;
@@ -382,34 +378,33 @@ function devtrack_module_executejson($jsonarray, $placenid, $ftritemnid) {
  * Then I tried to use the same trick as the services.browse functionality
  * provides. I learned that you also have to pass all the security variables.
  * But somehow i did not get these parameters working (especially the nodereferrer fields were a problem
- * On top of that the server runs Hardy, which has php 5.1 while our local machines (and Lucid) have 
+ * On top of that the server runs Hardy, which has php 5.1 while our local machines (and Lucid) have
  * php 5.3. The main difference between the 2 is the functionality of json_decode. It has changed.
- * So, this is just code for history, or a next time, when i am not suffering from Intestines issues 
+ * So, this is just code for history, or a next time, when i am not suffering from Intestines issues
  * (i was! yeast, amoebe, the lot)
  */
 
-
 function devtrack_module_firejson($jsonarray) {
-/*  
+/*
  * This bit of code tried to call the services module through the API
  * That ran into session issues.
  * So now we use the calls that the services_admin_browser also does
  * One big drawback: we completely bypass security!
- * 
+ *
   $ch = curl_init();
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
   curl_setopt($ch, CURLOPT_POST, 1);
   curl_setopt($ch, CURLOPT_URL, 'http://devtrac.rei/services/json');
-  
+
   $api_key = trim($jsonarray['api_key'], '"'); // Your API key.
   $domain = trim($jsonarray['domain_name'], '"');
   $method = trim($jsonarray['method'], '"');
-  
+
   $sessid = session_id();
   $timestamp = (string) time();
   $nonce = base_convert(rand(10e16, 10e20), 10, 36);
   $hash = hash_hmac('sha256', $timestamp .';'.$domain .';'. $nonce .';'. $method, $api_key);
-  
+
   $jsonarray['domain_time_stamp'] = $timestamp ;
   $jsonarray['nonce'] = $nonce ;
   $jsonarray['hash'] = $hash ;
@@ -417,17 +412,17 @@ function devtrack_module_firejson($jsonarray) {
 
   curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonarray);
   //make the request
-  $result = curl_exec($ch); 
+  $result = curl_exec($ch);
 
   drupal_set_message("methodname: ". $methodname);
   drupal_set_message("domain: ". $domain);
   drupal_set_message("nonce: ". $nonce);
   drupal_set_message("hash: ". $hash);
-  drupal_set_message("api_key: ". $api_key); 
+  drupal_set_message("api_key: ". $api_key);
   */
   /* Strip the things we dont need */
   $methodname = trim($jsonarray['method'], '"');
-  $method = services_method_get($methodname); 
+  $method = services_method_get($methodname);
   unset($jsonarray['method']);
   unset($jsonarray['domain_name']);
   unset($jsonarray['domain_time_stamp']);
@@ -436,11 +431,11 @@ function devtrack_module_firejson($jsonarray) {
   unset($jsonarray['sessid']);
   unset($jsonarray['hash']);
 
-  $result = kpr($jsonarray, true);
-  
-// Remove the keys from the array they have to be numbered  
+  $result = kpr($jsonarray, TRUE);
+
+// Remove the keys from the array they have to be numbered
   $args = array();
-  foreach($jsonarray as $arg) {
+  foreach ($jsonarray as $arg) {
 //    if (is_array($arg)) {
 //      $keys = array_keys($arg);
 //      $args[] = $arg[$keys[0]];
@@ -449,34 +444,34 @@ function devtrack_module_firejson($jsonarray) {
       if (is_object($arg)) {
         $args[] = (array)$arg;
 //        drupal_set_message("object" . json_encode($arg));
-     }
+      }
       else {
         $args[] = $arg;
       }
-      
-   // } 
+
+//    }
   }
-  
-//    $result = kpr($args, true);
-/*    $result .= kpr($method, true);
-    
-    $result .= "arg = " . $method['args'][0];; 
-    $result .= "value = " . $args[0]; 
-  */  
+
+//  $result = kpr($args, TRUE);
+/*  $result .= kpr($method, TRUE);
+
+  $result .= "arg = " . $method['args'][0];
+  $result .= "value = " . $args[0];
+  */
   // This bit is copied more or less from services_admin_browse_test_unserialize_args
   $return = array();
   $noskip = FALSE;
   for ($c = count($method['args']) - 1; $c >= 0; $c--) {
     $arg = $method['args'][$c];
     $value = $args[$c];
-    
+
     // Remove empty values from end of array
     // Once we find a value, we can no longer skip
     if (!is_numeric($value) && empty($value) && !$noskip) {
       continue;
     }
     $noskip = TRUE;
-    
+
     if (empty($value)) {
       $return[$c] = NULL;
     }
@@ -495,7 +490,7 @@ function devtrack_module_firejson($jsonarray) {
             $mvalue[$mkey] = (array)$mvalue[$mkey];
 //            print $mkey . " is array\n\n";
             if (is_object($mvalue[$mkey]['nid'])) {
-              $mvalue[$mkey]['nid'] = (array)$mvalue[$mkey]['nid'];   
+              $mvalue[$mkey]['nid'] = (array)$mvalue[$mkey]['nid'];
             }
           }
           $returnvalue[$key] = $mvalue;
@@ -508,10 +503,9 @@ function devtrack_module_firejson($jsonarray) {
     }
     break;
   }
-   // $result = kpr($return, true);
-  //$result .= kpr($return, TRUE);
-  
-  
+  // $result = kpr($return, TRUE);
+  // $result .= kpr($return, TRUE);
+
   if ($return) ksort($return);
   $args = $return;
 
@@ -520,7 +514,6 @@ function devtrack_module_firejson($jsonarray) {
   // the second option bypasses all that
   //  $result .= services_method_call($method, $args, FALSE);
 
-  
   /*
    * this is where stuff gets seriously ugly
    * here we do things because we know not because we like them
@@ -529,7 +522,7 @@ function devtrack_module_firejson($jsonarray) {
    */
   module_load_include('inc', 'node_service', 'node_service');
   module_load_include('inc', 'node', 'node.pages');
-  
+
   // Change working directory to drupal root to call drupal function,
   // then change it back to server module root to handle return.
   $server_root = getcwd();
@@ -537,31 +530,27 @@ function devtrack_module_firejson($jsonarray) {
   if ($server_info) {
     chdir($server_info->drupal_path);
   }
-    // Load the required includes for drupal_execute
+  // Load the required includes for drupal_execute
   if ($methodname == "node.save") {
-    
+
     // TODO replace %PLACEID%
-    
-    
-    
-    
+
     // TODO replace %REPORTITEMID%
-    
+
     $result .=  node_service_save($jsonarray['node']);
   }
   elseif ($methodname == "questionnaire.submit") {
-    drupal_set_message("going to do " . $methodname);
+    drupal_set_message(t("going to do @method", array('@method' => $methodname)));
     //$results .= questionaire_question_submitquestions($jsonarray['questions'],$jsonarray['qnid'],$jsonarray['contextnid'] );
-    $result .= kpr($jsonarray['questions'], true);
-    $results .= questionaire_question_submitquestions(array(340, 'Yes'),556, 460 );
-    drupal_set_message("result " . $results);
+    $result .= kpr($jsonarray['questions'], TRUE);
+    $results .= questionaire_question_submitquestions(array(340, 'Yes'), 556, 460 );
+    drupal_set_message(t("result @results", array('@results' => $results)));
   }
   if ($server_info) {
     chdir($server_root);
   }
   return $result;
 }
-
 
 function devtrack_module_init() {
   global $user;
@@ -577,14 +566,14 @@ function devtrack_module_init() {
   }
   // Suppress the admin menu on the mobile website.
   if (devtrack_module_ismobile()) {
-    admin_menu_suppress(); 
+    admin_menu_suppress();
   }
   // redirect the /user page to the user profile page
   $arg1 = arg(1);
   if ((arg(0) == 'user') && !isset($arg1) && $user->uid > 0) {
     drupal_goto('user/me');
   }
-  
+
 }
 
 function devtrack_module_ismobile() {
@@ -600,13 +589,13 @@ function devtrack_module_menu() {
     'page arguments' => array(2),
   //  'access callback' => TRUE,
     'access arguments' => array('sync all bbsync'), // TODO Temporary, implement callback to detiremen 'sync own bbsync'
-  );    
+  );
   $items['devtrac/addplacetofieldtrip/%'] = array(
     'title' => 'Add Place to Fieldtrip',
     'page callback' => 'devtrack_module_addplacefieldtotrip',
     'page arguments' => array(2),
     'access callback' => TRUE, //'node_access',
-//    'access arguments' => array('update', 3), // this is not working correctly. 
+//    'access arguments' => array('update', 3), // this is not working correctly.
     'type' => MENU_CALLBACK,
   );
   $items['devtrac/mycurrentfieldtrip'] = array(
@@ -683,25 +672,27 @@ function devtrack_module_menu() {
 
 
 function devtrack_module_gotocommentform_access($actionitem = NULL) {
-  
+
   $result = ($fieldtrip->type == "actionitem");
-  if (!$result) { return false;};
+  if (!$result) {
+    return FALSE;
+  }
   $result = $result && ($actionitem->comment == 2) &&  (user_access("post comments") || user_access("post comments without approval"));
-  return TRUE; 
+  return TRUE;
 }
 
 function devtrack_module_gotocommentform($actionitem = NULL) {
-  drupal_goto('node/'. $actionitem->nid, NULL ,'comment-form');
+  drupal_goto('node/'. $actionitem->nid, NULL , 'comment-form');
 }
 
 
 function devtrack_module_actionitemcommentform_access($actionitem = NULL) {
   $result = ($actionitem->type == "actionitem");
   if (!$result) {
-    return false;
+    return FALSE;
   }
   $result = $result && ($actionitem->comment == 2) &&  (user_access("post comments") || user_access("post comments without approval"));
-  return TRUE; 
+  return TRUE;
 }
 
 function devtrack_module_actionitemcommentform($actionitem = NULL) {
@@ -711,10 +702,10 @@ function devtrack_module_actionitemcommentform($actionitem = NULL) {
 function devtrack_module_reportitemaddpicture_access($reportitem = NULL) {
   $result = ($reportitem->type == "ftritem");
   if (!$result) {
-    return false;
+    return FALSE;
   }
   $result = $result && (user_access("edit own ftritem content"));
-  return TRUE; 
+  return TRUE;
 }
 
 function devtrack_module_reportitemaddpicture($reportitem = NULL) {
@@ -724,10 +715,10 @@ function devtrack_module_reportitemaddpicture($reportitem = NULL) {
 function devtrack_module_reportitemaddactionitem_access($reportitem = NULL) {
   $result = ($reportitem->type == "ftritem");
   if (!$result) {
-    return false;
+    return FALSE;
   }
   $result = $result && (user_access("create actionitem content"));
-  return TRUE; 
+  return TRUE;
 }
 
 function devtrack_module_reportitemaddactionitem($reportitem = NULL) {
@@ -761,12 +752,12 @@ function devtrack_module_homepage() {
       $query = array('destination' => 'homepage');
       drupal_goto('user', $query);
     }
-  	if (in_array('unicef user (Mobile)', $user->roles)) { // We're dealing with a mobile user.
+    if (in_array('unicef user (Mobile)', $user->roles)) { // We're dealing with a mobile user.
       if ($mytrip = devtrack_module_getcurrentfieldtrip()) { // This user has a field trip scheduled for today.
-      	drupal_goto('m_field_trip/'. $mytrip);
+        drupal_goto('m_field_trip/'. $mytrip);
       }
       else { // The user does not have a field trip scheduled for today.
-      	return 'You do not have a fieldtrip scheduled for today. You have to go to the main website to create a new or reschedule an existing fieldtrip.';
+        return 'You do not have a fieldtrip scheduled for today. You have to go to the main website to create a new or reschedule an existing fieldtrip.';
       }
     }
     else { // We're dealing with a non-mobile user.
@@ -786,7 +777,7 @@ function devtrack_module_gotofieldtrip() {
 
   $mytrip = devtrack_module_getcurrentfieldtrip();
   if (devtrack_module_ismobile()) { // We're on the mobile website.
-   	drupal_goto('m_field_trip/'. $mytrip);
+    drupal_goto('m_field_trip/'. $mytrip);
   }
   else {
     drupal_goto('node/'. $mytrip);
@@ -795,11 +786,11 @@ function devtrack_module_gotofieldtrip() {
 
 /*
  *   Adds a place to a fieldtrip, not ajax-proof, just a URL
- */ 
+ */
 
 function devtrack_module_addplacefieldtotrip($placenid, $fieldtripnid = NULL, $reporttype = NULL) {
   $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid, $reporttype);
-	$object = new stdClass();
+  $object = new stdClass();
   $object->content = $message;// $html.drupal_render($node->content[$field_name]);
   drupal_json($object);
   exit();
@@ -807,35 +798,37 @@ function devtrack_module_addplacefieldtotrip($placenid, $fieldtripnid = NULL, $r
 
 function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = NULL, $reporttype = NULL) {
   global $user;
-  $message = "";  
+  $message = "";
   $place = node_load($placenid);
   if ($place->type != 'place') {
    // lets supress this message, you should not be here in the first place
    // the BBsync code unfortunately still triggers this
    // $message .= "Sorry, that is not a Place that you are attaching to the Field Trip.";
-  } else {
+  }
+  else {
     if (isset($fieldtripnid) && is_numeric($fieldtripnid)) {
       $fieldtrip = node_load($fieldtripnid);
       if ($fieldtrip->type != 'fieldtrip') {
         // lets supress this message, you should not be here in the first place
         // the BBsync code unfortunately still triggers this
         // $message .= "Sorry, that is not a Field Trip that you are attaching this place to.";
-      } else {
-        foreach($fieldtrip->field_fieldtrip_places as $tpplace) {
+      }
+      else {
+        foreach ($fieldtrip->field_fieldtrip_places as $tpplace) {
           if ($tpplace['nid'] == $placenid) {
 //            $sql = "SELECT ftr.nid FROM content_type_ftritem ftr WHERE ftr.field_ftritem_field_trip_nid = %d AND ftr.field_ftritem_place_nid = %d";
 //            $ftrnid = db_result(db_query($sql, $fieldtripnid, $placenid));
 //            watchdog("reinier", "ftrnid " . $ftrnid);
 //            if ($ftrnid > 0) {
 //              $message .= "This place is already attached to the field trip " . $fieldtrip->title;
-//            } 
+//            }
             $sql = "SELECT ftr.nid FROM {content_type_ftritem} ftr INNER JOIN {term_node} tn ON ftr.nid = tn.nid WHERE ftr.field_ftritem_field_trip_nid = %d AND ftr.field_ftritem_place_nid = %d AND tn.tid = %d";
             $ftrnid = db_result(db_query($sql, $fieldtripnid, $placenid, $reporttype));
             watchdog("reinier", "ftrnid " . $ftrnid);
             if ($ftrnid > 0) {
               $term = taxonomy_get_term($reporttype);
               $message .= "There is already a ". $term->name ." planned to this place during the field trip " . $fieldtrip->title;
-            } 
+            }
             break;
           }
         }
@@ -866,11 +859,11 @@ function _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid = 
           $ftr->uid = $user->uid;
           $ftr->status = 1;
           $ftr->comment = 0;
-          
+
           node_save($ftr);
-          
+
           // for when we go ajax messages:  $message .= "Attached the " .$place->title . ' to '. l($fieldtrip->title, 'node/'. $fieldtrip->nid);
-          $message .= "Attached location " .$place->title . ' to '. $fieldtrip->title;
+          $message .= 'Attached location '. $place->title . ' to '. $fieldtrip->title;
         }
       }
     }
@@ -901,7 +894,7 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
     case 'fieldtrip_node_form':
     case 'ftritem_node_form':
     case 'actionitem_node_form':
-  	  $arg3 = arg(3);
+      $arg3 = arg(3);
       if ((arg(0) == 'node') && (is_numeric(arg(1))) && (arg(2) == 'edit')) {
         if (empty($arg3)) {
           break;
@@ -924,7 +917,7 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
         foreach ($form as $field_name => $field_value) {
           if (strstr($field_name, 'field_') == $field_name) {
             if ($field_name == arg(3)) {
-              drupal_set_title(t('Edit '. $field_value['#title']));
+              drupal_set_title(t('Edit @title'. array('@title', $field_value['#title'])));
             }
             else {
               $form[$field_name] = NULL;
@@ -1066,7 +1059,7 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
     $form['field_ftritem_field_trip']['#prefix'] = '<div class="devtracshowfield">';
   }
   $form['field_ftritem_field_trip']['#suffix'] = '</div>';
-  
+
   return $form;
 }
 
@@ -1080,21 +1073,21 @@ function devtrack_module_fieldtrip_hide_user_field(&$form) {
   global $user;
   if (in_array('administrator', array_values($user->roles))) {
     return $form;
-  } 
-	
-  if (isset($form[field_fieldtrip_user][0]['#value']['uid'])) {
-    $form[field_fieldtrip_user]['#prefix'] = '<div class="devtrachidefield">';
+  }
+
+  if (isset($form['field_fieldtrip_user'][0]['#value']['uid'])) {
+    $form['field_fieldtrip_user']['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-    $form[field_fieldtrip_user]['#prefix'] = '<div class="devtracshowfield">';
+    $form['field_fieldtrip_user']['#prefix'] = '<div class="devtracshowfield">';
   }
-  $form[field_fieldtrip_user]['#suffix'] = '</div>';
-  
-  $form[field_fieldtrip_status]['#prefix'] = '<div class="devtrachidefield">';
-  $form[field_fieldtrip_status]['#suffix'] = '</div>';
+  $form['field_fieldtrip_user']['#suffix'] = '</div>';
 
-  $form[field_fieldtrip_places]['#prefix'] = '<div class="devtrachidefield">';
-  $form[field_fieldtrip_places]['#suffix'] = '</div>';
+  $form['field_fieldtrip_status']['#prefix'] = '<div class="devtrachidefield">';
+  $form['field_fieldtrip_status']['#suffix'] = '</div>';
+
+  $form['field_fieldtrip_places']['#prefix'] = '<div class="devtrachidefield">';
+  $form['field_fieldtrip_places']['#suffix'] = '</div>';
 
   return $form;
 }
@@ -1109,23 +1102,23 @@ function devtrack_module_actionitem_hide_place_and_ftritem_fields(&$form) {
   global $user;
   if (in_array('administrator', array_values($user->roles))) {
     return $form;
-  } 
-	
-  if (isset($form[field_actionitem_resp_place][0]['nid']['nid']['#value'])) {
-    $form[field_actionitem_resp_place]['#prefix'] = '<div class="devtrachidefield">';
+  }
+
+  if (isset($form['field_actionitem_resp_place'][0]['nid']['nid']['#value'])) {
+    $form['field_actionitem_resp_place']['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-    $form[field_actionitem_resp_place]['#prefix'] = '<div class="devtracshowfield">';
+    $form['field_actionitem_resp_place']['#prefix'] = '<div class="devtracshowfield">';
   }
-  $form[field_actionitem_resp_place]['#suffix'] = '</div>';
-  
-  if (isset($form[field_actionitem_ftreportitem][0]['nid']['nid']['#value'])) {
-    $form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtrachidefield">';
+  $form['field_actionitem_resp_place']['#suffix'] = '</div>';
+
+  if (isset($form['field_actionitem_ftreportitem'][0]['nid']['nid']['#value'])) {
+    $form['field_actionitem_ftreportitem']['#prefix'] = '<div class="devtrachidefield">';
   }
   else {
-    $form[field_actionitem_ftreportitem]['#prefix'] = '<div class="devtracshowfield">';
+    $form['field_actionitem_ftreportitem']['#prefix'] = '<div class="devtracshowfield">';
   }
-  $form[field_actionitem_ftreportitem]['#suffix'] = '</div>';
+  $form['field_actionitem_ftreportitem']['#suffix'] = '</div>';
   return $form;
 }
 
@@ -1151,26 +1144,26 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             $localusername = $localnode->name;
             $localuser = user_load($localnode->uid);
             if (user_access('create actionitem content')) {
-              if( $localusername == $user->name ) {
+              if ($localusername == $user->name) {
 
-                /* Nice, action items on places, but not supported 
+                /* Nice, action items on places, but not supported
                 if ( $localnode->type == 'place') {
                   $options = Array(
                     'edit[field_actionitem_resp_place][nid][value]'  => $localnode->nid,
                     'edit[field_actionitem_responsible][uid][value]' => $localuseruid,
                     'html'  => TRUE,
                   );
-                  // no, not without a report item!     
+                  // no, not without a report item!
                   // $result .= '<li>'. l('<button type="button">Add Action Item</button>', 'node/add/actionitem', Array('query'=> $options, 'html'  => TRUE)) .'</li>';
                 }
                 */
-                if ( $localnode->type == 'ftritem') {
+                if ($localnode->type == 'ftritem') {
                   $options = Array(
-                    'edit[field_actionitem_ftreportitem][0][nid][nid]'  => '[nid:'. $localnode->nid . ']',
-                    'edit[field_actionitem_responsible][0][uid][uid]' => $localuser->name,
+                    "edit['field_actionitem_ftreportitem'][0]['nid']['nid']"  => "[nid:". $localnode->nid ."]",
+                    "edit['field_actionitem_responsible'][0]['uid']['uid']" => $localuser->name,
                   );
-                  if ($localnode->field_ftritem_place[0][nid] > 0 ) {
-                    $options['edit[field_actionitem_resp_place][0][nid][nid]']  = '[nid:'. $localnode->field_ftritem_place[0][nid] . ']';
+                  if ($localnode->field_ftritem_place[0]['nid'] > 0) {
+                    $options["edit['field_actionitem_resp_place'][0]['nid']['nid']"]  = "[nid:". $localnode->field_ftritem_place[0]['nid'] . "]";
                   }
 
 /*                  if (_devtrack_module_isinternetexplorer()) {
@@ -1186,7 +1179,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             }
 
             if (user_access('submit questions')) {
-              if( $localusername == $user->name ) {
+              if ($localusername == $user->name) {
                 if ( $localnode->type == 'ftritem') {
 /*                  if (_devtrack_module_isinternetexplorer()) {
                     $result .= '<li>' . l('<div class="form-submit">Answer Questions</div>', 'node/'. $localnode->nid .'/questions/addsubmission', Array('html'=> TRUE)) . '</li>';
@@ -1199,7 +1192,6 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                 }
               }
             }
-            
 
             // this is not spitting anything out at the moment
             /*
@@ -1217,24 +1209,25 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                   // this needs ajax, so disabled for now
                   // TODO: include wmsgetfeatureinfo.js file and make sure this gets fired on pageload.
                   //    $('.getfeatureaddlink').bind("click",Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.click);
-                  
-                  $attribs = Array(            
+
+                  $attribs = Array(
                     'class' => 'getfeatureaddlink'
                     );
-                  
+
                   $result .= '<li>'. l('<button type="button">Add this place to your Current Field Trip</button>', 'devtrac/addplacetofieldtrip/'.$localnode->nid .'/'. devtrack_module_getcurrentfieldtrip(), Array('query'=> $options, 'attributes' => $attribs, 'html'  => TRUE)) .'</li>';
                 }
               }
             }
-            
+
             */
-            
-            
-          } elseif ((user_is_logged_in()) && (arg(0) == 'user') && (is_numeric(arg(1) | arg(1) == 'me'))) {
+
+          }
+          elseif ((user_is_logged_in()) && (arg(0) == 'user') && (is_numeric(arg(1) | arg(1) == 'me'))) {
             if (is_numeric(arg(1))) {
               $localuser = user_load(arg(1));
               $localuseruid = arg(1);
-            } else {
+            }
+            else {
               $localuser = $user;
               $localuseruid = $user->uid;
               $localusername = $user->name;
@@ -1271,7 +1264,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             $block['subject'] = "";
             $block['content'] .= "Don't forget to Upload your " . l('Picture', '/user/'. $user->uid ."/edit", array('fragment' => 'edit-pass-pass2', 'external' => TRUE));
             return $block;
-          } 
+          }
           break;
         case 3:
           // Do the approval workflow.
@@ -1299,7 +1292,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                   $manager = user_load($profile->field_user_superior[0]['uid']);
                   if ($manager->uid == $user->uid) { // Manager of the user that took the fieldtrip is the current user
 // Comment out the previous 2 lines and uncomment the following line to have the buttons show on the fieldtrip user page instead of the manager page.
-// Maybe we want to move this completely and approve in 1 step.                    
+// Maybe we want to move this completely and approve in 1 step.
                   // if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
                     $result .= _devtrack_module_getbutton('Approve Field Trip', 'node/'. $localnode->nid .'/setstatus/approve');
                     $result .= _devtrack_module_getbutton('Reject Field Trip', 'node/'. $localnode->nid .'/setstatus/reject');
@@ -1335,7 +1328,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
 //                  $manager = user_load($profile->field_user_superior[0]['uid']);
 //                  if ($manager->uid == $user->uid) { // Manager of the user that took the fieldtrip is the current user
 // Comment out the previous 2 lines and uncomment the following line to have the buttons show on the fieldtrip user page instead of the manager page.
-// Maybe we want to move this completely and approve in 1 step.                    
+// Maybe we want to move this completely and approve in 1 step.
 //                  // if ($localnode->field_fieldtrip_user[0]['uid'] == $user->uid) { // User that went on the fieldtrip is the current user
 //                    $result .= _devtrack_module_getbutton('Approve Field Trip', 'node/'. $localnode->nid .'/setstatus/approve');
 //                    $result .= _devtrack_module_getbutton('Reject Field Trip', 'node/'. $localnode->nid .'/setstatus/reject');
@@ -1368,19 +1361,19 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function devtrack_module_currentfieldtrip_access() {
-	$result = devtrack_module_getcurrentfieldtrip() > 0;
+  $result = devtrack_module_getcurrentfieldtrip() > 0;
   return ($result);
 }
 
 function devtrack_module_getcurrentfieldtrip($account = NULL) {
-	global $user;
-	if (!isset($account)) {
-		$account = $user;
-	}
-	$thedate = date('Y-m-d');
-	
-	/*$sql = "SELECT node.nid AS nid
- FROM {node} node 
+  global $user;
+  if (!isset($account)) {
+    $account = $user;
+  }
+  $thedate = date('Y-m-d');
+
+  /* $sql = "SELECT node.nid AS nid
+ FROM {node} node
  LEFT JOIN {content_type_fieldtrip} {node_data_field_fieldtrip_start_end_date} ON node.vid = node_data_field_fieldtrip_start_end_date.vid
  WHERE ((node.type in ('fieldtrip')) AND (node_data_field_fieldtrip_start_end_date.field_fieldtrip_user_uid = ". $account->uid ."))
     AND (
@@ -1389,11 +1382,10 @@ function devtrack_module_getcurrentfieldtrip($account = NULL) {
      (DATE_FORMAT(STR_TO_DATE(node_data_field_fieldtrip_start_end_date.field_fieldtrip_start_end_date_value2, '%Y-%m-%%dT%T'), '%Y-%m-%%d') >= '". $thedate ."')
  )";*/
 
-	
-	$sql = "SELECT node.nid AS nid FROM node node LEFT JOIN content_type_fieldtrip fieldtrip ON node.vid = fieldtrip.vid WHERE (node.type = 'fieldtrip' AND fieldtrip.field_fieldtrip_user_uid = ". $account->uid .") AND ( (DATE_FORMAT(STR_TO_DATE(fieldtrip.field_fieldtrip_start_end_date_value, '%Y-%m-%%dT%T'), '%Y-%m-%%d') <= '". $thedate ."') AND (DATE_FORMAT(STR_TO_DATE(fieldtrip.field_fieldtrip_start_end_date_value2, '%Y-%m-%%dT%T'), '%Y-%m-%%d') >= '". $thedate ."') )";
-	
-  $fieldtripnid = db_result(db_query($sql));	
-	
+  $sql = "SELECT node.nid AS nid FROM {node} node LEFT JOIN {content_type_fieldtrip} fieldtrip ON node.vid = fieldtrip.vid WHERE (node.type = 'fieldtrip' AND fieldtrip.field_fieldtrip_user_uid = ". $account->uid .") AND ( (DATE_FORMAT(STR_TO_DATE(fieldtrip.field_fieldtrip_start_end_date_value, '%Y-%m-%%dT%T'), '%Y-%m-%%d') <= '". $thedate ."') AND (DATE_FORMAT(STR_TO_DATE(fieldtrip.field_fieldtrip_start_end_date_value2, '%Y-%m-%%dT%T'), '%Y-%m-%%d') >= '". $thedate ."') )";
+
+  $fieldtripnid = db_result(db_query($sql));
+
   return $fieldtripnid;
 }
 
@@ -1421,15 +1413,15 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
     unset($params['placetype']);
     $placetypeterm = devtrack_module_get_term_by_name_vid($placetype, 1);
     $fieldtrip = node_load($mytrip);
-    
+
     $name = $params['name'];
     unset($params['name']);
-    
+
     // first, let's check if this place already exists
     $uid = $params['id'];
     unset($params['id']);
     $uri = "http://www.devtrac.ug/places";
-    $sql = "SELECT n.nid from {content_type_place} n WHERE n.field_place_unique_id_value = '%s' AND n.field_place_sourcelayer_value = '%s' AND n.field_place_sourceuri_value='%s'"; 
+    $sql = "SELECT n.nid from {content_type_place} n WHERE n.field_place_unique_id_value = '%s' AND n.field_place_sourcelayer_value = '%s' AND n.field_place_sourceuri_value='%s'";
     $placenid = db_result(db_query(db_rewrite_sql($sql), $uid, $layer, $uri));
     if ($placenid > 0) {
       $message .= "The place was already known\n";
@@ -1439,7 +1431,8 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
 //        }
 //      }
       // got that out of the way, let's move on
-    } else {
+    }
+    else {
       // Going to Create Place
       // First, let's make sure the placetype taxonomy term exists.
       if (!isset($placetypeterm[0]->tid)) {
@@ -1449,18 +1442,18 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
         $message .= "Created new Placetype '". $placetype . "'";
         $placetypeterm = devtrack_module_get_term_by_name_vid($placetype, 1);
       }
-      $district = ucfirst(strtolower($params['district']));
+      $district = drupal_ucfirst(drupal_strtolower($params['district']));
       $vid = 6; // That is District
-      $districtterm = devtrack_module_get_term_by_name_vid($district, $vid); 
+      $districtterm = devtrack_module_get_term_by_name_vid($district, $vid);
       unset($params['district']);
       $body = "";
-      foreach ($params as $key=>$value) {
+      foreach ($params as $key => $value) {
         $body .= $key ." = ". $value . '<br/>';
-      }	 	 
+      }
       $node = new stdClass();
       $node->title = $name;
       $node->type = 'place';
-//      node_object_prepare($node); 
+//      node_object_prepare($node);
       $node->body = $body;
       $node->field_place_unique_id[0]['value'] = $uid;
       $node->field_place_sourcelayer[0]['value'] = $layer;
@@ -1469,13 +1462,13 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
       $node->field_place_lat_long[0]['openlayers_wkt'] = "GEOMETRYCOLLECTION(". str_replace(',', ' ', $geometry) . ")";
       $node->taxonomy = array($districtterm[0]->tid, $placetypeterm[0]->tid);
       $actionitem->comment = 0;
-      
+
 //      $node = node_submit($node);
       node_save($node);
-       
+
 //      taxonomy_node_save($node, $districtterm);
 //      taxonomy_node_save($node, $placetypeterm);
-      $placenid = $node->nid;   
+      $placenid = $node->nid;
     }
     $fieldtrip->field_fieldtrip_places[$placenid]['nid'] = $placenid;
     node_save($fieldtrip);
@@ -1486,13 +1479,14 @@ function devtrack_module_process_getfeatureinfo($layer, $geometry, $params, $arg
     $ftr->field_ftritem_field_trip[]['nid'] = $fieldtrip->nid;
     $ftr->field_ftritem_place[]['nid'] = $placenid;
     $ftr->field_ftritem_public_summary[]['value'] = t('Please Provide a small summary for the public.');
-    $ftr->field_ftritem_narrative[]['value'] = t('Please provide a full report.'); 
+    $ftr->field_ftritem_narrative[]['value'] = t('Please provide a full report.');
     $ftr->uid = $user->uid;
     node_save($ftr);
-*/
-    $message .= _devtrack_module_addplacefieldtotrip_helper($placenid, $mytrip, $reporttype); 
+ */
+    $message .= _devtrack_module_addplacefieldtotrip_helper($placenid, $mytrip, $reporttype);
     return $message;
-  } else {
+  }
+  else {
     $message .= 'You have to have selected a fieldtrip before selecting pages.';
     return $message;
   }
@@ -1504,12 +1498,12 @@ function devtrack_module_pageaddplaceform_access($fieldtrip = NULL) {
   $result = ($fieldtrip->type == "fieldtrip");
   $result = $result && node_access("update", $fieldtrip);
   $result = $result && ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Approved') && ($fieldtrip->field_fieldtrip_status[0]['value'] != 'Published');
-  return $result;	
+  return $result;
 }
 
 
 function devtrack_module_pageaddplaceform($fieldtrip = NULL) {
-	return drupal_get_form("devtrack_module_addplaceform", $fieldtrip);
+  return drupal_get_form("devtrack_module_addplaceform", $fieldtrip);
 }
 
 function devtrack_module_addplaceform($form_state, $fieldtrip) {
@@ -1518,7 +1512,7 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
     '#title' => "title",
     '#value' => "Select Place to visit for Field Trip: ". $fieldtrip->title,
   );
-	
+
   $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
   foreach ($vocabularies as $vocabulary) {
     if ($vocabulary->name == 'Site Report Type') {
@@ -1562,20 +1556,19 @@ function devtrack_module_addplaceform($form_state, $fieldtrip) {
     '#options' => $placetypes,
     '#default_value' => 0,
   );
-  
+
   $form['nid'] = array(
     '#type' => 'hidden',
     '#value' => $fieldtrip->nid,
   );
-  
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
-		
+
 //  print($fieldtripnid);
-	return $form;
-	
+  return $form;
 }
 
 function devtrack_module_addplaceform_validate($form, &$form_state) {
@@ -1608,11 +1601,11 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
       switch ($form_state['values']['placetype']) {
         case 0:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TTFFT');
-      	  break;
+        break;
         case 1:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFTFT');
           break;
-      	case 2:
+        case 2:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']] , 'layers=B0TFFTT');
           break;
         case 3:
@@ -1622,14 +1615,14 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
       }
       break;
     case 1:
-      drupal_goto('node/add/ftritem', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+      drupal_goto('node/add/ftritem', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
 //      drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
       break;
     case 2:
       switch ($form_state['values']['placetype']) {
         case 0:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TTFFT');
-      	  break;
+          break;
         case 1:
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFTFT');
           break;
@@ -1640,13 +1633,13 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFFT');
           break;
         case 4:
-          drupal_goto('node/add/ftritem/', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
+          drupal_goto('node/add/ftritem/', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
 //          drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
           break;
       }
     break;
   }
-  
+
 }
 
 
@@ -1699,18 +1692,18 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
       case 'delete':
         $placenid = $node->field_ftritem_place[0]['nid'];
         $fieldtripnid = $node->field_ftritem_field_trip[0]['nid'];
-        $fieldtrip = node_load($fieldtripnid);    
+        $fieldtrip = node_load($fieldtripnid);
         if ($placenid > 0) {
           $sql = "DELETE from {content_field_fieldtrip_places} WHERE nid = %d AND field_fieldtrip_places_nid = %d";
           db_query($sql, $fieldtripnid, $placenid);
 // re-adding inserts the trip report.
           $place = node_load($placenid);
-          if (strlen($fieldtrip->title) > 0) {
-            drupal_set_message('Removed ' . $place->title . ' from ' . $fieldtrip->title);
+          if (drupal_strlen($fieldtrip->title) > 0) {
+            drupal_set_message(t('Removed @place from @fieldtrip'. array('@place' => $place->title, '@fieldtrip' => $fieldtrip->title)));
           }
         }
         $_REQUEST['destination'] = 'node/' . $fieldtripnid;
-    	  break;
+        break;
     }
   }
   if ($node->type == 'fieldtrip') {
@@ -1740,11 +1733,11 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
               devtrack_module_fieldtrip_revoke_update($node, $manager);
               devtrack_module_fieldtrip_grant_update($node, $localuser);
 //              devtrack_module_fieldtrip_grant_update($node, $owner);
-              drupal_set_message("Field Trip is editable.");
+              drupal_set_message(t("Field Trip is editable."));
               break;
             case 'Submitted':
               devtrack_module_fieldtrip_grant_update($node, $manager);
-              drupal_set_message("Field Trip submitted for approval.");
+              drupal_set_message(t("Field Trip submitted for approval."));
               break;
             case 'Approved':
 //              devtrack_module_fieldtrip_publish($node, TRUE);
@@ -1771,7 +1764,7 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
               break;
             case 'Approved':
               devtrack_module_fieldtrip_publish($node);
-              drupal_set_message("Field Trip submitted.");
+              drupal_set_message(t("Field Trip submitted."));
               break;
           }
         }
@@ -1800,22 +1793,22 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $fieldtripnid = arg(2);
         $reporttype = arg(3);
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
-          // todo: we can probably completely remove the relationship between Field Trip and Place 
+          // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function
           // or, when coming from the mobile bb application, the BB will create an ftritem
-          drupal_set_message("attaching the place to the fieldtrip");
+          drupal_set_message(t("attaching the place to the fieldtrip"));
           $message = _devtrack_module_addplacefieldtotrip_helper($placenid, $fieldtripnid, $reporttype);
-          drupal_set_message($message);
+          drupal_set_message(t('@message', array('@message' => $message)));
         }
         break;
     }
   }
   if ($node->type == 'bbsync') {
-drupal_set_message("its a bbsync and we will do " . $op);
+drupal_set_message(t("its a bbsync and we will do " . $op));
     switch ($op) {
       case 'insert':
-        drupal_set_message("We are inserting");
-        devtrack_module_bbsync($node); // This is untested   
+        drupal_set_message(t("We are inserting"));
+        devtrack_module_bbsync($node); // This is untested
         break;
     }
   }
@@ -1843,10 +1836,10 @@ function devtrack_module_getcontext($nid) {
 
 function _devtrack_module_getbutton($text, $path, $options) {
   if (_devtrack_module_isinternetexplorer()) {
-    $result .= '<li>' . l('<div class="form-submit">'. $text .'</div>', $path, Array('query'=> $options, 'html'=> TRUE)) . '</li>';
+    $result .= '<li>'. l('<div class="form-submit">'. $text .'</div>', $path, Array('query' => $options, 'html' => TRUE)) .'</li>';
   }
   else {
-    $result .= '<li>' . l('<button type="button">'. $text .'</button>', $path, Array('query'=> $options, 'html'  => TRUE)) . '</li>';
+    $result .= '<li>'. l('<button type="button">'. $text .'</button>', $path, Array('query' => $options, 'html' => TRUE)) .'</li>';
   }
   return $result;
 }
@@ -1855,15 +1848,16 @@ function _devtrack_module_isinternetexplorer() {
         // $version = 6
 //    drupal_set_message($_SERVER['HTTP_USER_AGENT']);
     if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) { // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
-      return true;
-    } else {
-      return false;
+      return TRUE;
+    }
+    else {
+      return FALSE;
     }
 }
 
 function _devtrack_module_array_to_object($array = array()) {
   if (!empty($array)) {
-    $data = false;
+    $data = FALSE;
 
     foreach ($array as $akey => $aval) {
       $data -> {$akey} = $aval;
@@ -1872,7 +1866,7 @@ function _devtrack_module_array_to_object($array = array()) {
     return $data;
   }
 
-  return false;
+  return FALSE;
 }
 
 function devtrack_module_environment() {
@@ -1899,11 +1893,11 @@ function devtrack_module_environment() {
     ),
   );
   return $environments;
-  
+
 }
 /**
-* Implementation of hook_environment_switch().
-*/
+ * Implementation of hook_environment_switch().
+ */
 function devtrack_module_environment_switch($target_env, $current_env) {
   // Declare each optional development-related module
   $devel_modules = array(
@@ -1927,59 +1921,59 @@ function devtrack_module_environment_switch($target_env, $current_env) {
   switch ($target_env) {
     case 'production':
       module_disable($devel_modules);
-      variable_set ("environment_indicator_enabled", "0");
-      drupal_set_message('Disabled development modules');
-      variable_set ("mobile_tools_desktop_url",  "http://www.devtrac.ug");
+      variable_set("environment_indicator_enabled", "0");
+      drupal_set_message(t('Disabled development modules'));
+      variable_set("mobile_tools_desktop_url",  "http://www.devtrac.ug");
       _change_services_key("6825f0e79c87f6c930d8b252694ef1cf", "devtrac.ug");
       return;
     case 'test':
       module_disable($devel_modules);
-      variable_set ("environment_indicator_enabled", "0");
-      drupal_set_message('disabled development modules');
+      variable_set("environment_indicator_enabled", "0");
+      drupal_set_message(t('disabled development modules'));
       /* Tell Mobile Tools where the site is */
       _change_services_key("ed189296f0507fde20b1b9863c6fc21a", "devtrac.org");
-      variable_set ("mobile_tools_desktop_url",  "http://test.devtrac.org");
+      variable_set("mobile_tools_desktop_url",  "http://test.devtrac.org");
       return;
     case 'development':
       module_enable($devel_modules);
-      drupal_set_message('Enabled development modules');
+      drupal_set_message(t('Enabled development modules'));
       /* Tell Mobile Tools where the site is */
-      variable_set ("mobile_tools_desktop_url",  "http://devtrac.mountbatten.net:8001");
+      variable_set("mobile_tools_desktop_url",  "http://devtrac.mountbatten.net:8001");
       /* Enable Environment Indicator */
-      variable_set ("environment_indicator_color", "#45FA12");
-      variable_set ("environment_indicator_enabled", "1");
-      variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Development Server");
+      variable_set("environment_indicator_color", "#45FA12");
+      variable_set("environment_indicator_enabled", "1");
+      variable_set("environment_indicator_position", "left");
+      variable_set("environment_indicator_text", "Development Server");
       return;
     case 'jan':
       module_enable($devel_modules);
-      drupal_set_message('Enabled development modules');
+      drupal_set_message(t('Enabled development modules'));
       /* Tell Mobile Tools where the site is */
-      variable_set ("mobile_tools_desktop_url",  "http://devtrac.jan");
+      variable_set("mobile_tools_desktop_url",  "http://devtrac.jan");
       /* Enable Environment Indicator */
-      variable_set ("environment_indicator_color", "green");
-      variable_set ("environment_indicator_enabled", "1");
-      variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Jan Development Server");
+      variable_set("environment_indicator_color", "green");
+      variable_set("environment_indicator_enabled", "1");
+      variable_set("environment_indicator_position", "left");
+      variable_set("environment_indicator_text", "Jan Development Server");
       return;
     case 'reinier':
       module_enable($devel_modules);
-      drupal_set_message('Enabled development modules');
+      drupal_set_message(t('Enabled development modules'));
       /* Tell Mobile Tools where the site is */
-      variable_set ("mobile_tools_desktop_url",  "http://devtrac2.rei");
+      variable_set("mobile_tools_desktop_url",  "http://devtrac2.rei");
       /* Enable Environment Indicator */
-      variable_set ("environment_indicator_color", "red");
-      variable_set ("environment_indicator_enabled", "1");
-      variable_set ("environment_indicator_position", "left");
-      variable_set ("environment_indicator_text", "Reinier Development Server");
+      variable_set("environment_indicator_color", "red");
+      variable_set("environment_indicator_enabled", "1");
+      variable_set("environment_indicator_position", "left");
+      variable_set("environment_indicator_text", "Reinier Development Server");
       return;
   }
 }
 
 function _change_services_key($key, $domain) {
-  db_query("UPDATE {services_keys} SET kid = '%s'", $key); 
-  db_query("UPDATE {services_keys} SET domain = '%s'", $domain); 
-  db_query("UPDATE {services_key_permissions} SET kid = '%s'", $key); 
+  db_query("UPDATE {services_keys} SET kid = '%s'", $key);
+  db_query("UPDATE {services_keys} SET domain = '%s'", $domain);
+  db_query("UPDATE {services_key_permissions} SET kid = '%s'", $key);
 }
 
 function devtrack_module_fieldtrip_setstatus($node, $method) {
@@ -1994,7 +1988,7 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
         node_save($node);
       }
       else {
-        drupal_set_message('Already submitted.');
+        drupal_set_message(t('Already submitted.'));
       }
       break;
     case 'approve':
@@ -2006,7 +2000,7 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
         node_save($node);
       }
       else {
-        drupal_set_message('Already submitted.');
+        drupal_set_message(t('Already submitted.'));
       }
       // TO DO: Workflow: Redo when implementing the manager workflow
 /*      if ($status == 'Submitted') {
@@ -2016,7 +2010,7 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
       else {
         drupal_set_message('Already approved.');
       }
-*/
+ */
       break;
     case 'reject':
       if ($status == 'Submitted') {
@@ -2024,7 +2018,7 @@ function devtrack_module_fieldtrip_setstatus($node, $method) {
         node_save($node);
       }
       else {
-        drupal_set_message('Already rejected.');
+        drupal_set_message(t('Already rejected.'));
       }
       break;
   }
@@ -2101,7 +2095,7 @@ function devtrack_module_node_access_records($node) {
   if (!$node->nid) {
     return;
   }
-  
+
   if (($node->type == 'fieldtrip') || ($node->type == 'ftritem')) {
     $grants = array();
     if ($node->type == 'ftritem') {
@@ -2348,7 +2342,7 @@ function devtrack_module_get_report_counts() {
   $output .= '<td class="views-field-name">';
   $output .= '<a href="/tripreports/map?placetype='. $result[0]->tid .'">'. $result[0]->name .'</a>';
   $output .= '</td></tr>';
-  
+
   $output .= '</tbody></table></div></div>';
 //  $output .= '</div></div></div>';
 
@@ -2377,4 +2371,4 @@ function devtrack_module_popups () {
     ),
   );
 }
-*/
+ */

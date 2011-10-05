@@ -1,4 +1,10 @@
-<?php 
+<?php
+
+/**
+ * @file
+ * Create a drush command for the Devtrac module.
+ */
+
 /**
  * Implementation of hook_drush_command().
  */

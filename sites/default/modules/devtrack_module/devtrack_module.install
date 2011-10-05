@@ -1,5 +1,4 @@
 <?php
-// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $
 
 /**
  * @file
@@ -87,12 +86,12 @@ function devtrack_module_update_6001() {
     'colorbox',
     'environment',
     'jquery_update',
-  );  
+  );
   module_enable($new_modules);
 
   $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all site reports' );
   return $ret;
-  
+
 }
 
 function devtrack_module_update_6002() {
@@ -100,10 +99,10 @@ function devtrack_module_update_6002() {
   $new_modules = array(
     'spamspan',
     'search_config',
-  );  
+  );
   module_enable($new_modules);
-  
-  db_query("INSERT INTO {filters} (fid, format, module, delta, weight) VALUES ('11', '1', 'spamspan', '0', '10')");  
+
+  update_sql("INSERT INTO {filters} (fid, format, module, delta, weight) VALUES ('11', '1', 'spamspan', '0', '10')");
 }
 
 function devtrack_module_update_6003() {
@@ -119,12 +118,12 @@ function devtrack_module_update_6003() {
   // Declare new modules
   $new_modules = array(
     'devtrac_breadcrumbs',
-  );  
+  );
   module_enable($new_modules);
 
   $ret[] = array('success' => TRUE, 'query' => 'cleared all custom_breadcrumbs tables; enabled devtrac_breabcrumbs module');
   return $ret;
-  
+
   // Running "drush fra" now, will install the devtrac_breadcrumbs feature and populate all the tables again
 }
 
@@ -212,7 +211,7 @@ function devtrack_module_update_6004() {
   taxonomy_save_term($term);
 
   // Now update the existing site reports
-  $nids = db_query("SELECT nid FROM {node} WHERE type = '%s'", 'ftritem'); // ALERT: Hardcoded node_type machine name
+  $nids = db_query(db_rewrite_sql("SELECT n.nid FROM {node} n WHERE n.type = '%s'", 'ftritem')); // ALERT: Hardcoded node_type machine name
   while ($nid = db_fetch_object($nids)) {
     $node = node_load($nid->nid);
     $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
@@ -247,11 +246,11 @@ function devtrack_module_update_6005() {
   $original = db_result(db_query("SELECT module FROM {vocabulary} WHERE vid = %d", $vid));
 
   // Update the vocabulary
-  db_query("UPDATE {vocabulary} SET module = '%s' WHERE vid = %d", 'taxonomy_redirect', $vid);
+  update_sql("UPDATE {vocabulary} SET module = 'taxonomy_redirect' WHERE vid = $vid");
 
   // Add an entry to vocabulary_redirect table
-  db_query("INSERT INTO {taxonomy_redirect} (vid, tid, module, path, separator_replace, remove_text, filter, path_case)
-            VALUES (%d, NULL, '%s', '%s', '%s', '%s', %d, '%s')", $vid, $original, 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform');
+  update_sql("INSERT INTO {taxonomy_redirect} (vid, tid, module, path, separator_replace, remove_text, filter, path_case)
+              VALUES ($vid, NULL, $original, 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform')");
 
   $ret[] = array('success' => TRUE, 'query' => 'added entry to taxonomy_redirect');
   return $ret;
@@ -287,14 +286,14 @@ function devtrack_module_update_6006() {
 function devtrack_module_update_6007() {
   $new_modules = array(
     'devtrac_wms',
-  );  
+  );
   module_enable($new_modules);
 }
 
 /*
  * https://www.pivotaltracker.com/story/show/16939181
  * Create OECD Sector Code vocab
- * 
+ *
  * https://www.pivotaltracker.com/story/show/14972339
  * Add Child Protection to Department vocab
  */
@@ -640,8 +639,8 @@ function devtrack_module_update_6009() {
   $count = 0;
   while ($sitevisitnid = db_fetch_object($sitevisitnids)) {
     $sitevisit = node_load($sitevisitnid->nid);
-    if ((substr($sitevisit->title, 0, 14) == 'Trip Report at') || (substr($sitevisit->title, 0, 14) == 'Site Report at')) {
-      $sitevisit->title = 'Site Visit at'. substr($sitevisit->title, 14);
+    if ((drupal_substr($sitevisit->title, 0, 14) == 'Trip Report at') || (drupal_substr($sitevisit->title, 0, 14) == 'Site Report at')) {
+      $sitevisit->title = 'Site Visit at'. drupal_substr($sitevisit->title, 14);
       node_save($sitevisit);
       $count++;
     }

@@ -672,3 +672,11 @@ function devtrack_module_update_6010() {
   $ret[] = array('success' => TRUE, 'query' => 'removed Nzerea II from Place Types');
   return $ret;
 }
+
+/*
+ * https://www.pivotaltracker.com/story/show/19285329
+ * Increase limit on associated node questions to 100
+ */
+function devtrack_module_update_6011() {
+  update_sql("UPDATE {associated_nodes_association} SET number = 100 WHERE  aid = 1");
+}

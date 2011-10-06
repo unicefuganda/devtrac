@@ -1159,11 +1159,11 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                 */
                 if ($localnode->type == 'ftritem') {
                   $options = Array(
-                    "edit['field_actionitem_ftreportitem'][0]['nid']['nid']"  => "[nid:". $localnode->nid ."]",
-                    "edit['field_actionitem_responsible'][0]['uid']['uid']" => $localuser->name,
+                    "edit[field_actionitem_ftreportitem][0][nid][nid]"  => "[nid:". $localnode->nid ."]",
+                    "edit[field_actionitem_responsible][0][uid][uid]" => $localuser->name,
                   );
                   if ($localnode->field_ftritem_place[0]['nid'] > 0) {
-                    $options["edit['field_actionitem_resp_place'][0]['nid']['nid']"]  = "[nid:". $localnode->field_ftritem_place[0]['nid'] . "]";
+                    $options["edit[field_actionitem_resp_place][0][nid][nid]"]  = "[nid:". $localnode->field_ftritem_place[0]['nid'] . "]";
                   }
 
 /*                  if (_devtrack_module_isinternetexplorer()) {
@@ -1790,9 +1790,6 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $destination = drupal_get_destination();
         $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
         $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos(substr($destination, 0, strrpos($destination, '%2F')), '%2F') + 3);
-        drupal_set_message("dest". $destination . " reporttype ". $reporttype . " nid " . $fieldtripnid);
-//        $fieldtripnid = arg(2);
-//        $reporttype = arg(3);
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function
@@ -1835,12 +1832,18 @@ function devtrack_module_getcontext($nid) {
   return $node->field_ftritem_place[0]['nid'];
 }
 
-function _devtrack_module_getbutton($text, $path, $options) {
-  if (_devtrack_module_isinternetexplorer()) {
-    $result .= '<li>'. l('<div class="form-submit">'. $text .'</div>', $path, Array('query' => $options, 'html' => TRUE)) .'</li>';
+function _devtrack_module_getbutton($text, $path, $options = NULL) {
+  if (isset($options)) {
+    $params = Array('query' => $options, 'html' => TRUE);
   }
   else {
-    $result .= '<li>'. l('<button type="button">'. $text .'</button>', $path, Array('query' => $options, 'html' => TRUE)) .'</li>';
+    $params = Array('html' => TRUE);
+  }
+  if (_devtrack_module_isinternetexplorer()) {
+    $result .= '<li>'. l('<div class="form-submit">'. $text .'</div>', $path, $params) .'</li>';
+  }
+  else {
+    $result .= '<li>'. l('<button type="button">'. $text .'</button>', $path, $params) .'</li>';
   }
   return $result;
 }

@@ -2320,7 +2320,7 @@ function devtrac_module_get_questionaire_status($node, $sid) {
   $result['output'] .= l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('html' => TRUE));
   $result['output'] .= '</li>';
   $result['output'] .= '<li>';
-  $sql = "SELECT COUNT(qa.id) FROM {questionaire_answer} qa JOIN {questionaire_submission} qs ON qa.sid = qs.sid WHERE qs.qnid = %d AND qs.sid = %d GROUP BY qa.sid";
+  $sql = "SELECT COUNT(DISTINCT(sid)) FROM {questionaire_answer} WHERE qa.qnid = %d AND qa.sid = %d";
   $count = db_result(db_query($sql, $node->nid, $sid));
   if (!$count) {
     $count = 0;

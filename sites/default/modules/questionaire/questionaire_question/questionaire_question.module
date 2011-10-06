@@ -441,13 +441,24 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
   foreach ($questions as $code => $question) {
     
     if ($sid) {
-      $sql = 'SELECT answer FROM {questionaire_answer} where question = %d AND sid = %d'; 
-      $answer = db_result(db_query($sql, $question->nid, $sid));
+      $sql = 'SELECT answer FROM {questionaire_answer} where question = %d AND sid = %d';
+//      This is not working for multi-choice checkboxes.
+//      $answer = db_result(db_query($sql, $question->nid, $sid));
+      $results = db_query($sql, $question->nid, $sid);
+      $answers = array();
+      $answer = NULL;
+      if ($results->num_rows > 0) {
+        while ($result = db_fetch_object($results)) {
+          $answers[] = $result->answer;
+        }
+        $answer = $answers[0];
+      }
     }
     else {
       // Changed default to NULL (from '') to solve
       // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
       // $answer = '';
+      $answers = array();
       $answer = NULL;
     }
     $node = node_load($question->nid);
@@ -465,9 +476,10 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
         // Added the following check to solve the following
         // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
         // Checkboxes are multi value, hence an empty array
-        if ($answer == NULL) {
-          $answer = array();
-        }
+//        if ($answer == NULL) {
+//          $answer = array();
+//        }
+        $answer = $answers;
         break;
       case 'radios' :
         $formtype = 'radios';
@@ -638,9 +650,17 @@ function questionaire_question_saveanswers($answers) {
   */
       
     if (isset($answers['sid'])) {
-//      $keys = array( 'sid', 'question');
       $keys = array('id');
-      $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
+      $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
+      $question = node_load($answer['question']);
+      if ($questiontypes[$question->questiontype] != 'checkboxes') {
+        // This does not work for multi-choice checkboxes.
+        $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
+      }
+      else {
+        // This does but only for multi-choice checkboxes because every answers is stored under a unique id. 
+        $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d AND answer = '%s'", $answer['question'], $sid, $answer['answer']));
+      }
       if ($id) {
         $answer['id'] = $id;
         drupal_write_record('questionaire_answer', $answer, $keys);

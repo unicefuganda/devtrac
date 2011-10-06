@@ -1788,11 +1788,10 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $placenid = $node->nid;
         $nodearray = (array)$node;
         $destination = drupal_get_destination();
-        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
-        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos(substr($destination, 0, strrpos($destination, '%2F')), '%2F') + 3);
-        drupal_set_message("dest". $destination . " reporttype ". $reporttype . " nid " . $fieldtripnid);
-//        $fieldtripnid = arg(2);
-//        $reporttype = arg(3);
+//        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
+//        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos($destination, '%2F') + 3));
+        $fieldtripnid = arg(2);
+        $reporttype = arg(3);
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function
@@ -2317,11 +2316,8 @@ function devtrac_module_get_questionaire_status($node, $sid) {
   $result['output'] .= l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('html' => TRUE));
   $result['output'] .= '</li>';
   $result['output'] .= '<li>';
-  $sql = "SELECT COUNT(qa.id) FROM {questionaire_answer} qa JOIN {questionaire_submission} qs ON qa.sid = qs.sid WHERE qs.qnid = %d AND qs.sid = %d GROUP BY qa.sid";
+  $sql = "SELECT COUNT(DISTINCT(question)) FROM {questionaire_answer} WHERE qnid = %d AND sid = %d";
   $count = db_result(db_query($sql, $node->nid, $sid));
-  if (!$count) {
-    $count = 0;
-  }
   $result['output'] .= t('Questions answered: @count', array('@count' => $count));
   $result['output'] .= '</li></ul>';
   return $result;

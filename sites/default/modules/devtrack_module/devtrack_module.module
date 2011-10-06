@@ -1788,10 +1788,11 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $placenid = $node->nid;
         $nodearray = (array)$node;
         $destination = drupal_get_destination();
-//        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
-//        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos($destination, '%2F') + 3));
-        $fieldtripnid = arg(2);
-        $reporttype = arg(3);
+        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
+        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos(substr($destination, 0, strrpos($destination, '%2F')), '%2F') + 3);
+        drupal_set_message("dest". $destination . " reporttype ". $reporttype . " nid " . $fieldtripnid);
+//        $fieldtripnid = arg(2);
+//        $reporttype = arg(3);
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function

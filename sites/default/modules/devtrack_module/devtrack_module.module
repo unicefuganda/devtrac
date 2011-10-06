@@ -2170,9 +2170,9 @@ function devtrac_module_get_fieldtrip_status($node) {
     $fieldtripstatus = FALSE;
     $output .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-fieldtrip-narrative-0-value-wrapper', 'external' => TRUE, 'html' => TRUE)) .'</li>';
   }
-  else {
-    $output .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
-  }
+//  else {
+//    $output .= '<li>Done</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
+//  }
   $output .= '</ul>';
 
   // Gather information on all Site Reports (Action Items inclusive)
@@ -2192,6 +2192,9 @@ function devtrac_module_get_fieldtrip_status($node) {
     $output .= '<div>All fields on the Field Trip and all of its Site Reports are ready to be submitted.</div>';
     $output .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $node->nid .'/setstatus/approve');
   }
+  else {
+    $output .= '<div>As soon as all fields on the Field Trip and all of its Site Reports are ready to be submitted a "Submit Field Trip" button will appear here.</div>';
+  }
   return $output;
 }
 
@@ -2200,7 +2203,6 @@ function devtrac_module_get_fieldtrip_status($node) {
  * including all its action items
  */
 function devtrac_module_get_site_report_status($node) {
-  // Gather information on all Site Reports (Action Items inclusive)
   $result = array(
     'status' => TRUE,
     'output' => ''
@@ -2247,9 +2249,9 @@ function devtrac_module_get_site_report_status($node) {
         $result['status'] = FALSE;
         $result['output'] .= '<li>'. l('Provide either the Place or the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
-      if ($result['status']) {
-        $result['output'] .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
-      }
+//      if ($result['status']) {
+//        $result['output'] .= '<li>Done</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
+//      }
       // Gather information on all Action Items for a Site Report
       // First get all the Site Reports that belong to this Field Trip
       $sql = "SELECT nid FROM {content_type_actionitem} WHERE field_actionitem_ftreportitem_nid = %d ORDER BY field_actionitem_due_date_value DESC";
@@ -2263,6 +2265,16 @@ function devtrac_module_get_site_report_status($node) {
           $actionitemsstatus = $actionitemsstatus && $airesult['status'];
         }
       }
+      $sql = "SELECT sid FROM {questionaire_submission} WHERE qnid = %d";
+      $sids = db_query($sql, $node->nid);
+      if ($sids->num_rows > 0) {
+        $result['output'] .= '<li><div class="caption">Questionnaires</div>';
+        while ($sid = db_fetch_object($sids)) {
+          $qresult = devtrac_module_get_questionaire_status($node, $sid->sid);
+          $result['output'] .= $qresult['output'];
+//          $actionitemsstatus = $actionitemsstatus && $qresult['status'];
+        }
+      }
       break;
   }
   $result['status'] = $result['status'] && $actionitemsstatus;
@@ -2274,7 +2286,6 @@ function devtrac_module_get_site_report_status($node) {
  * Gather information about the status of an action item
  */
 function devtrac_module_get_action_item_status($node) {
-  // Gather information on all Action Items
   $result = array(
     'status' => TRUE,
     'output' => ''
@@ -2290,10 +2301,32 @@ function devtrac_module_get_action_item_status($node) {
     $result['status'] = FALSE;;
     $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
   }
-  if ($result['status']) {
-    $result['output'] .= '<li>Clear</li>';// All fields are okay, but you might want to read through the Follow-up Task.</li>';
-  }
+//  if ($result['status']) {
+//    $result['output'] .= '<li>Done</li>';// All fields are okay, but you might want to read through the Follow-up Task.</li>';
+//  }
   $result['output'] .= '</ul>';
+  return $result;
+}
+
+/*
+ * Gather information about the status of a questionaire
+ */
+function devtrac_module_get_questionaire_status($node, $sid) {
+  $result = array(
+    'status' => TRUE,
+    'output' => ''
+  );
+  $result['output'] .= '<ul><li>';
+  $result['output'] .= l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('html' => TRUE));
+  $result['output'] .= '</li>';
+  $result['output'] .= '<li>';
+  $sql = "SELECT COUNT(qa.id) FROM {questionaire_answer} qa JOIN {questionaire_submission} qs ON qa.sid = qs.sid WHERE qs.qnid = %d AND qs.sid = %d GROUP BY qa.sid";
+  $count = db_result(db_query($sql, $node->nid, $sid));
+  if (!$count) {
+    $count = 0;
+  }
+  $result['output'] .= t('Questions answered: @count', array('@count' => $count));
+  $result['output'] .= '</li></ul>';
   return $result;
 }
 

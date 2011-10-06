@@ -99,7 +99,7 @@ function questionaire_question_menu() {
     'title' => t('Edit Submission'),
     'description'      => t('Edit Submission of Questionaire.'),
     'page callback'    => 'questionaire_question_submission_edit',
-    'page arguments'   => array(1, 3),
+    'page arguments'   => array(1, 4),
     'access callback'  => 'questionaire_question_addsubmission_access',
     'access arguments' => array(1),
     'type' => MENU_CALLBACK,
@@ -381,8 +381,10 @@ function questionaire_question_questions($nid) {
  */
 
 function questionaire_question_addsubmission_access($nid) {
+  global $user;
   $node = node_load($nid);
-  if (user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
+  // Only the reporter is allowed to create/edit a submission
+  if (($user->uid == $node->uid) && user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
     // make sure there are questions for this questionairetype. 
     //TODO, also check if there are submissions (when questions become disabled, the submissions migh still be there)
     return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
@@ -511,7 +513,13 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
     '#type' => 'value',
     '#value' => $context,
   );
-
+  if ($sid) {
+    $form['sid'] = array(
+      '#type' => 'value',
+      '#value' => $sid,
+    );
+  }
+  
   $form['#redirect'] = 'node/' . $nid;
   return $form;
   
@@ -630,10 +638,16 @@ function questionaire_question_saveanswers($answers) {
   */
       
     if (isset($answers['sid'])) {
-      $keys = array( 'sid', 'question');
+//      $keys = array( 'sid', 'question');
+      $keys = array('id');
       $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
-      $answer['id'] = $id;
-      drupal_write_record('questionaire_answer', $answer, $keys);
+      if ($id) {
+        $answer['id'] = $id;
+        drupal_write_record('questionaire_answer', $answer, $keys);
+      }
+      else {
+        drupal_write_record('questionaire_answer', $answer);
+      }
     }
     else { 
        drupal_write_record('questionaire_answer', $answer);

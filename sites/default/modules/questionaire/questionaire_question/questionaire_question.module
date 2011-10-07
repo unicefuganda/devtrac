@@ -447,7 +447,7 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
       $results = db_query($sql, $question->nid, $sid);
       $answers = array();
       $answer = NULL;
-      if ($results->num_rows > 0) {
+      if ($results) {
         while ($result = db_fetch_object($results)) {
           $answers[] = $result->answer;
         }

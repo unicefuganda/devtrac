@@ -2257,7 +2257,7 @@ function devtrac_module_get_site_report_status($node) {
       $sql = "SELECT nid FROM {content_type_actionitem} WHERE field_actionitem_ftreportitem_nid = %d ORDER BY field_actionitem_due_date_value DESC";
       $nids = db_query($sql, $node->nid);
       $actionitemsstatus = TRUE;
-      if ($nids->num_rows > 0) {
+      if ($nids) {
         $result['output'] .= '<li><div class="caption">Action Items</div>';
         while ($nid = db_fetch_object($nids)) {
           $airesult = devtrac_module_get_action_item_status(node_load($nid->nid));
@@ -2265,9 +2265,9 @@ function devtrac_module_get_site_report_status($node) {
           $actionitemsstatus = $actionitemsstatus && $airesult['status'];
         }
       }
-      $sql = "SELECT sid FROM {questionaire_submission} WHERE qnid = %d";
+      $sql = "SELECT sid FROM {questionaire_submission} WHERE qnid = %d ORDER BY sid ASC";
       $sids = db_query($sql, $node->nid);
-      if ($sids->num_rows > 0) {
+      if ($sids) {
         $result['output'] .= '<li><div class="caption">Questionnaires</div>';
         while ($sid = db_fetch_object($sids)) {
           $qresult = devtrac_module_get_questionaire_status($node, $sid->sid);
@@ -2317,10 +2317,10 @@ function devtrac_module_get_questionaire_status($node, $sid) {
     'output' => ''
   );
   $result['output'] .= '<ul><li>';
-  $result['output'] .= l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('html' => TRUE));
+  $result['output'] .= l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE));
   $result['output'] .= '</li>';
   $result['output'] .= '<li>';
-  $sql = "SELECT COUNT(DISTINCT(sid)) FROM {questionaire_answer} WHERE qa.qnid = %d AND qa.sid = %d";
+  $sql = "SELECT COUNT(DISTINCT(sid)) FROM {questionaire_answer} WHERE qnid = %d AND sid = %d";
   $count = db_result(db_query($sql, $node->nid, $sid));
   if (!$count) {
     $count = 0;

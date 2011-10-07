@@ -679,4 +679,5 @@ function devtrack_module_update_6010() {
  */
 function devtrack_module_update_6011() {
   update_sql("UPDATE {associated_nodes_association} SET number = 100 WHERE  aid = 1");
+  variable_set('hidden_comment_default_reasons', 'Mistake');
 }

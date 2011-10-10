@@ -2154,17 +2154,17 @@ function devtrac_module_get_fieldtrip_status($node) {
 //  $output .= '<div class ="caption">Fieldtrip</div>';
   $output .= '<ul>';
 //  $output .= '<li>'. l($node->title, 'node/'. $node->nid .'/edit', array('html' => TRUE)) .'</li>';
-  $output .= '<li><ul>';
+  $output .= '<li>';
   $fieldtripstatus = TRUE;
   // Gather information on the Field Trip
   if (!isset($node->field_fieldtrip_narrative[0]['value']) || empty($node->field_fieldtrip_narrative[0]['value'])) {
     $fieldtripstatus = FALSE;
-    $output .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-fieldtrip-narrative-0-value-wrapper', 'external' => TRUE, 'html' => TRUE)) .'</li>';
+    $output .= '<ul><li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-fieldtrip-narrative-0-value-wrapper', 'external' => TRUE, 'html' => TRUE)) .'</li></ul>';
   }
 //  else {
 //    $output .= '<li>Done</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
 //  }
-  $output .= '</ul></li>';
+  $output .= '</li>';
   $output .= '</ul>';
 
   $sitereportsstatus = TRUE;
@@ -2182,7 +2182,7 @@ function devtrac_module_get_fieldtrip_status($node) {
   }
   if (!$sitereportsattached) {
     $sitereportsstatus = FALSE;
-    $output .= '<ul><li><div>A Field Trip should have at least one Place attached to it. Click '. l('Add Place to Trip', 'node/'. $node->nid .'/addplaceform', array('html' => TRUE)) .' to add one.</li></ul></div>';
+    $output .= '<ul><li>A Field Trip should have at least one Place attached to it. Click '. l('Add Place to Trip', 'node/'. $node->nid .'/addplaceform', array('html' => TRUE)) .' to add one.</li></ul>';
   }
 
   // Conditionally add a submit text and button to the output

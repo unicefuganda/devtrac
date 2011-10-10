@@ -9,11 +9,12 @@
 	display: inline-block;*/
 
 }
-button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link {
+button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link, span.form-submit {
 	background-image: url("/sites/default/themes/devtrack_theme/images/input_btn.gif");
 	background-repeat: repeat-x;
 	background-position: left top;
-	background-color: #000;
+/*	background-color: #000;*/
+  display: inline-block;
 	border: #f2f2f2 solid 1px;
 }
 
@@ -22,6 +23,22 @@ input.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   background-color: #CCCCCC;
+}
+
+span.form-submit {
+  padding: 5px;
+  border-top: 1px #000 solid;
+  border-left: 1px #000 solid;
+  border-bottom: 1px #ccc solid;
+  border-right: 1px #ccc solid;
+}
+
+span.form-submit a:hover {
+  color: #fff;
+}
+
+span.form-submit:active {
+  border-color: #fff;
 }
 
 #footermenubar {

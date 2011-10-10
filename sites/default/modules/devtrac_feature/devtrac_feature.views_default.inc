@@ -9250,9 +9250,12 @@ watchdog(\'gallery views\', $theme_path);
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('page', 'Places Map Page', 'page_2');
-  $handler->override_option('header', 'Please select a location to add from the map below.');
+  $handler->override_option('header', 'Please select a location to add from the map below.
+<div class="button-wrapper"><ul><?php echo _devtrack_module_getbutton(\'Back to Field Trip\', \'node/\'. arg(2)); ?></ul></div>');
+  $handler->override_option('header_format', '3');
   $handler->override_option('footer', 'If the location does not exist, choose
-<ul><li><?php echo  _devtrack_module_getbutton(\'Create New Place\', \'node/add/place\', array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2) .\'/\'. arg(3))); ?></li>
+<!-- Removed the <li> and </li> tags. They are provided by _devtrack_module_getbutton. -->
+<ul><?php echo  _devtrack_module_getbutton(\'Create New Place\', \'node/add/place\', array(\'destination\' => arg(0) .\'/\'. arg(1) .\'/\'. arg(2) .\'/\'. arg(3))); ?>
 <!-- <li><?php // echo l(\'Back to Field Trip\', \'node/\' . arg(2)); ?></li> -->
 </ul>');
   $handler->override_option('footer_format', '3');

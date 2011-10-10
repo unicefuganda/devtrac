@@ -781,13 +781,22 @@ background-image: -moz-linear-gradient(
     background: none repeat scroll 0 0 #EA0001;
     color: #FFFFFF;
 }
-.container div.help, .help{background: none repeat scroll 0 0 transparent; float:right;}
+.container div.help, .help{
+  background: none repeat scroll 0 0 transparent;
+  float:right;
+}
+
+/*
+This is obsolete we think not sure why this was ever positioned absolute
 
 .page-places .col-content_contentlayerleft.span-16 div.help {
     left: 316px;
     position: absolute;
     top: 247px;
 }
+*/
+
+
 .col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
 .col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
 }

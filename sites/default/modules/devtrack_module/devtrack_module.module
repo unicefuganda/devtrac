@@ -955,16 +955,10 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
 
   // We're editing an existing site report
   if ((arg(0) == "node") && (is_numeric(arg(1))) && (arg(2) == "edit")) {
-    $vids = array();
-    $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
-    foreach ($vocabularies as $vocabulary) {
-      $vids[$vocabulary->vid] = $vocabulary->vid;
-      if ($vocabulary->name == 'Site Report Type') {
-        $editreporttype = new stdClass();
-        $editreporttype->vid = $vocabulary->vid;
-        $terms = array_values($form['#node']->taxonomy);
-        $editreporttype->name = $terms[0]->name;
-      }
+    $editreporttype = new stdClass();
+    $editreporttype->vid = 7; // Alert: Hardcoded vocabulary id
+    foreach ($form['#node']->taxonomy as $term) {
+      $editreporttype->name = $term->name;
     }
   }
 
@@ -980,75 +974,67 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
   // We're back at creating a new site report
   if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
     // Hide/Show certain fields according to the Type of Site Report we're creating
+    $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+    $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+    $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
     switch ($addreporttype->name) {
       case 'Site Visit':
-        // Is done in code, so no hiding/showing
+        // Is done in code, so no need to do any hiding, but to make sure we just hide everything
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
         break;
       case 'Roadside Observation':
-        $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
         $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['field_ftritem_place']['#suffix'] = '</div>';
-        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
         break;
       case 'Human Interest Story':
-        $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
-        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['field_ftritem_place']['#suffix'] = '</div>';
-        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
+        if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
+          $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+        }
+        else {
+          $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+        }
         break;
     }
+    $form['field_ftritem_place']['#suffix'] = '</div>';
+    $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+    $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
+    $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
   }
 
   // We're editing an existing site report
   if ((arg(0) == "node") && (is_numeric(arg(1))) && (arg(2) == "edit")) {
-    // Hide/Show certain fields according to the Type of Site Report we're editing
+    // Hide/Show certain fields
+    $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+    $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+    $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
     switch ($editreporttype->name) {
       case 'Site Visit':
-        if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
-          $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
-          $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+        break;
+      case 'Roadside Observation':
+        if (isset($form['field_ftritem_lat_long']['#value'][0]['openlayers_wkt']) && ($form['field_ftritem_lat_long']['#value'][0]['openlayers_wkt'] != '')) {
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
         }
         else {
-          $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
           $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-          $form['taxonomy'][7]['#prefix'] = '<div class="devtracshowfield">'; // Alert: Hardcoded vocabulary id
         }
-        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['field_ftritem_place']['#suffix'] = '</div>';
-        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        break;
-      case 'Roadside Observation':
-        $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
-        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
-        $form['field_ftritem_place']['#suffix'] = '</div>';
-        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#suffix'] = '</div>';
         break;
       case 'Human Interest Story':
-        $form['field_ftritem_place']['#prefix'] = '<div class="devtracshowfield">';
-        $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
-        $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">';
-        $form['field_ftritem_place']['#suffix'] = '</div>';
-        $form['field_ftritem_lat_long']['#suffix'] = '</div>';
-        $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
-        $form['taxonomy'][7]['#suffix'] = '</div>';
-        break;
+        if (isset($form['field_ftritem_place'][0]['nid']['nid']['#value']) && ($form['field_ftritem_place'][0]['nid']['nid']['#value'] != '')) {
+          $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+        }
+        else {
+          if (isset($form['field_ftritem_lat_long']['#value'][0]['openlayers_wkt']) && ($form['field_ftritem_lat_long']['#value'][0]['openlayers_wkt'] != '')) {
+            $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtrachidefield">';
+          }
+          else {
+            $form['field_ftritem_lat_long']['#prefix'] = '<div class="devtracshowfield">';
+          }
+        }
     }
+    $form['field_ftritem_place']['#suffix'] = '</div>';
+    $form['field_ftritem_lat_long']['#suffix'] = '</div>';
+    $form['taxonomy'][1]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
+    $form['taxonomy'][7]['#suffix'] = '</div>'; // Alert: Hardcoded vocabulary id
   }
 
   // Only show the Field Trip field if it's empty
@@ -2234,7 +2220,7 @@ function devtrac_module_get_site_report_status($node) {
       $sector_codes = array_values(taxonomy_node_get_terms_by_vocabulary($node, $vocabularysc->vid));
       if (!isset($sector_codes) || empty($sector_codes)) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
       }
       if (!isset($node->field_ftritem_date_visited[0]['value']) || is_null($node->field_ftritem_date_visited[0]['value'])) {
         $result['status'] = FALSE;
@@ -2307,7 +2293,7 @@ function devtrac_module_get_action_item_status($node) {
   $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $sector_codes->vid));
   if (!isset($terms) || empty($terms)) {
     $result['status'] = FALSE;;
-    $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-9-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+    $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
   }
 //  if ($result['status']) {
 //    $result['output'] .= '<li>Done</li>';// All fields are okay, but you might want to read through the Follow-up Task.</li>';

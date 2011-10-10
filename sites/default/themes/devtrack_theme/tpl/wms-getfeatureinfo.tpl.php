@@ -1,5 +1,4 @@
 <?php
-// $Id$
 
 /**
  * @file
@@ -22,8 +21,8 @@ print '</div>';
 
 
 $referrer = $_SERVER['HTTP_REFERER'];
-$q = substr($referrer, strpos($referrer, '/', 7) + 1);
-$q = substr($q ,0, strpos($q, '?'));
+$q = drupal_substr($referrer, strpos($referrer, '/', 7) + 1);
+$q = drupal_substr($q, 0, strpos($q, '?'));
 
 $args = explode("/", $q);
 print "<ul>";

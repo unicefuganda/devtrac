@@ -1,15 +1,25 @@
 @CHARSET "UTF-8";
-
-#nav a {
+#header li a {
+	margin-left: 6px;
+	margin-top -5px;
+	padding-top: 15px;
+}
+#nav a { 
 	background-image: url("/sites/default/themes/devtrack_theme/images/menu_bkgd.gif");
 	background-repeat: repeat-x;
-	background-color: #000;
-	/*padding: 6px 10px 4px;
+	/*background-color: #cc9999;*/
+	margin: -20px 0 0 0;
+	/*padding: 15px 10px;*/
+	line-height: 20px;
 	height: 30px;
-	display: inline-block;*/
-
 }
-button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link {
+#nav li a{
+	margin: 0;
+}
+button,
+.form-submit,
+input a.form-button-cancel, 
+.node-form a.openlayers-cck-hide-link {
 	background-image: url("/sites/default/themes/devtrack_theme/images/input_btn.gif");
 	background-repeat: repeat-x;
 	background-position: left top;
@@ -17,13 +27,21 @@ button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-c
 	border: #f2f2f2 solid 1px;
 }
 
-button:hover ,
-input.form-submit:hover,
+button:hover,
+.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   background-color: #CCCCCC;
 }
-
+.block .form-submit{
+	/*width: 50%;*/
+	color: #FFF;
+	padding: 3px;
+	text-align: center;
+	font-style: normal;
+	clear: right;
+	float:left;
+}
 #footermenubar {
 	background-color:#000 !important;	
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
@@ -36,4 +54,13 @@ input a.form-button-cancel:hover,
 
 .page-user .description {
   margin-top: 10px;
-}  
+} 
+
+.tabsaslist .tabs li {
+	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage.gif");
+	list-style-position: outside;
+	line-height: 10px;
+}
+.tabsaslist .tabs li.active {
+	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage_active.gif");
+}

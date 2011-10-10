@@ -29,7 +29,6 @@ html body{
   background-color: #f2f2f2;
   /*color:#666;*/
 }
-
 .wrapper {
 	height: auto !important;
   margin: 0 auto -150px;
@@ -173,7 +172,7 @@ div.olMapViewport {
 	padding: 0px;
 }
 #header li a {
-	background-color: #000;
+	/*background-color: #000;*/
 	text-decoration: none;
 	margin-left: 6px;
 	padding: 6px 10px 4px;
@@ -217,7 +216,6 @@ div.olMapViewport {
   -moz-border-radius-topright: 4px;
   -webkit-border-top-left-radius: 4px;
   -webkit-border-top-right-radius: 4px;
-  
 }
 #logo a{
   width: 310px;
@@ -236,7 +234,7 @@ div.olMapViewport {
 	line-height:28px;
 	margin-top:-28px;
 	padding-left:10px;
-	padding-top:16px;
+	padding-top: 32px;
 	width: 28%;
 }
 .uniceflogo {background-image:url("/sites/default/themes/devtrack_theme/images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
@@ -466,8 +464,6 @@ div.olMapViewport {
 	color: #EA0001;
   list-style-image: none;
   font-size: 25px;
-  display: list-item;
-/*  list-style-image:url("/sites/default/themes/devtrack_theme/images/listimage.gif");*/
 }
 
 .tabsaslist .tabs li.active {
@@ -593,14 +589,17 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft dl,
 .col-content_contentlayerleft.span-6,
 .col-content_contentlayerleft .views-exposed-widgets,
-.col-content_layertwoleft .block-views,
+.col-content_layertwoleft .block-views .views-row,
 .col-content_layertworight .content,
 .col-content_layerthree .content p,
 #getfeatureinfo,
 .front .clear-block p,
 .clearfix h2{
 	padding-left: 10px;
-}
+}/*
+body .col-content_layertwoleft .block-views .content table{
+	padding-left: -10px;
+}*/
 .node-form .standard,
 .col-content_contentlayerright .openlayers-views-map{
 	margin-right: 10px;
@@ -647,18 +646,29 @@ background-image: -moz-linear-gradient(
 	margin: 5px; float:left;
 }
 .col-content_contentlayermiddle .views-content-field-ftritem-images-data {
-    background-color: #000000;
+   /* background-color: #000000;
     color: #FFFFFF;
     float: left;
     margin-left: 5px;
     margin-top: -37px;
     opacity: 0.5;
     padding: 4px 5px 0;
-    width: 370px;
+    width: 370px;*/
+    
+    background-color: #000000;
+    color: #FFFFFF;
+    float: left;
+    height: 36px;
+    margin-left: 5px;
+    margin-top: -45px;
+    opacity: 0.5;
+    padding: 4px 34px 0 4px;
+    width: 342px;
 }
 #contentcontainer .col-content_contentlayermiddle .view-empty .views-content-field-ftritem-images-data {
     margin-top: -45px;
 }
+/*
 .col-content_contentlayerright .views-content-field-ftritem-images-data {
     background-color: #000000;
     color: #FFFFFF;
@@ -670,14 +680,15 @@ background-image: -moz-linear-gradient(
     padding: 7px 5px 5px;
     width: 97%;
 }
+*/
+.col-content_contentlayermiddle a.downloadimage {
+	background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
+    background-repeat: no-repeat;
 
-.downloadimage {
-	background-image:url("/sites/default/themes/devtrack_theme/icons/download_image.png");
-	background-repeat: no-repeat;
-	float:right;
-	height:24px;
-	width:24px;
-	padding: 2px;
+    height: 24px;
+    position: absolute;
+    right: 5px;
+    width: 24px;
 }
 .activeSlide{
   opacity: 0.3;
@@ -721,7 +732,14 @@ background-image: -moz-linear-gradient(
 /*  comments   */
 .col-content_contentlayerright div.comment img { border: 0 none;}
 .col-content_contentlayerright div.comment { margin-right: 10px;}
-
+#comments div.comment-content{
+	float: none;
+}
+div.comment div.picture{
+	float: right;
+}
+div.comment div.content{float: left;}
+#comments div.picture img{ border: 0 none;}
 .col-content_contentlayermiddle.last {
 	width:710px;
 }
@@ -858,4 +876,6 @@ body a.getfeatureaddlink:link {
 }
 .col-content_contentlayerright table tr{
 	border-bottom: 3px solid #FFF9CD;
+}
+.advanced-help-link{
 }

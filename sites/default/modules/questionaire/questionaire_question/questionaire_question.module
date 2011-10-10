@@ -629,8 +629,16 @@ function questionaire_question_saveanswers($answers) {
     $sid = questionaire_question_create_submission($uid, $qnid, $context);  
   }
   
-//  $table = data_get_table('questionaire_answer');
-    
+  // First delete all old answers and old term data.
+  $aids = db_query("SELECT id FROM {questionaire_answer} WHERE sid = %d", $sid);
+  if ($aids) {
+    while ($aid = db_fetch_object($aids)) {
+      db_query("DELETE FROM {questionaire_answer_term} WHERE id = %d", $aid->id);
+    }
+  }
+  db_query("DELETE FROM {questionaire_answer} WHERE sid = %d", $sid);
+
+  // Now add them again.
   foreach ($answers['answers'] as $answer) {
     $answer['sid'] = $sid;
     $answer['uid'] = $uid;
@@ -647,8 +655,8 @@ function questionaire_question_saveanswers($answers) {
         $answer['data_taxonomy:'. $term->vid][] = $term->tid;
       }
     }
-  */
-      
+ */
+/*
     if (isset($answers['sid'])) {
       $keys = array('id');
       $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
@@ -658,7 +666,7 @@ function questionaire_question_saveanswers($answers) {
         $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
       }
       else {
-        // This does but only for multi-choice checkboxes because every answers is stored under a unique id. 
+        // This does but only for multi-choice checkboxes because every answers is stored under a unique id.
         $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d AND answer = '%s'", $answer['question'], $sid, $answer['answer']));
       }
       if ($id) {
@@ -669,17 +677,18 @@ function questionaire_question_saveanswers($answers) {
         drupal_write_record('questionaire_answer', $answer);
       }
     }
-    else { 
-       drupal_write_record('questionaire_answer', $answer);
-       $contextnode = node_load($context);
-       foreach ($contextnode->taxonomy as $term) {
-         $answerterm = array(
-           'id' => $answer['id'],
-           'tid' => $term->tid,
-         );
-         drupal_write_record('questionaire_answer_term', $answerterm);
-       } 
-    }
+ */
+//    else { 
+      drupal_write_record('questionaire_answer', $answer);
+      $contextnode = node_load($context);
+      foreach ($contextnode->taxonomy as $term) {
+        $answerterm = array(
+          'id' => $answer['id'],
+          'tid' => $term->tid,
+        );
+        drupal_write_record('questionaire_answer_term', $answerterm);
+      } 
+//    }
   }
 }
 

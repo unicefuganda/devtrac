@@ -1166,6 +1166,7 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                     $options["edit[field_actionitem_resp_place][0][nid][nid]"]  = "[nid:". $localnode->field_ftritem_place[0]['nid'] . "]";
                   }
 
+
 /*                  if (_devtrack_module_isinternetexplorer()) {
                     $result .= '<li>' . l('<div class="form-submit">Add Action Item</div>', 'node/add/actionitem', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
                   }
@@ -1840,7 +1841,8 @@ function _devtrack_module_getbutton($text, $path, $options = NULL) {
     $params = Array('html' => TRUE);
   }
   if (_devtrack_module_isinternetexplorer()) {
-    $result .= '<li>'. l('<div class="form-submit">'. $text .'</div>', $path, $params) .'</li>';
+    // we can not tell how much we hate IE for this
+    $result .= '<li><span class="form-submit">'. l($text, $path, $params) .'</span></li>';
   }
   else {
     $result .= '<li>'. l('<button type="button">'. $text .'</button>', $path, $params) .'</li>';

@@ -513,6 +513,26 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'hidden_comment_default_reasons';
+  $strongarm->value = 'Mistake
+Comment No Longer Relevant
+Other';
+  $export['hidden_comment_default_reasons'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'locale_custom_strings_en';
+  $strongarm->value = array(
+    'Add another item' => 'Add another photo',
+    'View' => 'Overview',
+    'This action can be reverted by the unhide functionality. Not be scared!' => 'This action can be reversed later by clicking "unhide".',
+  );
+  $export['locale_custom_strings_en'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_actionitem';
   $strongarm->value = array(
     0 => 'status',

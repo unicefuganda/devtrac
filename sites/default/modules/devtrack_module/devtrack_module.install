@@ -250,7 +250,7 @@ function devtrack_module_update_6005() {
 
   // Add an entry to vocabulary_redirect table
   update_sql("INSERT INTO {taxonomy_redirect} (vid, tid, module, path, separator_replace, remove_text, filter, path_case)
-              VALUES ($vid, NULL, $original, 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform')");
+              VALUES ($vid, NULL, '$original', 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform')");
 
   $ret[] = array('success' => TRUE, 'query' => 'added entry to taxonomy_redirect');
   return $ret;
@@ -688,7 +688,7 @@ function devtrack_module_update_6011() {
   }
   $resultc = db_query(db_rewrite_sql("SELECT * FROM {associated_nodes_criterion} a WHERE a.aid = 1", 'a', 'aid'));
   if ($resultc) {
-    update_sql("UPDATE {associated_nodes_criterion} SET type = 'taxonomy', element = 1, weight = 5) WHERE aid = 1");
+    update_sql("UPDATE {associated_nodes_criterion} SET type = 'taxonomy', element = 1, weight = 5 WHERE aid = 1");
   }
   else {
     update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight) VALUES (1, 'taxonomy', 1, 5)");

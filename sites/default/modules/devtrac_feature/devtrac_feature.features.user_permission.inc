@@ -767,8 +767,6 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'edit own fieldtrip content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'unicef user (Mobile)',
     ),
   );
 
@@ -777,8 +775,6 @@ function devtrac_feature_user_default_permissions() {
     'name' => 'edit own ftritem content',
     'roles' => array(
       '0' => 'administrator',
-      '1' => 'authenticated user',
-      '2' => 'unicef user (Mobile)',
     ),
   );
 

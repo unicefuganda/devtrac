@@ -30,24 +30,27 @@ input a.form-button-cancel,
 button:hover,
 .form-submit:hover,
 input a.form-button-cancel:hover, 
-.node-form a.openlayers-cck-hide-link:hover  {
-  background-color: #CCCCCC;
+.node-form a.openlayers-cck-hide-link:hover,
+span.form-submit a:hover  {
+  color: #CCCCCC;
+  text-decoration: none;
 }
-span.form-submit{
-	/*width: 50%;*/
-	color: #FFF;
-	padding: 3px;
+span.form-submit {
+	padding: 3px 5px;
 	text-align: center;
 	font-style: normal;
 	clear: right;
 	float:left;
+	text-decoration: none;
+}
+span.form-submit a{
+	color: #FFF;
 }
 #footermenubar {
 	background-color:#000 !important;	
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
 	display: inline-block;
 }
-
 #footer-message {
 	margin-top:-10px;
 }

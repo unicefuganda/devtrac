@@ -91,11 +91,11 @@ body .more-link a:hover, body .node-links a:hover{color: #9B9B9A;}
 .view-my-homepage-my-action-items .view-footer a {float:right;}
 
 button ,
-input.form-submit,  input a.form-button-cancel, .node-form a.openlayers-cck-hide-link
-{
-  border-style:solid;
-  color:#FFFFFF;
-  /*font-weight:bold; */
+input.form-submit,  
+input a.form-button-cancel, 
+.node-form a.openlayers-cck-hide-link{
+  border-style: solid;
+  color: #FFFFFF;
   padding:2px 5px;
   text-align:center;
   background-image: -moz-linear-gradient(
@@ -103,7 +103,7 @@ input.form-submit,  input a.form-button-cancel, .node-form a.openlayers-cck-hide
     rgb(107,0,0) 66%);
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-	margin: 0;
+	margin: 0 0 5px;
 background-image: -webkit-gradient(
     linear,
     left top,

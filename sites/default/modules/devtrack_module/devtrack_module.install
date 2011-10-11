@@ -673,19 +673,25 @@ function devtrack_module_update_6010() {
   return $ret;
 }
 
+
 /*
  * https://www.pivotaltracker.com/story/show/19285329
  * Increase limit on associated node questions to 100
  */
 function devtrack_module_update_6011() {
   $resulta = db_query(db_rewrite_sql("SELECT * FROM {associated_nodes_association} a WHERE  a.aid = 1", 'a', 'aid'));
-  if (!$resulta) {
+  if ($resulta) {
+    update_sql("UPDATE {associated_nodes_association} SET name = 'Questions', number = 100, published_only = 1 WHERE aid = 1");
+  }
+  else {
     update_sql("INSERT INTO {associated_nodes_association} (aid, name, number, published_only) VALUES (1, 'Questions', 100, 1)");
   }
   $resultc = db_query(db_rewrite_sql("SELECT * FROM {associated_nodes_criterion} a WHERE a.aid = 1", 'a', 'aid'));
-  if (!$resultc) {
+  if ($resultc) {
+    update_sql("UPDATE {associated_nodes_criterion} SET type = 'taxonomy', element = 1, weight = 5) WHERE aid = 1");
+  }
+  else {
     update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight) VALUES (1, 'taxonomy', 1, 5)");
   }
   variable_set('hidden_comment_default_reasons', 'Mistake');
 }
-

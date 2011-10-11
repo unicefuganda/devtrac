@@ -678,6 +678,14 @@ function devtrack_module_update_6010() {
  * Increase limit on associated node questions to 100
  */
 function devtrack_module_update_6011() {
-  update_sql("UPDATE {associated_nodes_association} SET number = 100 WHERE  aid = 1");
+  $resulta = db_query(db_rewrite_sql("SELECT * FROM {associated_nodes_association} a WHERE  a.aid = 1", 'a', 'aid'));
+  if (!$resulta) {
+    update_sql("INSERT INTO {associated_nodes_association} (aid, name, number, published_only) VALUES (1, 'Questions', 100, 1)");
+  }
+  $resultc = db_query(db_rewrite_sql("SELECT * FROM {associated_nodes_criterion} a WHERE a.aid = 1", 'a', 'aid'));
+  if (!$resultc) {
+    update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight) VALUES (1, 'taxonomy', 1, 5)");
+  }
   variable_set('hidden_comment_default_reasons', 'Mistake');
 }
+

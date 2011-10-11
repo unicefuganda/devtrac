@@ -33,7 +33,7 @@ input a.form-button-cancel:hover,
 .node-form a.openlayers-cck-hide-link:hover  {
   background-color: #CCCCCC;
 }
-.block .form-submit{
+span.form-submit{
 	/*width: 50%;*/
 	color: #FFF;
 	padding: 3px;
@@ -59,8 +59,16 @@ input a.form-button-cancel:hover,
 .tabsaslist .tabs li {
 	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage.gif");
 	list-style-position: outside;
-	line-height: 10px;
+	line-height: 0px;
+	/*font-size: 10px;*/
 }
 .tabsaslist .tabs li.active {
 	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage_active.gif");
+}
+.tabsaslist .tabs li a{
+	margin-top: -22px;
+	height: 40px;
+}
+.col-content_contentlayerleft .tabsaslist ul.primary{
+	margin-top: 20px;
 }

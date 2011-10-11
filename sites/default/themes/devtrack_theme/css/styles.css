@@ -452,7 +452,6 @@ div.olMapViewport {
 	background-color: #F2F2F2;/*9B9B9B*/
 }
 
-
 .tabsaslist ul.tabs.primary li a {
   background-image: none;
 }
@@ -879,3 +878,10 @@ body a.getfeatureaddlink:link {
 }
 .advanced-help-link{
 }
+
+/* 765
+.col-content_layertworight .block-devtrack_module .caption {
+    background-color: #FFF9CD;
+    color: #00CC00;
+}
+*/

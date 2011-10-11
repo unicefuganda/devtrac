@@ -11,7 +11,7 @@
   <?php print $styles; ?>
   <?php print $scripts ?>
   <!--[if lte IE 8]>
-<!--    <link rel="stylesheet" href="<?php print $path; ?>blueprint/blueprint/ie.css" type="text/css" media="screen, projection"> -->
+    <link rel="stylesheet" href="<?php print $path; ?>blueprint/blueprint/ie.css" type="text/css" media="screen, projection">
     <link href="<?php print $path; ?>css/ie.css" rel="stylesheet"  type="text/css"  media="screen, projection" />
   <![endif]-->  
   <!--[if lte IE 6]>

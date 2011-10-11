@@ -29,7 +29,6 @@ html body{
   background-color: #f2f2f2;
   /*color:#666;*/
 }
-
 .wrapper {
 	height: auto !important;
   margin: 0 auto -150px;
@@ -173,7 +172,7 @@ div.olMapViewport {
 	padding: 0px;
 }
 #header li a {
-	background-color: #000;
+	/*background-color: #000;*/
 	text-decoration: none;
 	margin-left: 6px;
 	padding: 6px 10px 4px;
@@ -217,7 +216,6 @@ div.olMapViewport {
   -moz-border-radius-topright: 4px;
   -webkit-border-top-left-radius: 4px;
   -webkit-border-top-right-radius: 4px;
-  
 }
 #logo a{
   width: 310px;
@@ -236,7 +234,7 @@ div.olMapViewport {
 	line-height:28px;
 	margin-top:-28px;
 	padding-left:10px;
-	padding-top:16px;
+	padding-top: 32px;
 	width: 28%;
 }
 .uniceflogo {background-image:url("/sites/default/themes/devtrack_theme/images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
@@ -339,7 +337,7 @@ div.olMapViewport {
 	margin-bottom: -2px;
 }
 .col-content_contentlayerleft {
-	min-height: 50px;
+	min-height: 100px;
 }
 
 .views-row .picture {
@@ -357,7 +355,7 @@ div.olMapViewport {
 	margin:0 10px 12px;
 	float: left;
 }
-.col-content_layeroneright ul li,
+.col-content_layeroneright ul li, 
 .col-content_layeroneright .item-list ul li{
 	background-color: #fff9cd;
 	/*float: left;*/
@@ -454,7 +452,6 @@ div.olMapViewport {
 	background-color: #F2F2F2;/*9B9B9B*/
 }
 
-
 .tabsaslist ul.tabs.primary li a {
   background-image: none;
 }
@@ -466,8 +463,6 @@ div.olMapViewport {
 	color: #EA0001;
   list-style-image: none;
   font-size: 25px;
-  display: list-item;
-/*  list-style-image:url("/sites/default/themes/devtrack_theme/images/listimage.gif");*/
 }
 
 .tabsaslist .tabs li.active {
@@ -593,14 +588,17 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft dl,
 .col-content_contentlayerleft.span-6,
 .col-content_contentlayerleft .views-exposed-widgets,
-.col-content_layertwoleft .view-field-trip-report-item-details,
+.col-content_layertwoleft .block-views .views-row,
 .col-content_layertworight .content,
 .col-content_layerthree .content p,
 #getfeatureinfo,
 .front .clear-block p,
 .clearfix h2{
 	padding-left: 10px;
-}
+}/*
+body .col-content_layertwoleft .block-views .content table{
+	padding-left: -10px;
+}*/
 .node-form .standard,
 .col-content_contentlayerright .openlayers-views-map{
 	margin-right: 10px;
@@ -647,18 +645,29 @@ background-image: -moz-linear-gradient(
 	margin: 5px; float:left;
 }
 .col-content_contentlayermiddle .views-content-field-ftritem-images-data {
-    background-color: #000000;
+   /* background-color: #000000;
     color: #FFFFFF;
     float: left;
     margin-left: 5px;
     margin-top: -37px;
     opacity: 0.5;
     padding: 4px 5px 0;
-    width: 370px;
+    width: 370px;*/
+    
+    background-color: #000000;
+    color: #FFFFFF;
+    float: left;
+    height: 36px;
+    margin-left: 5px;
+    margin-top: -45px;
+    opacity: 0.5;
+    padding: 4px 34px 0 4px;
+    width: 342px;
 }
 #contentcontainer .col-content_contentlayermiddle .view-empty .views-content-field-ftritem-images-data {
     margin-top: -45px;
 }
+/*
 .col-content_contentlayerright .views-content-field-ftritem-images-data {
     background-color: #000000;
     color: #FFFFFF;
@@ -670,14 +679,15 @@ background-image: -moz-linear-gradient(
     padding: 7px 5px 5px;
     width: 97%;
 }
+*/
+.col-content_contentlayermiddle a.downloadimage {
+	background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
+    background-repeat: no-repeat;
 
-.downloadimage {
-	background-image:url("/sites/default/themes/devtrack_theme/icons/download_image.png");
-	background-repeat: no-repeat;
-	float:right;
-	height:24px;
-	width:24px;
-	padding: 2px;
+    height: 24px;
+    position: absolute;
+    right: 5px;
+    width: 24px;
 }
 .activeSlide{
   opacity: 0.3;
@@ -721,7 +731,14 @@ background-image: -moz-linear-gradient(
 /*  comments   */
 .col-content_contentlayerright div.comment img { border: 0 none;}
 .col-content_contentlayerright div.comment { margin-right: 10px;}
-
+#comments div.comment-content{
+	float: none;
+}
+div.comment div.picture{
+	float: right;
+}
+div.comment div.content{float: left;}
+#comments div.picture img{ border: 0 none;}
 .col-content_contentlayermiddle.last {
 	width:710px;
 }
@@ -763,13 +780,12 @@ background-image: -moz-linear-gradient(
 	font-weight: bold;
 }
 .col-content_layertworight .block-devtrack_module .caption{
-	color: #00cc00;
 	background-color: #FFF9CD;
+    padding-left: 10px;
 }
 .not-front .views-table tr td {
     border-bottom: 1px solid #FFF9CD;
 }
-
 /*  ........pager..........*/
 .clearfix .block ul.pager a, .clearfix .block ul.pager li.pager-current, .clearfix .block ul.pager a:hover {
     border: 1px solid #FFF9CD;
@@ -781,22 +797,13 @@ background-image: -moz-linear-gradient(
     background: none repeat scroll 0 0 #EA0001;
     color: #FFFFFF;
 }
-.container div.help, .help{
-  background: none repeat scroll 0 0 transparent;
-  float:right;
-}
-
-/*
-This is obsolete we think not sure why this was ever positioned absolute
+.container div.help, .help{background: none repeat scroll 0 0 transparent; float:right;}
 
 .page-places .col-content_contentlayerleft.span-16 div.help {
     left: 316px;
     position: absolute;
     top: 247px;
 }
-*/
-
-
 .col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
 .col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
 }
@@ -855,14 +862,26 @@ body a.getfeatureaddlink:link {
  float: right;
  list-style-image: none;
 }
-
 .view-findplaces-districts ul,
 .view-findplaces-districts li
 {
  list-style-type: none;
  list-style-image: none;
 }
-/*
-.col-content_contentlayerright div#block-views-my_homepage_picture-block_5{
-	margin-bottom: 0.4em;
-}*/
+.col-content_contentlayerright table th.views-field-label-title, thead th{
+	width: 20%;
+	border-bottom: 0;
+	background-color: 
+}
+.col-content_contentlayerright table tr{
+	border-bottom: 3px solid #FFF9CD;
+}
+.advanced-help-link{
+}
+
+/* 765
+.col-content_layertworight .block-devtrack_module .caption {
+    background-color: #FFF9CD;
+    color: #00CC00;
+}
+*/

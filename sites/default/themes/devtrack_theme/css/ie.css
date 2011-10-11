@@ -1,46 +1,47 @@
 @CHARSET "UTF-8";
-
-#nav a {
+#header li a {
+	margin-left: 6px;
+	margin-top -5px;
+	padding-top: 15px;
+}
+#nav a { 
 	background-image: url("/sites/default/themes/devtrack_theme/images/menu_bkgd.gif");
 	background-repeat: repeat-x;
-	background-color: #000;
-	/*padding: 6px 10px 4px;
+	/*background-color: #cc9999;*/
+	margin: -20px 0 0 0;
+	/*padding: 15px 10px;*/
+	line-height: 20px;
 	height: 30px;
-	display: inline-block;*/
-
 }
-button, input.form-submit, input a.form-button-cancel, .node-form a.openlayers-cck-hide-link, span.form-submit {
+#nav li a{
+	margin: 0;
+}
+button,
+.form-submit,
+input a.form-button-cancel, 
+.node-form a.openlayers-cck-hide-link {
 	background-image: url("/sites/default/themes/devtrack_theme/images/input_btn.gif");
 	background-repeat: repeat-x;
 	background-position: left top;
-/*	background-color: #000;*/
-  display: inline-block;
+	background-color: #000;
 	border: #f2f2f2 solid 1px;
 }
 
-button:hover ,
-input.form-submit:hover,
+button:hover,
+.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   background-color: #CCCCCC;
 }
-
-span.form-submit {
-  padding: 5px;
-  border-top: 1px #000 solid;
-  border-left: 1px #000 solid;
-  border-bottom: 1px #ccc solid;
-  border-right: 1px #ccc solid;
+span.form-submit{
+	/*width: 50%;*/
+	color: #FFF;
+	padding: 3px;
+	text-align: center;
+	font-style: normal;
+	clear: right;
+	float:left;
 }
-
-span.form-submit a:hover {
-  color: #fff;
-}
-
-span.form-submit:active {
-  border-color: #fff;
-}
-
 #footermenubar {
 	background-color:#000 !important;	
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
@@ -53,4 +54,21 @@ span.form-submit:active {
 
 .page-user .description {
   margin-top: 10px;
-}  
+} 
+
+.tabsaslist .tabs li {
+	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage.gif");
+	list-style-position: outside;
+	line-height: 0px;
+	/*font-size: 10px;*/
+}
+.tabsaslist .tabs li.active {
+	list-style-image: url("/sites/default/themes/devtrack_theme/images/listimage_active.gif");
+}
+.tabsaslist .tabs li a{
+	margin-top: -22px;
+	height: 40px;
+}
+.col-content_contentlayerleft .tabsaslist ul.primary{
+	margin-top: 20px;
+}

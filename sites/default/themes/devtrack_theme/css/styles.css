@@ -799,11 +799,15 @@ div.comment div.content{float: left;}
 }
 .container div.help, .help{background: none repeat scroll 0 0 transparent; float:right;}
 
+/*
+Fix very strange title issue on the getfeatureinfo page.
+Why was this code there in the first place
 .page-places .col-content_contentlayerleft.span-16 div.help {
     left: 316px;
     position: absolute;
     top: 247px;
 }
+*/
 .col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
 .col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
 }

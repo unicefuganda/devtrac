@@ -211,7 +211,7 @@ function devtrack_module_update_6004() {
   taxonomy_save_term($term);
 
   // Now update the existing site reports
-  $nids = db_query(db_rewrite_sql("SELECT n.nid FROM {node} n WHERE n.type = '%s'", 'ftritem')); // ALERT: Hardcoded node_type machine name
+  $nids = db_query(db_rewrite_sql("SELECT n.nid FROM {node} n WHERE n.type = '%s'"), 'ftritem'); // ALERT: Hardcoded node_type machine name
   while ($nid = db_fetch_object($nids)) {
     $node = node_load($nid->nid);
     $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name

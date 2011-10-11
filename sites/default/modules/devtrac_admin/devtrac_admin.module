@@ -1,0 +1,3 @@
+<?php
+
+include_once('devtrac_admin.features.inc');

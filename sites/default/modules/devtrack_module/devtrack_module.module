@@ -2342,7 +2342,7 @@ function devtrack_module_get_report_counts() {
   $output .= '<tbody>';
 
   $vocabulary = devtrack_module_get_vocabulary_by_name('Place Type');
-  $sql_count = "SELECT COUNT(ctf.nid) FROM {content_type_ftritem} ctf JOIN {term_node} tnp ON ctf.field_ftritem_place_nid = tnp.nid JOIN {node} n ON ctf.nid = n.nid JOIN {term_node} tnr ON ctf.nid = tnr.nid WHERE n.status = 1 AND tnr.tid = 209 AND tnp.tid = %d"; // "Site Visit" has tid 209
+  $sql_count = "SELECT COUNT(ctf.nid) FROM {content_type_ftritem} ctf JOIN {term_node} tnp ON ctf.field_ftritem_place_nid = tnp.nid JOIN {node} n ON ctf.nid = n.nid JOIN {term_node} tnr ON ctf.nid = tnr.nid WHERE ctf.field_ftritem_status_value = 'Submitted' AND n.status = 1 AND tnr.tid = 209 AND tnp.tid = %d"; // "Site Visit" has tid 209
   $sql_children = "SELECT tid FROM {term_hierarchy} WHERE parent = %d";
 
   $result = devtrack_module_get_term_by_name_vid('Health Facilities', $vocabulary->vid);

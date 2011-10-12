@@ -127,22 +127,27 @@ function associated_nodes_taxonomy_associated_nodes_exclude($aid, $node) {
 function associated_nodes_taxonomy_associated_nodes_find($aid, $node, $criteria) {
 	$types = associated_nodes_nodetypes($aid);
   $associated_nodes = array();
-  foreach ($criteria as $vid => $weight) {
-    if ($weight != 0) {
+  foreach ($criteria as $vid => $criterion) {
+    if ($criterion['weight'] != 0) {
       $terms = _associated_nodes_taxonomy_get_terms($node->nid, $vid);
       $nb_terms = count($terms);
       foreach ($terms as $tid) {
-        $descendants = _associated_nodes_taxonomy_get_all_descendants($tid);
+        if ($criterion['parents_only']) {
+          $descendants = array($tid);
+        }
+        else {
+          $descendants = _associated_nodes_taxonomy_get_all_descendants($tid);
+        }
         $nodes = array();
         foreach($descendants as $descendant_tid) {
-          $nodes = array_merge($nodes, _associated_nodes_taxonomy_get_nodes($descendant_tid, $types));
+          $nodes = array_merge($nodes, _associated_nodes_taxonomy_get_nodes($descendant_tid, $types, $criterion['parents_only']));
         }
         $nodes = array_unique($nodes);
         foreach ($nodes as $nid) {
           if (!isset($associated_nodes[$nid])) {
             $associated_nodes[$nid] = 0;
           }
-          $associated_nodes[$nid] += $weight / $nb_terms;
+          $associated_nodes[$nid] += $criterion['weight'] / $nb_terms;
         }
       }
     }
@@ -164,7 +169,7 @@ function _associated_nodes_taxonomy_get_all_descendants($tid) {
   return $descendants[$tid];
 }
 
-function _associated_nodes_taxonomy_get_nodes($tid, $nodetypes) {
+function _associated_nodes_taxonomy_get_nodes($tid, $nodetypes, $parents_only) {
   static $nodes = array();
   if (isset($nodes[$tid])) {
     return $nodes[$tid];
@@ -181,7 +186,12 @@ function _associated_nodes_taxonomy_get_nodes($tid, $nodetypes) {
   while ($row = db_fetch_array($result)) {
     $nodes[$tid][] += $row['nid'];
   }
-  $children = taxonomy_get_children($tid);
+  if ($parents_only) {
+    $children = array(taxonomy_get_term($tid));
+  }
+  else {
+    $children = taxonomy_get_children($tid);
+  }
   foreach ($children as $child) {
     $nodes[$tid] = array_merge($nodes[$tid], _associated_nodes_taxonomy_get_nodes($child->tid, $nodetypes));
   }

@@ -153,6 +153,11 @@ function associated_nodes_form_associations_criteria($aid) {
 		    '#options' => _associated_nodes_get_criteria($aid),
 	      '#default_value' => $key,
 		  );
+      $fieldset["criterion_$i"]['parents_only'] = array(
+        '#type' => "checkbox",
+//        '#title' => t("Parent terms only"),
+        '#default_value' => $criterion['parents_only'],
+      );
 		  $fieldset["criterion_$i"]['weight'] = array(
 		    '#type' => 'textfield',
 		    '#default_value' => $criterion['weight'],
@@ -227,12 +232,13 @@ function associated_nodes_theme() {
 }
 
 function theme_associated_nodes_form_associations_association($form) {
-  $header = array(t('Criterion'), t('Weight'));
+  $header = array(t('Criterion'), t('Parent terms only'), t('Weight'));
   $rows = array();
   foreach ($form['association']['criteria'] as $criterion_id => $criterion) {
     if (strpos($criterion_id, "criterion_") === 0) {
 	    $row = array();
 	    $row[] = drupal_render($form['association']['criteria'][$criterion_id]['element']);
+	    $row[] = drupal_render($form['association']['criteria'][$criterion_id]['parents_only']);
 	    $row[] = drupal_render($form['association']['criteria'][$criterion_id]['weight']);
 	    $rows[] = $row;
     }
@@ -427,11 +433,13 @@ function associated_nodes_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
 }
 
 function _associated_nodes_find($aid, $node) {
-	$weigths = _associated_nodes_get_weights($aid);
+//	$weigths = _associated_nodes_get_weights($aid);
+  $details = _associated_nodes_get_details($aid);
 	$nodetypes = associated_nodes_nodetypes($aid);
 	$modules_for_types = _associated_nodes_modules_for_types();
 	$associated_nodes = array();
-	foreach ($weigths[$aid] as $type => $criteria) {
+//	foreach ($weigths[$aid] as $type => $criteria) {
+	foreach ($details[$aid] as $type => $criteria) {
 	  foreach ($modules_for_types[$type] as $module) {
 	    if (module_hook($module, "associated_nodes_find")) {
 	      $associated_nodes_part = module_invoke($module, "associated_nodes_find", $aid, $node, $criteria, $nodetypes, $type);
@@ -490,8 +498,8 @@ function _associated_nodes_save($association) {
 	  foreach ($association['criteria'] as $criterion) {
 	    if ($criterion['element'] and in_array($criterion['element'], $criteria)) {
 		    list($type, $element) = explode("::", $criterion['element']);
-		    $q = "INSERT INTO {associated_nodes_criterion} SET aid = %d, type = '%s', element = '%s', weight = %f";
-		    db_query($q, $aid, $type, $element, $criterion['weight']);
+		    $q = "INSERT INTO {associated_nodes_criterion} SET aid = %d, type = '%s', element = '%s', weight = %f, parents_only = %d";
+		    db_query($q, $aid, $type, $element, $criterion['weight'], $criterion['parents_only']);
 	    }
 	  }
   }
@@ -567,7 +575,7 @@ function _associated_nodes_get_criteria_unclassed($aid, $cache = TRUE) {
 function _associated_nodes_get_association_criteria($aid) {
   $criteria = _associated_nodes_get_criteria_unclassed($aid);
   $association_criteria = array();
-  $q = "SELECT type, element, weight FROM {associated_nodes_criterion} WHERE aid = %d";
+  $q = "SELECT type, element, weight, parents_only FROM {associated_nodes_criterion} WHERE aid = %d";
   $result = db_query($q, $aid);
   while ($row = db_fetch_array($result)) {
     $association_criteria[] = $row;
@@ -640,10 +648,29 @@ function _associated_nodes_get_weights($aid) {
     $q = "SELECT aid, type, element, weight FROM {associated_nodes_criterion}";
     $result = db_query($q);
     while ($row = db_fetch_array($result)) {
-      $weights[$row['aid']][$row['type']][$row['element']] = $row['weight'];
+      $weights[$row['aid']][$row['type']][$row['element']]['weight'] = $row['weight'];
     }
   }
   return $weights;
+}
+
+function _associated_nodes_get_details($aid) {
+  static $details = NULL;
+  if ($details === NULL) {
+    $details = array();
+    $q = "SELECT aid FROM {associated_nodes_association}";
+    $result = db_query($q);
+    while ($row = db_fetch_array($result)) {
+      $details[$row['aid']] = array();
+    }
+    $q = "SELECT aid, type, element, weight, parents_only FROM {associated_nodes_criterion}";
+    $result = db_query($q);
+    while ($row = db_fetch_array($result)) {
+      $details[$row['aid']][$row['type']][$row['element']]['weight'] = $row['weight'];
+      $details[$row['aid']][$row['type']][$row['element']]['parents_only'] = $row['parents_only'];
+    }
+  }
+  return $details;
 }
 
 function associated_nodes_delete_criterion($type, $element) {

@@ -681,6 +681,6 @@ function devtrack_module_update_6010() {
 function devtrack_module_update_6011() {
   update_sql("UPDATE {associated_nodes_association} SET name = 'Questions', number = 100, published_only = 1 WHERE aid = 1");
   update_sql("DELETE FROM {associated_nodes_criterion} WHERE aid = 1");
-  update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight) VALUES (1, 'taxonomy', 1, 5)");
+  update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight, parents_only) VALUES (1, 'taxonomy', 1, 5, 1)");
   variable_set('hidden_comment_default_reasons', 'Mistake');
 }

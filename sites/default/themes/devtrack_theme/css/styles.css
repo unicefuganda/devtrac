@@ -681,13 +681,13 @@ body .col-content_layertwoleft .block-views .content table{
 }
 */
 .col-content_contentlayermiddle a.downloadimage {
-	background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
-    background-repeat: no-repeat;
-
-    height: 24px;
-    position: absolute;
-    right: 5px;
-    width: 24px;
+  background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
+  background-repeat: no-repeat;
+  float: right;
+  height: 24px;
+  position: relative;
+  left: 28px;
+  width: 24px;
 }
 .activeSlide{
   opacity: 0.3;

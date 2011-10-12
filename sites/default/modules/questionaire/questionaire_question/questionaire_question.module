@@ -387,7 +387,8 @@ function questionaire_question_addsubmission_access($nid) {
   if (($user->uid == $node->uid) && user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
     // make sure there are questions for this questionairetype. 
     //TODO, also check if there are submissions (when questions become disabled, the submissions migh still be there)
-    return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+//    return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+    return TRUE;
   }
   else {
     return FALSE;
@@ -423,8 +424,24 @@ function questionaire_question_getquestionsprivate($context) {
 function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL ) {
   $form = Array();
   $context = questionaire_question_getcontext($nid);
+  $contextnode = node_load($context);
+  $placetype = taxonomy_node_get_terms_by_vocabulary($contextnode, 1);
+  $temp = array_values($placetype);
   $questions = questionaire_question_getquestionsprivate($context);
   //$questions = module_invoke_all('getcontext', $nid);
+  if ($question == array()) {
+    $form['message'] = array(
+      '#prefix' => '<div>',
+      '#value' => t('There are no questions available for location type @type', array('@type' => $temp[0]->name)),
+      '#suffix' => '</div>',
+    );
+    $form['cancel'] = array(
+      '#type' => 'submit',
+      '#value' => t('Back to Site Report'),
+    );
+    $form['#redirect'] = 'node/' . $nid;
+    return $form;
+  }
   
   
   $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'

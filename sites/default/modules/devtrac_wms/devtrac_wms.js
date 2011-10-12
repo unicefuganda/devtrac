@@ -35,6 +35,9 @@ Drupal.devtracwms.click = function(me) {
         });
       }
       alert(response.content);
+      myPath = window.location.pathname.split('/');
+      
+      window.location = Drupal.settings.basePath + 'node/' + myPath[3];
       //$(element).html(response.content);
     },
     error: function(response) {

@@ -2141,6 +2141,7 @@ function devtrack_module_fieldtrip_publish_all_field_trips() {
     }
     else { // node type is ftritem
       $current_node->field_ftritem_date_visited[0]['value'] = date('Y-m-j', $current_node->created);
+      $current_node->field_ftritem_status[0]['value'] = 'Submitted';
     }
     node_save($current_node);
   }

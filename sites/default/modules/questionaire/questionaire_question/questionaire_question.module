@@ -425,14 +425,13 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
   $form = Array();
   $context = questionaire_question_getcontext($nid);
   $contextnode = node_load($context);
-  $placetype = taxonomy_node_get_terms_by_vocabulary($contextnode, 1);
-  $temp = array_values($placetype);
+  $placetypes = array_values(taxonomy_node_get_terms_by_vocabulary($contextnode, 1));
   $questions = questionaire_question_getquestionsprivate($context);
   //$questions = module_invoke_all('getcontext', $nid);
   if ($question == array()) {
     $form['message'] = array(
       '#prefix' => '<div>',
-      '#value' => t('There are no questions available for location type @type', array('@type' => $temp[0]->name)),
+      '#value' => t('There are no questions available for location type @type', array('@type' => $placetypes[0]->name)),
       '#suffix' => '</div>',
     );
     $form['cancel'] = array(

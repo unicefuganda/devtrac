@@ -715,6 +715,9 @@ background-image: -moz-linear-gradient(
 /*  comments   */
 .col-content_contentlayerright div.comment img { border: 0 none;}
 .col-content_contentlayerright div.comment { margin-right: 10px;}
+#comments div.comment.author{
+	width: 658px;
+}
 #comments div.comment-content{
 	float: none;
 }
@@ -883,4 +886,21 @@ body a.getfeatureaddlink:link {
 .col-content_layertworight .block-devtrack_module .caption li a{
     background-color: #FFF;
     color: #666;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay {
+    background-color: #F2F2F2;
+    font-size: 140%;
+    margin: -12px;
+    min-height: 83px;
+    opacity: 0.95;
+    padding: 5px;
+    position: absolute;
+    text-transform: capitalize;
+    width: 673px;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay a{
+	color: #9B9B9A;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay a:hover{
+	color: #EA0001;
 }

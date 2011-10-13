@@ -4,6 +4,12 @@
   print ' '. $zebra; 
   if ($comment->hidden_comment) print " comment-hidden";
   ?>">
+  <?php if ($comment->hidden_comment): ?>
+    <div class="hidden-comment-overlay">
+      <?php print $links ?>
+    </div>
+  <?php endif; ?>
+  
   <?php if ($picture): ?>
     <div class="picture span-3">
       <?php print $picture ?>

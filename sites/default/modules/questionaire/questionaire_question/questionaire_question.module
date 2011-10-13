@@ -428,7 +428,7 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
   $placetypes = array_values(taxonomy_node_get_terms_by_vocabulary($contextnode, 1));
   $questions = questionaire_question_getquestionsprivate($context);
   //$questions = module_invoke_all('getcontext', $nid);
-  if ($question == array()) {
+  if ($questions == array()) {
     $form['message'] = array(
       '#prefix' => '<div>',
       '#value' => t('There are no questions available for location type @type', array('@type' => $placetypes[0]->name)),

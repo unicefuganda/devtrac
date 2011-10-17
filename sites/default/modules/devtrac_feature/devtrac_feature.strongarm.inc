@@ -10,8 +10,17 @@ function devtrac_feature_strongarm() {
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'collapsiblock_default_state';
-  $strongarm->value = '3';
+  $strongarm->value = '1';
   $export['collapsiblock_default_state'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_settings';
+  $strongarm->value = array(
+    'block-devtrack_module-4' => '3',
+  );
+  $export['collapsiblock_settings'] = $strongarm;
 
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

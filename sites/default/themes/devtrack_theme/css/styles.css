@@ -111,6 +111,7 @@ background-image: -webkit-gradient(
     color-stop(0.33, rgb(180,0,0)),
     color-stop(0.66, rgb(107,0,0))
 );
+	text-decoration: none;
 }
 
 button:hover ,
@@ -118,7 +119,12 @@ input.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   color: #cccccc;
+  text-decoration: none;
 }
+#getfeatureinfo li a{
+	text-decoration: none;
+}
+#getfeatureinfo /* check with jan */
 .node-form a.openlayers-cck-hide-link{
   border: 2px solid #F2F2F2; margin: 15px 10px 5px 0;}
 .node-form{
@@ -595,10 +601,10 @@ background-image: -moz-linear-gradient(
 .front .clear-block p,
 .clearfix h2{
 	padding-left: 10px;
-}/*
-body .col-content_layertwoleft .block-views .content table{
-	padding-left: -10px;
-}*/
+}
+#cboxContent #getfeatureinfo{
+	padding-left: 0px;
+}
 .node-form .standard,
 .col-content_contentlayerright .openlayers-views-map{
 	margin-right: 10px;
@@ -645,15 +651,6 @@ body .col-content_layertwoleft .block-views .content table{
 	margin: 5px; float:left;
 }
 .col-content_contentlayermiddle .views-content-field-ftritem-images-data {
-   /* background-color: #000000;
-    color: #FFFFFF;
-    float: left;
-    margin-left: 5px;
-    margin-top: -37px;
-    opacity: 0.5;
-    padding: 4px 5px 0;
-    width: 370px;*/
-    
     background-color: #000000;
     color: #FFFFFF;
     float: left;
@@ -667,19 +664,6 @@ body .col-content_layertwoleft .block-views .content table{
 #contentcontainer .col-content_contentlayermiddle .view-empty .views-content-field-ftritem-images-data {
     margin-top: -45px;
 }
-/*
-.col-content_contentlayerright .views-content-field-ftritem-images-data {
-    background-color: #000000;
-    color: #FFFFFF;
-    display: list-item;
-    float: left;
-    margin-left: 5px;
-    margin-top: -35px;
-    opacity: 0.5;
-    padding: 7px 5px 5px;
-    width: 97%;
-}
-*/
 .col-content_contentlayermiddle a.downloadimage {
   background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
   background-repeat: no-repeat;
@@ -880,12 +864,23 @@ body a.getfeatureaddlink:link {
 .col-content_contentlayerright table tr{
 	border-bottom: 3px solid #FFF9CD;
 }
-.advanced-help-link{
+
+.sub_region,
+.status,
+.source{
+	display: none;
 }
 
-/* 765
+/* field trip status ...*/
 .col-content_layertworight .block-devtrack_module .caption {
     background-color: #FFF9CD;
-    color: #00CC00;
+    font-weight: bold;
 }
-*/
+.col-content_layertworight .block-devtrack_module .caption li a{
+    background-color: #FFF;
+    color: #EA0001;
+}
+.col-content_layertworight .block-devtrack_module .caption li a{
+    background-color: #FFF;
+    color: #666;
+}

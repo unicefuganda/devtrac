@@ -9,6 +9,27 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_default_state';
+  $strongarm->value = '3';
+  $export['collapsiblock_default_state'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_slide_speed';
+  $strongarm->value = '200';
+  $export['collapsiblock_slide_speed'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_slide_type';
+  $strongarm->value = '1';
+  $export['collapsiblock_slide_type'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'colorbox_imagecache_preset';
   $strongarm->value = '0';
   $export['colorbox_imagecache_preset'] = $strongarm;
@@ -600,43 +621,6 @@ Other';
   $strongarm->name = 'print_pdf_page_orientation';
   $strongarm->value = 'portrait';
   $export['print_pdf_page_orientation'] = $strongarm;
-
-  $strongarm = new stdClass;
-  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
-  $strongarm->api_version = 1;
-  $strongarm->name = 'theme_settings';
-  $strongarm->value = array(
-    'toggle_logo' => 1,
-    'toggle_name' => 1,
-    'toggle_slogan' => 1,
-    'toggle_mission' => 1,
-    'toggle_node_user_picture' => 0,
-    'toggle_comment_user_picture' => 1,
-    'toggle_search' => 1,
-    'toggle_favicon' => 1,
-    'toggle_primary_links' => 1,
-    'toggle_secondary_links' => 1,
-    'toggle_node_info_actionitem' => 0,
-    'toggle_node_info_bbsync' => 1,
-    'toggle_node_info_book' => 0,
-    'toggle_node_info_fieldtrip' => 0,
-    'toggle_node_info_ftritem' => 0,
-    'toggle_node_info_page' => 0,
-    'toggle_node_info_place' => 0,
-    'toggle_node_info_questionaire_question' => 1,
-    'toggle_node_info_story' => 1,
-    'toggle_node_info_user_profile' => 0,
-    'default_logo' => 0,
-    'logo_path' => 'sites/default/files/logo.png',
-    'logo_upload' => '',
-    'default_favicon' => 1,
-    'favicon_path' => '',
-    'favicon_upload' => '',
-    'collapsiblock_block' => 'div.block',
-    'collapsiblock_title' => '.content a button',
-    'collapsiblock_content' => '.content ul',
-  );
-  $export['theme_settings'] = $strongarm;
 
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

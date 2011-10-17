@@ -1833,6 +1833,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       drupal_set_message(t('Disabled development modules'));
       variable_set("mobile_tools_desktop_url",  "http://www.devtrac.ug");
       _change_services_key("6825f0e79c87f6c930d8b252694ef1cf", "devtrac.ug");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'test':
       module_disable($devel_modules);
@@ -1841,6 +1844,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       /* Tell Mobile Tools where the site is */
       _change_services_key("ed189296f0507fde20b1b9863c6fc21a", "devtrac.org");
       variable_set("mobile_tools_desktop_url",  "http://test.devtrac.org");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'development':
       module_enable($devel_modules);
@@ -1852,6 +1858,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Development Server");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'jan':
       module_enable($devel_modules);
@@ -1863,7 +1872,10 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Jan Development Server");
-      return;
+      variable_set("preprocess_js", '0');
+      variable_set("javascript_aggregator_gzip", 0);
+      variable_set("javascript_aggregator_jsminplus", 0);
+            return;
     case 'reinier':
       module_enable($devel_modules);
       drupal_set_message(t('Enabled development modules'));
@@ -1874,6 +1886,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Reinier Development Server");
+      variable_set("preprocess_js", '0');
+      variable_set("javascript_aggregator_gzip", 0);
+      variable_set("javascript_aggregator_jsminplus", 0);
       return;
   }
 }

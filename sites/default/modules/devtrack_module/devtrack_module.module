@@ -926,14 +926,9 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
   if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
     $destination = drupal_get_destination();
     if (trim($destination) != "") {
-      if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem") && (trim($destination) != "")) {
-        $args = explode("%2F", $destination);
-//        $params = explode("%26", $args[2]);
-//        $tid = substr($params[0], strpos($params[0], '%3D') + 3);
-        $tid = $args[3];
-        $addreporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
-        drupal_set_title(t('Create @name', array('@name' => $addreporttype->name)));
-      }
+      $tid = $form['taxonomy'][7]['#value']; // ALERT: Hardcoded Vocabulary ID.
+      $addreporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
+      drupal_set_title(t('Create @name', array('@name' => $addreporttype->name)));
     }
   }
 

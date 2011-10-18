@@ -684,3 +684,21 @@ function devtrack_module_update_6011() {
   update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight, parents_only) VALUES (1, 'taxonomy', 1, 5, 1)");
   variable_set('hidden_comment_default_reasons', 'Mistake');
 }
+
+/*
+ * https://www.pivotaltracker.com/story/show/19285329
+ * Increase limit on associated node questions to 100
+ */
+function devtrack_module_update_6012() {
+  // Declare new modules
+  $new_modules = array(
+    'jstools',
+    'collapsiblock',
+  );
+  module_enable($new_modules);
+  // Declare old module
+  $old_modules = array(
+    'js_theming',
+  );
+  module_disable($old_modules);
+}

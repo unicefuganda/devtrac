@@ -1,21 +1,5 @@
 <?php
 
-/**
- * Implementation of hook_ctools_plugin_api().
- */
-//function devtrack_module_ctools_plugin_api($module, $api) {
-//}
-
-/*
-  if (_devtrack_module_isinternetexplorer()) {
-    $output .= l('<div class="form-submit">Click to submit</div>', "user/". $applicant->uid ."/submit/confirm", Array('html'=> TRUE));
-  }
-  else {
-    $output .= l('<button class="form-submit" type="button">Click to submit</button>', "user/". $applicant->uid ."/submit/confirm", Array('html'=> TRUE));
-  }
-
- */
-
 function devtrack_module_node_info() {
   return array(
     'bbsync' => array(
@@ -942,14 +926,9 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
   if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
     $destination = drupal_get_destination();
     if (trim($destination) != "") {
-      if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem") && (trim($destination) != "")) {
-        $args = explode("%2F", $destination);
-//        $params = explode("%26", $args[2]);
-//        $tid = substr($params[0], strpos($params[0], '%3D') + 3);
-        $tid = $args[3];
-        $addreporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
-        drupal_set_title(t('Create @name', array('@name' => $addreporttype->name)));
-      }
+      $tid = $form['taxonomy'][7]['#value']; // ALERT: Hardcoded Vocabulary ID.
+      $addreporttype = db_fetch_object(db_query("SELECT vid, name FROM {term_data} WHERE tid = %d", $tid));
+      drupal_set_title(t('Create @name', array('@name' => $addreporttype->name)));
     }
   }
 
@@ -1131,18 +1110,6 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
             $localuser = user_load($localnode->uid);
             if (user_access('create actionitem content')) {
               if ($localusername == $user->name) {
-
-                /* Nice, action items on places, but not supported
-                if ( $localnode->type == 'place') {
-                  $options = Array(
-                    'edit[field_actionitem_resp_place][nid][value]'  => $localnode->nid,
-                    'edit[field_actionitem_responsible][uid][value]' => $localuseruid,
-                    'html'  => TRUE,
-                  );
-                  // no, not without a report item!
-                  // $result .= '<li>'. l('<button type="button">Add Action Item</button>', 'node/add/actionitem', Array('query'=> $options, 'html'  => TRUE)) .'</li>';
-                }
-                */
                 if ($localnode->type == 'ftritem') {
                   $options = Array(
                     "edit[field_actionitem_ftreportitem][0][nid][nid]"  => "[nid:". $localnode->nid ."]",
@@ -1151,63 +1118,14 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                   if ($localnode->field_ftritem_place[0]['nid'] > 0) {
                     $options["edit[field_actionitem_resp_place][0][nid][nid]"]  = "[nid:". $localnode->field_ftritem_place[0]['nid'] . "]";
                   }
-
-
-/*                  if (_devtrack_module_isinternetexplorer()) {
-                    $result .= '<li>' . l('<div class="form-submit">Add Action Item</div>', 'node/add/actionitem', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
-                  }
-                  else {
-                    $result .= '<li>' . l('<button type="button">Add Action Item</button>', 'node/add/actionitem', Array('query'=> $options, 'html'  => TRUE)) . '</li>';
-                  }
-                  */
                   $result .= _devtrack_module_getbutton('Add Action Item', 'node/add/actionitem', $options);
                 }
               }
             }
 
-            if (user_access('submit questions')) {
-              if ($localusername == $user->name) {
-                if ( $localnode->type == 'ftritem') {
-/*                  if (_devtrack_module_isinternetexplorer()) {
-                    $result .= '<li>' . l('<div class="form-submit">Answer Questions</div>', 'node/'. $localnode->nid .'/questions/addsubmission', Array('html'=> TRUE)) . '</li>';
-                  }
-                  else {
-                    $result .= '<li>' . l('<button type="button">Answer Questions</button>', 'node/'. $localnode->nid .'/questions/addsubmission', Array('html'  => TRUE)) . '</li>';
-                  }
-                  */
-                  $result .= _devtrack_module_getbutton('Answer Questions', 'node/'. $localnode->nid .'/questions/addsubmission');
-                }
-              }
+            if ($link = questionaire_get_submission_link($localnode->nid, $localnode->field_ftritem_place[0]['nid'])) {
+              $result .= _devtrack_module_getbutton(t('Answer Questions'), $link);
             }
-
-            // this is not spitting anything out at the moment
-            /*
-            if ($localnode->type == "place") {
-            	if (!(devtrack_module_getcurrentfieldtrip() > 0)) {
-            		// Let's just not show this.
-//            		$result .= '<li>'. "You can not add this place to your Field Trip, because you have none.". '</li>';
-              } else {
-                if (user_access('create fieldtrip content', $localuser)) {
-                  $options = Array(
-                    'edit[field_fieldtrip_user][0][uid][uid]'  => $localuser,
-//                    'html'  => TRUE,
-                  );
-                  // TODO: remove button when place is already in list of places. (And show some nice: 'You are about to visit this place' link to the FT
-                  // this needs ajax, so disabled for now
-                  // TODO: include wmsgetfeatureinfo.js file and make sure this gets fired on pageload.
-                  //    $('.getfeatureaddlink').bind("click",Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.click);
-
-                  $attribs = Array(
-                    'class' => 'getfeatureaddlink'
-                    );
-
-                  $result .= '<li>'. l('<button type="button">Add this place to your Current Field Trip</button>', 'devtrac/addplacetofieldtrip/'.$localnode->nid .'/'. devtrack_module_getcurrentfieldtrip(), Array('query'=> $options, 'attributes' => $attribs, 'html'  => TRUE)) .'</li>';
-                }
-              }
-            }
-
-            */
-
           }
           elseif ((user_is_logged_in()) && (arg(0) == 'user') && (is_numeric(arg(1) | arg(1) == 'me'))) {
             if (is_numeric(arg(1))) {
@@ -1224,13 +1142,6 @@ function devtrack_module_block($op = 'list', $delta = 0, $edit = array()) {
                 'edit[field_fieldtrip_user][0][uid][uid]'  => $localuser->name,
                 'html'  => TRUE,
               );
-/*              if (_devtrack_module_isinternetexplorer()) {
-                $result .= '<li>'. l('<div class="form-submit">Create Field Trip</div>', 'node/add/fieldtrip', Array('query'=> $options, 'html'=> TRUE)) . '</li>';
-              }
-              else {
-                $result .= '<li>'. l('<button type="button">Create Field Trip</button>', 'node/add/fieldtrip', Array('query'=> $options, 'html'  => TRUE)). '</li>';
-              }
-              */
               $result .= _devtrack_module_getbutton('Create Field Trip', 'node/add/fieldtrip', $options);
             }
           }
@@ -1820,9 +1731,9 @@ function devtrack_module_getcontext($nid) {
   return $node->field_ftritem_place[0]['nid'];
 }
 
-function _devtrack_module_getbutton($text, $path, $options = NULL) {
-  if (isset($options)) {
-    $params = Array('query' => $options, 'html' => TRUE);
+function _devtrack_module_getbutton($text, $path, $query = NULL) {
+  if (isset($query)) {
+    $params = Array('query' => $query, 'html' => TRUE);
   }
   else {
     $params = Array('html' => TRUE);
@@ -1838,14 +1749,13 @@ function _devtrack_module_getbutton($text, $path, $options = NULL) {
 }
 
 function _devtrack_module_isinternetexplorer() {
-        // $version = 6
-//    drupal_set_message($_SERVER['HTTP_USER_AGENT']);
-    if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) { // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
-      return TRUE;
-    }
-    else {
-      return FALSE;
-    }
+  // $version = 6
+  if (isset($_SERVER['HTTP_USER_AGENT']) && (strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') > 0)) { // || (strpos($_SERVER['HTTP_USER_AGENT'], 'KHTML') > 0 ))) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
 }
 
 function _devtrack_module_array_to_object($array = array()) {
@@ -1918,6 +1828,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       drupal_set_message(t('Disabled development modules'));
       variable_set("mobile_tools_desktop_url",  "http://www.devtrac.ug");
       _change_services_key("6825f0e79c87f6c930d8b252694ef1cf", "devtrac.ug");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'test':
       module_disable($devel_modules);
@@ -1926,6 +1839,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       /* Tell Mobile Tools where the site is */
       _change_services_key("ed189296f0507fde20b1b9863c6fc21a", "devtrac.org");
       variable_set("mobile_tools_desktop_url",  "http://test.devtrac.org");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'development':
       module_enable($devel_modules);
@@ -1937,6 +1853,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Development Server");
+      variable_set("preprocess_js", '1');
+      variable_set("javascript_aggregator_gzip", 1);
+      variable_set("javascript_aggregator_jsminplus", 1);
       return;
     case 'jan':
       module_enable($devel_modules);
@@ -1948,7 +1867,10 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Jan Development Server");
-      return;
+      variable_set("preprocess_js", '0');
+      variable_set("javascript_aggregator_gzip", 0);
+      variable_set("javascript_aggregator_jsminplus", 0);
+            return;
     case 'reinier':
       module_enable($devel_modules);
       drupal_set_message(t('Enabled development modules'));
@@ -1959,6 +1881,9 @@ function devtrack_module_environment_switch($target_env, $current_env) {
       variable_set("environment_indicator_enabled", "1");
       variable_set("environment_indicator_position", "left");
       variable_set("environment_indicator_text", "Reinier Development Server");
+      variable_set("preprocess_js", '0');
+      variable_set("javascript_aggregator_gzip", 0);
+      variable_set("javascript_aggregator_jsminplus", 0);
       return;
   }
 }
@@ -2141,6 +2066,7 @@ function devtrack_module_fieldtrip_publish_all_field_trips() {
     }
     else { // node type is ftritem
       $current_node->field_ftritem_date_visited[0]['value'] = date('Y-m-j', $current_node->created);
+      $current_node->field_ftritem_status[0]['value'] = 'Submitted';
     }
     node_save($current_node);
   }
@@ -2193,6 +2119,7 @@ function devtrac_module_get_fieldtrip_status($node) {
   }
   else {
     $output .= '<div>As soon as all fields on the Field Trip and all of its Site Reports are ready to be submitted a "Submit Field Trip" button will appear here.</div>';
+    $output .= _devtrack_module_getbutton('View Details', '#');
   }
   return $output;
 }
@@ -2202,6 +2129,7 @@ function devtrac_module_get_fieldtrip_status($node) {
  * including all its action items
  */
 function devtrac_module_get_site_report_status($node) {
+  global $user;
   $result = array(
     'status' => TRUE,
     'output' => ''
@@ -2259,18 +2187,44 @@ function devtrac_module_get_site_report_status($node) {
       $nids = db_query($sql, $node->nid);
       $actionitemsstatus = TRUE;
       $result['output'] .= '<li><div class="caption">Action Items</div></li>';
-      while ($nid = db_fetch_object($nids)) {
-        $airesult = devtrac_module_get_action_item_status(node_load($nid->nid));
-        $result['output'] .= '<li>'. $airesult['output'] .'</li>';
-        $actionitemsstatus = $actionitemsstatus && $airesult['status'];
+      if (db_affected_rows($nids)) {
+        while ($nid = db_fetch_object($nids)) {
+          $airesult = devtrac_module_get_action_item_status(node_load($nid->nid));
+          $result['output'] .= '<li>'. $airesult['output'] .'</li>';
+          $actionitemsstatus = $actionitemsstatus && $airesult['status'];
+        }
+      }
+      else {
+        $options = Array(
+          'query' => Array( 
+            "edit[field_actionitem_ftreportitem][0][nid][nid]"  => "[nid:". $node->nid ."]",
+            "edit[field_actionitem_responsible][0][uid][uid]" => $user->name,
+          ),
+          'html' => TRUE,
+        );
+          
+        if ($node->field_ftritem_place[0]['nid'] > 0) {
+          $options["query"]["edit[field_actionitem_resp_place][0][nid][nid]"]  = "[nid:". $node->field_ftritem_place[0]['nid'] . "]";
+        }
+        
+        $result['output'] .= l('Add Action Item', 'node/add/actionitem', $options);
       }
       $sql = "SELECT sid FROM {questionaire_submission} WHERE qnid = %d ORDER BY sid ASC";
       $sids = db_query($sql, $node->nid);
       $result['output'] .= '<li><div class="caption">Questionnaires</div></li>';
-      while ($sid = db_fetch_object($sids)) {
-        $qresult = devtrac_module_get_questionaire_status($node, $sid->sid);
-        $result['output'] .= '<li>'. $qresult['output'] .'</li>';
-//        $actionitemsstatus = $actionitemsstatus && $qresult['status'];
+      if (db_affected_rows($sids)) {
+        while ($sid = db_fetch_object($sids)) {
+          $qresult = devtrac_module_get_questionaire_status($node, $sid->sid);
+          $result['output'] .= '<li>'. $qresult['output'] .'</li>';
+        }
+        if ($link = questionaire_get_submission_link($node->nid, $node->field_ftritem_place[0]['nid'])) {
+          $result['output'] .= '<li>' . l(t('Edit Submission'), $link) . '</li>';
+        }
+      }
+      else {
+        if ($link = questionaire_get_submission_link($node->nid, $context->field_ftritem_place[0]['nid'])) {
+          $result['output'] .= '<li>' . l(t('Add Submission'), $link) . '</li>';
+        }
       }
       break;
   }
@@ -2317,17 +2271,12 @@ function devtrac_module_get_questionaire_status($node, $sid) {
     'status' => TRUE,
     'output' => ''
   );
-  $result['output'] .= '<ul>';
-//  $result['output'] .= '<li>'. l('Questionnaire: '. $sid, 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
   $sql = "SELECT COUNT(DISTINCT(question)) FROM {questionaire_answer} WHERE qnid = %d AND sid = %d";
   $count = db_result(db_query($sql, $node->nid, $sid));
   if (!$count) {
     $count = 0;
   }
-//  $result['output'] .= '<li><ul>';
-  $result['output'] .= '<li>'. l("Questions answered: $count", 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
-//  $result['output'] .= '</ul></li>';
-  $result['output'] .= '</ul>';
+  $result['output'] .= l("Questions answered: $count", 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE));
   return $result;
 }
 
@@ -2394,19 +2343,3 @@ function devtrack_module_link_alter(&$links, $node, $comment = NULL) {
   }
 }
 
-/*
-function devtrack_module_popups () {
-  return array(
-    'fieldtrip_node_form' => array( // The field trip node edit form
-      '#edit-delete' => array(
-        'href' => 'node/'. arg(1) . '/delete',
-      ),
-    ),
-    'ftritem_node_form' => array( // The report item node edit form
-      '#edit-delete' => array(
-        'href' => 'node/'. arg(1) . '/delete',
-      ),
-    ),
-  );
-}
- */

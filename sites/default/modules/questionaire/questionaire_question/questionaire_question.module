@@ -220,6 +220,29 @@ function questionaire_question_display_view_answers($context, $qid, $charttype) 
   return $view->preview($display_id, array($context, $qid));
 }
 
+/* This function returns the link the submit or edit page of 
+ * a questionaire, depending of wether a submission already exists or not.
+ * 
+ */
+function questionaire_get_submission_link($nid, $context, $luser = NULL) {
+  if (questionaire_question_addsubmission_access($nid)) {
+    global $user;
+    if (!$luser) {
+      $luser = $user;
+    }
+    $submission = db_result(db_query("SELECT sid FROM {questionaire_submission} WHERE qnid=%d AND context=%d AND uid=%d", $nid, $context, $luser->uid));
+    if ($submission) {
+      return 'node/' . $nid . '/questions/editsubmission/' . $submission;
+    }
+    else {
+      return 'node/'. $nid .'/questions/addsubmission';
+    }
+  }
+  else {
+    return FALSE;
+  }
+}
+
 
 function questionaire_question_form($node) {
   $type = node_get_types('type', $node);
@@ -425,14 +448,13 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
   $form = Array();
   $context = questionaire_question_getcontext($nid);
   $contextnode = node_load($context);
-  $placetype = taxonomy_node_get_terms_by_vocabulary($contextnode, 1);
-  $temp = array_values($placetype);
+  $placetypes = array_values(taxonomy_node_get_terms_by_vocabulary($contextnode, 1));
   $questions = questionaire_question_getquestionsprivate($context);
   //$questions = module_invoke_all('getcontext', $nid);
-  if ($question == array()) {
+  if ($questions == array()) {
     $form['message'] = array(
       '#prefix' => '<div>',
-      '#value' => t('There are no questions available for location type @type', array('@type' => $temp[0]->name)),
+      '#value' => t('There are no questions available for location type @type', array('@type' => $placetypes[0]->name)),
       '#suffix' => '</div>',
     );
     $form['cancel'] = array(

@@ -868,12 +868,13 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
       // Set default district on create location page.
       $destination = drupal_get_destination();
       if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "place") && (trim($destination) != "")) {
-        $args = explode("%2F", $destination);
-        $district = $args[1];
-//        $fieldtripnid = $args[2];
+        $args = explode("=", $form['#action']);
+        $subargs = explode("%2F", $args[1]);
+        $district = $subargs[1];
+        $fieldtripnid = $subargs[2];
+        $reporttype = $subargs[3];
         $form['taxonomy'][6]['#default_value'] = $district;
-//        $form['#redirect'] = 'node/'. $fieldtripnid;
-//        $form_state['redirect'] = 'node/'. $fieldtripnid;
+        $form['#action'] = $args[0] .'=node/'. $fieldtripnid .'?'. $district .'/'. $reporttype;
       }
       // Make the Place Type field required on places/locations
       $form['taxonomy'][1]['#required'] = 1;
@@ -1695,8 +1696,10 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $placenid = $node->nid;
         $nodearray = (array)$node;
         $destination = drupal_get_destination();
-        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
-        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos(substr($destination, 0, strrpos($destination, '%2F')), '%2F') + 3);
+        $args = explode("%2F", $destination);
+        $subargs = explode("%3F", $args[1]);
+        $reporttype = $args[2];
+        $fieldtripnid = $subargs[0];
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function

@@ -5144,9 +5144,10 @@ else {
   $handler->override_option('footer', '<?php
   global $user;
   $node = node_load(arg(1));
+
 // drupal_set_message(\'Current user = \', $user->uid);
 // drupal_set_message(\'Node author = \', $node->uid);
-  if ($user->uid == $node->uid) {
+  if (($user->uid == $node->uid) && ($node->field_fieldtrip_status[0][\'value\'] != \'Approved\')) {
     if (_devtrack_module_isinternetexplorer()) {
       print \'<br />\';
       print l(\'<div class="form-submit">Add Reports to Trip</div>\', \'node/\'. arg(1) .\'/addplaceform\', Array(\'html\'=> TRUE));
@@ -9324,8 +9325,13 @@ watchdog(\'gallery views\', $theme_path);
       'default_argument_php' => '$destination = drupal_get_destination();
 if ((arg(0) == "node") && (arg(1) == "add") && ((arg(2) == "place") || (arg(2) == "ftritem")) && (trim($destination) != "")) {
   $args = explode("%2F", $destination);
-}
-return $args[1];',
+  if (arg(2) == "place") {
+    return $args[1];
+  }
+  if (arg(2) == "ftritem") {
+    return $args[3];
+  }
+}',
       'validate_argument_node_type' => array(
         'bbsync' => 0,
         'actionitem' => 0,

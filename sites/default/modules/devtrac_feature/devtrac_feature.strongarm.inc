@@ -634,6 +634,17 @@ Other';
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'site_footer';
+  $strongarm->value = '<a href="http://www.unicef.org" target="_blank" ><span class="uniceflogo"></span>(c) Unicef Uganda.</a><br/>
+<a href="http://www.mountbatten.net" target="_blank" ><span class="mblogo"></span>Built by Mountbatten Ltd.</a>
+<br/><div class="uganda"></div><div  class="hosted">Hosted in Uganda.</div>
+<div class="text-footer"><p>All Ugandan data layers displayed are from the <a href="http://www.ugandaclusters.ug/geo-im.htm" class="text-footer-links">Geo-Information Management Working Group.</a> <!-- & <a href="http://www.geonames.org/">Geonames</a> --></p></div>
+<div class="license"><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.devtrac.ug" property="cc:attributionName" rel="cc:attributionURL">UNICEF Uganda</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</div>';
+  $export['site_footer'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'theme_settings';
   $strongarm->value = array(
     'toggle_logo' => 1,

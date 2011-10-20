@@ -868,9 +868,13 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
       // Set default district on create location page.
       $destination = drupal_get_destination();
       if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "place") && (trim($destination) != "")) {
-        $args = explode("%2F", $destination);
-        $district = $args[1];
+        $args = explode("=", $form['#action']);
+        $subargs = explode("%2F", $args[1]);
+        $district = $subargs[1];
+        $fieldtripnid = $subargs[2];
+        $reporttype = $subargs[3];
         $form['taxonomy'][6]['#default_value'] = $district;
+        $form['#action'] = $args[0] .'=node/'. $fieldtripnid .'?'. $district .'/'. $reporttype;
       }
       // Make the Place Type field required on places/locations
       $form['taxonomy'][1]['#required'] = 1;
@@ -1513,7 +1517,9 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
       }
       break;
     case 1:
-      drupal_goto('node/add/ftritem', 'destination=node/'. $form_state['values']['nid'] .'/addplaceform&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
+      drupal_goto('node/add/ftritem', 'destination=node/'. $form_state['values']['nid'] .'/addplaceform/'. $form_state['values']['district'] .'&edit[taxonomy]['. $vidsrt 
+.']='. 
+$reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
 //      drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
       break;
     case 2:
@@ -1531,7 +1537,10 @@ function devtrack_module_addplaceform_submit($form, &$form_state) {
           drupal_goto('places/'. $form_state['values']['district'] . '/'. $form_state['values']['nid'] . '/'. $reporttypes[$form_state['values']['reporttype']], 'layers=B0TFFFT');
           break;
         case 4:
-          drupal_goto('node/add/ftritem', 'destination=node/'. $form_state['values']['nid'] .'/addplaceform&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
+          drupal_goto('node/add/ftritem', 'destination=node/'. $form_state['values']['nid'] .'/addplaceform/'. $form_state['values']['district'] .'&edit[taxonomy]['. 
+$vidsrt 
+.']='. 
+$reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
 //          drupal_goto('node/add/ftritem/', 'destination=places/'. $form_state['values']['district'] .'/'. $form_state['values']['nid'] .'/'. $reporttypes[$form_state['values']['reporttype']] .'&edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid'] .']');
 //          drupal_goto('node/add/ftritem', 'edit[taxonomy]['. $vidsrt .']='. $reporttypes[$form_state['values']['reporttype']] .'&edit[field_ftritem_field_trip][0][nid][nid]=[nid:'. $form_state['values']['nid']. ']');
           break;
@@ -1687,8 +1696,10 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
         $placenid = $node->nid;
         $nodearray = (array)$node;
         $destination = drupal_get_destination();
-        $reporttype = substr($destination, strrpos($destination, '%2F') + 3);
-        $fieldtripnid = substr(substr($destination, 0, strrpos($destination, '%2F')), strrpos(substr($destination, 0, strrpos($destination, '%2F')), '%2F') + 3);
+        $args = explode("%2F", $destination);
+        $subargs = explode("%3F", $args[1]);
+        $reporttype = $args[2];
+        $fieldtripnid = $subargs[0];
         if (is_numeric($fieldtripnid) && is_numeric($reporttype)) {
           // todo: we can probably completely remove the relationship between Field Trip and Place
           // because we now either created the ftritem automatically here in this function
@@ -2135,7 +2146,7 @@ function devtrac_module_get_site_report_status($node) {
     'output' => ''
   );
   $result['output'] .= '<ul>';
-  $result['output'] .= '<li>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+  $result['output'] .= '<li>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
   $result['output'] .= '<li><ul>';
   switch ($node->field_ftritem_status[0]['value']) {
     case 'Submitted':
@@ -2147,36 +2158,36 @@ function devtrac_module_get_site_report_status($node) {
       if (!isset($node->field_ftritem_public_summary[0]['value']) || empty($node->field_ftritem_public_summary[0]['value']) ||
           ($node->field_ftritem_public_summary[0]['value'] == t('Please Provide a small summary for the public.'))) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the Public Summary', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-public-summary-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the Public Summary', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-public-summary-0-value-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       if (!isset($node->field_ftritem_narrative[0]['value']) || empty($node->field_ftritem_narrative[0]['value']) ||
           ($node->field_ftritem_narrative[0]['value'] == t('Please provide a full report.'))) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-narrative-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the Narrative', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-narrative-0-value-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       $vocabularysc = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
       $sector_codes = array_values(taxonomy_node_get_terms_by_vocabulary($node, $vocabularysc->vid));
       if (!isset($sector_codes) || empty($sector_codes)) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       if (!isset($node->field_ftritem_date_visited[0]['value']) || is_null($node->field_ftritem_date_visited[0]['value'])) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the Date Visited', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-date-visited-0-value-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the Date Visited', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-date-visited-0-value-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       $vocabularysrt = devtrack_module_get_vocabulary_by_name(t('Site Report Type'));
       $report_types = array_values(taxonomy_node_get_terms_by_vocabulary($node, $vocabularysrt->vid));
       if (($report_types[0]->name == 'Site Visit') AND ($node->field_ftritem_place[0]['nid'] == NULL)) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the Place', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-place-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the Place', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-place-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       if (($report_types[0]->name == 'Roadside Observation') && ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
       if (($report_types[0]->name == 'Human Interest Story') AND ($node->field_ftritem_place[0]['nid'] == NULL) AND ($node->field_ftritem_lat_long[0]['openlayers_wkt'] == NULL)) {
         $result['status'] = FALSE;
-        $result['output'] .= '<li>'. l('Provide either the Place or the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. $node->field_ftritem_field_trip[0]['nid']), 'html' => TRUE)) .'</li>';
+        $result['output'] .= '<li>'. l('Provide either the Place or the Lat-Long', $node->nid .'/edit', array('fragment' => 'edit-field-ftritem-lat-long-openlayers-wkt-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. $node->field_ftritem_field_trip[0]['nid'], 'html' => TRUE)) .'</li>';
       }
 //      if ($result['status']) {
 //        $result['output'] .= '<li>Done</li>';// All fields are okay, but you might want to read through the Summary and the Full Report.</li>';
@@ -2243,17 +2254,17 @@ function devtrac_module_get_action_item_status($node) {
     'output' => ''
   );
   $result['output'] .= '<ul>';
-  $result['output'] .= '<li>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+  $result['output'] .= '<li>'. l($node->title, 'node/'. $node->nid .'/edit', array('query' => 'destination=node/'. arg(1), 'html' => TRUE)) .'</li>';
   $result['output'] .= '<li><ul>';
   if (!isset($node->field_actionitem_resp_place[0]['nid']) || is_null($node->field_actionitem_resp_place[0]['nid'])) {
     $result['status'] = FALSE;
-    $result['output'] .= '<li>'. l('Provide the Location', $node->nid .'/edit', array('fragment' => 'edit-field-actionitem-resp-place-0-nid-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+    $result['output'] .= '<li>'. l('Provide the Location', $node->nid .'/edit', array('fragment' => 'edit-field-actionitem-resp-place-0-nid-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. arg(1), 'html' => TRUE)) .'</li>';
   }
   $sector_codes = devtrack_module_get_vocabulary_by_name(t('OECD Sector Code'));
   $terms = array_values(taxonomy_node_get_terms_by_vocabulary($node, $sector_codes->vid));
   if (!isset($terms) || empty($terms)) {
     $result['status'] = FALSE;;
-    $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE)) .'</li>';
+    $result['output'] .= '<li>'. l('Provide the OECD Sector Code', $node->nid .'/edit', array('fragment' => 'edit-taxonomy-8-wrapper', 'external' => TRUE, 'query' => 'destination=node/'. arg(1), 'html' => TRUE)) .'</li>';
   }
 //  if ($result['status']) {
 //    $result['output'] .= '<li>Done</li>';// All fields are okay, but you might want to read through the Follow-up Task.</li>';
@@ -2276,7 +2287,7 @@ function devtrac_module_get_questionaire_status($node, $sid) {
   if (!$count) {
     $count = 0;
   }
-  $result['output'] .= l("Questions answered: $count", 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => array('destination' => 'node/'. arg(1)), 'html' => TRUE));
+  $result['output'] .= l("Questions answered: $count", 'node/'. $node->nid .'/questions/editsubmission/'. $sid, array('query' => 'destination=node/'. arg(1), 'html' => TRUE));
   return $result;
 }
 

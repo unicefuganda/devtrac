@@ -51,8 +51,12 @@ span.form-submit a{
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
 	display: inline-block;
 }
+#footermenubar ul li, #footermenubar li{
+	list-style: none;
+	list-style-image: none;
+}
 #footer-message {
-	margin-top:-10px;
+	margin-top:-27px;
 }
 
 .page-user .description {

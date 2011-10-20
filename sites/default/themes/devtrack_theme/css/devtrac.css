@@ -163,11 +163,20 @@ ul.primary li.active a {
   display: block;
 }
 
-#block-views-my_homepage_picture-block_1, #block-devtrack_module-0, #block-views-82b405e48615f4f718a3de0caf6ad948 .content {
+#block-views-my_homepage_picture-block_1, 
+#block-devtrack_module-0, 
+#block-views-82b405e48615f4f718a3de0caf6ad948 .content {
   padding: 10px;
 }
 
-#block-views-my_homepage_picture-block_2 .content, #block-views-bb81c6932c49ceae6c11cf399465f5ce .content, #block-views-6c5d40078b5d978dec5660e09799fa4d .content, #block-views-87cfc5888b93ec2b557b2215e685ab74 .content, #block-views-e2873ecf875782fff940de052e22939c .content, #block-views-my_homepage_picture-block_3 .content, #block-block-2 .content, #block-views-cac0f8a4b9f539757b67cf65047d5197 .content {
+#block-views-my_homepage_picture-block_2 .content, 
+#block-views-bb81c6932c49ceae6c11cf399465f5ce .content, 
+#block-views-6c5d40078b5d978dec5660e09799fa4d .content, 
+#block-views-87cfc5888b93ec2b557b2215e685ab74 .content, 
+#block-views-e2873ecf875782fff940de052e22939c .content, 
+#block-views-my_homepage_picture-block_3 .content, 
+#block-block-2 .content, 
+#block-views-cac0f8a4b9f539757b67cf65047d5197 .content {
   padding: 0px;
 }
 
@@ -175,11 +184,27 @@ ul.primary li.active a {
   display: none;
 }
 
-#block-views-my_homepage_picture-block_1 a, #block-devtrack_module-0 li a, #block-views-my_homepage_picture-block_2 a, #block-views-bb81c6932c49ceae6c11cf399465f5ce a, #block-views-6c5d40078b5d978dec5660e09799fa4d a, #block-views-87cfc5888b93ec2b557b2215e685ab74 a, #block-views-e2873ecf875782fff940de052e22939c a, #block-views-my_homepage_picture-block_3 a, #block-views-cac0f8a4b9f539757b67cf65047d5197 a {
+#block-views-my_homepage_picture-block_1 a, 
+#block-devtrack_module-0 li a, 
+#block-views-my_homepage_picture-block_2 a, 
+#block-views-bb81c6932c49ceae6c11cf399465f5ce a, 
+#block-views-6c5d40078b5d978dec5660e09799fa4d a, 
+#block-views-87cfc5888b93ec2b557b2215e685ab74 a, 
+#block-views-e2873ecf875782fff940de052e22939c a, 
+#block-views-my_homepage_picture-block_3 a, 
+#block-views-cac0f8a4b9f539757b67cf65047d5197 a {
   color: #000000;
 }
 
-#block-views-my_homepage_picture-block_1 a:hover, #block-devtrack_module-0 li a:hover, #block-views-my_homepage_picture-block_2 a:hover, #block-views-bb81c6932c49ceae6c11cf399465f5ce a:hover, #block-views-6c5d40078b5d978dec5660e09799fa4d a:hover, #block-views-87cfc5888b93ec2b557b2215e685ab74 a:hover, #block-views-e2873ecf875782fff940de052e22939c a:hover, #block-views-my_homepage_picture-block_3 a:hover, #block-views-cac0f8a4b9f539757b67cf65047d5197 a:hover {
+#block-views-my_homepage_picture-block_1 a:hover, 
+#block-devtrack_module-0 li a:hover, 
+#block-views-my_homepage_picture-block_2 a:hover, 
+#block-views-bb81c6932c49ceae6c11cf399465f5ce a:hover, 
+#block-views-6c5d40078b5d978dec5660e09799fa4d a:hover, 
+#block-views-87cfc5888b93ec2b557b2215e685ab74 a:hover, 
+#block-views-e2873ecf875782fff940de052e22939c a:hover, 
+#block-views-my_homepage_picture-block_3 a:hover, 
+#block-views-cac0f8a4b9f539757b67cf65047d5197 a:hover {
   color: #777777;
 }
 
@@ -191,22 +216,31 @@ ul.primary li.active a {
   text-decoration: none;
 }
 
-#block-views-e2873ecf875782fff940de052e22939c table, #block-views-my_homepage_picture-block_3 table, #block-views-cac0f8a4b9f539757b67cf65047d5197 table {
+#block-views-e2873ecf875782fff940de052e22939c table, 
+#block-views-my_homepage_picture-block_3 table, 
+#block-views-cac0f8a4b9f539757b67cf65047d5197 table {
   /*border: 1px solid #fff9cd;*/
   margin-top: -17px;
 }
 
-#block-views-e2873ecf875782fff940de052e22939c table tr, #block-views-my_homepage_picture-block_3 table tr, #block-views-cac0f8a4b9f539757b67cf65047d5197 table tr {
+#block-views-e2873ecf875782fff940de052e22939c table tr, 
+#block-views-my_homepage_picture-block_3 table tr, 
+#block-views-cac0f8a4b9f539757b67cf65047d5197 table tr {
   border: 1px solid #fff9cd;
 }
 
- #block-views-e2873ecf875782fff940de052e22939c table th, #block-views-my_homepage_picture-block_3 table th, #block-views-cac0f8a4b9f539757b67cf65047d5197 table th {
+ #block-views-e2873ecf875782fff940de052e22939c table th, 
+ #block-views-my_homepage_picture-block_3 table th, 
+ #block-views-cac0f8a4b9f539757b67cf65047d5197 table th {
   color: #000000;
   background-color: transparent;
   border-bottom: 2px solid #fff9cd;
 }
 
- #block-views-87cfc5888b93ec2b557b2215e685ab74 table td p, #block-views-e2873ecf875782fff940de052e22939c table td p, #block-views-my_homepage_picture-block_3 table td p, #block-views-cac0f8a4b9f539757b67cf65047d5197 table td p {
+ #block-views-87cfc5888b93ec2b557b2215e685ab74 table td p, 
+ #block-views-e2873ecf875782fff940de052e22939c table td p, 
+ #block-views-my_homepage_picture-block_3 table td p, 
+ #block-views-cac0f8a4b9f539757b67cf65047d5197 table td p {
   margin:10px 0px;
   padding: 0px;
 }
@@ -232,7 +266,8 @@ ul.primary li.active a {
   padding-left: 20px;
 }
 
-#block-views-bb81c6932c49ceae6c11cf399465f5ce .views-field-field-ftritem-images-fid {
+#block-views-bb81c6932c49ceae6c11cf399465f5ce 
+.views-field-field-ftritem-images-fid {
   padding: 0px 40px 10px;
 }
  */
@@ -242,7 +277,9 @@ ul.primary li.active a {
  * Field Trip Report Item Block, Funding Partners Block and Place Types Block
  */
 
-#block-views-field_trip_report_items-block_4 ul li, #block-menu-menu-funding-partners ul li, #block-menu-menu-placetype-menu ul li ul li {
+#block-views-field_trip_report_items-block_4 ul li, 
+#block-menu-menu-funding-partners ul li, 
+#block-menu-menu-placetype-menu ul li ul li {
   list-style: none url(square_bullet.png) outside;
 }
 
@@ -254,11 +291,17 @@ ul.primary li.active a {
   list-style: none url(downarrow_bullet.png) outside;
 }
 
-#block-views-field_trip_report_items-block_4 ul li a, #block-menu-menu-funding-partners ul li a, #block-menu-menu-placetype-menu ul li a, #block-menu-menu-placetype-menu ul li ul li a {
+#block-views-field_trip_report_items-block_4 ul li a, 
+#block-menu-menu-funding-partners ul li a, 
+#block-menu-menu-placetype-menu ul li a, 
+#block-menu-menu-placetype-menu ul li ul li a {
   color: #000000;
 }
 
-#block-views-field_trip_report_items-block_4 ul li a:hover, #block-menu-menu-funding-partners ul li a:hover, #block-menu-menu-placetype-menu ul li a:hover, #block-menu-menu-placetype-menu ul li ul li a:hover {
+#block-views-field_trip_report_items-block_4 ul li a:hover, 
+#block-menu-menu-funding-partners ul li a:hover, 
+#block-menu-menu-placetype-menu ul li a:hover, 
+#block-menu-menu-placetype-menu ul li ul li a:hover {
   color: #777777;
 }
 
@@ -328,7 +371,8 @@ ul.primary li.active a {
 /**
  * The Place Edit Form
  */
-body.page-node .node-form #edit-taxonomy-1-wrapper, body.page-node .node-form #edit-taxonomy-2-wrapper {
+body.page-node .node-form #edit-taxonomy-1-wrapper, 
+body.page-node .node-form #edit-taxonomy-2-wrapper {
   float: left;
   padding-left: 25px;
 }
@@ -361,17 +405,18 @@ body.page-node .node-form #field-fieldtrip-places-items {
 /**
  * The Action Item Edit Form
  */
-body.page-node .node-form .group-actionitem-status .container-inline-date, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper {
+body.page-node .node-form .group-actionitem-status .container-inline-date, 
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper, 
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper {
   float: left;
   padding-left: 25px;
   margin: 0px;
 }
-
 body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper {
   padding-left: 30px;
 }
-
-body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper select#edit-field-actionitem-status-value, body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper select#edit-field-actionitem-severity-value {
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status-value-wrapper select#edit-field-actionitem-status-value, 
+body.page-node .node-form .group-actionitem-status #edit-field-actionitem-severity-value-wrapper select#edit-field-actionitem-severity-value {
   margin-top: 7px;
   width: 100px;
 }
@@ -379,12 +424,10 @@ body.page-node .node-form .group-actionitem-status #edit-field-actionitem-status
 body.page-node .node-form #field-actionitem-responsible-items {
   padding-bottom: 30px;
 }
-
 /*...District Search Box....The district Search box on /tripreports......................................*/
 #views-exposed-form-trip-reports-search-page-1 #edit-district {
   width: 200px;
 }
-
 /*...The Help Icons......................................*/
 /* the help icons */
 /* there is a css inject rule for this that needs to be removed!! */

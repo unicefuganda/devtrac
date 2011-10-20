@@ -236,16 +236,23 @@ div.olMapViewport {
 	border-left:1px solid #000000;
 	color:#CCCCCC;
 	float:right;
-	height:114px;
+	/*height:114px;*/
 	line-height:28px;
 	margin-top:-28px;
 	padding-left:10px;
 	padding-top: 32px;
-	width: 28%;
+	width: 35%;
 }
 .uniceflogo {background-image:url("/sites/default/themes/devtrack_theme/images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
 .mblogo{ background-image: url("/sites/default/themes/devtrack_theme/images/mountbatten.png");  float:left; height:20px; margin-right:10px; width:20px;}
 .uganda{ background-image: url("/sites/default/themes/devtrack_theme/images/uganda.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.license {
+    float: left;
+    font-size:10px;
+    line-height: 17px;
+    margin-top: 10px;
+    text-align: left;
+}.license a{padding-right: 5px;}
 .text-footer {
 	clear:left;
 	font-size:10px;
@@ -255,22 +262,21 @@ div.olMapViewport {
 	width: 285px;
 }
 .hosted{float:left;}
-#footer-message a {float:left; line-height: 18px;}
+#footer-message a {float:left; /*line-height: 18px;*/}
 
 #footermenubar {
 	background-color:#000;
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
 	background-repeat: repeat-x;
 	border-top:7px solid #ea0001; 
-	min-height:200px; 
+	min-height:250px;
 	padding-top:10px;
 	position: relative;
 	clear:both;
-/* fuck me, this didnt work	margin: 200px auto 0 auto; */ /* margin-top equals the min-height !! this is for the push div to push the footer to the bottom of the page!!!!*/
+ /* margin-top equals the min-height !! this is for the push div to push the footer to the bottom of the page!!!!*/
 	color: #DDD;
 	text-align:center;
 }
-
 #footermenubar {
 	width: 100%;
 }
@@ -796,7 +802,17 @@ Why was this code there in the first place
 }
 */
 .col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
-.col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
+.col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;}
+
+.container .col-content_contentlayerleft .view-header,
+.container .view-footer{
+	padding-left: 0.8em;
+	padding-top: 0.3em;
+	padding-bottom: 0.6em;
+}
+.container .view-footer ul,
+.container .col-content_contentlayerleft .view-header ul{
+	padding-left: 0;
 }
 #contentcontainer div.content-profile-display{
 	border: none;

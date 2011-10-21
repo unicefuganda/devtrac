@@ -1742,13 +1742,17 @@ function devtrack_module_getcontext($nid) {
   return $node->field_ftritem_place[0]['nid'];
 }
 
-function _devtrack_module_getbutton($text, $path, $query = NULL) {
+function _devtrack_module_getbutton($text, $path, $query = NULL, $options = NULL) {
   if (isset($query)) {
     $params = Array('query' => $query, 'html' => TRUE);
   }
   else {
     $params = Array('html' => TRUE);
   }
+  if (isset($options)) {
+    $params = array_merge($params, $options);
+  }
+  
   if (_devtrack_module_isinternetexplorer()) {
     // we can not tell how much we hate IE for this
     $result .= '<li><span class="form-submit">'. l($text, $path, $params) .'</span></li>';
@@ -2126,11 +2130,11 @@ function devtrac_module_get_fieldtrip_status($node) {
   // Conditionally add a submit text and button to the output
   if ($fieldtripstatus && $sitereportsstatus) {
     $output .= '<div>All fields on the Field Trip and all of its Site Reports are ready to be submitted.</div>';
-    $output .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $node->nid .'/setstatus/approve');
+    $output .= _devtrack_module_getbutton('Submit Field Trip', 'node/'. $node->nid .'/setstatus/approve', NULL, array('attributes' => array('class' => 'submit')));
   }
   else {
     $output .= '<div>As soon as all fields on the Field Trip and all of its Site Reports are ready to be submitted a "Submit Field Trip" button will appear here.</div>';
-    $output .= _devtrack_module_getbutton('View Details', '#');
+    $output .= _devtrack_module_getbutton('View Details', '#', NULL, array('attributes' => array('class' => 'detail')));
   }
   return $output;
 }

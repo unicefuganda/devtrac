@@ -1,4 +1,4 @@
-<?php
+ <?php
 
 /**
  * Implementation of hook_strongarm().
@@ -674,7 +674,7 @@ Other';
     'favicon_path' => '',
     'favicon_upload' => '',
     'collapsiblock_block' => 'div.block',
-    'collapsiblock_title' => '.content a button',
+    'collapsiblock_title' => '.content a.detail button',
     'collapsiblock_content' => '.content ul',
   );
   $export['theme_settings'] = $strongarm;

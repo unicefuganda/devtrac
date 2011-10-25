@@ -27,6 +27,12 @@ function devtrack_module_node_info() {
       'has_body' => TRUE,
       'body_label' => 'json',
     ),
+    'image' => array(
+      'name' => t('Image'),
+      'module' => 'devtrack_module',
+      'title_label' => t('Caption'),
+      'body_label' => t('Description'),
+    ),
   );
 }
 
@@ -2324,3 +2330,615 @@ function devtrack_module_popups () {
   );
 }
 */
+
+
+
+// This code is for converting ftritem images in to image_refs
+function devtrack_module_convert_images_into_image_refs() {
+  // Create some fields using CRUD
+  _devtrack_module_add_fields();  
+
+  // Allow some taxonomies on image nodes
+  _devtrack_module_set_taxonomy_node_types();
+
+  // Set some field permissions on the new fields
+  _devtrack_module_set_permissions();
+
+  // Now read all the ftritems, get the images field, loop over it, 
+  // create all the image nodes and populate the new image_refs field
+  _devtrack_module_create_image_nodes();
+}
+
+// Create some fields using CRUD
+function _devtrack_module_add_fields() {
+  // CRUD functions are found in content.crud.inc so we have to include it
+  module_load_include('inc', 'content', 'includes/content.crud');
+
+  // Let's first do the new image node type
+  $info = array (
+    'label' => 'Image',
+    'field_name' => 'field_image_image',
+    'type_name' => 'image',
+    'type' => 'filefield',
+    'widget_type' => 'imagefield_widget',
+    'change' => 'Change basic information',
+    'weight' => '34',
+    'file_extensions' => 'png gif jpg jpeg',
+    'progress_indicator' => 'bar',
+    'file_path' => '',
+    'max_filesize_per_file' => '',
+    'max_filesize_per_node' => '',
+    'max_resolution' => 0,
+    'min_resolution' => 0,
+    'custom_alt' => 0,
+    'alt' => '',
+    'custom_title' => 0,
+    'title_type' => 'textfield',
+    'title' => '',
+    'use_default_image' => 0,
+    'default_image_upload' => '',
+    'default_image' => NULL,
+    'slide_preset' => 'galleryformatter_slide',
+    'thumb_preset' => 'galleryformatter_thumb',
+    'style' => 'Greenarrows',
+    'link_to_full' => 1,
+    'link_to_full_preset' => '0',
+    'description' => '',
+    'ffp_field_image_image' => array (
+      'file_path' => '',
+      'file_path_cleanup' => array (
+        'file_path_pathauto' => 0,
+        'file_path_tolower' => 0,
+        'file_path_transliterate' => 0,
+      ),
+      'file_name' => '[filefield-onlyname-original].[filefield-extension-original]',
+      'file_name_cleanup' => array (
+        'file_name_pathauto' => 0,
+        'file_name_tolower' => 0,
+        'file_name_transliterate' => 0,
+      ),
+      'retroactive_update' => '',
+      'active_updating' => 0,
+    ),
+    'group' => false,
+    'required' => 0,
+    'multiple' => '0',
+    'list_field' => '0',
+    'list_default' => 1,
+    'description_field' => '0',
+    'op' => 'Save field settings',
+    'module' => 'filefield',
+    'widget_module' => 'imagefield',
+    'columns' => array (
+      'fid' => array (
+        'type' => 'int',
+        'not null' => false,
+        'views' => true,
+      ),
+      'list' => array (
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => false,
+        'views' => true,
+      ),
+      'data' => array (
+        'type' => 'text',
+        'serialize' => true,
+        'views' => true,
+      ),
+    ),
+    'display_settings' => array (
+      'label' => array (
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'teaser' => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'full' => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      4 => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      2 => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      3 => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'mobile' => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+      'token' => array (
+        'format' => 'image_plain',
+        'exclude' => 0,
+      ),
+    ),
+  );
+  content_field_instance_create($info);
+  
+  $info = array (
+    'label' => 'Site Report',
+    'field_name' => 'field_image_ftritem',
+    'type_name' => 'image',
+    'type' => 'nodereference',
+    'widget_type' => 'nodereference_autocomplete',
+    'change' => 'Change basic information',
+    'weight' => '31',
+    'autocomplete_match' => 'contains',
+    'size' => '60',
+    'description' => '',
+    'default_value' => array (
+    ),
+    'default_value_php' => '',
+    'default_value_widget' => NULL,
+    'group' => false,
+    'required' => 0,
+    'multiple' => '0',
+    'referenceable_types' => array (
+      'ftritem' => 'ftritem',
+      'actionitem' => 0,
+      'bbsync' => 0,
+      'book' => 0,
+      'fieldtrip' => 0,
+      'image' => 0,
+      'page' => 0,
+      'place' => 0,
+      'questionaire_question' => 0,
+      'story' => 0,
+      'user_profile' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'op' => 'Save field settings',
+    'module' => 'nodereference',
+    'widget_module' => 'nodereference',
+    'columns' => array (
+      'nid' => array (
+        'type' => 'int',
+        'unsigned' => true,
+        'not null' => false,
+        'index' => true,
+      ),
+    ),
+    'display_settings' => array (
+      'label' => array (
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      2 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      3 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+  );
+  content_field_instance_create($info);
+
+  $info = array (
+    'label' => 'Location',
+    'field_name' => 'field_image_place',
+    'type_name' => 'image',
+    'type' => 'nodereference',
+    'widget_type' => 'nodereference_autocomplete',
+    'change' => 'Change basic information',
+    'weight' => '33',
+    'autocomplete_match' => 'contains',
+    'size' => '60',
+    'description' => '',
+    'default_value' => array (
+    ),
+    'default_value_php' => '',
+    'default_value_widget' => array (
+      'field_image_place' => array (
+        0 => array (
+          'nid' => array (
+            'nid' => '',
+            '_error_element' => 'default_value_widget][field_image_place][0][nid][nid',
+          ),
+          '_error_element' => 'default_value_widget][field_image_place][0][nid][nid',
+        ),
+      ),
+    ),
+    'group' => false,
+    'required' => 0,
+    'multiple' => '0',
+    'referenceable_types' => array (
+      'place' => 'place',
+      'actionitem' => 0,
+      'bbsync' => 0,
+      'book' => 0,
+      'fieldtrip' => 0,
+      'ftritem' => 0,
+      'image' => 0,
+      'page' => 0,
+      'questionaire_question' => 0,
+      'story' => 0,
+      'user_profile' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'op' => 'Save field settings',
+    'module' => 'nodereference',
+    'widget_module' => 'nodereference',
+    'columns' => array (
+      'nid' => array (
+        'type' => 'int',
+        'unsigned' => true,
+        'not null' => false,
+        'index' => true,
+      ),
+    ),
+    'display_settings' => array (
+      'label' => array (
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      2 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      3 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+  );
+  content_field_instance_create($info);
+
+  $info = array (
+    'label' => 'Field Trip',
+    'field_name' => 'field_image_field_trip',
+    'type_name' => 'image',
+    'type' => 'nodereference',
+    'widget_type' => 'nodereference_autocomplete',
+    'change' => 'Change basic information',
+    'weight' => '32',
+    'autocomplete_match' => 'contains',
+    'size' => '60',
+    'description' => '',
+    'default_value' => array (
+    ),
+    'default_value_php' => '',
+    'default_value_widget' => array (
+      'field_image_field_trip' => array (
+        0 => array (
+          'nid' => array (
+            'nid' => '',
+            '_error_element' => 'default_value_widget][field_image_field_trip][0][nid][nid',
+          ),
+          '_error_element' => 'default_value_widget][field_image_field_trip][0][nid][nid',
+        ),
+      ),
+    ),
+    'group' => false,
+    'required' => 0,
+    'multiple' => '0',
+    'referenceable_types' => array (
+      'fieldtrip' => 'fieldtrip',
+      'actionitem' => 0,
+      'bbsync' => 0,
+      'book' => 0,
+      'ftritem' => 0,
+      'image' => 0,
+      'page' => 0,
+      'place' => 0,
+      'questionaire_question' => 0,
+      'story' => 0,
+      'user_profile' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'op' => 'Save field settings',
+    'module' => 'nodereference',
+    'widget_module' => 'nodereference',
+    'columns' => array (
+      'nid' => array (
+        'type' => 'int',
+        'unsigned' => true,
+        'not null' => false,
+        'index' => true,
+      ),
+    ),
+    'display_settings' => array (
+      'label' => array (
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      2 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      3 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+  );
+  content_field_instance_create($info);
+
+  // and now the existing ftritem, we want to add image_refs (next to the images)
+  $info = array (
+    'label' => 'Image References',
+    'field_name' => 'field_ftritem_image_refs',
+    'type_name' => 'ftritem',
+    'type' => 'nodereference',
+    'widget_type' => 'nodereference_autocomplete',
+    'change' => 'Change basic information',
+    'weight' => '14',
+    'autocomplete_match' => 'contains',
+    'size' => '60',
+    'description' => '',
+    'default_value' => array (
+      0 => array (
+        'nid' => NULL,
+        '_error_element' => 'default_value_widget][field_ftritem_image_refs][0][nid][nid',
+      ),
+    ),
+    'default_value_php' => '',
+    'default_value_widget' => NULL,
+    'group' => false,
+    'required' => 0,
+    'multiple' => '1',
+    'referenceable_types' => array (
+      'image' => 'image',
+      'actionitem' => 0,
+      'bbsync' => 0,
+      'book' => 0,
+      'fieldtrip' => 0,
+      'ftritem' => 0,
+      'page' => 0,
+      'place' => 0,
+      'questionaire_question' => 0,
+      'story' => 0,
+      'user_profile' => 0,
+    ),
+    'advanced_view' => '--',
+    'advanced_view_args' => '',
+    'op' => 'Save field settings',
+    'module' => 'nodereference',
+    'widget_module' => 'nodereference',
+    'columns' => array (
+      'nid' => array (
+        'type' => 'int',
+        'unsigned' => true,
+        'not null' => false,
+        'index' => true,
+      ),
+    ),
+    'display_settings' => array (
+      'label' => array (
+        'format' => 'above',
+        'exclude' => 0,
+      ),
+      5 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'teaser' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'full' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      4 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      2 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      3 => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array (
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+  );
+  content_field_instance_create($info);
+}
+
+// Allow some taxonomies on image nodes
+function _devtrack_module_set_taxonomy_node_types() {
+  $vids = array(1, 2, 4, 6, 7, 8);
+  $sql = "INSERT INTO {vocabulary_node_types} (vid, type) VALUES (%d, 'image')";
+  foreach ($vids as $vid) {
+    db_query($sql, $vid);
+  }
+}
+
+// Set some field permissions on the new fields
+function _devtrack_module_set_permissions() {
+  $editpermissions = 'edit field_ftritem_image_refs, edit field_image_field_trip, edit field_image_ftritem, edit field_image_place, edit field_image_image';
+  $viewpermissions = 'view field_ftritem_image_refs, view field_image_field_trip, view field_image_ftritem, view field_image_place, view field_image_image';
+  $allpermissions = $editpermissions .', '. $viewpermissions;
+  $sqlselect = "SELECT perm FROM {permission} WHERE rid = %d";
+  $sqlupdate = "UPDATE {permission} SET perm = '%s' WHERE rid = %d";
+  $rids = array(1, 2, 3, 5, 6);
+  foreach ($rids as $rid) {
+    if ($rid == 1) {
+      $permissions = db_result(db_query($sqlselect, $rid));
+      $permissions .= ', '. $viewpermissions;
+      db_query($sqlupdate, $permissions, $rid);
+    }
+    else {
+      $permissions = db_result(db_query($sqlselect, $rid));
+      $permissions .= ', '. $allpermissions;
+      db_query($sqlupdate, $permissions, $rid);
+    }
+  }
+}
+
+// Now read all the ftritems, get the images field, loop over it, create all the image nodes and populate the new image_refs field
+function _devtrack_module_create_image_nodes() {
+  $ftritems = db_query("SELECT nid FROM {node} WHERE type = 'ftritem' ORDER BY nid ASC");
+  while ($ftritem = db_fetch_object($ftritems)) {
+    $ftritemnid = $ftritem->nid;
+    $ftritemnode= node_load($ftritemnid);
+    $ftritemuser = user_load($ftritemnode->uid);
+    $fieldtripnid = $ftritemnode->field_ftritem_field_trip[0]['nid'];
+    $placenid = $ftritemnode->field_ftritem_place[0]['nid'];
+    $placenode = node_load($placenid);
+    $images = $ftritemnode->field_ftritem_images;
+    foreach ($images as $image) {
+      if (isset($image)) {
+        $newimage = new stdClass();
+        $newimage->type = 'image';
+        $newimage->language = '';
+        $newimage->uid = $ftritemnode->uid;
+        $newimage->status = 1;
+        $newimage->created = $image['timestamp'];
+        $newimage->changed = $image['timestamp'];
+        $newimage->comment = 0;
+        $newimage->promote = 0;
+        $newimage->moderate = 0;
+        $newimage->sticky = 0;
+        $newimage->tnid = 0;
+        $newimage->translate = 0;
+        if ((isset($image['data']['description'])) && ($image['data']['description'] != '')) {
+          $newimage->title = $image['data']['description'];
+          $newimage->body = $image['data']['description'];
+          $newimage->teaser = $image['data']['description'];
+        }
+        else {
+          $newimage->title = t('Image');
+          $newimage->body = t('Image');
+          $newimage->teaser = t('Image');
+        }
+        $newimage->format = 0;
+        $newimage->name = $ftritemuser->name;
+        $newimage->picture = 'sites/default/files/pictures/picture-'. $ftritemnode->uid .'.jpg';
+        $newimage->field_image_ftritem[0]['nid'] = $ftritemnid;
+        $newimage->field_image_place[0]['nid'] = $placenid;
+        $newimage->field_image_field_trip[0]['nid'] = $fieldtripnid;
+        $newimage->field_image_image[] = $image;
+        unset($newimage->field_image_image[0]['data']['description']);
+        $newimage->last_comment_timestamp = $image['timestamp'];
+        $newimage->last_comment_name = NULL;
+        $newimage->comment_count = 0;
+        $placetypes = taxonomy_node_get_terms_by_vocabulary($placenode, 1);
+        foreach ($placetypes as $tid => $term) {
+          $newimage->taxonomy[$tid] = $term;
+        }
+        $fundingpartners = taxonomy_node_get_terms_by_vocabulary($placenode, 2);
+        foreach ($fundingpartners as $tid => $term) {
+          $newimage->taxonomy[$tid] = $term;
+        }
+        $tid = $ftritemuser->field_user_department;
+        $term = taxonomy_get_term($tid);
+        $newimage->taxonomy[$tid] = $term;
+        $districts = taxonomy_node_get_terms_by_vocabulary($placenode, 6);
+        foreach ($districts as $tid => $term) {
+          $newimage->taxonomy[$tid] = $term;
+        }
+        $reporttypes = taxonomy_node_get_terms_by_vocabulary($ftritemnode, 7);
+        foreach ($reporttypes as $tid => $term) {
+          $newimage->taxonomy[$tid] = $term;
+        }
+        $oecdsectorcodes = taxonomy_node_get_terms_by_vocabulary($ftritemnode, 8);
+        foreach ($oecdsectorcodes as $tid => $term) {
+          $newimage->taxonomy[$tid] = $term;
+        }
+        node_save($newimage);
+        $ftritemnode->field_ftritem_image_refs[]['nid'] = $newimage->nid;
+      }
+    }
+    node_save($ftritemnode);
+  }
+}

@@ -673,3 +673,16 @@ function devtrack_module_update_6010() {
   $ret[] = array('success' => TRUE, 'query' => 'removed Nzerea II from Place Types');
   return $ret;
 }
+
+/*
+ * Performs the conversion of images to image references
+ *
+ * Check the number in the update function's name
+ * Started recounting at 6700 to show it's purpose is the D7 upgrade
+ */
+function devtrack_module_update_6700() {
+  devtrack_module_convert_images_into_image_refs();
+
+  $ret[] = array('success' => TRUE, 'query' => 'converted all images to image references');
+  return $ret;
+}

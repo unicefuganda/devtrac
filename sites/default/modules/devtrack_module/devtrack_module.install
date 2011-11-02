@@ -700,7 +700,24 @@ function devtrack_module_update_6701() {
       openlayers_preset_save($preset);
     }
   }
-
   $ret[] = array('success' => TRUE, 'query' => 'saved all openlayers presets (maps) from features into the database');
+  return $ret;
+
+  $layers = openlayers_layers_export_load();
+  foreach ($layers as $layer) {
+    if (($layer->type == 'Default') && ($layer->export_module != 'openlayers')){
+      openlayers_layer_save($layer);
+    }
+  }
+  $ret[] = array('success' => TRUE, 'query' => 'saved all openlayers layers from features into the database');
+  return $ret;
+
+  $styles = openlayers_styles();
+  foreach ($styles as $style) {
+    if ($style->type == 'Default') {
+      openlayers_style_save($style);
+    }
+  }
+  $ret[] = array('success' => TRUE, 'query' => 'saved all openlayers styles from features into the database');
   return $ret;
 }

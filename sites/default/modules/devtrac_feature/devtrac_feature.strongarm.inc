@@ -1,4 +1,4 @@
- <?php
+<?php
 
 /**
  * Implementation of hook_strongarm().
@@ -657,16 +657,16 @@ Other';
     'toggle_favicon' => 1,
     'toggle_primary_links' => 1,
     'toggle_secondary_links' => 1,
-    'toggle_node_info_actionitem' => 1,
+    'toggle_node_info_actionitem' => 0,
     'toggle_node_info_bbsync' => 1,
-    'toggle_node_info_book' => 1,
-    'toggle_node_info_fieldtrip' => 1,
-    'toggle_node_info_ftritem' => 1,
-    'toggle_node_info_page' => 1,
-    'toggle_node_info_place' => 1,
+    'toggle_node_info_book' => 0,
+    'toggle_node_info_fieldtrip' => 0,
+    'toggle_node_info_ftritem' => 0,
+    'toggle_node_info_page' => 0,
+    'toggle_node_info_place' => 0,
     'toggle_node_info_questionaire_question' => 1,
     'toggle_node_info_story' => 1,
-    'toggle_node_info_user_profile' => 1,
+    'toggle_node_info_user_profile' => 0,
     'default_logo' => 1,
     'logo_path' => '',
     'logo_upload' => '',

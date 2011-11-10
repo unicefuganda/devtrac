@@ -1724,16 +1724,6 @@ drupal_set_message(t("its a bbsync and we will do " . $op));
       case 'insert':
         drupal_set_message(t("We are inserting"));
         devtrack_module_bbsync($node); // This is untested
-        /*
-         * TODO:
-         * Initialy all Site Reports are Unpublished ($node->status = 0).
-         * In P2-S4 we made changes to the workflow (https://www.pivotaltracker.com/story/show/16939181).
-         * This forced us to have them Published initialy.
-         * This should be changed in the array returned by the BB App.
-         * So once the BB App has been updated we have to remove the following 2 lines  of code again.
-         */
-        $node->status = 1;
-        node_save($node);
         break;
     }
   }
@@ -2027,10 +2017,17 @@ function devtrack_module_fieldtrip_publish(&$node) {
     $db_result = db_query(db_rewrite_sql($sql), $node->nid);
     while ($ftritemnid = db_fetch_object($db_result)) {
       $ftritem = node_load($ftritemnid->nid);
+//      watchdog('Submit Site Report', 'Submitting Site Report: '. $ftritem->nid .' (on Field Trip: '. $node->nid .')');
+      if (!isset($ftritem->field_ftritem_date_visited[0]['value'])) {
+        $ftritem->field_ftritem_date_visited[0]['value'] = $node->field_fieldtrip_start_end_date[0]['value'];
+      }
       $ftritem->field_ftritem_status[0]['value'] = 'Submitted';
+      $ftritem->status = 1;
       node_save($ftritem);
       node_access_acquire_grants($ftritem);
     }
+    $node->field_fieldtrip_status[0]['value'] = 'Approved';
+    $node->status = 1;
     node_access_acquire_grants($node);
   }
 }
@@ -2088,18 +2085,21 @@ function devtrack_module_node_access_records($node) {
 }
 
 function devtrack_module_fieldtrip_publish_all_field_trips() {
-  $sql = "SELECT nid FROM {node} WHERE type = '%s' OR type = '%s'";
-  $result = db_query($sql, 'fieldtrip', 'ftritem');
+  $sql = "SELECT nid FROM {node} WHERE type = '%s' AND created < %d";
+  $result = db_query($sql, 'fieldtrip', date('U') - 14 * 24 * 60 * 60);
   while ($node = db_fetch_object($result)) {
     $current_node = node_load($node->nid);
-    $current_node->status = 1;
-    if ($current_node->type == 'fieldtrip') {
-      $current_node->field_fieldtrip_status[0]['value'] = 'Approved';
-    }
-    else { // node type is ftritem
-      $current_node->field_ftritem_date_visited[0]['value'] = date('Y-m-j', $current_node->created);
-      $current_node->field_ftritem_status[0]['value'] = 'Submitted';
-    }
+    watchdog('Submit Field Trip', 'Submitting Field Trip: '. $current_node->nid .' (created at: '. date('Y-m-j', $current_node->created) .')');
+//    $current_node->status = 1;
+//    if ($current_node->type == 'fieldtrip') {
+//      $current_node->field_fieldtrip_status[0]['value'] = 'Approved';
+//    }
+//    else { // node type is ftritem
+//      $current_node->field_ftritem_date_visited[0]['value'] = date('Y-m-j', $current_node->created);
+//      $current_node->field_ftritem_status[0]['value'] = 'Submitted';
+//    }
+//    node_save($current_node);
+    devtrack_module_fieldtrip_publish($current_node);
     node_save($current_node);
   }
 }
@@ -2371,4 +2371,3 @@ function devtrack_module_link_alter(&$links, $node, $comment = NULL) {
     $links = array_intersect_key($links, array('hidden_comment_show' => TRUE, 'hidden_comment_hide' => TRUE));
   }
 }
-

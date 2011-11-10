@@ -1594,6 +1594,16 @@ function devtrack_module_get_vocabulary_by_name($name) {
 function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
   if ($node->type == 'ftritem') {
     switch ($op) {
+      case 'insert':
+        /*
+         * TODO:
+         * Initialy all Site Reports were Unpublished ($node->status = 0).
+         * In P2-S4 we made changes to the workflow (https://www.pivotaltracker.com/story/show/16939181).
+         * This forced us to have them Published initialy.
+         * This should be changed in the array returned by the BB App.
+         * So once the BB App has been updated we have to remove the following line of code again.
+         */
+        $node->status = 1;
       case 'delete':
         $placenid = $node->field_ftritem_place[0]['nid'];
         $fieldtripnid = $node->field_ftritem_field_trip[0]['nid'];
@@ -1714,6 +1724,16 @@ drupal_set_message(t("its a bbsync and we will do " . $op));
       case 'insert':
         drupal_set_message(t("We are inserting"));
         devtrack_module_bbsync($node); // This is untested
+        /*
+         * TODO:
+         * Initialy all Site Reports are Unpublished ($node->status = 0).
+         * In P2-S4 we made changes to the workflow (https://www.pivotaltracker.com/story/show/16939181).
+         * This forced us to have them Published initialy.
+         * This should be changed in the array returned by the BB App.
+         * So once the BB App has been updated we have to remove the following 2 lines  of code again.
+         */
+        $node->status = 1;
+        node_save($node);
         break;
     }
   }
@@ -2229,13 +2249,10 @@ function devtrac_module_get_site_report_status($node) {
           $qresult = devtrac_module_get_questionaire_status($node, $sid->sid);
           $result['output'] .= '<li>'. $qresult['output'] .'</li>';
         }
-        if ($link = questionaire_get_submission_link($node->nid, $node->field_ftritem_place[0]['nid'])) {
-          $result['output'] .= '<li>' . l(t('Edit Submission'), $link) . '</li>';
-        }
       }
       else {
         if ($link = questionaire_get_submission_link($node->nid, $context->field_ftritem_place[0]['nid'])) {
-          $result['output'] .= '<li>' . l(t('Add Submission'), $link) . '</li>';
+          $result['output'] .= '<li>' . l(t('Add Submission'), $link, array('query' => 'destination=node/'. $node->nid)) . '</li>';
         }
       }
       break;

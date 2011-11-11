@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.views.inc,v 1.1.2.1 2008/09/26 16:09:43 fago Exp $
 
 /**
  * @file content_profile.views.inc

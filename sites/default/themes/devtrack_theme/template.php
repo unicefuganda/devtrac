@@ -45,6 +45,30 @@ function devtrack_theme_preprocess_views_view(&$vars) {
 
 function devtrack_theme_preprocess_views_view__Questions(&$vars) {
   if($vars['display_id'] == 'block_1') {
-    $vars['more'] = '<div class="more-link">'. l(t('more'), 'node/'. arg(1) .'/questions/questionaire', array()) .'</div';
+    $vars['more'] = '<div class="more-link">'. l(t('more'), 'node/'. arg(1) .'/questions/questionaire', array()) .'</div>';
+  }
+}
+
+/*
+function devtrack_theme_preprocess_breadcrumb(&$vars) {
+  // This does not seem to work. Is there no breadcrumb template file defined???
+}
+*/
+
+/**
+ * Override, remove the title at the end again. It was introduced by blueprint.
+ * Override, show Home breadcrumb on all pages.
+ *
+ * Return a themed breadcrumb trail.
+ *
+ * @param $breadcrumb
+ *   An array containing the breadcrumb links.
+ * @return a string containing the breadcrumb output.
+ */
+function devtrack_theme_breadcrumb($breadcrumb) {
+  if (count($breadcrumb) > 0) {
+//  if (count($breadcrumb) > 1) {
+//    $breadcrumb[] = drupal_get_title();
+    return '<div class="breadcrumb">'. implode(' &rsaquo; ', $breadcrumb) .'</div>';
   }
 }

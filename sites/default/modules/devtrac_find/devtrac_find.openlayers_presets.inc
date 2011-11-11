@@ -5,6 +5,7 @@
  */
 function devtrac_find_openlayers_presets() {
   $export = array();
+
   $openlayers_presets = new stdClass;
   $openlayers_presets->disabled = FALSE; /* Edit this to true to make a default openlayers_presets disabled initially */
   $openlayers_presets->api_version = 1;
@@ -33,6 +34,9 @@ function devtrac_find_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+          'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+          'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
+          'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
         ),
       ),
       'openlayers_behavior_keyboarddefaults' => array(),
@@ -52,22 +56,46 @@ function devtrac_find_openlayers_presets() {
     ),
     'default_layer' => 'uganda_basemap',
     'layers' => array(
-      'uganda_basemap' => 'uganda_basemap',
       'osm_mapnik' => 'osm_mapnik',
+      'uganda_basemap' => 'uganda_basemap',
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'layer_styles' => array(
       'trip_reports_search_openlayers_1' => array(
-        'default' => 'default',
-        'select' => 'default',
-        'temporary' => 'default',
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
+      ),
+      'trip_reports_search_openlayers_2' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'trip_reports_search_openlayers_4' => array(
+        'default' => 'devtrac_default',
+        'select' => 'devtrac_default',
+        'temporary' => 'devtrac_default',
+      ),
+      'trip_reports_search_openlayers_3' => array(
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
       ),
     ),
     'layer_activated' => array(
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'layer_switcher' => array(
       'trip_reports_search_openlayers_1' => 'trip_reports_search_openlayers_1',
+      'trip_reports_search_openlayers_2' => 'trip_reports_search_openlayers_2',
+      'trip_reports_search_openlayers_3' => 'trip_reports_search_openlayers_3',
+      'trip_reports_search_openlayers_4' => 'trip_reports_search_openlayers_4',
     ),
     'projection' => '900913',
     'displayProjection' => '4326',
@@ -77,7 +105,7 @@ function devtrac_find_openlayers_presets() {
       'temporary' => 'placetype',
     ),
   );
-
   $export['tripreports'] = $openlayers_presets;
+
   return $export;
 }

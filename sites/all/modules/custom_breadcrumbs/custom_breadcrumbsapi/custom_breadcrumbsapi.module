@@ -14,6 +14,7 @@ module_load_include('inc', 'custom_breadcrumbs', 'custom_breadcrumbs.admin');
  *   'field' a unique field of the database table used to identify the breadcrumb,
  *   'type' a string used for indicating the breadcrumb type on the admin list,
  *   'name_constructor' a function which generates the breadcrumb name from the breadcrumb.
+ *   'machine_name_constructor' a function which generates the machine name for use with features from the breadcrumb
  */
 function custom_breadcrumbsapi_cb_breadcrumb_info() {
   $breadcrumb_type_info = array();
@@ -22,6 +23,7 @@ function custom_breadcrumbsapi_cb_breadcrumb_info() {
     'field' => 'module_page',
     'type' => 'module',
     'name_constructor' => '_custom_breadcrumbsapi_breadcrumb_name',
+    'machine_name_constructor' => '_custom_breadcrumbsapi_breadcrumb_machine_name',
   );
   return $breadcrumb_type_info;
 }
@@ -38,6 +40,21 @@ function custom_breadcrumbsapi_cb_breadcrumb_info() {
 function _custom_breadcrumbsapi_breadcrumb_name($breadcrumb) {
   if (isset($breadcrumb->module_page)) {
     return $breadcrumb->module_page;
+  }
+}
+
+/**
+ * Constructs a default name for features integration.
+ *
+ * @param $breadcrumb
+ *   The breadcrumb object.
+ *
+ * @return
+ *   A text string that will be used for features integration.
+ */
+function _custom_breadcrumbsapi_breadcrumb_machine_name($breadcrumb) {
+  if (isset($breadcrumb->module_page)) {
+    return $breadcrumb->module_page .'-'. $breadcrumb->bid;
   }
 }
 
@@ -187,4 +204,21 @@ function  custom_breadcrumbsapi_preprocess(&$variables, $hook) {
       }
     }
   }
+}
+
+/**
+ * Implementation of hook_features_api
+ *
+ * Here we define the components that we want to make exportable.  For this
+ * particular module, we want to make the configurations exportable.
+ */
+function custom_breadcrumbsapi_features_api() {
+  return array(
+    'custom_breadcrumbsapi_config' => array(
+      'name' => 'Custom Breadcrumbs Api',
+      'file' => drupal_get_path('module', 'custom_breadcrumbsapi') .'/custom_breadcrumbsapi.features.inc',
+      'default_hook' => 'custom_breadcrumbsapi_config_features_default_settings',
+      'feature_source' => TRUE,
+    ),
+  );
 }

@@ -1,0 +1,11 @@
+name = Hidden Comment
+description = This module allows site admin to hide certain comments contents, without unpublish or delete them
+core = 6.x
+
+
+; Information added by drupal.org packaging script on 2011-07-02
+version = "6.x-1.6"
+core = "6.x"
+project = "hidden_comment"
+datestamp = "1309638116"
+

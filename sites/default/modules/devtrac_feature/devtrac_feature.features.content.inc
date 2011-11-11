@@ -1421,7 +1421,7 @@ Published|Published',
       'polygon' => 0,
     ),
     'widget' => array(
-      'openlayers_cck_preset_map' => 'uganda_map',
+      'openlayers_cck_preset_map' => 'geocoder_map',
       'openlayers_behaviors' => array(
         'openlayers_behavior_zoomtolayer' => array(
           'enabled' => 0,
@@ -1439,6 +1439,10 @@ Published|Published',
       ),
       'default_value_php' => NULL,
       'position' => '10',
+      'autocompletion_field_ftritem_status_enable' => 0,
+      'autocompletion_field_ftritem_status_override' => 0,
+      'autocompletion_field_ftritem_status_content' => '',
+      'autocompletion_field_ftritem_status_type' => 'select',
       'label' => 'Lat-Long',
       'weight' => '4',
       'description' => 'Results while geocoding based on address might vary. If you can not find a place, just navigate the map towards the location and click the pencil, and then the map to indicate the right location.',
@@ -1635,6 +1639,76 @@ Published|Published',
       'description' => 'Your summarized Trip Report content. This will be made PUBLIC and thus available to the general public.',
       'type' => 'text_textarea',
       'module' => 'text',
+    ),
+  );
+
+  // Exported field: field_ftritem_status
+  $fields['ftritem-field_ftritem_status'] = array(
+    'field_name' => 'field_ftritem_status',
+    'type_name' => 'ftritem',
+    'display_settings' => array(
+      'weight' => '5',
+      'parent' => '',
+      'label' => array(
+        'format' => 'hidden',
+      ),
+      'teaser' => array(
+        'format' => 'hidden',
+        'exclude' => 0,
+      ),
+      'full' => array(
+        'format' => 'hidden',
+        'exclude' => 0,
+      ),
+      '5' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '4' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '2' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      '3' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'mobile' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+      'token' => array(
+        'format' => 'default',
+        'exclude' => 0,
+      ),
+    ),
+    'widget_active' => '1',
+    'type' => 'text',
+    'required' => '0',
+    'multiple' => '0',
+    'module' => 'text',
+    'active' => '1',
+    'text_processing' => '0',
+    'max_length' => '',
+    'allowed_values' => 'In Progress|In Progress
+Submittable|Submittable
+Submitted|Submitted',
+    'allowed_values_php' => '',
+    'widget' => array(
+      'default_value' => array(
+        '0' => array(
+          'value' => 'In Progress',
+        ),
+      ),
+      'default_value_php' => NULL,
+      'label' => 'Status',
+      'weight' => '5',
+      'description' => '',
+      'type' => 'optionwidgets_select',
+      'module' => 'optionwidgets',
     ),
   );
 
@@ -2222,6 +2296,8 @@ return array(
     'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
+      'rows' => 5,
+      'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
@@ -2229,8 +2305,6 @@ return array(
         ),
       ),
       'default_value_php' => NULL,
-      'rows' => 5,
-      'size' => '60',
       'label' => 'Academic Degree(s)',
       'weight' => '9',
       'description' => '',
@@ -2554,6 +2628,8 @@ return array(
     'allowed_values' => '',
     'allowed_values_php' => '',
     'widget' => array(
+      'rows' => 5,
+      'size' => '60',
       'default_value' => array(
         '0' => array(
           'value' => '',
@@ -2561,8 +2637,6 @@ return array(
         ),
       ),
       'default_value_php' => NULL,
-      'rows' => 5,
-      'size' => '60',
       'label' => 'Title',
       'weight' => '8',
       'description' => '',

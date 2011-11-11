@@ -70,7 +70,7 @@
 
     <?php
       if ($tabs != '') {
-        print '<div class="tabsaslist"><div class="tabsaslist-title">Report Item</div>'. $tabs_primary .'</div>';
+        print '<div class="tabsaslist"><div class="tabsaslist-title">Site Report</div>'. $tabs_primary .'</div>';
       }
       
       print $help; // Drupal already wraps this one in a class      

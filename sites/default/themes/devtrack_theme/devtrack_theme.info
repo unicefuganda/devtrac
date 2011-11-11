@@ -28,4 +28,4 @@ regions[footer] = Footer
 stylesheets[all][] = css/styles.css
 stylesheets[all][] = css/tables.css
 // only once it works scripts[] = scripts/search.js
-
+scripts[] = js/devtrac.js

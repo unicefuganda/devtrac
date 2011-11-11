@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile_views_handler_relationship.inc,v 1.1.2.4 2010/01/12 10:05:01 fago Exp $
 // @file
 
 /**

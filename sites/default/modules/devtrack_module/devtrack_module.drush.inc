@@ -1,4 +1,10 @@
-<?php 
+<?php
+
+/**
+ * @file
+ * Create a drush command for the Devtrac module.
+ */
+
 /**
  * Implementation of hook_drush_command().
  */
@@ -30,8 +36,8 @@ function devtrack_module_drush_help($section) {
 
 
 function drush_devtrack_module_publishfieldtrips() {
-  drush_print("going to update");
+  drush_print("going to update all field trips that were planned more than 2 weeks ago");
   devtrack_module_fieldtrip_publish_all_field_trips();
-  drush_print("published all field trips");
+  drush_print("published all field trips that were planned more than 2 weeks ago");
   drush_log('Done.', 'success');
 }

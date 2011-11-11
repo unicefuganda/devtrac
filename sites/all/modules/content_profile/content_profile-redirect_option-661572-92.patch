@@ -1,0 +1,154 @@
+--- content_profile.module	2010-11-09 08:22:06 -0800
++++ content_profile.patched.module	2010-11-09 08:28:13 -0800
+@@ -6,6 +6,8 @@
+  * Marks content types as profiles.
+  */
+ 
++define("CONTENT_PROFILE_TO_USER_PROFILE", 1);
++define("USER_PROFILE_TO_CONTENT_PROFILE", 2);
+ 
+ /**
+  * Implementation of hook_init().
+@@ -172,6 +174,27 @@ function content_profile_admin_settings(
+       'sub' => t("Show a secondary tab below the user's edit tab"),
+     ),
+   );
++  $form['display']['page_redirect'] = array(
++    '#type' => 'radios',
++    '#title' => t('Redirecting profile content'),
++    '#default_value' => content_profile_get_settings($type, 'page_redirect'),
++    '#description' => t('Optionally redirect all full page node views or default user profile views'),
++    '#options' => array(
++      0 => t('Do not redirect'),
++      CONTENT_PROFILE_TO_USER_PROFILE => t('Redirect content profile node to user profile'),
++      USER_PROFILE_TO_CONTENT_PROFILE => t('Redirect user profile to content profile node'),
++    ),
++  );
++  $form['display']['edit_page_redirect'] = array(
++    '#type' => 'radios',
++    '#title' => t('Redirecting profile edit'),
++    '#default_value' => content_profile_get_settings($type, 'edit_page_redirect'),
++    '#options' => array(
++      0 => t('Do not redirect'),
++      CONTENT_PROFILE_TO_USER_PROFILE => t('Redirect content profile <em>node</em> edit to content profile <em>user</em> edit'),
++      USER_PROFILE_TO_CONTENT_PROFILE => t('Redirect content profile <em>user</em> edit to content profile <em>node</em> edit'),
++    ),
++  );
+   $form['submit'] = array(
+     '#type' => 'submit',
+     '#value' => t('Submit'),
+@@ -304,6 +327,19 @@ function content_profile_user($op, &$edi
+       return $data;
+ 
+     case 'view':
++      foreach (content_profile_get_types('names') as $type => $type_name) {
++        if (content_profile_get_settings($type, 'page_redirect') == USER_PROFILE_TO_CONTENT_PROFILE) {
++          $arg1 = arg(1);
++          if (!is_numeric($arg1) && module_exists('me')) {
++            // If me module is active argument 1 will be the me alias instead
++            // of uid, so get uid for me alias.
++            $arg1 = _me_check_arg($arg1, FALSE, FALSE);
++          }
++          if ($node = content_profile_load($type, $arg1)) {
++            drupal_goto("node/". $node->nid);
++          }
++        }
++      }
+       $account->content['content_profile'] = content_profile_show_profiles($account->uid);
+       break;
+ 
+@@ -375,30 +411,61 @@ function _content_profile_node_delete($n
+  * Implementation of hook_nodeapi().
+  */
+ function content_profile_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+-
+-  if ($op == 'prepare' && is_content_profile($node) && !isset($node->nid) && $node->uid && !user_access('administer nodes') && arg(0) != 'admin') {
+-    // Check if this nodetype already exists
+-    if ($nid = content_profile_profile_exists($node, $node->uid)) {
+-      // This node already exists, redirect to edit page
+-      drupal_goto('node/'. $nid .'/edit', 'destination=user/'. $node->uid);
+-    }
+-  }
+-  elseif ($op == 'validate' && is_content_profile($node) && user_access('administer nodes')) {
+-    $form = $a3;
+-    // Only validate if the user-name changed or we add a new node
+-    if (!empty($node->nid) && $form['author']['name']['#default_value'] == $node->name) {
+-      return;
+-    }
+-    //check whether the selected user has already a profile
+-    $uid = db_result(db_query("SELECT uid FROM {users} WHERE name = '%s'", $node->name));
+-    if ($uid && content_profile_profile_exists($node, $uid)) {
+-      form_set_error('name', t('This user already has a content profile of this type. You can only create one profile per user.'));
+-    }
+-  }
+-  elseif ($op == 'prepare translation' && is_content_profile($node->translation_source)) {
+-    // Make sure the translated profile belongs to the same user.
+-    $node->uid = $node->translation_source->uid;
+-    $node->name = $node->translation_source->name;
++  
++  switch ($op) {
++    case 'prepare':
++      if (!is_content_profile($node)) {
++        break;
++      }
++      if (!isset($node->nid) && $node->uid && !user_access('administer nodes') && arg(0) != 'admin') {
++        // Check if this nodetype already exists
++        if ($nid = content_profile_profile_exists($node, $node->uid)) {
++          // This node already exists, redirect to edit page
++          drupal_goto('node/'. $nid .'/edit', 'destination=user/'. $node->uid);
++        }
++      }
++      elseif (arg(0) == 'node' && arg(1) == $node->nid && content_profile_get_settings($node->type, 'edit_page_redirect') == CONTENT_PROFILE_TO_USER_PROFILE) {
++        // Check what kind of edit tab is used - top or sub and redirect to
++        // corresponding path.
++        if (content_profile_get_settings($node->type, 'edit_tab') == 'top') {
++          drupal_goto('user/' . $node->uid . '/profile/' . $node->type);
++        }
++        elseif (content_profile_get_settings($node->type, 'edit_tab') == 'sub') {
++          drupal_goto('user/' . $node->uid . '/edit/' . $node->type);
++        }
++      }
++      elseif (arg(0) == 'user' && (arg(2) == 'edit' || arg(2) == 'profile') && isset($node->nid) && arg(3) == $node->type) {
++        if (content_profile_get_settings($node->type, 'edit_page_redirect') == USER_PROFILE_TO_CONTENT_PROFILE) {
++          drupal_goto('node/' . $node->nid . '/edit');
++        }
++      }
++      break;
++    case 'validate':
++      if (is_content_profile($node) && user_access('administer nodes')) {
++        $form = $a3;
++        // Only validate if the user-name changed or we add a new node
++        if (!empty($node->nid) && $form['author']['name']['#default_value'] == $node->name) {
++          return;
++        }
++        //check whether the selected user has already a profile
++        $uid = db_result(db_query("SELECT uid FROM {users} WHERE name = '%s'", $node->name));
++        if ($uid && content_profile_profile_exists($node, $uid)) {
++          form_set_error('name', t('This user already has a content profile of this type. You can only create one profile per user.'));
++        }
++      }      
++      break;
++    case 'prepare translation':
++      if (is_content_profile($node->translation_source)) {
++        // Make sure the translated profile belongs to the same user.
++        $node->uid = $node->translation_source->uid;
++        $node->name = $node->translation_source->name;
++      }
++      break;
++    case 'view':
++      if (arg(0) == 'node' && arg(1) == $node->nid && content_profile_get_settings($node->type, 'page_redirect') == CONTENT_PROFILE_TO_USER_PROFILE) {
++        drupal_goto('user/' . $node->uid);
++      }
++      break;
+   }
+ }
+ 
+@@ -463,6 +530,8 @@ function content_profile_content_profile
+     'edit_link' => 0,
+     'edit_tab' => 'sub',
+     'add_link' => 1,
++    'page_redirect' => 0,
++    'edit_page_redirect' => 0,
+   );
+ }
+ 

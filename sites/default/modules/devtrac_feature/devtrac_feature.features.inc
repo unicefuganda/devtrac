@@ -17,6 +17,9 @@ function devtrac_feature_ctools_plugin_api() {
   elseif ($module == "openlayers" && $api == "openlayers_styles") {
     return array("version" => 1);
   }
+  elseif ($module == "password_policy" && $api == "default_password_policy") {
+    return array("version" => 1);
+  }
   elseif ($module == "strongarm" && $api == "strongarm") {
     return array("version" => 1);
   }

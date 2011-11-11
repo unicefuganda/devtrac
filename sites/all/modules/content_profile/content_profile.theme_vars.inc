@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.theme_vars.inc,v 1.1.2.6 2009/07/31 16:41:15 fago Exp $
 
 /**
  * @file

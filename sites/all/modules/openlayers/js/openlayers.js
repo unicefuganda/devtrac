@@ -134,11 +134,13 @@ Drupal.openlayers = {
       function() {
         var map;
         for (map in Drupal.settings.openlayers.maps) {
-          $.each($('#' + map).data('openlayers').openlayers.getLayersByClass('OpenLayers.Layer.Vector'),
-            function(i, layer) {
-              layer.redraw();
-            }
-          );
+          if ($('#' + map).length > 0) {
+            $.each($('#' + map).data('openlayers').openlayers.getLayersByClass('OpenLayers.Layer.Vector'),
+              function(i, layer) {
+                layer.redraw();
+              }
+            );
+          }
         }
       }
     );

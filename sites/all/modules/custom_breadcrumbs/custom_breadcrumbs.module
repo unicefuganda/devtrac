@@ -19,6 +19,7 @@ define('CUSTOM_BREADCRUMBS_SHOW_FORM_TABLE_DEFAULT', 1);
  *     'field' a unique field of the database table used to identify the breadcrumb,
  *     'type' a string used for indicating the breadcrumb type on the admin list.
  *     'name_constructor' a function which generates the breadcrumb name from the breadcrumb.
+ *     'machine_name_constructor' a function which generates the machine name for use with features from the breadcrumb.
  */
 function custom_breadcrumbs_cb_breadcrumb_info() {
   $breadcrumb_type_info = array();
@@ -27,6 +28,7 @@ function custom_breadcrumbs_cb_breadcrumb_info() {
     'field' => 'node_type',
     'type'  => 'node',
     'name_constructor' => '_custom_breadcrumbs_breadcrumb_name',
+    'machine_name_constructor' => '_custom_breadcrumbs_breadcrumb_machine_name',
   );
   return $breadcrumb_type_info;
 }
@@ -37,6 +39,15 @@ function custom_breadcrumbs_cb_breadcrumb_info() {
 function _custom_breadcrumbs_breadcrumb_name($breadcrumb) {
   if (isset($breadcrumb->node_type)) {
     return $breadcrumb->node_type;
+  }
+}
+
+/**
+ * Constructs a unique default machine name for features integration.
+ */
+function _custom_breadcrumbs_breadcrumb_machine_name($breadcrumb) {
+  if (isset($breadcrumb->node_type)) {
+    return $breadcrumb->node_type .'-'. $breadcrumb->bid;
   }
 }
 
@@ -492,12 +503,18 @@ function _custom_breadcrumbs_save_breadcrumb($module, $key, $breadcrumb) {
     if ((!isset($breadcrumb->name) || $breadcrumb->name == '') && isset($info[$key]['name_constructor']) && function_exists($info[$key]['name_constructor'])) {
       $breadcrumb->name = $info[$key]['name_constructor']($breadcrumb);
     }
-    if (isset($breadcrumb->bid)) {
-      drupal_write_record($info[$key]['table'], $breadcrumb, 'bid');
-    }
-    else {
+    if (!isset($breadcrumb->bid)) {
       drupal_write_record($info[$key]['table'], $breadcrumb);
     }
+    // drupal_write_record passes $breadcrumb by reference,
+    // so we're good and $breadcrumb->bid is set now
+    // and the machine_name will be set by the constructor.
+    $sql = "SELECT machine_name FROM {". $info[$key]['table'] ."} WHERE bid = %d";
+    $machine_name = db_result((db_query($sql, $breadcrumb->bid)));
+    if ((!isset($machine_name) || !machine_name || $machine_name == '') && isset($info[$key]['machine_name_constructor']) && function_exists($info[$key]['machine_name_constructor'])) {
+      $breadcrumb->machine_name = $info[$key]['machine_name_constructor']($breadcrumb);
+    }
+    drupal_write_record($info[$key]['table'], $breadcrumb, 'bid');
   }
 }
 
@@ -1170,4 +1187,21 @@ function _custom_breadcrumbs_identifiers_option($part = 0, $bid = NULL) {
     $options['attributes']['class'] = implode(' ', $classes);
   }
   return $options;
+}
+
+/**
+ * Implementation of hook_features_api
+ *
+ * Here we define the components that we want to make exportable.  For this
+ * particular module, we want to make the configurations exportable.
+ */
+function custom_breadcrumbs_features_api() {
+  return array(
+    'custom_breadcrumbs_config' => array(
+      'name' => 'Custom Breadcrumbs Node',
+      'file' => drupal_get_path('module', 'custom_breadcrumbs') .'/custom_breadcrumbs.features.inc',
+      'default_hook' => 'custom_breadcrumbs_config_features_default_settings',
+      'feature_source' => TRUE,
+    ),
+  );
 }

@@ -1,5 +1,4 @@
 <?php
-// $Id: content_profile.install,v 1.1.2.7 2009/01/09 15:55:07 fago Exp $
 /**
  * @file
  * Content profile installation file.

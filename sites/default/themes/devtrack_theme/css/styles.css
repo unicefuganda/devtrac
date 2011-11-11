@@ -29,7 +29,6 @@ html body{
   background-color: #f2f2f2;
   /*color:#666;*/
 }
-
 .wrapper {
 	height: auto !important;
   margin: 0 auto -150px;
@@ -92,11 +91,11 @@ body .more-link a:hover, body .node-links a:hover{color: #9B9B9A;}
 .view-my-homepage-my-action-items .view-footer a {float:right;}
 
 button ,
-input.form-submit,  input a.form-button-cancel, .node-form a.openlayers-cck-hide-link
-{
-  border-style:solid;
-  color:#FFFFFF;
-  /*font-weight:bold; */
+input.form-submit,  
+input a.form-button-cancel, 
+.node-form a.openlayers-cck-hide-link{
+  border-style: solid;
+  color: #FFFFFF;
   padding:2px 5px;
   text-align:center;
   background-image: -moz-linear-gradient(
@@ -104,7 +103,7 @@ input.form-submit,  input a.form-button-cancel, .node-form a.openlayers-cck-hide
     rgb(107,0,0) 66%);
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
-	margin: 0;
+	margin: 0 0 5px;
 background-image: -webkit-gradient(
     linear,
     left top,
@@ -112,6 +111,7 @@ background-image: -webkit-gradient(
     color-stop(0.33, rgb(180,0,0)),
     color-stop(0.66, rgb(107,0,0))
 );
+	text-decoration: none;
 }
 
 button:hover ,
@@ -119,7 +119,12 @@ input.form-submit:hover,
 input a.form-button-cancel:hover, 
 .node-form a.openlayers-cck-hide-link:hover  {
   color: #cccccc;
+  text-decoration: none;
 }
+#getfeatureinfo li a{
+	text-decoration: none;
+}
+#getfeatureinfo /* check with jan */
 .node-form a.openlayers-cck-hide-link{
   border: 2px solid #F2F2F2; margin: 15px 10px 5px 0;}
 .node-form{
@@ -173,7 +178,7 @@ div.olMapViewport {
 	padding: 0px;
 }
 #header li a {
-	background-color: #000;
+	/*background-color: #000;*/
 	text-decoration: none;
 	margin-left: 6px;
 	padding: 6px 10px 4px;
@@ -217,7 +222,6 @@ div.olMapViewport {
   -moz-border-radius-topright: 4px;
   -webkit-border-top-left-radius: 4px;
   -webkit-border-top-right-radius: 4px;
-  
 }
 #logo a{
   width: 310px;
@@ -232,16 +236,23 @@ div.olMapViewport {
 	border-left:1px solid #000000;
 	color:#CCCCCC;
 	float:right;
-	height:114px;
+	/*height:114px;*/
 	line-height:28px;
 	margin-top:-28px;
 	padding-left:10px;
-	padding-top:16px;
-	width: 28%;
+	padding-top: 32px;
+	width: 35%;
 }
 .uniceflogo {background-image:url("/sites/default/themes/devtrack_theme/images/unicef.png"); float:left; height:20px; margin-right:10px; width:20px;}
 .mblogo{ background-image: url("/sites/default/themes/devtrack_theme/images/mountbatten.png");  float:left; height:20px; margin-right:10px; width:20px;}
 .uganda{ background-image: url("/sites/default/themes/devtrack_theme/images/uganda.png"); float:left; height:20px; margin-right:10px; width:20px;}
+.license {
+    float: left;
+    font-size:10px;
+    line-height: 17px;
+    margin-top: 10px;
+    text-align: left;
+}.license a{padding-right: 5px;}
 .text-footer {
 	clear:left;
 	font-size:10px;
@@ -251,22 +262,21 @@ div.olMapViewport {
 	width: 285px;
 }
 .hosted{float:left;}
-#footer-message a {float:left; line-height: 18px;}
+#footer-message a {float:left; /*line-height: 18px;*/}
 
 #footermenubar {
 	background-color:#000;
 	background-image: url("/sites/default/themes/devtrack_theme/images/footermap_bkgd.jpg");
 	background-repeat: repeat-x;
 	border-top:7px solid #ea0001; 
-	min-height:200px; 
+	min-height:250px;
 	padding-top:10px;
 	position: relative;
 	clear:both;
-/* fuck me, this didnt work	margin: 200px auto 0 auto; */ /* margin-top equals the min-height !! this is for the push div to push the footer to the bottom of the page!!!!*/
+ /* margin-top equals the min-height !! this is for the push div to push the footer to the bottom of the page!!!!*/
 	color: #DDD;
 	text-align:center;
 }
-
 #footermenubar {
 	width: 100%;
 }
@@ -295,7 +305,6 @@ div.olMapViewport {
 }
 .views-label-field-fieldtrip-public-summary-value{ line-height:30px; }
 
-/*...temporary...can be pasted in reiniers css file.........*/
 .col-content_layertworight .block h3, 
 .col-content_contentlayerright .block h3 {
 	border-bottom: 2px solid #ea0001;
@@ -303,7 +312,8 @@ div.olMapViewport {
 .col-content_layertworight .block h3, 
 .col-content_contentlayerright .block h3,
 .block h3, 
-.col-content_contentlayermiddle caption{
+.col-content_contentlayermiddle caption,
+.col-content_layertworight div.block .title{
 	background-image: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png");
 	background-repeat:repeat-x;
 	background-color:#FFF9CD;
@@ -339,7 +349,7 @@ div.olMapViewport {
 	margin-bottom: -2px;
 }
 .col-content_contentlayerleft {
-	min-height: 50px;
+	min-height: 100px;
 }
 
 .views-row .picture {
@@ -357,7 +367,7 @@ div.olMapViewport {
 	margin:0 10px 12px;
 	float: left;
 }
-.col-content_layeroneright ul li,
+.col-content_layeroneright ul li, 
 .col-content_layeroneright .item-list ul li{
 	background-color: #fff9cd;
 	/*float: left;*/
@@ -454,7 +464,6 @@ div.olMapViewport {
 	background-color: #F2F2F2;/*9B9B9B*/
 }
 
-
 .tabsaslist ul.tabs.primary li a {
   background-image: none;
 }
@@ -466,8 +475,6 @@ div.olMapViewport {
 	color: #EA0001;
   list-style-image: none;
   font-size: 25px;
-  display: list-item;
-/*  list-style-image:url("/sites/default/themes/devtrack_theme/images/listimage.gif");*/
 }
 
 .tabsaslist .tabs li.active {
@@ -593,18 +600,17 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft dl,
 .col-content_contentlayerleft.span-6,
 .col-content_contentlayerleft .views-exposed-widgets,
-.col-content_layertwoleft .view-field-trip-report-item-details,
+.col-content_layertwoleft .block-views .views-row,
 .col-content_layertworight .content,
 .col-content_layerthree .content p,
 #getfeatureinfo,
 .front .clear-block p,
-.clearfix h2/*,
-.not-front .col-content_contentlayerright .block-devtrack_module*/{
+.clearfix h2{
 	padding-left: 10px;
 }
-/*#user-login, #contentcontainer h2, .node .content, .col-content_contentlayerleft .meta, .context-block p,
-.view-my-homepage-my-field-trips .views-row, #contact-mail-page, .view-empty, .tabaslist, .block-devtrack_module li*/
-
+#cboxContent #getfeatureinfo{
+	padding-left: 0px;
+}
 .node-form .standard,
 .col-content_contentlayerright .openlayers-views-map{
 	margin-right: 10px;
@@ -617,10 +623,9 @@ background-image: -moz-linear-gradient(
 .col-content_contentlayerleft .view-field-trip-report-item-details{
 	padding-right: 3px;
  }
-
-
-.col-content_contentlayerright .block-devtrack_module h3{margin-bottom:8px; margin-top:-8px;}
-
+.col-content_contentlayerright .block-devtrack_module h3{
+	margin-bottom: 0.4em;
+}
 .view-devtrac-frontpage .node{
 	background-color: #FFF9EB; 
 	padding:5px 10px 10px 0px;
@@ -655,34 +660,24 @@ background-image: -moz-linear-gradient(
     background-color: #000000;
     color: #FFFFFF;
     float: left;
+    height: 36px;
     margin-left: 5px;
-    margin-top: -37px;
+    margin-top: -45px;
     opacity: 0.5;
-    padding: 4px 5px 0;
-    width: 370px;
+    padding: 4px 34px 0 4px;
+    width: 342px;
 }
 #contentcontainer .col-content_contentlayermiddle .view-empty .views-content-field-ftritem-images-data {
     margin-top: -45px;
 }
-.col-content_contentlayerright .views-content-field-ftritem-images-data {
-    background-color: #000000;
-    color: #FFFFFF;
-    display: list-item;
-    float: left;
-    margin-left: 5px;
-    margin-top: -35px;
-    opacity: 0.5;
-    padding: 7px 5px 5px;
-    width: 97%;
-}
-
-.downloadimage {
-	background-image:url("/sites/default/themes/devtrack_theme/icons/download_image.png");
-	background-repeat: no-repeat;
-	float:right;
-	height:24px;
-	width:24px;
-	padding: 2px;
+.col-content_contentlayermiddle a.downloadimage {
+  background-image: url("/sites/default/themes/devtrack_theme/icons/download_image.png");
+  background-repeat: no-repeat;
+  float: right;
+  height: 24px;
+  position: relative;
+  left: 28px;
+  width: 24px;
 }
 .activeSlide{
   opacity: 0.3;
@@ -726,7 +721,17 @@ background-image: -moz-linear-gradient(
 /*  comments   */
 .col-content_contentlayerright div.comment img { border: 0 none;}
 .col-content_contentlayerright div.comment { margin-right: 10px;}
-
+#comments div.comment.author{
+	width: 658px;
+}
+#comments div.comment-content{
+	float: none;
+}
+div.comment div.picture{
+	float: right;
+}
+div.comment div.content{float: left;}
+#comments div.picture img{ border: 0 none;}
 .col-content_contentlayermiddle.last {
 	width:710px;
 }
@@ -735,10 +740,6 @@ background-image: -moz-linear-gradient(
 	text-decoration: none;
 	font-weight:bold;
 }
-
-.col-content_contentlayermiddle ul.secondary li.active a {
-}
-
 .col-content_contentlayermiddle ul.secondary li.active a{
     background-color:#EA0001;
  	border-bottom:medium none;
@@ -763,18 +764,21 @@ background-image: -moz-linear-gradient(
     top: 33px;
 }
 .col-content_contentlayermiddle .view-header a:hover{color: #9B9B9A;}
-
-/*
-.not-front .views-table tr td:first-child {
-    border-right: 1px solid #FFF9CD;
-}*/
 .col-content_layertworight .views-table tr td {
     border-right: none;
+}
+/*..... New field trip status block ...*/
+.col-content_layertworight div.block .title{
+	border-bottom: 1px solid #FFF;
+	font-weight: bold;
+}
+.col-content_layertworight .block-devtrack_module .caption{
+	background-color: #FFF9CD;
+    padding-left: 10px;
 }
 .not-front .views-table tr td {
     border-bottom: 1px solid #FFF9CD;
 }
-
 /*  ........pager..........*/
 .clearfix .block ul.pager a, .clearfix .block ul.pager li.pager-current, .clearfix .block ul.pager a:hover {
     border: 1px solid #FFF9CD;
@@ -788,13 +792,27 @@ background-image: -moz-linear-gradient(
 }
 .container div.help, .help{background: none repeat scroll 0 0 transparent; float:right;}
 
+/*
+Fix very strange title issue on the getfeatureinfo page.
+Why was this code there in the first place
 .page-places .col-content_contentlayerleft.span-16 div.help {
     left: 316px;
     position: absolute;
     top: 247px;
 }
+*/
 .col-content_contentlayerleft.span-16 .view-header p{ padding-left: 10px;}
-.col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;
+.col-content_contentlayerleft.span-16 .view-header ul{ padding-left: 26px;}
+
+.container .col-content_contentlayerleft .view-header,
+.container .view-footer{
+	padding-left: 0.8em;
+	padding-top: 0.3em;
+	padding-bottom: 0.6em;
+}
+.container .view-footer ul,
+.container .col-content_contentlayerleft .view-header ul{
+	padding-left: 0;
 }
 #contentcontainer div.content-profile-display{
 	border: none;
@@ -806,6 +824,99 @@ body.page-placetypes .col-content_contentlayerright{ margin-top: 40px;
 	background-color: #000000;
 }
 
+/*
+* Getfeature info functionality
+*/
+
 body a.getfeatureaddlink:link {
   color: #EA0001;
  }
+
+#getfeatureinfo {
+ height: 90%;
+}
+
+#getfeatureinfo .the_geom {
+  display: none;
+}
+
+#getfeatureinfo div {
+ float: left;
+ overflow: hidden;
+}
+
+#getfeatureinfo div.layers {
+ height: 89%;
+ overflow: visible;
+/* overflow-y:scroll;
+ overflow-x:scroll;*/
+ float: left;
+ width: 100%;
+}
+
+#getfeatureinfo div.layer {
+ float: left;
+}
+
+#getfeatureinfo ul {
+ display: block;
+ float: right;
+ width: 95%;
+}
+
+#getfeatureinfo li {
+ display: block;
+ float: right;
+ list-style-image: none;
+}
+.view-findplaces-districts ul,
+.view-findplaces-districts li
+{
+ list-style-type: none;
+ list-style-image: none;
+}
+.col-content_contentlayerright table th.views-field-label-title, thead th{
+	width: 20%;
+	border-bottom: 0;
+	background-color: 
+}
+.col-content_contentlayerright table tr{
+	border-bottom: 3px solid #FFF9CD;
+}
+
+.sub_region,
+.status,
+.source{
+	display: none;
+}
+
+/* field trip status ...*/
+.col-content_layertworight .block-devtrack_module .caption {
+    background-color: #FFF9CD;
+    font-weight: bold;
+}
+.col-content_layertworight .block-devtrack_module .caption li a{
+    background-color: #FFF;
+    color: #EA0001;
+}
+.col-content_layertworight .block-devtrack_module .caption li a{
+    background-color: #FFF;
+    color: #666;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay {
+    background-color: #F2F2F2;
+    font-size: 140%;
+    margin: -12px;
+    min-height: 83px;
+    opacity: 0.95;
+    padding: 5px;
+    position: absolute;
+    text-transform: capitalize;
+    width: 673px;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay a{
+	color: #9B9B9A;
+}
+.col-content_contentlayermiddle .hidden-comment-overlay a:hover{
+	color: #EA0001;
+}

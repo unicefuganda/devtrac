@@ -9,6 +9,36 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_default_state';
+  $strongarm->value = '1';
+  $export['collapsiblock_default_state'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_settings';
+  $strongarm->value = array(
+    'block-devtrack_module-4' => '3',
+  );
+  $export['collapsiblock_settings'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_slide_speed';
+  $strongarm->value = '200';
+  $export['collapsiblock_slide_speed'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'collapsiblock_slide_type';
+  $strongarm->value = '1';
+  $export['collapsiblock_slide_type'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'colorbox_imagecache_preset';
   $strongarm->value = '0';
   $export['colorbox_imagecache_preset'] = $strongarm;
@@ -355,36 +385,36 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_access_settings';
   $strongarm->value = array(
     'view' => array(
-      'ftritem' => array(
+      'fieldtrip' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
-      'fieldtrip' => array(
+      'ftritem' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
     ),
     'view_own' => array(
-      'ftritem' => array(
+      'fieldtrip' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
-      'fieldtrip' => array(
+      'ftritem' => array(
         0 => 1,
         1 => 2,
         2 => 3,
       ),
     ),
     'per_node' => array(
-      'ftritem' => 0,
       'fieldtrip' => 1,
+      'ftritem' => 0,
     ),
     'priority' => array(
-      'ftritem' => '0',
       'fieldtrip' => '0',
+      'ftritem' => '0',
     ),
   );
   $export['content_access_settings'] = $strongarm;
@@ -431,16 +461,16 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'content_extra_weights_ftritem';
   $strongarm->value = array(
     'title' => '-5',
-    'revision_information' => '5',
-    'author' => '7',
-    'options' => '8',
-    'comment_settings' => '6',
+    'revision_information' => '6',
+    'author' => '8',
+    'options' => '9',
+    'comment_settings' => '7',
     'menu' => '3',
     'taxonomy' => '-4',
-    'book' => '10',
-    'path' => '9',
-    'print' => '12',
-    'custom_breadcrumbs' => '11',
+    'book' => '11',
+    'path' => '10',
+    'print' => '13',
+    'custom_breadcrumbs' => '12',
   );
   $export['content_extra_weights_ftritem'] = $strongarm;
 
@@ -513,6 +543,26 @@ function devtrac_feature_strongarm() {
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
+  $strongarm->name = 'hidden_comment_default_reasons';
+  $strongarm->value = 'Mistake
+Comment No Longer Relevant
+Other';
+  $export['hidden_comment_default_reasons'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'locale_custom_strings_en';
+  $strongarm->value = array(
+    'Add another item' => 'Add another photo',
+    'View' => 'Overview',
+    'This action can be reverted by the unhide functionality. Not be scared!' => 'This action can be reversed later by clicking "unhide".',
+  );
+  $export['locale_custom_strings_en'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
   $strongarm->name = 'node_options_actionitem';
   $strongarm->value = array(
     0 => 'status',
@@ -580,6 +630,54 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'print_pdf_page_orientation';
   $strongarm->value = 'portrait';
   $export['print_pdf_page_orientation'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'site_footer';
+  $strongarm->value = '<a href="http://www.unicef.org" target="_blank" ><span class="uniceflogo"></span>(c) Unicef Uganda.</a><br/>
+<a href="http://www.mountbatten.net" target="_blank" ><span class="mblogo"></span>Built by Mountbatten Ltd.</a>
+<br/><div class="uganda"></div><div  class="hosted">Hosted in Uganda.</div>
+<div class="text-footer"><p>All Ugandan data layers displayed are from the <a href="http://www.ugandaclusters.ug/geo-im.htm" class="text-footer-links">Geo-Information Management Working Group.</a> <!-- & <a href="http://www.geonames.org/">Geonames</a> --></p></div>
+<div class="license"><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/80x15.png" /></a><br />This work by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.devtrac.ug" property="cc:attributionName" rel="cc:attributionURL">UNICEF Uganda</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.</div>';
+  $export['site_footer'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'theme_settings';
+  $strongarm->value = array(
+    'toggle_logo' => 1,
+    'toggle_name' => 1,
+    'toggle_slogan' => 0,
+    'toggle_mission' => 1,
+    'toggle_node_user_picture' => 0,
+    'toggle_comment_user_picture' => 0,
+    'toggle_search' => 1,
+    'toggle_favicon' => 1,
+    'toggle_primary_links' => 1,
+    'toggle_secondary_links' => 1,
+    'toggle_node_info_actionitem' => 0,
+    'toggle_node_info_bbsync' => 1,
+    'toggle_node_info_book' => 0,
+    'toggle_node_info_fieldtrip' => 0,
+    'toggle_node_info_ftritem' => 0,
+    'toggle_node_info_page' => 0,
+    'toggle_node_info_place' => 0,
+    'toggle_node_info_questionaire_question' => 1,
+    'toggle_node_info_story' => 1,
+    'toggle_node_info_user_profile' => 0,
+    'default_logo' => 1,
+    'logo_path' => '',
+    'logo_upload' => '',
+    'default_favicon' => 1,
+    'favicon_path' => '',
+    'favicon_upload' => '',
+    'collapsiblock_block' => 'div.block',
+    'collapsiblock_title' => '.content a.detail button',
+    'collapsiblock_content' => '.content ul',
+  );
+  $export['theme_settings'] = $strongarm;
 
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

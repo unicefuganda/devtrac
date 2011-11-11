@@ -1,5 +1,4 @@
 <?php
-// $Id: questionaire_question.install,v 1.1 2010/12/21 06:46:30 batje Exp $
 
 /**
  * @file
@@ -87,11 +86,619 @@ function devtrack_module_update_6001() {
     'colorbox',
     'environment',
     'jquery_update',
-  );  
+  );
   module_enable($new_modules);
 
-  $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all report items' );
+  $ret = array('success' => TRUE, 'query' => 'enabled colorbox, environment and jquery_update modules; updated all field trips and all site reports' );
   return $ret;
-  
+
 }
-   
+
+function devtrack_module_update_6002() {
+  // Declare new modules
+  $new_modules = array(
+    'spamspan',
+    'search_config',
+  );
+  module_enable($new_modules);
+
+  update_sql("INSERT INTO {filters} (fid, format, module, delta, weight) VALUES ('11', '1', 'spamspan', '0', '10')");
+}
+
+function devtrack_module_update_6003() {
+  // Clear all custom_breadcrumbs tables
+  db_query("TRUNCATE TABLE custom_breadcrumb");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_panels");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_paths");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_taxonomy_term");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_taxonomy_vocabulary");
+  db_query("TRUNCATE TABLE custom_breadcrumbs_views");
+  db_query("TRUNCATE TABLE custom_breadcrumbsapi");
+
+  // Declare new modules
+  $new_modules = array(
+    'devtrac_breadcrumbs',
+  );
+  module_enable($new_modules);
+
+  $ret[] = array('success' => TRUE, 'query' => 'cleared all custom_breadcrumbs tables; enabled devtrac_breabcrumbs module');
+  return $ret;
+
+  // Running "drush fra" now, will install the devtrac_breadcrumbs feature and populate all the tables again
+}
+
+function devtrack_module_update_6004() {
+  // Create a new vocabulary
+  $vocabulary = array(
+    'name' => t('Site Report Type'), // ALERT: Hardcoded vocabulary name
+    'description' => t(''),
+    'help' => t(''),
+    'nodes' => array(
+      'ftritem' => 'ftritem', // ALERT: Hardcoded node_type machine name
+    ),
+    'tags' => 0,
+    'multiple' => 0,
+    'required' => 0,
+    'weight' => 0,
+    'hierarchy' => 0,
+    'relations' => 1,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'form_id' => taxonomy_form_vocabulary,
+  );
+  taxonomy_save_vocabulary($vocabulary);
+  $vid = $vocabulary['vid'];
+
+  // Add terms to the vocabulary
+  $term = array(
+    'name' => t('Site Visit'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '0',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 0,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Roadside Observation'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '0',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 0,
+    'weight' => 1,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Human Interest Story'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '0',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 0,
+    'weight' => 2,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Now update the existing site reports
+  $nids = db_query(db_rewrite_sql("SELECT n.nid FROM {node} n WHERE n.type = '%s'"), 'ftritem'); // ALERT: Hardcoded node_type machine name
+  while ($nid = db_fetch_object($nids)) {
+    $node = node_load($nid->nid);
+    $vocabularies = taxonomy_get_vocabularies('ftritem'); // ALERT: Hardcoded node_type machine name
+    foreach ($vocabularies as $vocabulary) {
+      if ($vocabulary->name == 'Site Report Type') { // ALERT: Hardcoded vocabulary name
+        $vid = $vocabulary->vid;
+      }
+    }
+    if (isset($node->field_ftritem_place[0]['nid']) && (is_numeric($node->field_ftritem_place[0]['nid']))) {
+      // This was a 'Site Visit'
+      $term = devtrack_module_get_term_by_name_vid('Site Visit', $vid);
+    }
+    else {
+      // This was a 'Roadside Observation'
+      $term = devtrack_module_get_term_by_name_vid('Roadside Observation', $vid);
+    }
+    if (!isset($node->taxonomy[$term[0]->tid])) {
+      $node->taxonomy[$term[0]->tid] = $term[0];
+    }
+    node_save($node);
+  }
+
+  $ret[] = array('success' => TRUE, 'query' => 'created Site Report Type vocabulary and updated all site reports');
+  return $ret;
+}
+
+function devtrack_module_update_6005() {
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type');
+  $vid = $vocabulary->vid;
+
+  // Save the original module from the vocabulary
+  $original = db_result(db_query("SELECT module FROM {vocabulary} WHERE vid = %d", $vid));
+
+  // Update the vocabulary
+  update_sql("UPDATE {vocabulary} SET module = 'taxonomy_redirect' WHERE vid = $vid");
+
+  // Add an entry to vocabulary_redirect table
+  update_sql("INSERT INTO {taxonomy_redirect} (vid, tid, module, path, separator_replace, remove_text, filter, path_case)
+              VALUES ($vid, NULL, '$original', 'tripreports/map?sitereporttype=!tid', '', '', 1, 'No transform')");
+
+  $ret[] = array('success' => TRUE, 'query' => 'added entry to taxonomy_redirect');
+  return $ret;
+
+}
+
+/*
+ *  https://www.pivotaltracker.com/story/show/16239085
+ *  Add Youth Centre
+ */
+function devtrack_module_update_6006() {
+  $term = array(
+    'name' => t('Youth Centre'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '49',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 2,
+    'vid' => 1, // placetype
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/1/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+}
+
+function devtrack_module_update_6007() {
+  $new_modules = array(
+    'devtrac_wms',
+  );
+  module_enable($new_modules);
+}
+
+/*
+ * https://www.pivotaltracker.com/story/show/16939181
+ * Create OECD Sector Code vocab
+ *
+ * https://www.pivotaltracker.com/story/show/14972339
+ * Add Child Protection to Department vocab
+ */
+function devtrack_module_update_6008() {
+  // Create the OECD Sector Code vocabulary
+  $vocabulary = array(
+    'name' => t('OECD Sector Code'), // ALERT: Hardcoded vocabulary name
+    'description' => t(''),
+    'help' => t(''),
+    'nodes' => array(
+      'actionitem' => 'actionitem', // ALERT: Hardcoded node_type machine name
+      'ftritem' => 'ftritem', // ALERT: Hardcoded node_type machine name
+    ),
+    'tags' => 0,
+    'multiple' => 0,
+    'required' => 0,
+    'weight' => 0,
+    'hierarchy' => 0,
+    'relations' => 1,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'form_id' => taxonomy_form_vocabulary,
+  );
+  taxonomy_save_vocabulary($vocabulary);
+  $vid = $vocabulary['vid'];
+
+  // Add terms to the vocabulary
+  $term = array(
+    'name' => t('UNICEF'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '0',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 0,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $unicef = $term['tid'];
+
+  $term = array(
+    'name' => t('Alive'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $alive = $term['tid'];
+
+  $term = array(
+    'name' => t('Learning'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $learning = $term['tid'];
+
+  $term = array(
+    'name' => t('Safe'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $unicef,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $safe = $term['tid'];
+
+  $term = array(
+    'name' => t('Basic nutrition'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Infectious disease control'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Water and sanitation'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $alive,
+      1 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Early childhood education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Primary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Secondary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Post-secondary education'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $learning,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 1,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Birth registration'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $term = array(
+    'name' => t('Child protection'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $safe,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => $vid,
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/'. $vid .'/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add Child Protection to Department Vocab
+  $term = array(
+    'name' => t('Child Protection'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '29',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/1/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Submit all Site Reports that belong to Approved Fieldtrips
+  $sql = "SELECT nid FROM {content_type_fieldtrip} WHERE field_fieldtrip_status_value = 'Approved'";
+  $fieldtripnids = db_query($sql);
+  while ($fieldtripnid = db_fetch_object($fieldtripnids)) {
+    $sql = "SELECT nid FROM {content_type_ftritem} WHERE field_ftritem_field_trip_nid = %d";
+    $sitereportnids = db_query($sql, $fieldtripnid->nid);
+    while ($sitereportnid = db_fetch_object($sitereportnids)) {
+      $sitereport = node_load($sitereportnid->nid);
+      $sitereport->field_ftritem_status[0]['value'] = 'Submitted';
+      node_save($sitereport);
+    }
+  }
+
+  $ret[] = array('success' => TRUE, 'query' => 'created the OECD Sector Code vocabulary');
+  $ret[] = array('success' => TRUE, 'query' => 'added Child Protection to Department vocabulary');
+  $ret[] = array('success' => TRUE, 'query' => 'submitted all Site Reports that belong to Approved Fieldtrips');
+  return $ret;
+}
+
+/*
+ * https://www.pivotaltracker.com/story/show/16939181
+ * Replace "Trip Report at" with "Site Visit at" for all Site Visits
+ */
+function devtrack_module_update_6009() {
+  // Change the title of all Site Visits
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Site Report Type');
+  $terms = devtrack_module_get_term_by_name_vid('Site Visit', $vocabulary->vid);
+  $sql = "SELECT ctf.nid FROM {content_type_ftritem} ctf INNER JOIN {term_node} tn ON tn.nid = ctf.nid WHERE tn.tid = %d";
+  $sitevisitnids = db_query($sql, $terms[0]->tid);
+  $count = 0;
+  while ($sitevisitnid = db_fetch_object($sitevisitnids)) {
+    $sitevisit = node_load($sitevisitnid->nid);
+    if ((drupal_substr($sitevisit->title, 0, 14) == 'Trip Report at') || (drupal_substr($sitevisit->title, 0, 14) == 'Site Report at')) {
+      $sitevisit->title = 'Site Visit at'. drupal_substr($sitevisit->title, 14);
+      node_save($sitevisit);
+      $count++;
+    }
+  }
+
+  $ret[] = array('success' => TRUE, 'query' => 'changed the title of '. $count .' Site Visits');
+  return $ret;
+}
+
+/*
+ * https://www.pivotaltracker.com/story/show/17875097
+ * The word "Nzerea II" under place type - should be removed
+ */
+function devtrack_module_update_6010() {
+  // First remove the term from all nodes
+  $vocabulary = devtrack_module_get_vocabulary_by_name('Place Type');
+  $terms = devtrack_module_get_term_by_name_vid('Nzerea II', $vocabulary->vid);
+  $sql = "SELECT n.nid FROM {node} n INNER JOIN {term_node} tn ON n.nid = tn.nid WHERE tn.tid = %d";
+  $nids = db_query($sql, $terms[0]->tid);
+  while ($nid = db_fetch_object($nids)) {
+    $node = node_load($nid->nid);
+    unset($node->taxonomy[$terms[0]->tid]);
+    node_save($node);
+  }
+
+  // Now remove the term from the vocabulary
+  taxonomy_del_term($terms[0]->tid);
+
+  $ret[] = array('success' => TRUE, 'query' => 'removed Nzerea II from Place Types');
+  return $ret;
+}
+
+
+/*
+ * https://www.pivotaltracker.com/story/show/19285329
+ * Increase limit on associated node questions to 100
+ */
+function devtrack_module_update_6011() {
+  update_sql("UPDATE {associated_nodes_association} SET name = 'Questions', number = 100, published_only = 1 WHERE aid = 1");
+  update_sql("DELETE FROM {associated_nodes_criterion} WHERE aid = 1");
+  update_sql("INSERT INTO {associated_nodes_criterion} (aid, type, element, weight, parents_only) VALUES (1, 'taxonomy', 1, 5, 1)");
+  variable_set('hidden_comment_default_reasons', 'Mistake');
+}
+
+/*
+ * https://www.pivotaltracker.com/story/show/19285329
+ * Increase limit on associated node questions to 100
+ */
+function devtrack_module_update_6012() {
+  // Declare new modules
+  $new_modules = array(
+    'jstools',
+    'collapsiblock',
+  );
+  module_enable($new_modules);
+  // Declare old module
+  $old_modules = array(
+    'js_theming',
+  );
+  module_disable($old_modules);
+}

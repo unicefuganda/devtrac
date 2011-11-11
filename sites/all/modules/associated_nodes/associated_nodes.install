@@ -35,6 +35,7 @@ function associated_nodes_schema() {
       'aid' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
       'type' => array('type' => 'varchar', 'length' => 32, 'not null' => TRUE, 'default' => ''),
       'element' => array('type' => 'varchar', 'length' => 128, 'not null' => TRUE, 'default' => ''),
+      'parents_only' => array('type' => 'int', 'size' => 'tiny', 'not null' => TRUE, 'default' => 1),
       'weight' => array('type' => 'float', 'not null' => TRUE, 'default' => 0),
     ),
     'primary key' => array('aid', 'type', 'element'),
@@ -49,4 +50,13 @@ function associated_nodes_schema() {
     'primary key' => array('aid', 'nid', 'associated_nid'),
   );
   return $schema;
+}
+
+function associated_nodes_update_6000() {
+  db_add_field($ret, 'associated_nodes_criterion', 'parents_only', array('type' => 'int', 'size' => 'tiny', 'NOT NULL' => TRUE, 'description' => 'Whether or not to use only parent terms or all terms.'));
+  $associations = db_query(db_rewrite_sql("SELECT aid FROM {associated_nodes_association}"));
+  while ($association = db_fetch_object($associations)) {
+    update_sql("UPDATE {associated_nodes_criterion} SET parents_only = 1 WHERE aid = $association->aid");
+  }
+  return $ret;
 }

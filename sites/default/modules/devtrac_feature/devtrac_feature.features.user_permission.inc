@@ -6,6 +6,280 @@
 function devtrac_feature_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: administer features
+  $permissions['administer features'] = array(
+    'name' => 'administer features',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: administer own comments
+  $permissions['administer own comments'] = array(
+    'name' => 'administer own comments',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create actionitem content
+  $permissions['create actionitem content'] = array(
+    'name' => 'create actionitem content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create bbsync content
+  $permissions['create bbsync content'] = array(
+    'name' => 'create bbsync content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create book content
+  $permissions['create book content'] = array(
+    'name' => 'create book content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'editor',
+    ),
+  );
+
+  // Exported permission: create fieldtrip content
+  $permissions['create fieldtrip content'] = array(
+    'name' => 'create fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create ftritem content
+  $permissions['create ftritem content'] = array(
+    'name' => 'create ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create page content
+  $permissions['create page content'] = array(
+    'name' => 'create page content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: create place content
+  $permissions['create place content'] = array(
+    'name' => 'create place content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: create user_profile content
+  $permissions['create user_profile content'] = array(
+    'name' => 'create user_profile content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: delete any actionitem content
+  $permissions['delete any actionitem content'] = array(
+    'name' => 'delete any actionitem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any book content
+  $permissions['delete any book content'] = array(
+    'name' => 'delete any book content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any fieldtrip content
+  $permissions['delete any fieldtrip content'] = array(
+    'name' => 'delete any fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any ftritem content
+  $permissions['delete any ftritem content'] = array(
+    'name' => 'delete any ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any page content
+  $permissions['delete any page content'] = array(
+    'name' => 'delete any page content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any place content
+  $permissions['delete any place content'] = array(
+    'name' => 'delete any place content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete any user_profile content
+  $permissions['delete any user_profile content'] = array(
+    'name' => 'delete any user_profile content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own actionitem content
+  $permissions['delete own actionitem content'] = array(
+    'name' => 'delete own actionitem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own book content
+  $permissions['delete own book content'] = array(
+    'name' => 'delete own book content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'editor',
+    ),
+  );
+
+  // Exported permission: delete own fieldtrip content
+  $permissions['delete own fieldtrip content'] = array(
+    'name' => 'delete own fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own ftritem content
+  $permissions['delete own ftritem content'] = array(
+    'name' => 'delete own ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own page content
+  $permissions['delete own page content'] = array(
+    'name' => 'delete own page content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own place content
+  $permissions['delete own place content'] = array(
+    'name' => 'delete own place content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: delete own user_profile content
+  $permissions['delete own user_profile content'] = array(
+    'name' => 'delete own user_profile content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit any actionitem content
+  $permissions['edit any actionitem content'] = array(
+    'name' => 'edit any actionitem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit any book content
+  $permissions['edit any book content'] = array(
+    'name' => 'edit any book content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'editor',
+    ),
+  );
+
+  // Exported permission: edit any fieldtrip content
+  $permissions['edit any fieldtrip content'] = array(
+    'name' => 'edit any fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit any ftritem content
+  $permissions['edit any ftritem content'] = array(
+    'name' => 'edit any ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit any page content
+  $permissions['edit any page content'] = array(
+    'name' => 'edit any page content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'editor',
+    ),
+  );
+
+  // Exported permission: edit any place content
+  $permissions['edit any place content'] = array(
+    'name' => 'edit any place content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: edit any user_profile content
+  $permissions['edit any user_profile content'] = array(
+    'name' => 'edit any user_profile content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit field_actionitem_due_date
   $permissions['edit field_actionitem_due_date'] = array(
     'name' => 'edit field_actionitem_due_date',
@@ -291,6 +565,14 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit field_ftritem_status
+  $permissions['edit field_ftritem_status'] = array(
+    'name' => 'edit field_ftritem_status',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: edit field_place_email
   $permissions['edit field_place_email'] = array(
     'name' => 'edit field_place_email',
@@ -461,11 +743,109 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: edit own actionitem content
+  $permissions['edit own actionitem content'] = array(
+    'name' => 'edit own actionitem content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: edit own book content
+  $permissions['edit own book content'] = array(
+    'name' => 'edit own book content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own fieldtrip content
+  $permissions['edit own fieldtrip content'] = array(
+    'name' => 'edit own fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own ftritem content
+  $permissions['edit own ftritem content'] = array(
+    'name' => 'edit own ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own page content
+  $permissions['edit own page content'] = array(
+    'name' => 'edit own page content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own place content
+  $permissions['edit own place content'] = array(
+    'name' => 'edit own place content',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: edit own user_profile content
+  $permissions['edit own user_profile content'] = array(
+    'name' => 'edit own user_profile content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: grant own content access
   $permissions['grant own content access'] = array(
     'name' => 'grant own content access',
     'roles' => array(
       '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: hide own comments
+  $permissions['hide own comments'] = array(
+    'name' => 'hide own comments',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: manage features
+  $permissions['manage features'] = array(
+    'name' => 'manage features',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: sync all bbsync
+  $permissions['sync all bbsync'] = array(
+    'name' => 'sync all bbsync',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
+  // Exported permission: sync own bbsync
+  $permissions['sync own bbsync'] = array(
+    'name' => 'sync own bbsync',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'unicef user',
+      '2' => 'unicef user (Mobile)',
     ),
   );
 
@@ -774,6 +1154,14 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: view field_ftritem_status
+  $permissions['view field_ftritem_status'] = array(
+    'name' => 'view field_ftritem_status',
+    'roles' => array(
+      '0' => 'administrator',
+    ),
+  );
+
   // Exported permission: view field_place_email
   $permissions['view field_place_email'] = array(
     'name' => 'view field_place_email',
@@ -860,7 +1248,6 @@ function devtrac_feature_user_default_permissions() {
       '1' => 'authenticated user',
       '2' => 'unicef user',
       '3' => 'unicef user (Mobile)',
-<<<<<<< HEAD
     ),
   );
 
@@ -873,8 +1260,6 @@ function devtrac_feature_user_default_permissions() {
       '2' => 'authenticated user',
       '3' => 'unicef user',
       '4' => 'unicef user (Mobile)',
-=======
->>>>>>> p2-s1
     ),
   );
 

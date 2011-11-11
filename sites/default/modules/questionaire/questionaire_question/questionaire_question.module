@@ -99,7 +99,7 @@ function questionaire_question_menu() {
     'title' => t('Edit Submission'),
     'description'      => t('Edit Submission of Questionaire.'),
     'page callback'    => 'questionaire_question_submission_edit',
-    'page arguments'   => array(1, 3),
+    'page arguments'   => array(1, 4),
     'access callback'  => 'questionaire_question_addsubmission_access',
     'access arguments' => array(1),
     'type' => MENU_CALLBACK,
@@ -218,6 +218,29 @@ function questionaire_question_display_view_answers($context, $qid, $charttype) 
 
   drupal_set_title(questionaire_question_charts_title($context, $qid));
   return $view->preview($display_id, array($context, $qid));
+}
+
+/* This function returns the link the submit or edit page of 
+ * a questionaire, depending of wether a submission already exists or not.
+ * 
+ */
+function questionaire_get_submission_link($nid, $context, $luser = NULL) {
+  if (questionaire_question_addsubmission_access($nid)) {
+    global $user;
+    if (!$luser) {
+      $luser = $user;
+    }
+    $submission = db_result(db_query("SELECT sid FROM {questionaire_submission} WHERE qnid=%d AND context=%d AND uid=%d", $nid, $context, $luser->uid));
+    if ($submission) {
+      return 'node/' . $nid . '/questions/editsubmission/' . $submission;
+    }
+    else {
+      return 'node/'. $nid .'/questions/addsubmission';
+    }
+  }
+  else {
+    return FALSE;
+  }
 }
 
 
@@ -381,11 +404,14 @@ function questionaire_question_questions($nid) {
  */
 
 function questionaire_question_addsubmission_access($nid) {
+  global $user;
   $node = node_load($nid);
-  if (user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
+  // Only the reporter is allowed to create/edit a submission
+  if (($user->uid == $node->uid) && user_access('submit questions') && questionaire_question_isquestionaire($node->type)) { // and does this nodetype support questionaires?
     // make sure there are questions for this questionairetype. 
     //TODO, also check if there are submissions (when questions become disabled, the submissions migh still be there)
-    return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+//    return (count(questionaire_question_getquestionsprivate(questionaire_question_getcontext($nid))) > 0);
+    return TRUE;
   }
   else {
     return FALSE;
@@ -421,8 +447,23 @@ function questionaire_question_getquestionsprivate($context) {
 function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL ) {
   $form = Array();
   $context = questionaire_question_getcontext($nid);
+  $contextnode = node_load($context);
+  $placetypes = array_values(taxonomy_node_get_terms_by_vocabulary($contextnode, 1));
   $questions = questionaire_question_getquestionsprivate($context);
   //$questions = module_invoke_all('getcontext', $nid);
+  if ($questions == array()) {
+    $form['message'] = array(
+      '#prefix' => '<div>',
+      '#value' => t('There are no questions available for location type @type', array('@type' => $placetypes[0]->name)),
+      '#suffix' => '</div>',
+    );
+    $form['cancel'] = array(
+      '#type' => 'submit',
+      '#value' => t('Back to Site Report'),
+    );
+    $form['#redirect'] = 'node/' . $nid;
+    return $form;
+  }
   
   
   $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
@@ -439,13 +480,24 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
   foreach ($questions as $code => $question) {
     
     if ($sid) {
-      $sql = 'SELECT answer FROM {questionaire_answer} where question = %d AND sid = %d'; 
-      $answer = db_result(db_query($sql, $question->nid, $sid));
+      $sql = 'SELECT answer FROM {questionaire_answer} where question = %d AND sid = %d';
+//      This is not working for multi-choice checkboxes.
+//      $answer = db_result(db_query($sql, $question->nid, $sid));
+      $results = db_query($sql, $question->nid, $sid);
+      $answers = array();
+      $answer = NULL;
+      if ($results) {
+        while ($result = db_fetch_object($results)) {
+          $answers[] = $result->answer;
+        }
+        $answer = $answers[0];
+      }
     }
     else {
       // Changed default to NULL (from '') to solve
       // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
       // $answer = '';
+      $answers = array();
       $answer = NULL;
     }
     $node = node_load($question->nid);
@@ -463,9 +515,10 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
         // Added the following check to solve the following
         // "warning: Invalid argument supplied for foreach() in /home/drupal/drupal6/includes/form.inc on line 1213"
         // Checkboxes are multi value, hence an empty array
-        if ($answer == NULL) {
-          $answer = array();
-        }
+//        if ($answer == NULL) {
+//          $answer = array();
+//        }
+        $answer = $answers;
         break;
       case 'radios' :
         $formtype = 'radios';
@@ -511,7 +564,13 @@ function questionaire_question_submission_form(&$form_state, $nid, $sid = NULL )
     '#type' => 'value',
     '#value' => $context,
   );
-
+  if ($sid) {
+    $form['sid'] = array(
+      '#type' => 'value',
+      '#value' => $sid,
+    );
+  }
+  
   $form['#redirect'] = 'node/' . $nid;
   return $form;
   
@@ -609,8 +668,16 @@ function questionaire_question_saveanswers($answers) {
     $sid = questionaire_question_create_submission($uid, $qnid, $context);  
   }
   
-//  $table = data_get_table('questionaire_answer');
-    
+  // First delete all old answers and old term data.
+  $aids = db_query("SELECT id FROM {questionaire_answer} WHERE sid = %d", $sid);
+  if ($aids) {
+    while ($aid = db_fetch_object($aids)) {
+      db_query("DELETE FROM {questionaire_answer_term} WHERE id = %d", $aid->id);
+    }
+  }
+  db_query("DELETE FROM {questionaire_answer} WHERE sid = %d", $sid);
+
+  // Now add them again.
   foreach ($answers['answers'] as $answer) {
     $answer['sid'] = $sid;
     $answer['uid'] = $uid;
@@ -627,25 +694,40 @@ function questionaire_question_saveanswers($answers) {
         $answer['data_taxonomy:'. $term->vid][] = $term->tid;
       }
     }
-  */
-      
+ */
+/*
     if (isset($answers['sid'])) {
-      $keys = array( 'sid', 'question');
-      $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
-      $answer['id'] = $id;
-      drupal_write_record('questionaire_answer', $answer, $keys);
+      $keys = array('id');
+      $questiontypes = questionaire_question_getquestiontypes(); // select', 'checkboxes', 'radios', 'number', 'time'
+      $question = node_load($answer['question']);
+      if ($questiontypes[$question->questiontype] != 'checkboxes') {
+        // This does not work for multi-choice checkboxes.
+        $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d", $answer['question'], $sid));
+      }
+      else {
+        // This does but only for multi-choice checkboxes because every answers is stored under a unique id.
+        $id = db_result(db_query("SELECT id FROM {questionaire_answer} WHERE question = %d AND sid = %d AND answer = '%s'", $answer['question'], $sid, $answer['answer']));
+      }
+      if ($id) {
+        $answer['id'] = $id;
+        drupal_write_record('questionaire_answer', $answer, $keys);
+      }
+      else {
+        drupal_write_record('questionaire_answer', $answer);
+      }
     }
-    else { 
-       drupal_write_record('questionaire_answer', $answer);
-       $contextnode = node_load($context);
-       foreach ($contextnode->taxonomy as $term) {
-         $answerterm = array(
-           'id' => $answer['id'],
-           'tid' => $term->tid,
-         );
-         drupal_write_record('questionaire_answer_term', $answerterm);
-       } 
-    }
+ */
+//    else { 
+      drupal_write_record('questionaire_answer', $answer);
+      $contextnode = node_load($context);
+      foreach ($contextnode->taxonomy as $term) {
+        $answerterm = array(
+          'id' => $answer['id'],
+          'tid' => $term->tid,
+        );
+        drupal_write_record('questionaire_answer_term', $answerterm);
+      } 
+//    }
   }
 }
 

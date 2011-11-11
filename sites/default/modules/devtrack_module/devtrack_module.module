@@ -1592,6 +1592,21 @@ function devtrack_module_get_vocabulary_by_name($name) {
 
 
 function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
+  if ($node->type == 'action_item') {
+    switch ($op) {
+      case 'insert':
+        /*
+         * TODO:
+         * Initialy all Site Reports were Unpublished ($node->status = 0).
+         * In P2-S4 we made changes to the workflow (https://www.pivotaltracker.com/story/show/16939181).
+         * This forced us to have them Published initialy.
+         * This should be changed in the array returned by the BB App.
+         * So once the BB App has been updated we have to remove the following line of code again.
+         */
+        $node->status = 1;
+        break;
+    }
+  }
   if ($node->type == 'ftritem') {
     switch ($op) {
       case 'insert':

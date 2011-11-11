@@ -7,6 +7,12 @@ $(document).ready(function() {
     $('input[name="reporttype"]')[0].checked = true;
     $('input[name="placetype"]')[0].checked = true;
   }
+  else {
+//    alert('Going to set defaults.');
+    $('input[name="reporttype"]')[0].checked = true;
+    $('input[name="placetype"]')[0].checked = true; 
+//    alert('Defaults set.');
+  }
 });
 
 Drupal.behaviors.devtrac = function (context) {

@@ -9329,7 +9329,7 @@ if ((arg(0) == "node") && (arg(1) == "add") && ((arg(2) == "place") || (arg(2) =
     return $args[1];
   }
   if (arg(2) == "ftritem") {
-    return $args[3];
+    return $args[2];
   }
 }',
       'validate_argument_node_type' => array(

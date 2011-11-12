@@ -1592,7 +1592,7 @@ function devtrack_module_get_vocabulary_by_name($name) {
 
 
 function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
-  if ($node->type == 'action_item') {
+  if ($node->type == 'actionitem') {
     switch ($op) {
       case 'presave':
         /*

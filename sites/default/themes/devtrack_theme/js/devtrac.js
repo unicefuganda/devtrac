@@ -9,8 +9,8 @@ $(document).ready(function() {
   }
   else {
 //    alert('Going to set defaults.');
-    $('input[name="reporttype"]')[0].checked = true;
-    $('input[name="placetype"]')[0].checked = true; 
+//    $('input[name="reporttype"]')[0].checked = true;
+//    $('input[name="placetype"]')[0].checked = true; 
 //    alert('Defaults set.');
   }
 });

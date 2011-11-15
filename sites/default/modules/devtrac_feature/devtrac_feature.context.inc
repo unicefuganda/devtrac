@@ -580,12 +580,6 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'layertworight',
           'weight' => 0,
         ),
-        'block-2' => array(
-          'module' => 'block',
-          'delta' => 2,
-          'region' => 'layertworight',
-          'weight' => 1,
-        ),
         'views-87cfc5888b93ec2b557b2215e685ab74' => array(
           'module' => 'views',
           'delta' => '87cfc5888b93ec2b557b2215e685ab74',

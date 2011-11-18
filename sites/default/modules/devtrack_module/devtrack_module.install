@@ -702,3 +702,15 @@ function devtrack_module_update_6012() {
   );
   module_disable($old_modules);
 }
+
+function devtrack_module_update_6013() {
+  // Declare new modules
+  $new_modules = array(
+    'quicktabs',
+    'openlayers_geosearch',
+  );
+  module_enable($new_modules);
+
+  $ret = array('success' => TRUE, 'query' => 'enabled quicktabs and openlayers_geosearch modules' );
+  return $ret;
+}

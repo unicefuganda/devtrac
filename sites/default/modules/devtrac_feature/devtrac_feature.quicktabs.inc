@@ -16,20 +16,13 @@ function devtrac_feature_quicktabs_default_quicktabs() {
   $quicktabs->title = 'Geosearch QT';
   $quicktabs->tabs = array(
     0 => array(
-      'bid' => 'openlayers_geosearch_delta_0',
-      'hide_title' => 0,
-      'title' => 'Search',
-      'weight' => '-100',
-      'type' => 'block',
-    ),
-    1 => array(
       'bid' => 'openlayers_geosearch_delta_1',
       'hide_title' => 0,
       'title' => 'Results',
       'weight' => '-99',
       'type' => 'block',
     ),
-    2 => array(
+    1 => array(
       'bid' => 'devtrack_module_delta_1',
       'hide_title' => 0,
       'title' => 'Legend',

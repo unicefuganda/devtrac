@@ -708,6 +708,8 @@ function devtrack_module_update_6013() {
   $new_modules = array(
     'quicktabs',
     'openlayers_geosearch',
+    'openlayers_geosearch_openstreetmap',
+    'openlayers_geosearch_wfs',
   );
   module_enable($new_modules);
 

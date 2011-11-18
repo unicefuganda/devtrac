@@ -498,11 +498,17 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerright',
           'weight' => 0,
         ),
+        'openlayers_geosearch-0' => array(
+          'module' => 'openlayers_geosearch',
+          'delta' => 0,
+          'region' => 'contentlayerright',
+          'weight' => 1,
+        ),
         'quicktabs-geosearch' => array(
           'module' => 'quicktabs',
           'delta' => 'geosearch',
           'region' => 'contentlayerright',
-          'weight' => 1,
+          'weight' => 2,
         ),
       ),
     ),

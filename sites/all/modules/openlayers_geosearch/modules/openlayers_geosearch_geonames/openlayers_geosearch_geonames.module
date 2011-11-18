@@ -1,0 +1,131 @@
+<?php
+
+/**
+ *
+ * Implementation of hook_menu().
+ *
+ * @return
+ *   Array of menu items
+ */
+function openlayers_geosearch_geonames_menu() {
+  $items = array();
+  $items['admin/build/openlayers/geosearch/geonames'] = array(
+    'title' => 'Geonames',
+    'description' => 'Manage Geosearch Geonames Settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('openlayers_geosearch_geonames_admin_settings'),
+    'access arguments' => array('administer openlayers'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 20,
+  );
+  return $items;
+}
+
+/**
+ *
+ * Generates the settings form
+ *
+ * @return
+ *   settings form
+ */
+function openlayers_geosearch_geonames_admin_settings() {
+  $form['openlayers_geosearch_geonames_maxresults'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of results'),
+    '#description' => t('Maximum number of results displayed. Ordering is done by Geonames.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('openlayers_geosearch_geonames_maxresults', '15'),
+  );
+
+  $countries_all = geonames_countries();
+  $countries = array(
+    'none' => "All Countries",
+  );
+  foreach ($countries_all as $country) {
+    $countries[$country['iso_alpha2']] = $country['name'];
+  }
+  $form['openlayers_geosearch_geonames_country'] = array(
+    '#type' => 'select',
+    '#title' => t('Country'),
+    '#description' => t('Only return results from this country.'),
+    '#required' => FALSE,
+    '#options' => $countries,
+    '#default_value' => variable_get('openlayers_geosearch_geonames_country', 'none'),
+  );
+
+  /*
+   * There is no API call for the Class list & its description. So, we hardcode it :-(
+   */
+  $classes = array(
+    'none' => "All Classes",
+    'A' => 'country, state, region,...',
+    'H' => 'H stream, lake, ...',
+    'L' => 'parks,area, ...',
+    'P' => 'city, village,...',
+    'R' => 'road, railroad',
+    'S' => 'spot, building, farm',
+    'T' => 'mountain,hill,rock,... ',
+    'U' => 'undersea',
+    'V' => 'forest,heath,...',
+  );
+  $form['openlayers_geosearch_geonames_class'] = array(
+    '#type' => 'select',
+    '#title' => t('Feature Class'),
+    '#description' => t('Only return results for this Feature Class.'),
+    '#required' => FALSE,
+    '#options' => $classes,
+    '#default_value' => variable_get('openlayers_geosearch_geonames_class', 'none'),
+  );
+  // Make a system setting form and return
+  return system_settings_form($form);
+}
+
+/**
+ * Function to query the geonames service
+ *
+ * @param $query
+ *   string with value to search for
+ *
+ * @return
+ *   array of search results
+ */
+function openlayers_geosearch_geonames_geosearch($query) {
+  $return = Array(
+      'Geonames' => Array(),
+    );
+  $q = array(
+    'name' => $query,
+    'maxRows' => variable_get('openlayers_geosearch_geonames_maxresults', '15'),
+  );
+  if (variable_get('openlayers_geosearch_geonames_country', 'none') != 'none') {
+    $q['country'] = variable_get('openlayers_geosearch_geonames_country', 'none');
+  }
+  if (variable_get('openlayers_geosearch_geonames_class', 'none') != 'none') {
+    $q['featureClass'] = variable_get('openlayers_geosearch_geonames_class', 'none');
+  }
+
+  if ($results = geonames_query('search', $q)) {
+    if (isset($results->results)) {
+      foreach ($results->results as $result) {
+        $location = Array(
+          'address' => Array(),
+          'components' => Array(),
+          'location' => Array(
+            'lng' => $result['lng'],
+            'lat' => $result['lat']
+          ),
+          'bounds' => Array(), //TODO: ReQuery each result to ge the bounding box
+        );
+        $location['components'][t("Name")] = $result['name'];
+        $country = geonames_countryinfo($result['countrycode']);
+        $location['components'][t("Country")] = $country['name'];
+        if (!empty($result['fcode'])) {
+          $fcode = geonames_featureinfo($result['fcode']);
+          $location['components'][t("Type")] = $fcode['name'];
+        }
+        $return['Geonames'][] = $location;
+      }
+    }
+  }
+  return $return;
+}

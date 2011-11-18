@@ -1,0 +1,36 @@
+.ui-tabs-nav .ui-tabs-selected a {
+	font-weight: bolder;
+	color: #0000FF;
+	background-color: transparent;
+}
+
+.ui-tabs-nav .ui-tabs-selected ul {
+	background-color: #8888FF;
+}
+
+.ui-tabs-nav ul {
+	clear: both;
+  padding: 0px;
+  float: left;
+  background-image: none;
+  list-style-image: none;
+  list-style-type: none;
+}
+
+.ui-tabs-nav ul li {
+  padding: 0px 10px;
+  float: left;
+  border: 1px #0000FF solid;
+  background-image: none;
+  list-style-image: none;
+  list-style-type: none;
+}
+
+.ui-tabs-nav .ui-tabs-panel {
+	float: left;
+  clear: both;
+}
+
+.ui-tabs-nav .ui-tabs-hide {
+	display: none;
+}

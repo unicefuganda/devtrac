@@ -498,9 +498,9 @@ function devtrac_feature_context_default_contexts() {
           'region' => 'contentlayerright',
           'weight' => 0,
         ),
-        'devtrack_module-1' => array(
-          'module' => 'devtrack_module',
-          'delta' => 1,
+        'quicktabs-geosearch' => array(
+          'module' => 'quicktabs',
+          'delta' => 'geosearch',
           'region' => 'contentlayerright',
           'weight' => 1,
         ),

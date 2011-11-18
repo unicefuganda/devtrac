@@ -1,0 +1,12 @@
+name = Openlayers Geosearch OpenStreetMap
+description = Implements Geosearch functionality using the Nominatim Search Service to search data contributed on OpenStreetMap.
+ 
+package = OpenLayers Geosearch
+dependencies[] = openlayers_geosearch
+core = 6.x
+; Information added by drupal.org packaging script on 2011-11-18
+version = "6.x-1.x-dev"
+core = "6.x"
+project = "openlayers_geosearch"
+datestamp = "1321576407"
+

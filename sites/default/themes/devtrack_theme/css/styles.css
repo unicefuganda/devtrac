@@ -920,3 +920,49 @@ body a.getfeatureaddlink:link {
 .col-content_contentlayermiddle .hidden-comment-overlay a:hover{
 	color: #EA0001;
 }
+
+/* The new tabbed block on the places/* pages */
+.col-content_contentlayerright form#openlayers-geosearch-searchform input.form-text, textarea {
+  max-width: 294px;
+}
+ul.quicktabs_tabs.quicktabs-style-zen {
+  background-image: none;
+  background-color: transparent;
+  margin: 0 0 10px;
+  padding: 0 0 3px;
+  border-bottom: 2px solid #EA0001;
+}
+ul.quicktabs_tabs.quicktabs-style-zen li, ul.quicktabs_tabs.quicktabs-style-zen li.active {
+  background: none no-repeat scroll 0 0px transparent;
+  float: left;
+  margin: 0 5px;
+  padding: 0 0 0 5px;
+}
+ul.quicktabs_tabs.quicktabs-style-zen li a {
+  background: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png") repeat-x scroll 0 -5px transparent;
+  background-color: #FFF9CD;
+  color: #000000;
+  padding-top: 3px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px; 
+  border-width: 1px 1px 2px;
+  border-style: solid;
+  border-color: #EA0001;
+}
+ul.quicktabs_tabs.quicktabs-style-zen li a:hover {
+  background: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png") repeat-x scroll 0 -5px transparent;
+  background-color: #FFF9CD;
+  color: #444444;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px; 
+  border-width: 1px 1px 2px;
+  border-style: solid;
+  border-color: #EA0001;
+}
+ul.quicktabs_tabs.quicktabs-style-zen li.active a, ul.quicktabs_tabs.quicktabs-style-zen li.active a:hover {
+  background: url("/sites/default/themes/devtrack_theme/images/h3_bkgd.png") repeat-x scroll 0 -5px transparent;
+  color: #444444;
+  border-width: 1px 1px 2px;
+  border-style: solid;
+  border-color: #EA0001 #EA0001 #FFF6BD;
+}

@@ -1,0 +1,13 @@
+name = Openlayers Geosearch Geonames
+description = Implements Geosearch functionality using Geonames.
+ 
+package = OpenLayers Geosearch
+dependencies[] = openlayers_geosearch
+dependencies[] = geonames
+core = 6.x
+; Information added by drupal.org packaging script on 2011-11-18
+version = "6.x-1.x-dev"
+core = "6.x"
+project = "openlayers_geosearch"
+datestamp = "1321576407"
+

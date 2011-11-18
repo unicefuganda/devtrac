@@ -1,0 +1,172 @@
+<?php
+/**
+ * @file
+ * This module allows for simple querying of WFS layers
+ *
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function openlayers_geosearch_openstreetmap_menu() {
+  $items = array();
+  $items['admin/build/openlayers/geosearch/openstreetmap'] = array(
+    'title' => 'OpenStreetMap',
+    'description' => 'Manage Geosearch OpenStreetMaps Settings.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('openlayers_geosearch_openstreetmap_admin_settings'),
+    'access arguments' => array('administer openlayers'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 20,
+  );
+  return $items;
+}
+
+/**
+ * Return the settings form
+ */
+function openlayers_geosearch_openstreetmap_admin_settings() {
+  $form['openlayers_geosearch_openstreetmap_maxresults'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Maximum number of results'),
+    '#description' => t('Maximum number of results displayed. Ordering is done by OpenStreetMap.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('openlayers_geosearch_openstreetmap_maxresults', '15'),
+  );
+
+  $countries_all = openlayers_geosearch_openstreetmap_countries();
+  $countries = array(
+    'none' => "All Countries",
+  );
+  foreach ($countries_all as $country) {
+    $countries[$country['iso_alpha2']] = $country['name'];
+  }
+  $form['openlayers_geosearch_openstreetmap_country'] = array(
+    '#type' => 'select',
+    '#title' => t('Country'),
+    '#description' => t('Only return results from this country.'),
+    '#required' => FALSE,
+    '#options' => $countries,
+    '#default_value' => variable_get('openlayers_geosearch_openstreetmap_country', 'none'),
+  );
+
+/*
+  $form['openlayers_geosearch_openstreetmap_addressdetails'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Breakdown addresses'),
+    '#description' => t('Include a breakdown of addresses into separate elements.'),
+    '#default_value' => variable_get('openlayers_geosearch_openstreetmap_addressdetails', ''),
+  );
+
+  $form['openlayers_geosearch_openstreetmap_resultfields'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Result Fields'),
+    '#description' => t('Fields to show in the result set, as comma seperated valued, eg "Devtrac:id,gml:name,Devtrac:District". The geo field will be detected automatically.'),
+    '#required' => TRUE,
+    '#default_value' => variable_get('openlayers_geosearch_openstreetmap_resultfields', ''),
+  );
+ */
+
+  // Make a system setting form and return
+  return system_settings_form($form);
+}
+
+/**
+ * Retrieve a list of countries.
+ */
+function openlayers_geosearch_openstreetmap_countries() {
+  $field_names = array('iso_alpha2', 'iso_alpha3', 'iso_numeric', 'fips_code', 'name', 'capital', 'areainsqkm',
+                       'population', 'continent', 'tld', 'currency', 'currencyname', 'phone', 'postal_code_format',
+                       'postal_code_regex', 'languages', 'geonameid', 'neighbours', 'equivalentfipscode');
+  $countries = array();
+  $file = drupal_http_request("http://download.geonames.org/export/dump/countryInfo.txt?app=drupal");
+  if ($file->code == 200) {
+    // Insert all records from the HTTP response
+    $num = preg_match_all('/^[A-Z].*?$/ms', $file->data, $matches);
+    foreach ($matches[0] as $line) {
+      $object = array_combine($field_names, split("\t", $line));
+      if ($object['geonameid'] != 0) {
+        $countries[] = $object;
+      }
+    }
+    watchdog("openlayers_geosearch_openstreetmap", "Successfully updated the list of countries");
+  }
+  else {
+    watchdog("openlayers_geosearch_openstreetmap", "Failed to update the list of countries", WATCHDOG_WARNING);
+  }
+  return $countries;
+}
+
+/**
+ * Implementation of our own hook_geosearch().
+ *
+ * Queries the WFS service for our query and formats the result
+ *
+ * @param $query
+ *   Text string with query
+ *
+ * @return
+ *   Array with results
+ *
+ */
+function openlayers_geosearch_openstreetmap_geosearch($query) {
+  $limit = variable_get('openlayers_geosearch_openstreetmap_maxresults', '15');
+  $url = 'http://open.mapquestapi.com/nominatim/v1/search?format=json&addressdetails=1&limit='. $limit;
+  if (variable_get('openlayers_geosearch_openstreetmap_country', 'none') != 'none') {
+    $countrycodes = variable_get('openlayers_geosearch_openstreetmap_country', 'none');
+    $url .= '&countrycodes='. $countrycodes;
+  }
+  $url .= '&q='. $query;
+  $result = drupal_http_request(
+    url($url, array(absolute => TRUE)),
+    array('Content-Type' => 'application/json'),
+    'GET', $request
+  );
+  return _openlayers_geosearch_openstreetmap_process_data(json_decode($result->data));
+}
+
+/**
+ * Process the OpenStreetMap result into the internal geosearch format
+ *
+ * @param
+ *   OpenStreetMap value
+ *
+ * @return
+ *  Array with results
+ *
+ */
+function _openlayers_geosearch_openstreetmap_process_data($data) {
+  $result = array(
+    'OpenStreetMap' => array(),
+  );
+
+  if (isset($data)) {
+    foreach ($data as $datum) {
+      $location = Array(
+        'address' => (array) $datum->address,
+        'components' => Array(),
+        'location' => Array(
+          'lng' => $datum->lon,
+          'lat' => $datum->lat,
+        ),
+        'bounds' => Array(), //TODO: ReQuery each result to ge the bounding box
+      );
+      if (!empty($datum->type)) {
+        $location['components'][t("name")] = $datum->address->{$datum->type};
+        if (!empty($datum->address->city)) {
+          $location['components'][t("city")] = $datum->address->city;
+        }
+//        if (!empty($datum->address->country)) {
+//          $location['components'][t("country")] = $datum->address->country;
+//        }
+//        $location['components'][t("address")] = $datum->display_name;
+        $location['components'][t("type")] = $datum->type;
+      }
+      if (!empty($location['components'][t("name")])) {
+        $result['OpenStreetMap'][] = $location;
+      }
+    }
+  }
+
+  return $result;
+}

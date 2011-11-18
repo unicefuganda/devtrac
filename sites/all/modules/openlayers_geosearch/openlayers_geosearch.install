@@ -1,0 +1,33 @@
+<?php
+/**
+ * @file
+ * This install file only checks requirements
+ *
+ */
+
+/**
+ *
+ * Implementation of hook_requirements().
+ * Check if any sub-module is active else, mark this on the status page
+ *
+ * @return
+ *   Array of presets
+ */
+function openlayers_geosearch_requirements($phase) {
+  $return = array();
+  if ($phase == 'runtime') {
+    $found = FALSE;
+    foreach (module_implements('geosearch') as $module) {
+      $found = TRUE;
+    }
+    if (!$found) {
+      $return['geosearch'] = array(
+      'title' => 'Geosearch Sub-Module',
+      'value' => 'No module enabled.',
+      'description' => 'Please enable one of the Geosearch Sub-Modules. We do not know where to look for you.',
+      'severity' => REQUIREMENT_ERROR,
+      );
+    }
+  }
+  return $return;
+}

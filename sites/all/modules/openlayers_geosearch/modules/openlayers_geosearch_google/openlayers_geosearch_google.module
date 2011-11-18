@@ -1,0 +1,25 @@
+<?php
+
+/*
+ *  This impressive piece of code will just use someone elses effort.
+ *  We like its simplicity
+ */
+
+function openlayers_geosearch_google_geosearch($query) {
+  $result = module_invoke('openlayers_geocoder', 'response', $query);
+  // During the Drupal 7 upgrade we will switch to using geocode, which is extendable
+  // so we can add geocoders for openstreetmap, geonames, wfs etc.
+  // the reason not to do this now is that geocode has only a working google plugin
+  // which only returns 1 value at a time, so you have to do a lot of querying
+  // before you can show a nice list of geocoded items.
+  // We could fix that in geocode, but not in the D6 version
+  //  $result = geocode($provider, $query, 'text');
+  if (isset($result)) {
+    return array(
+      'Google' => $result,
+    );
+  }
+  else {
+    return NULL;
+  }
+}

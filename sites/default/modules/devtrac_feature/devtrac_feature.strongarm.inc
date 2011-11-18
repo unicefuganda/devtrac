@@ -19,6 +19,7 @@ function devtrac_feature_strongarm() {
   $strongarm->name = 'collapsiblock_settings';
   $strongarm->value = array(
     'block-devtrack_module-4' => '3',
+    'block-quicktabs-geosearch' => '1',
   );
   $export['collapsiblock_settings'] = $strongarm;
 
@@ -630,6 +631,13 @@ Other';
   $strongarm->name = 'print_pdf_page_orientation';
   $strongarm->value = 'portrait';
   $export['print_pdf_page_orientation'] = $strongarm;
+
+  $strongarm = new stdClass;
+  $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
+  $strongarm->api_version = 1;
+  $strongarm->name = 'quicktabs_tabstyle';
+  $strongarm->value = 'Zen';
+  $export['quicktabs_tabstyle'] = $strongarm;
 
   $strongarm = new stdClass;
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */

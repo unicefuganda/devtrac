@@ -921,6 +921,82 @@ function devtrack_module_form_alter(&$form, &$form_state, $form_id) {
   }
 }
 
+/**
+ * Add action item metadata to the comment form.
+ *
+ * @param $form
+ *   Reference to form structure.
+ * @param $form_state
+ *   Current form state.
+ */
+function devtrack_module_form_comment_form_alter(&$form, &$form_state) {
+  $nid = $form['nid']['#value'];
+  $node = node_load($nid);
+
+  // Allows only actionitem
+  if ($node->type != 'actionitem') {
+    return;
+  }
+
+  // Only allow metadata changes on new followups.
+  if (isset($form['cid']['#value'])) {
+    return;
+  }
+
+  // We have to set $form['#action'] to prevent AHAH nastiness.
+  $form['#action'] = url('comment/reply/' . $nid);
+
+  // Call devtrack_module_comment_submit() on submission.
+  $form['#submit'][] = 'devtrack_module_comment_submit';
+
+  // Add metadata to comment_form for users that are allowed to change it.
+  $form['#prefix'] = '<div class="actionitem-comment"><div class="node-form"><div class="standard">';
+  $form['#suffix'] = '</div></div></div>';
+  global $user;
+  foreach ($node->field_actionitem_responsible as $responsible) {
+    if (($user->uid == $node->uid) || (($node->field_actionitem_status[0]['value'] != 3) && ($user->uid == $responsible['uid']))) {
+      $form['original_actionitem'] = array(
+        '#type' => 'fieldset',
+        '#title' => t('Change action item status'),
+        '#collapsible' => TRUE,
+        '#weight' => -10,
+      );
+
+      $options = array(
+        1 => 'Open',
+        2 => 'Rejected',
+        3 => 'Closed',
+      );
+      $form['original_actionitem']['actionitem_status'] = array(
+        '#type' => 'select',
+        '#title' => t('Action item status'),
+        '#options' => $options,
+        '#default_value' => $node->field_actionitem_status[0]['value'],
+        '#weight' => -30,
+        '#required' => TRUE,
+      );
+      break;
+    }
+  }
+  return;
+}
+
+function devtrack_module_comment_submit($form, &$form_state) {
+  $nid = $form_state['values']['nid'];
+  $actionitem = node_load($nid);
+  if ($actionitem->field_actionitem_status[0]['value'] != $form_state['values']['actionitem_status']) {
+    $old_status = $actionitem->field_actionitem_status[0]['value'];
+    $options = array(
+      1 => 'Open',
+      2 => 'Rejected',
+      3 => 'Closed',
+    );
+    $actionitem->field_actionitem_status[0]['value'] = $form_state['values']['actionitem_status'];
+    node_save($actionitem);
+    drupal_set_message('Changed status of action item "'. $actionitem->title .'" from '. $options[$old_status] .' to '. $options[$form_state['values']['actionitem_status']]);
+  }
+}
+
 function devtrack_module_form_ftritem_node_form_alter(&$form, &$form_state) {
   $form['#pre_render'][] = 'devtrack_module_ftritem_hide_place_and_fieldtrip_fields';
 }

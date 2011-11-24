@@ -567,6 +567,10 @@ background-image: -moz-linear-gradient(
   width: 400px; /* this is not working, code is making this 600px which is ugly */
 }
 
+#openlayers-map-auto-id-0.openlayers-preset-uganda_map .openlayers-popup, #openlayers-map-auto-id-0.openlayers-preset-tripreports .openlayers-popup {
+  width: 300px;  /* this is working (on the homepage (preset uganda_map) and the finder page (preset tripreports) only), looks kind of nice */
+}
+
 .openlayers-popup img {
 	margin-top:4px;
 	float: right;

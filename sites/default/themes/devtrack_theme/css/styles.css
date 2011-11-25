@@ -926,7 +926,7 @@ body a.getfeatureaddlink:link {
 }
 
 /* The new tabbed block on the places/* pages */
-.col-content_contentlayerright form#openlayers-geosearch-searchform input.form-text, textarea {
+.col-content_contentlayerright form#openlayers-geosearch-searchform input.form-text {
   max-width: 294px;
 }
 ul.quicktabs_tabs.quicktabs-style-zen {

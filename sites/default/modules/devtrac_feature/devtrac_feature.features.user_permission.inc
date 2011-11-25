@@ -831,6 +831,28 @@ function devtrac_feature_user_default_permissions() {
     ),
   );
 
+  // Exported permission: publish own fieldtrip content
+  $permissions['publish own fieldtrip content'] = array(
+    'name' => 'publish own fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: publish own ftritem content
+  $permissions['publish own ftritem content'] = array(
+    'name' => 'publish own ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
   // Exported permission: sync all bbsync
   $permissions['sync all bbsync'] = array(
     'name' => 'sync all bbsync',
@@ -846,6 +868,28 @@ function devtrac_feature_user_default_permissions() {
       '0' => 'administrator',
       '1' => 'unicef user',
       '2' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: unpublish own fieldtrip content
+  $permissions['unpublish own fieldtrip content'] = array(
+    'name' => 'unpublish own fieldtrip content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
+    ),
+  );
+
+  // Exported permission: unpublish own ftritem content
+  $permissions['unpublish own ftritem content'] = array(
+    'name' => 'unpublish own ftritem content',
+    'roles' => array(
+      '0' => 'administrator',
+      '1' => 'authenticated user',
+      '2' => 'unicef user',
+      '3' => 'unicef user (Mobile)',
     ),
   );
 

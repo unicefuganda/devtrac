@@ -2321,7 +2321,25 @@ function devtrac_feature_views_default_views() {
       'me_validate_user_restrict_roles' => 0,
     ),
   ));
-  $handler->override_option('filters', array());
+  $handler->override_option('filters', array(
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
   $handler->override_option('title', 'Site Reports');
   $handler->override_option('empty', 'There are no Site Reports for this field trip yet.');
   $handler->override_option('empty_format', '1');
@@ -5056,7 +5074,7 @@ else {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => 'Field Trip: %1\'s Site Reports',
+      'title' => 'Field Trip: %1\'s Published Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'node',
       'default_argument' => '',
@@ -5099,7 +5117,7 @@ else {
         '6' => 0,
         '5' => 0,
         '2' => 0,
-        '9' => 0,
+        '8' => 0,
         '1' => 0,
         '7' => 0,
       ),
@@ -5137,6 +5155,23 @@ else {
       'id' => 'type',
       'table' => 'node',
       'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
       'relationship' => 'none',
     ),
   ));
@@ -5204,11 +5239,489 @@ else {
     ),
     'default' => '-1',
   ));
-  $handler->override_option('path', 'node/%/fieldtripreports');
+  $handler->override_option('path', 'node/%/fieldtripreports/published');
   $handler->override_option('menu', array(
+    'type' => 'default tab',
+    'title' => 'Site Reports',
+    'description' => 'Site Reports',
+    'weight' => '3',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
     'type' => 'tab',
     'title' => 'Site Reports',
     'description' => 'Site Reports',
+    'weight' => '2',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('page', 'Field Trip Unpublished FTR page', 'page_3');
+  $handler->override_option('relationships', array(
+    'field_ftritem_place_nid' => array(
+      'label' => 'Place',
+      'required' => 0,
+      'delta' => -1,
+      'id' => 'field_ftritem_place_nid',
+      'table' => 'node_data_field_ftritem_place',
+      'field' => 'field_ftritem_place_nid',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('fields', array(
+    'field_ftritem_date_visited_value' => array(
+      'label' => 'Date Visited',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'medium',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => '',
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'both',
+      ),
+      'exclude' => 0,
+      'id' => 'field_ftritem_date_visited_value',
+      'table' => 'node_data_field_ftritem_date_visited',
+      'field' => 'field_ftritem_date_visited_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'tid_1' => array(
+      'label' => 'Site Report Type',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'type' => 'separator',
+      'separator' => ', ',
+      'link_to_taxonomy' => 1,
+      'limit' => 1,
+      'vids' => array(
+        '7' => 7,
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'exclude' => 0,
+      'id' => 'tid_1',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'tid' => array(
+      'label' => 'Location Type',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'type' => 'separator',
+      'separator' => ', ',
+      'link_to_taxonomy' => 1,
+      'limit' => 1,
+      'vids' => array(
+        '1' => 1,
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+      ),
+      'exclude' => 0,
+      'id' => 'tid',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'field_ftritem_place_nid',
+    ),
+    'field_ftritem_place_nid' => array(
+      'label' => 'Location',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => 'No Place',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_ftritem_place_nid',
+      'table' => 'node_data_field_ftritem_place',
+      'field' => 'field_ftritem_place_nid',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 1,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'view_node' => array(
+      'label' => 'Operations',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'text' => 'view',
+      'exclude' => 0,
+      'id' => 'view_node',
+      'table' => 'node',
+      'field' => 'view_node',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'edit_node' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'text' => 'edit',
+      'exclude' => 0,
+      'id' => 'edit_node',
+      'table' => 'node',
+      'field' => 'edit_node',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array(
+    'field_ftritem_field_trip_nid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => 'Field Trip: %1\'s Unpublished Site Reports',
+      'breadcrumb' => '',
+      'default_argument_type' => 'node',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'field_ftritem_field_trip_nid',
+      'table' => 'node_data_field_ftritem_field_trip',
+      'field' => 'field_ftritem_field_trip_nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'relationship' => 'none',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'fieldtrip' => 'fieldtrip',
+        'bbsync' => 0,
+        'actionitem' => 0,
+        'book' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'place' => 0,
+        'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+      ),
+      'validate_argument_node_access' => 1,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '8' => 0,
+        '1' => 0,
+        '7' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'ftritem' => 'ftritem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'Unpublished Site Reports');
+  $handler->override_option('footer', '<?php
+  global $user;
+  $node = node_load(arg(1));
+
+// drupal_set_message(\'Current user = \', $user->uid);
+// drupal_set_message(\'Node author = \', $node->uid);
+  if (($user->uid == $node->uid) && ($node->field_fieldtrip_status[0][\'value\'] != \'Approved\')) {
+    if (_devtrack_module_isinternetexplorer()) {
+      print \'<br />\';
+      print l(\'<div class="form-submit">Add Reports to Trip</div>\', \'node/\'. arg(1) .\'/addplaceform\', Array(\'html\'=> TRUE));
+    }
+    else {
+      print \'<br />\';
+      print l(\'<button class="form-submit" type="button">Add Reports to Trip</button>\', \'node/\'. arg(1) .\'/addplaceform\', Array(\'html\'=> TRUE));
+    }
+  }
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('empty', 'There are not yet any Site Reports associated with this Field Trip.');
+  $handler->override_option('empty_format', '1');
+  $handler->override_option('items_per_page', 0);
+  $handler->override_option('distinct', 1);
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'override' => 1,
+    'sticky' => 0,
+    'order' => 'asc',
+    'columns' => array(
+      'field_ftritem_date_visited_value' => 'field_ftritem_date_visited_value',
+      'tid_1' => 'tid_1',
+      'tid' => 'tid',
+      'field_ftritem_place_nid' => 'field_ftritem_place_nid',
+      'title' => 'title',
+      'view_node' => 'view_node',
+      'edit_node' => 'view_node',
+    ),
+    'info' => array(
+      'field_ftritem_date_visited_value' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'tid_1' => array(
+        'separator' => '',
+      ),
+      'tid' => array(
+        'separator' => '',
+      ),
+      'field_ftritem_place_nid' => array(
+        'separator' => '',
+      ),
+      'title' => array(
+        'sortable' => 1,
+        'separator' => '',
+      ),
+      'view_node' => array(
+        'separator' => ' ',
+      ),
+      'edit_node' => array(
+        'separator' => '',
+      ),
+    ),
+    'default' => '-1',
+  ));
+  $handler->override_option('path', 'node/%/fieldtripreports/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Unpublished Site Reports',
+    'description' => 'Unpublished Site Reports',
     'weight' => '3',
     'name' => 'navigation',
   ));
@@ -11538,6 +12051,23 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 5);
@@ -12629,6 +13159,23 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'Action Items');
   $handler->override_option('footer', '<?php
@@ -12751,6 +13298,23 @@ if (arg(1) == \'me\') {
         'button' => 'Use default',
       ),
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'All Action Items');
   $handler->override_option('footer', '<?php
@@ -12762,9 +13326,9 @@ if (arg(1) == \'me\') {
   $handler->override_option('empty', 'This place has no  Action Items yet.');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
-  $handler->override_option('path', 'node/%/action_items');
+  $handler->override_option('path', 'node/%/action_items/published');
   $handler->override_option('menu', array(
-    'type' => 'tab',
+    'type' => 'default tab',
     'title' => 'Action Items',
     'description' => 'All Action Items',
     'weight' => '4',
@@ -12772,9 +13336,9 @@ if (arg(1) == \'me\') {
   ));
   $handler->override_option('tab_options', array(
     'type' => 'tab',
-    'title' => 'Open Action Items',
-    'description' => 'Open Action Items for this Place',
-    'weight' => '2',
+    'title' => 'Action Items',
+    'description' => 'Action Items for this Place',
+    'weight' => '4',
     'name' => 'navigation',
   ));
   $handler = $view->new_display('block', 'This Report Action Items', 'block_4');
@@ -13297,12 +13861,30 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'Open Action Items');
   $handler->override_option('empty', 'This Report Item has no open Action Items.');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 0);
   $handler->override_option('use_pager', 'mini');
+  $handler->override_option('use_more_text', 'All My Action Items');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Block (Obsolete)', 'block_5');
@@ -14863,6 +15445,23 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('empty', 'This user does not have any Action Items assigned');
   $handler->override_option('use_ajax', TRUE);
@@ -15015,6 +15614,23 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'My Teams Action Items');
   $handler->override_option('empty', 'This team has no Action Items assigned.');
@@ -15150,6 +15766,23 @@ return TRUE;',
       ),
       'relationship' => 'none',
       'reduce_duplicates' => 0,
+    ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('empty', 'This user does not have any Closed Action Items assigned.');
@@ -15722,6 +16355,23 @@ return TRUE;',
       ),
       'relationship' => 'none',
       'reduce_duplicates' => 0,
+    ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('title', 'Action Items');
@@ -16696,17 +17346,454 @@ return TRUE;',
         'button' => 'Use default',
       ),
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'All Action Items');
   $handler->override_option('empty', 'This place has no  Action Items yet.');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
-  $handler->override_option('path', 'node/%/fieldtripactionitems');
+  $handler->override_option('path', 'node/%/fieldtripactionitems/published');
   $handler->override_option('menu', array(
-    'type' => 'tab',
+    'type' => 'default tab',
     'title' => 'Action Items',
     'description' => 'All Action Items',
     'weight' => '4',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'tab',
+    'title' => 'Action Items',
+    'description' => 'Action Items for this Place',
+    'weight' => '4',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('page', 'My Unpublished Action Items Page', 'page_9');
+  $handler->override_option('arguments', array(
+    'field_actionitem_responsible_uid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => '',
+      'breadcrumb' => '',
+      'default_argument_type' => 'user',
+      'default_argument' => '',
+      'validate_type' => 'user',
+      'validate_fail' => 'not found',
+      'break_phrase' => 1,
+      'not' => 0,
+      'id' => 'field_actionitem_responsible_uid',
+      'table' => 'node_data_field_actionitem_responsible',
+      'field' => 'field_actionitem_responsible_uid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'relationship' => 'none',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'bbsync' => 0,
+        'actionitem' => 0,
+        'book' => 0,
+        'fieldtrip' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'place' => 0,
+        'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+      ),
+      'validate_argument_node_access' => 0,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'actionitem' => 'actionitem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'My Unpublished Action Items');
+  $handler->override_option('empty', 'This user does not have any Action Items assigned');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('path', 'user/%/actionitems/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'My Unpublished Action Items',
+    'description' => 'My Unpublished Action Items',
+    'weight' => '6',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'tab',
+    'title' => 'My Open Action Items',
+    'description' => 'My Open Action Items',
+    'weight' => '5',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('page', 'All Unpublished Action Items for Field Trip', 'page_10');
+  $handler->override_option('relationships', array(
+    'field_actionitem_resp_place_nid' => array(
+      'label' => 'Responsible Place',
+      'required' => 0,
+      'delta' => -1,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'nodereferer_referers' => array(
+      'label' => 'Referencing Nodes',
+      'required' => 1,
+      'referrer_delta' => '-1',
+      'referrer_field' => 'field_fieldtrip_places',
+      'id' => 'nodereferer_referers',
+      'table' => 'node',
+      'field' => 'nodereferer_referers',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'field_actionitem_resp_place_nid',
+    ),
+  ));
+  $handler->override_option('arguments', array(
+    'nid' => array(
+      'default_action' => 'empty',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => '',
+      'breadcrumb' => '',
+      'default_argument_type' => 'fixed',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'nid',
+      'table' => 'node',
+      'field' => 'nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'nodereferer_referers',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'fieldtrip' => 'fieldtrip',
+        'bbsync' => 0,
+        'actionitem' => 0,
+        'book' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'place' => 0,
+        'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+        'testype' => 0,
+      ),
+      'validate_argument_node_access' => 1,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'actionitem' => 'actionitem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'All Unpublished Action Items');
+  $handler->override_option('empty', 'This place has no  Action Items yet.');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('path', 'node/%/fieldtripactionitems/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Unpublished Action Items',
+    'description' => 'All Unpublished Action Items',
+    'weight' => '5',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'tab',
+    'title' => 'Open Action Items',
+    'description' => 'Open Action Items for this Place',
+    'weight' => '2',
+    'name' => 'navigation',
+  ));
+  $handler = $view->new_display('page', 'All Unpublished Action Items for Location Page', 'page_11');
+  $handler->override_option('relationships', array());
+  $handler->override_option('arguments', array(
+    'field_actionitem_resp_place_nid' => array(
+      'default_action' => 'ignore',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => '',
+      'breadcrumb' => '',
+      'default_argument_type' => 'fixed',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'field_actionitem_resp_place_nid',
+      'table' => 'node_data_field_actionitem_resp_place',
+      'field' => 'field_actionitem_resp_place_nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'place' => 'place',
+        'bbsync' => 0,
+        'actionitem' => 0,
+        'book' => 0,
+        'fieldtrip' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
+        'testype' => 0,
+      ),
+      'validate_argument_node_access' => 1,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'actionitem' => 'actionitem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'All Unpublished Action Items');
+  $handler->override_option('footer', '<?php
+//  print l(\'<button type="button">Back to Field Trip</button>\', \'node/\'. arg(1), Array(\'html\'  => TRUE));
+ // print l(\'<button type="button">Pdf</button>\', \'printpdf/\'. arg(1). \'/fieldtrip_action_items_pdf\', Array(\'html\'  => TRUE));
+?>');
+  $handler->override_option('footer_format', '3');
+  $handler->override_option('footer_empty', 0);
+  $handler->override_option('empty', 'This place has no  Action Items yet.');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('path', 'node/%/action_items/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Unpublished Action Items',
+    'description' => 'All Unpublished Action Items',
+    'weight' => '5',
     'name' => 'navigation',
   ));
   $handler->override_option('tab_options', array(
@@ -17390,6 +18477,23 @@ return TRUE;',
       'id' => 'type',
       'table' => 'node',
       'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
       'relationship' => 'none',
     ),
   ));
@@ -18331,22 +19435,39 @@ return TRUE;',
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
-  $handler->override_option('path', 'user/%/fieldtrips');
+  $handler->override_option('path', 'user/%/fieldtrips/published');
   $handler->override_option('menu', array(
-    'type' => 'tab',
+    'type' => 'default tab',
     'title' => 'My Field Trips',
     'description' => 'My Field Trips',
     'weight' => '5',
     'name' => 'navigation',
   ));
   $handler->override_option('tab_options', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
+    'type' => 'tab',
+    'title' => 'My Field Trips',
+    'description' => 'My Field Trips',
+    'weight' => '5',
     'name' => 'navigation',
   ));
   $handler = $view->new_display('page', 'Full Field Trip Node', 'page_2');
@@ -20631,6 +21752,316 @@ return TRUE;',
     'page_1' => 0,
     'block_4' => 0,
     'block_5' => 0,
+  ));
+  $handler = $view->new_display('page', 'My Unpublished Field Trips Page', 'page_3');
+  $handler->override_option('fields', array(
+    'field_fieldtrip_proms_ta_id_value' => array(
+      'label' => 'TA Number',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 1,
+      'id' => 'field_fieldtrip_proms_ta_id_value',
+      'table' => 'node_data_field_fieldtrip_proms_ta_id',
+      'field' => 'field_fieldtrip_proms_ta_id_value',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Override',
+      ),
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 0,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+    ),
+    'field_fieldtrip_start_end_date_value' => array(
+      'label' => 'From',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => TRUE,
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'value',
+      ),
+      'exclude' => 0,
+      'id' => 'field_fieldtrip_start_end_date_value',
+      'table' => 'node_data_field_fieldtrip_start_end_date',
+      'field' => 'field_fieldtrip_start_end_date_value',
+      'relationship' => 'none',
+    ),
+    'field_fieldtrip_start_end_date_value2' => array(
+      'label' => 'To',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'custom',
+      'format' => 'default',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => TRUE,
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'value2',
+      ),
+      'exclude' => 0,
+      'id' => 'field_fieldtrip_start_end_date_value2',
+      'table' => 'node_data_field_fieldtrip_start_end_date',
+      'field' => 'field_fieldtrip_start_end_date_value2',
+      'relationship' => 'none',
+    ),
+    'field_fieldtrip_duration_value' => array(
+      'label' => 'Duration',
+      'alter' => array(
+        'alter_text' => 1,
+        'text' => '[field_fieldtrip_duration_value] day(s)',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'computed_value',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_fieldtrip_duration_value',
+      'table' => 'node_data_field_fieldtrip_duration',
+      'field' => 'field_fieldtrip_duration_value',
+      'override' => array(
+        'button' => 'Override',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_fieldtrip_status_value' => array(
+      'label' => 'Status',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_fieldtrip_status_value',
+      'table' => 'node_data_field_fieldtrip_status',
+      'field' => 'field_fieldtrip_status_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'field_fieldtrip_start_end_date_value' => array(
+      'order' => 'DESC',
+      'delta' => -1,
+      'id' => 'field_fieldtrip_start_end_date_value',
+      'table' => 'node_data_field_fieldtrip_start_end_date',
+      'field' => 'field_fieldtrip_start_end_date_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'fieldtrip' => 'fieldtrip',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'My Unpublished Field Trips');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('path', 'user/%/fieldtrips/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'My Unpublished Field Trips',
+    'description' => 'My Unpublished Field Trips',
+    'weight' => '6',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => 0,
+    'name' => 'navigation',
   ));
 
   $views[$view->name] = $view;
@@ -28197,6 +29628,23 @@ else {
       'field' => 'type',
       'relationship' => 'none',
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'Report Items');
   $handler->override_option('footer', '<?php
@@ -29366,6 +30814,23 @@ else {
         'button' => 'Use default',
       ),
     ),
+    'status_extra' => array(
+      'operator' => '=',
+      'value' => '',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status_extra',
+      'table' => 'node',
+      'field' => 'status_extra',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
   ));
   $handler->override_option('title', 'All Site Reports');
   $handler->override_option('empty', 'No site reports yet, Please check again later.');
@@ -29428,19 +30893,19 @@ else {
     ),
     'default' => '-1',
   ));
-  $handler->override_option('path', 'node/%/place_ftritems');
+  $handler->override_option('path', 'node/%/place_ftritems/published');
   $handler->override_option('menu', array(
-    'type' => 'tab',
+    'type' => 'default tab',
     'title' => 'Site Reports',
     'description' => 'Site Reports for this Location',
     'weight' => '3',
     'name' => 'navigation',
   ));
   $handler->override_option('tab_options', array(
-    'type' => 'none',
-    'title' => '',
-    'description' => '',
-    'weight' => 0,
+    'type' => 'tab',
+    'title' => 'Site Reports',
+    'description' => 'Site Reports for this Location',
+    'weight' => '3',
     'name' => 'navigation',
   ));
   $handler = $view->new_display('openlayers', 'User Site Reports Roadside Data', 'openlayers_1');
@@ -29601,6 +31066,596 @@ else {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
+  $handler = $view->new_display('page', 'All unpublished site reports (Place)', 'page_3');
+  $handler->override_option('relationships', array(
+    'field_ftritem_place_nid' => array(
+      'label' => 'Place',
+      'required' => 0,
+      'delta' => -1,
+      'id' => 'field_ftritem_place_nid',
+      'table' => 'node_data_field_ftritem_place',
+      'field' => 'field_ftritem_place_nid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('fields', array(
+    'field_ftritem_date_visited_value' => array(
+      'label' => 'Date Visited',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'medium',
+      'multiple' => array(
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_to' => '',
+        'group' => '',
+      ),
+      'repeat' => array(
+        'show_repeat_rule' => '',
+      ),
+      'fromto' => array(
+        'fromto' => 'both',
+      ),
+      'exclude' => 0,
+      'id' => 'field_ftritem_date_visited_value',
+      'table' => 'node_data_field_ftritem_date_visited',
+      'field' => 'field_ftritem_date_visited_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'tid' => array(
+      'label' => 'Site Report Type',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'type' => 'separator',
+      'separator' => ', ',
+      'link_to_taxonomy' => 1,
+      'limit' => 1,
+      'vids' => array(
+        '7' => 7,
+        '4' => 0,
+        '6' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'exclude' => 0,
+      'id' => 'tid',
+      'table' => 'term_node',
+      'field' => 'tid',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'field_ftritem_place_nid' => array(
+      'label' => 'Place',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 1,
+      'id' => 'field_ftritem_place_nid',
+      'table' => 'node_data_field_ftritem_place',
+      'field' => 'field_ftritem_place_nid',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'field_ftritem_narrative_value' => array(
+      'label' => 'Full Report',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '100',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 0,
+      'label_type' => 'widget',
+      'format' => 'default',
+      'multiple' => array(
+        'group' => TRUE,
+        'multiple_number' => '',
+        'multiple_from' => '',
+        'multiple_reversed' => FALSE,
+      ),
+      'exclude' => 0,
+      'id' => 'field_ftritem_narrative_value',
+      'table' => 'node_data_field_ftritem_narrative',
+      'field' => 'field_ftritem_narrative_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'body' => array(
+      'label' => 'Narrative',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 1,
+        'max_length' => '100',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'exclude' => 1,
+      'id' => 'body',
+      'table' => 'node_revisions',
+      'field' => 'body',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'title' => array(
+      'label' => 'Title',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_node' => 1,
+      'exclude' => 1,
+      'id' => 'title',
+      'table' => 'node',
+      'field' => 'title',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'view_node' => array(
+      'label' => 'Operations',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'text' => 'view',
+      'exclude' => 0,
+      'id' => 'view_node',
+      'table' => 'node',
+      'field' => 'view_node',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'edit_node' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'text' => 'edit',
+      'exclude' => 0,
+      'id' => 'edit_node',
+      'table' => 'node',
+      'field' => 'edit_node',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+    'name' => array(
+      'label' => 'Term',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'link_to_taxonomy' => 0,
+      'exclude' => 1,
+      'id' => 'name',
+      'table' => 'term_data',
+      'field' => 'name',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'field_ftritem_place_nid',
+    ),
+    'phpcode' => array(
+      'label' => '',
+      'alter' => array(
+        'alter_text' => 0,
+        'text' => '',
+        'make_link' => 0,
+        'path' => '',
+        'link_class' => '',
+        'alt' => '',
+        'prefix' => '',
+        'suffix' => '',
+        'target' => '',
+        'help' => '',
+        'trim' => 0,
+        'max_length' => '',
+        'word_boundary' => 1,
+        'ellipsis' => 1,
+        'html' => 0,
+        'strip_tags' => 0,
+      ),
+      'empty' => '',
+      'hide_empty' => 0,
+      'empty_zero' => 0,
+      'value' => '<?php
+  global $user;
+  if ($user->uid == 0) {
+    return \'\';
+  }
+  $ftritem = node_load($data->nid);
+  if ($ftritem->uid != $user->uid) {
+    return \'\';
+  }
+//  $result .= \'<ul><li>\';
+  $result .= l(\'<button type="button">Edit Report</button>\', \'node/\'. $ftritem->nid .\'/edit\', Array(\'html\' => TRUE));
+//  $result .= \'</li></ul>\';
+//  return $result;
+?>
+',
+      'exclude' => 0,
+      'id' => 'phpcode',
+      'table' => 'customfield',
+      'field' => 'phpcode',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('sorts', array(
+    'field_ftritem_date_visited_value' => array(
+      'order' => 'DESC',
+      'delta' => -1,
+      'id' => 'field_ftritem_date_visited_value',
+      'table' => 'node_data_field_ftritem_date_visited',
+      'field' => 'field_ftritem_date_visited_value',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('arguments', array(
+    'field_ftritem_place_nid' => array(
+      'default_action' => 'default',
+      'style_plugin' => 'default_summary',
+      'style_options' => array(),
+      'wildcard' => 'all',
+      'wildcard_substitution' => 'All',
+      'title' => 'Location: %1\'s Trip Report Items',
+      'breadcrumb' => '',
+      'default_argument_type' => 'node',
+      'default_argument' => '',
+      'validate_type' => 'node',
+      'validate_fail' => 'not found',
+      'break_phrase' => 0,
+      'not' => 0,
+      'id' => 'field_ftritem_place_nid',
+      'table' => 'node_data_field_ftritem_place',
+      'field' => 'field_ftritem_place_nid',
+      'validate_user_argument_type' => 'uid',
+      'validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+      ),
+      'me_redirect' => 0,
+      'me_validate_user_argument_type' => 'uid',
+      'me_validate_user_roles' => array(
+        '2' => 0,
+        '3' => 0,
+      ),
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+      'default_options_div_prefix' => '',
+      'default_argument_fixed' => '',
+      'default_argument_user' => 0,
+      'default_argument_php' => '',
+      'validate_argument_node_type' => array(
+        'place' => 'place',
+        'actionitem' => 0,
+        'book' => 0,
+        'fieldtrip' => 0,
+        'ftritem' => 0,
+        'page' => 0,
+        'story' => 0,
+        'user_profile' => 0,
+      ),
+      'validate_argument_node_access' => 0,
+      'validate_argument_nid_type' => 'nid',
+      'validate_argument_vocabulary' => array(
+        '4' => 0,
+        '5' => 0,
+        '2' => 0,
+        '1' => 0,
+      ),
+      'validate_argument_type' => 'tid',
+      'validate_argument_transform' => 0,
+      'validate_user_restrict_roles' => 0,
+      'validate_argument_php' => '',
+      'me_validate_user_restrict_roles' => 0,
+    ),
+  ));
+  $handler->override_option('filters', array(
+    'type' => array(
+      'operator' => 'in',
+      'value' => array(
+        'ftritem' => 'ftritem',
+      ),
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'type',
+      'table' => 'node',
+      'field' => 'type',
+      'relationship' => 'none',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '0',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
+    ),
+  ));
+  $handler->override_option('title', 'All Unpublished Site Reports');
+  $handler->override_option('empty', 'No site reports yet, Please check again later.');
+  $handler->override_option('empty_format', '1');
+  $handler->override_option('use_ajax', TRUE);
+  $handler->override_option('use_pager', '1');
+  $handler->override_option('distinct', 1);
+  $handler->override_option('style_options', array(
+    'grouping' => '',
+    'override' => 1,
+    'sticky' => 0,
+    'order' => 'asc',
+    'columns' => array(
+      'field_ftritem_date_visited_value' => 'field_ftritem_date_visited_value',
+      'tid' => 'tid',
+      'field_ftritem_place_nid' => 'field_ftritem_place_nid',
+      'field_ftritem_narrative_value' => 'field_ftritem_narrative_value',
+      'body' => 'body',
+      'title' => 'title',
+      'view_node' => 'view_node',
+      'edit_node' => 'view_node',
+      'name' => 'name',
+      'phpcode' => 'phpcode',
+    ),
+    'info' => array(
+      'field_ftritem_date_visited_value' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'tid' => array(
+        'separator' => '',
+      ),
+      'field_ftritem_place_nid' => array(
+        'separator' => '',
+      ),
+      'field_ftritem_narrative_value' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'body' => array(
+        'separator' => '',
+      ),
+      'title' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'view_node' => array(
+        'separator' => ' ',
+      ),
+      'edit_node' => array(
+        'separator' => '',
+      ),
+      'name' => array(
+        'sortable' => 0,
+        'separator' => '',
+      ),
+      'phpcode' => array(
+        'separator' => '',
+      ),
+    ),
+    'default' => '-1',
+  ));
+  $handler->override_option('path', 'node/%/place_ftritems/unpublished');
+  $handler->override_option('menu', array(
+    'type' => 'tab',
+    'title' => 'Unpublished Site Reports',
+    'description' => 'Unpublished Site Reports for this Location',
+    'weight' => '4',
+    'name' => 'navigation',
+  ));
+  $handler->override_option('tab_options', array(
+    'type' => 'none',
+    'title' => '',
+    'description' => '',
+    'weight' => 0,
+    'name' => 'navigation',
+  ));
 
   $views[$view->name] = $view;
 

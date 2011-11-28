@@ -1734,7 +1734,9 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
          * This should be changed in the array returned by the BB App.
          * So once the BB App has been updated we have to remove the following line of code again.
          */
-        $node->status = 1;
+        if (!isset($node->nid)) { // We're inserting a new action item.
+          $node->status = 1;
+        }
         break;
     }
   }
@@ -1773,12 +1775,30 @@ function devtrack_module_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     switch ($op) {
       case 'load':
         $node->oldstatus = $node->field_fieldtrip_status[0]['value'];
+        $node->oldpublishingstatus = $node->status;
         break;
       case 'insert':
         $localuser = user_load($node->field_fieldtrip_user[0]['uid']);
         devtrack_module_fieldtrip_grant_update($node, $localuser);
         break;
       case 'presave':
+        if ($node->oldpublishingstatus == 1) {
+          if ($node->status == 0) { // Field trip is being unpublished, so unpublish all site reports and action items as well.
+            $sitereportnids = db_query("SELECT nid FROM {content_type_ftritem} WHERE field_ftritem_field_trip_nid = %d", $node->nid);
+            while ($sitereportnid = db_fetch_object($sitereportnids)) {
+              $sitereport = node_load($sitereportnid->nid);
+              $actionitemnids = db_query("SELECT nid FROM {content_type_actionitem} WHERE field_actionitem_ftreportitem_nid = %d", $sitereport->nid);
+              while ($actionitemnid = db_fetch_object($actionitemnids)) {
+                $actionitem = node_load($actionitemnid->nid);
+                $actionitem->status = 0;
+                node_save($actionitem);
+              }
+              $sitereport->status = 0;
+              node_save($sitereport);
+            }
+          }
+        }
+
         if (!isset($node->oldstatus)) {
           break;
         }

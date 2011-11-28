@@ -5254,7 +5254,7 @@ else {
     'weight' => '2',
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'Field Trip Unpublished FTR page', 'page_3');
+  $handler = $view->new_display('page', 'Field Trip Removed FTR page', 'page_3');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -5552,7 +5552,7 @@ else {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => 'Field Trip: %1\'s Unpublished Site Reports',
+      'title' => 'Field Trip: %1\'s Removed Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'node',
       'default_argument' => '',
@@ -5653,7 +5653,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'Unpublished Site Reports');
+  $handler->override_option('title', 'Removed Site Reports');
   $handler->override_option('footer', '<?php
   global $user;
   $node = node_load(arg(1));
@@ -5720,9 +5720,9 @@ else {
   $handler->override_option('path', 'node/%/fieldtripreports/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Unpublished Site Reports',
-    'description' => 'Unpublished Site Reports',
-    'weight' => '3',
+    'title' => 'Removed Site Reports',
+    'description' => 'Removed Site Reports',
+    'weight' => '5',
     'name' => 'navigation',
   ));
   $handler->override_option('tab_options', array(
@@ -17400,7 +17400,7 @@ return TRUE;',
     'weight' => '4',
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'My Unpublished Action Items Page', 'page_9');
+  $handler = $view->new_display('page', 'My Removed Action Items Page', 'page_9');
   $handler->override_option('arguments', array(
     'field_actionitem_responsible_uid' => array(
       'default_action' => 'default',
@@ -17507,16 +17507,16 @@ return TRUE;',
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'My Unpublished Action Items');
+  $handler->override_option('title', 'My Removed Action Items');
   $handler->override_option('empty', 'This user does not have any Action Items assigned');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'user/%/actionitems/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'My Unpublished Action Items',
-    'description' => 'My Unpublished Action Items',
-    'weight' => '6',
+    'title' => 'My Removed Action Items',
+    'description' => 'My Removed Action Items',
+    'weight' => '8',
     'name' => 'navigation',
   ));
   $handler->override_option('tab_options', array(
@@ -17526,7 +17526,7 @@ return TRUE;',
     'weight' => '5',
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'All Unpublished Action Items for Field Trip', 'page_10');
+  $handler = $view->new_display('page', 'All Removed Action Items for Field Trip', 'page_10');
   $handler->override_option('relationships', array(
     'field_actionitem_resp_place_nid' => array(
       'label' => 'Responsible Place',
@@ -17664,15 +17664,15 @@ return TRUE;',
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'All Unpublished Action Items');
+  $handler->override_option('title', 'All Removed Action Items');
   $handler->override_option('empty', 'This place has no  Action Items yet.');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'node/%/fieldtripactionitems/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Unpublished Action Items',
-    'description' => 'All Unpublished Action Items',
+    'title' => 'Removed Action Items',
+    'description' => 'All Removed Action Items',
     'weight' => '5',
     'name' => 'navigation',
   ));
@@ -17683,7 +17683,7 @@ return TRUE;',
     'weight' => '2',
     'name' => 'navigation',
   ));
-  $handler = $view->new_display('page', 'All Unpublished Action Items for Location Page', 'page_11');
+  $handler = $view->new_display('page', 'All Removed Action Items for Location Page', 'page_11');
   $handler->override_option('relationships', array());
   $handler->override_option('arguments', array(
     'field_actionitem_resp_place_nid' => array(
@@ -17795,7 +17795,7 @@ return TRUE;',
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'All Unpublished Action Items');
+  $handler->override_option('title', 'All Removed Action Items');
   $handler->override_option('footer', '<?php
 //  print l(\'<button type="button">Back to Field Trip</button>\', \'node/\'. arg(1), Array(\'html\'  => TRUE));
  // print l(\'<button type="button">Pdf</button>\', \'printpdf/\'. arg(1). \'/fieldtrip_action_items_pdf\', Array(\'html\'  => TRUE));
@@ -17808,8 +17808,8 @@ return TRUE;',
   $handler->override_option('path', 'node/%/action_items/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Unpublished Action Items',
-    'description' => 'All Unpublished Action Items',
+    'title' => 'Removed Action Items',
+    'description' => 'All Removed Action Items',
     'weight' => '5',
     'name' => 'navigation',
   ));
@@ -21770,7 +21770,7 @@ return TRUE;',
     'block_4' => 0,
     'block_5' => 0,
   ));
-  $handler = $view->new_display('page', 'My Unpublished Field Trips Page', 'page_3');
+  $handler = $view->new_display('page', 'My Removed Field Trips Page', 'page_3');
   $handler->override_option('fields', array(
     'field_fieldtrip_proms_ta_id_value' => array(
       'label' => 'TA Number',
@@ -22062,14 +22062,14 @@ return TRUE;',
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'My Unpublished Field Trips');
+  $handler->override_option('title', 'My Removed Field Trips');
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('use_pager', '1');
   $handler->override_option('path', 'user/%/fieldtrips/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'My Unpublished Field Trips',
-    'description' => 'My Unpublished Field Trips',
+    'title' => 'My Removed Field Trips',
+    'description' => 'My Removed Field Trips',
     'weight' => '6',
     'name' => 'navigation',
   ));
@@ -31083,7 +31083,7 @@ else {
   ));
   $handler->override_option('row_plugin', '');
   $handler->override_option('displays', array());
-  $handler = $view->new_display('page', 'All unpublished site reports (Place)', 'page_3');
+  $handler = $view->new_display('page', 'All removed site reports (Place)', 'page_3');
   $handler->override_option('relationships', array(
     'field_ftritem_place_nid' => array(
       'label' => 'Place',
@@ -31504,7 +31504,7 @@ else {
       'style_options' => array(),
       'wildcard' => 'all',
       'wildcard_substitution' => 'All',
-      'title' => 'Location: %1\'s Trip Report Items',
+      'title' => 'Location: %1\'s Removed Site Reports',
       'breadcrumb' => '',
       'default_argument_type' => 'node',
       'default_argument' => '',
@@ -31519,12 +31519,18 @@ else {
       'validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'me_redirect' => 0,
       'me_validate_user_argument_type' => 'uid',
       'me_validate_user_roles' => array(
         '2' => 0,
         '3' => 0,
+        '4' => 0,
+        '5' => 0,
+        '6' => 0,
       ),
       'override' => array(
         'button' => 'Use default',
@@ -31536,21 +31542,26 @@ else {
       'default_argument_php' => '',
       'validate_argument_node_type' => array(
         'place' => 'place',
+        'bbsync' => 0,
         'actionitem' => 0,
         'book' => 0,
         'fieldtrip' => 0,
         'ftritem' => 0,
         'page' => 0,
-        'story' => 0,
         'user_profile' => 0,
+        'questionaire_question' => 0,
+        'story' => 0,
       ),
       'validate_argument_node_access' => 0,
       'validate_argument_nid_type' => 'nid',
       'validate_argument_vocabulary' => array(
         '4' => 0,
+        '6' => 0,
         '5' => 0,
         '2' => 0,
+        '8' => 0,
         '1' => 0,
+        '7' => 0,
       ),
       'validate_argument_type' => 'tid',
       'validate_argument_transform' => 0,
@@ -31597,7 +31608,7 @@ else {
       'relationship' => 'none',
     ),
   ));
-  $handler->override_option('title', 'All Unpublished Site Reports');
+  $handler->override_option('title', 'All Removed Site Reports');
   $handler->override_option('empty', 'No site reports yet, Please check again later.');
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_ajax', TRUE);
@@ -31661,8 +31672,8 @@ else {
   $handler->override_option('path', 'node/%/place_ftritems/unpublished');
   $handler->override_option('menu', array(
     'type' => 'tab',
-    'title' => 'Unpublished Site Reports',
-    'description' => 'Unpublished Site Reports for this Location',
+    'title' => 'Removed Site Reports',
+    'description' => 'Removed Site Reports for this Location',
     'weight' => '4',
     'name' => 'navigation',
   ));

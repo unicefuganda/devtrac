@@ -556,8 +556,10 @@ Other';
   $strongarm->name = 'locale_custom_strings_en';
   $strongarm->value = array(
     'Add another item' => 'Add another photo',
-    'View' => 'Overview',
+    'Publish' => 'Restore',
     'This action can be reverted by the unhide functionality. Not be scared!' => 'This action can be reversed later by clicking "unhide".',
+    'Unpublish' => 'Remove',
+    'View' => 'Overview',
   );
   $export['locale_custom_strings_en'] = $strongarm;
 

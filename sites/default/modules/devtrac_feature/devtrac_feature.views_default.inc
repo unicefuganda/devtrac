@@ -2322,18 +2322,18 @@ function devtrac_feature_views_default_views() {
     ),
   ));
   $handler->override_option('filters', array(
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -5157,18 +5157,18 @@ else {
       'field' => 'type',
       'relationship' => 'none',
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -12051,18 +12051,18 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -12609,6 +12609,23 @@ if (arg(1) == \'me\') {
       ),
       'relationship' => 'none',
       'reduce_duplicates' => 0,
+    ),
+    'status' => array(
+      'operator' => '=',
+      'value' => '1',
+      'group' => '0',
+      'exposed' => FALSE,
+      'expose' => array(
+        'operator' => FALSE,
+        'label' => '',
+      ),
+      'id' => 'status',
+      'table' => 'node',
+      'field' => 'status',
+      'override' => array(
+        'button' => 'Use default',
+      ),
+      'relationship' => 'none',
     ),
   ));
   $handler->override_option('title', 'My Teams Action Items');
@@ -13159,18 +13176,18 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -13298,18 +13315,18 @@ if (arg(1) == \'me\') {
         'button' => 'Use default',
       ),
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -13861,18 +13878,18 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -15445,18 +15462,18 @@ if (arg(1) == \'me\') {
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -15614,18 +15631,18 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -15767,18 +15784,18 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -16356,18 +16373,18 @@ return TRUE;',
       'relationship' => 'none',
       'reduce_duplicates' => 0,
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -17346,18 +17363,18 @@ return TRUE;',
         'button' => 'Use default',
       ),
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -18479,18 +18496,18 @@ return TRUE;',
       'field' => 'type',
       'relationship' => 'none',
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -19435,18 +19452,18 @@ return TRUE;',
       'field' => 'type',
       'relationship' => 'none',
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -29628,18 +29645,18 @@ else {
       'field' => 'type',
       'relationship' => 'none',
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),
@@ -30814,18 +30831,18 @@ else {
         'button' => 'Use default',
       ),
     ),
-    'status_extra' => array(
+    'status' => array(
       'operator' => '=',
-      'value' => '',
+      'value' => '1',
       'group' => '0',
       'exposed' => FALSE,
       'expose' => array(
         'operator' => FALSE,
         'label' => '',
       ),
-      'id' => 'status_extra',
+      'id' => 'status',
       'table' => 'node',
-      'field' => 'status_extra',
+      'field' => 'status',
       'override' => array(
         'button' => 'Use default',
       ),

@@ -2538,4 +2538,18 @@ function devtrack_module_link_alter(&$links, $node, $comment = NULL) {
   if ($comment != NULL) {
     $links = array_intersect_key($links, array('hidden_comment_show' => TRUE, 'hidden_comment_hide' => TRUE));
   }
+  else {
+    // Rename the 'Add new comment' link on action items.
+    // We should only do that when there already is a link.
+    // We don't want to create a new one.
+    // You never know where it is going to pop up.
+    if (($node->type == 'actionitem') && (isset($links['comment_add']['title']))) {
+      global $user;
+      foreach ($node->field_actionitem_responsible as $responsible) {
+        if (($user->uid == $node->uid) || (($node->field_actionitem_status[0]['value'] != 3) && ($user->uid == $responsible['uid']))) {
+          $links['comment_add']['title'] = 'Change action item status / Add new comment';
+        }
+      }
+    }
+  }
 }

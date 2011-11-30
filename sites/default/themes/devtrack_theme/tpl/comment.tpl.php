@@ -31,7 +31,7 @@
     </div>
     
     <div class="content">
-      <?php if ($title): ?><h3><?php print $title; ?></h3><?php endif; ?>
+<!--      <?php if ($title): ?><h3><?php print $title; ?></h3><?php endif; ?> -->
       <?php print $content ?>
       <?php if ($signature): ?>
         <div class="user-signature clear-block">

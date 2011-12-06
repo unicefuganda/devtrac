@@ -11,6 +11,9 @@ Drupal.behaviors.openlayers_geosearch = function (context) {
     if (!Drupal.openlayers_geosearch.data.map.displayProjection) {
       Drupal.openlayers_geosearch.data.map.displayProjection = 4326;
     }
+    if (!Drupal.openlayers_geosearch.data.map.behaviors['openlayers_behavior_zoomtolayer'].point_zoom_level) {  
+      Drupal.openlayers_geosearch.data.map.behaviors['openlayers_behavior_zoomtolayer'].point_zoom_level = 10;
+    }
     Drupal.openlayers_geosearch.displayProjection = new OpenLayers.Projection('EPSG:' + Drupal.openlayers_geosearch.data.map.displayProjection);
     Drupal.openlayers_geosearch.projection = new OpenLayers.Projection('EPSG:' + Drupal.openlayers_geosearch.data.map.projection);
     var searchLayer = Drupal.openlayers_geosearch.data.openlayers.getLayersBy('drupalID', "openlayers_searchresult_layer");

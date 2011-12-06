@@ -219,7 +219,7 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_scaleline' => array(),
       'openlayers_behavior_zoomtolayer' => array(
         'zoomtolayer' => 'findplaces_districts_openlayers_1',
-        'point_zoom_level' => '5',
+        'point_zoom_level' => '',
       ),
       'openlayers_plus_behavior_blockswitcher' => array(
         'map' => array(

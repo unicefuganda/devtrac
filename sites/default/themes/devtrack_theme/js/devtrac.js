@@ -4,14 +4,12 @@
 $(document).ready(function() {
 // only on the addplace page, check these boxes by default
   if (!$.browser.msie) {
-    $('input[name="reporttype"]')[0].checked = true;
-    $('input[name="placetype"]')[0].checked = true;
-  }
-  else {
-//    alert('Going to set defaults.');
-//    $('input[name="reporttype"]')[0].checked = true;
-//    $('input[name="placetype"]')[0].checked = true; 
-//    alert('Defaults set.');
+    if ($('input[name="reporttype"]')[0] != undefined) {
+      $('input[name="reporttype"]')[0].checked = true;
+    }
+    if ($('input[name="placetype"]')[0] != undefined) {
+      $('input[name="placetype"]')[0].checked = true;
+    }
   }
 });
 

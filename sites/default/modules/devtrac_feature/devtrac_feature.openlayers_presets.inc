@@ -244,17 +244,7 @@ function devtrac_feature_openlayers_presets() {
       'u-map-it-washWMS' => 'u-map-it-washWMS',
     ),
     'layer_styles' => array(
-      'findplaces_places_openlayers_1' => array(
-        'default' => 'placetype',
-        'select' => 'placetype',
-        'temporary' => 'placetype',
-      ),
-      'findplaces_districts_openlayers_1' => array(
-        'default' => 'invisible',
-        'select' => 'invisible',
-        'temporary' => 'invisible',
-      ),
-      'u-map-it-schoolsWMS' => array(
+      'u-map-it-washWMS' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
@@ -264,27 +254,37 @@ function devtrac_feature_openlayers_presets() {
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
-      'u-map-it-washWMS' => array(
+      'u-map-it-schoolsWMS' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
       ),
+      'findplaces_districts_openlayers_1' => array(
+        'default' => 'invisible',
+        'select' => 'invisible',
+        'temporary' => 'invisible',
+      ),
+      'findplaces_places_openlayers_1' => array(
+        'default' => 'placetype',
+        'select' => 'placetype',
+        'temporary' => 'placetype',
+      ),
     ),
     'layer_activated' => array(
-      'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
       'findplaces_districts_openlayers_1' => 'findplaces_districts_openlayers_1',
+      'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
     ),
     'layer_switcher' => array(
-      'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
-      'u-map-it-schoolsWMS' => 'u-map-it-schoolsWMS',
-      'UgandaHealthWMS' => 'UgandaHealthWMS',
       'u-map-it-washWMS' => 'u-map-it-washWMS',
+      'UgandaHealthWMS' => 'UgandaHealthWMS',
+      'u-map-it-schoolsWMS' => 'u-map-it-schoolsWMS',
+      'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
     ),
     'projection' => '900913',
     'displayProjection' => '4326',
     'styles' => array(
       'default' => 'default',
-      'select' => 'placetype',
+      'select' => 'default_select',
       'temporary' => 'placetype',
     ),
   );

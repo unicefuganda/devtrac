@@ -64,6 +64,8 @@ function openlayers_geosearch_ctools_plugin_api($module, $api) {
     switch ($api) {
       case 'openlayers_presets':
         return array('version' => 1);
+      case 'openlayers_layers':
+        return array('version' => 1);
     }
   }
 }
@@ -74,6 +76,14 @@ function openlayers_geosearch_ctools_plugin_api($module, $api) {
 function openlayers_geosearch_openlayers_presets() {
   module_load_include('inc', 'openlayers_geosearch', 'includes/openlayers_geosearch_presets');
   return _openlayers_geosearch_openlayers_presets();
+}
+
+/**
+ * Implementation of hook_openlayers_layers().
+ */
+function openlayers_geosearch_openlayers_layers() {
+  module_load_include('inc', 'openlayers_geosearch', 'includes/openlayers_geosearch_layers');
+  return _openlayers_geosearch_openlayers_layers();
 }
 
 /**
@@ -155,10 +165,11 @@ function openlayers_geosearch_get_response_js($query = '') {
   $query = check_plain($_POST['openlayers_geosearch_query_block']);
   $locations = array();
   if ($response = openlayers_geosearch_geosearch($query)) {
+    // Yes, one day we will use a nice .tpl file for this
     $result .= '<div id="openlayersgeosearchtabs">';
     $result .= '<ul>';
     foreach ($response as $provider => $results) {
-      $result .= '<li><a href="#openlayersgeosearchtabs-'. $provider .'">'. $provider .'</a></li>';
+      $result .= '<li><a href="#openlayersgeosearchtabs-'. $provider .'">'. $provider. ' (' . count($results) .')</a></li>';
     }
     $result .= '</ul>';
     foreach ($response as $provider => $results) {
@@ -255,6 +266,9 @@ function openlayers_geosearch_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 function openlayers_geosearch_searchform() {
+  // Load required js and css.
+  openlayers_geosearch_load();
+
   drupal_add_js(drupal_get_path('module', 'openlayers_geosearch') .'/js/openlayers_geosearch.js');
 
   $form['openlayers_geosearch_query_block'] = array(
@@ -280,6 +294,7 @@ function openlayers_geosearch_searchform() {
 
 function openlayers_geosearch_searchpage() {
   if (variable_get('openlayers_geosearch_test', TRUE)) {
+    // Load required js and css.
     openlayers_geosearch_load();
 
     $mapblock = module_invoke('openlayers_geosearch', 'block', 'view', 2);

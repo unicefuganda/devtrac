@@ -16,6 +16,7 @@
   foreach ($locations as $location) {
     $firstcolum = TRUE;
     print "<tr>";
+    $fid = 1; // We are going to give every feature an id, this should never happen in a template file, so TODO fix this.
     foreach ($location['locations']['components'] as $key => $component) {
       if ($firstcolum) {
         print '<td><a class="openlayers-geosearch-result-link" href="?lat=' . $location['locations']['location']['lat'] .
@@ -24,8 +25,10 @@
           '&miny=' . $location['locations']['bounds']['southwest']->lat .
           '&maxx=' . $location['locations']['bounds']['northeast']->lng .
           '&maxy=' . $location['locations']['bounds']['northeast']->lat .
-        '">' . $component ."</a></td>";
+          '&fid=' . $provider . '_' . $fid.
+        '">' . $component .'</a></td>';
         $firstcolum = FALSE;
+        $fid++; 
       }
       else {
         print "<td>" . $component ."</td>";

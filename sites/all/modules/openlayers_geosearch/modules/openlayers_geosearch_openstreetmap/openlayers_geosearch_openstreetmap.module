@@ -142,6 +142,16 @@ function _openlayers_geosearch_openstreetmap_process_data($data) {
 
   if (isset($data)) {
     foreach ($data as $datum) {
+      $southwest = new stdClass();
+      $southwest->lng = $datum->boundingbox[2];
+      $southwest->lat = $datum->boundingbox[0];
+      $northeast = new stdClass();
+      $northeast->lng = $datum->boundingbox[3];
+      $northeast->lat = $datum->boundingbox[1];
+      $bounds = array(
+        'southwest' => $southwest,
+        'northeast' => $northeast, 
+      );
       $location = Array(
         'address' => (array) $datum->address,
         'components' => Array(),
@@ -149,22 +159,11 @@ function _openlayers_geosearch_openstreetmap_process_data($data) {
           'lng' => $datum->lon,
           'lat' => $datum->lat,
         ),
-        'bounds' => Array(), //TODO: ReQuery each result to ge the bounding box
+        'bounds' => $bounds,
       );
-      if (!empty($datum->type)) {
-        $location['components'][t("name")] = $datum->address->{$datum->type};
-        if (!empty($datum->address->city)) {
-          $location['components'][t("city")] = $datum->address->city;
-        }
-//        if (!empty($datum->address->country)) {
-//          $location['components'][t("country")] = $datum->address->country;
-//        }
-//        $location['components'][t("address")] = $datum->display_name;
-        $location['components'][t("type")] = $datum->type;
-      }
-      if (!empty($location['components'][t("name")])) {
-        $result['OpenStreetMap'][] = $location;
-      }
+      $location['components'][t("name")] = $datum->display_name;
+      $location['components'][t("type")] = $datum->type;
+      $result['OpenStreetMap'][] = $location;
     }
   }
 

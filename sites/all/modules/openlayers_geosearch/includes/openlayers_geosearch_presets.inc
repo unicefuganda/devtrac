@@ -41,10 +41,21 @@ function _openlayers_geosearch_openlayers_presets() {
       'openlayers_behavior_attribution' => array(),
       'openlayers_behavior_keyboarddefaults' => array(),
       'openlayers_behavior_navigation' => array(),
+      'openlayers_behavior_tooltip' => array(
+        'layers' => array(
+          'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
+        ),
+      ),
     ),
+    'default_layer' => 'osm_mapnik',
     'layers' => array(
       'osm_mapnik' => 'osm_mapnik',
-    )
+      'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
+    ),
+    'layer_styles' => array(),
+    'layer_activated' => array(
+      'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
+    ),
   );
   return array('geosearch' => $default);
 }

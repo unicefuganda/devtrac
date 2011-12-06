@@ -638,7 +638,7 @@ Other';
   $strongarm->disabled = FALSE; /* Edit this to true to make a default strongarm disabled initially */
   $strongarm->api_version = 1;
   $strongarm->name = 'openlayers_geosearch_openstreetmap_maxresults';
-  $strongarm->value = '10';
+  $strongarm->value = '15';
   $export['openlayers_geosearch_openstreetmap_maxresults'] = $strongarm;
 
   $strongarm = new stdClass;

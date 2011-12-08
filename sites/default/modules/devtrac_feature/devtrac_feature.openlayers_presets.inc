@@ -206,6 +206,7 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_popup' => array(
         'layers' => array(
           'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
+          'openlayers_searchresult_layer' => 0,
           'findplaces_districts_openlayers_1' => 0,
         ),
       ),
@@ -242,12 +243,18 @@ function devtrac_feature_openlayers_presets() {
       'u-map-it-schoolsWMS' => 'u-map-it-schoolsWMS',
       'UgandaHealthWMS' => 'UgandaHealthWMS',
       'u-map-it-washWMS' => 'u-map-it-washWMS',
+      'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
     ),
     'layer_styles' => array(
       'u-map-it-washWMS' => array(
         'default' => 'devtrac_default',
         'select' => 'devtrac_default',
         'temporary' => 'devtrac_default',
+      ),
+      'openlayers_searchresult_layer' => array(
+        'default' => 'default',
+        'select' => 'default_select',
+        'temporary' => 'default',
       ),
       'UgandaHealthWMS' => array(
         'default' => 'devtrac_default',
@@ -271,6 +278,7 @@ function devtrac_feature_openlayers_presets() {
       ),
     ),
     'layer_activated' => array(
+      'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
       'findplaces_districts_openlayers_1' => 'findplaces_districts_openlayers_1',
       'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
     ),
@@ -284,7 +292,7 @@ function devtrac_feature_openlayers_presets() {
     'displayProjection' => '4326',
     'styles' => array(
       'default' => 'default',
-      'select' => 'default_select',
+      'select' => 'placetype',
       'temporary' => 'placetype',
     ),
   );

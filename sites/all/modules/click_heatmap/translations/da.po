@@ -1,0 +1,250 @@
+# Dansk translation of click_heatmap (6.x-2.5)
+# Copyright (c) 2009 by the Dansk translation team
+# Generated from files:
+#  click_heatmap.log.inc,v 1.1.4.4 2008/05/16 06:19:26 boombatower
+#  click_heatmap.info,v 1.2 2008/01/29 19:44:41 boombatower
+#  click_heatmap.module,v 1.5.4.7 2008/05/16 06:19:26 boombatower
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: click_heatmap (6.x-2.5)\n"
+"POT-Creation-Date: 2009-05-29 11:50-0700\n"
+"PO-Revision-Date: 2009-05-29 20:50+0100\n"
+"Language-Team: Dansk <dansk@klid.dk>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"Last-Translator: Morten Wulff <wulff@ratatosk.net>\n"
+"X-Poedit-Language: Danish\n"
+"X-Poedit-Country: DENMARK\n"
+
+#: click_heatmap.log.inc:70,94,106
+msgid "Update"
+msgstr "Opdatér"
+
+#: click_heatmap.log.inc:99
+msgid "Page"
+msgstr "Side"
+
+#: click_heatmap.info:0
+msgid "Other"
+msgstr "Anden"
+
+#: click_heatmap.module:165
+msgid "General"
+msgstr "Generelt"
+
+#: click_heatmap.module:188
+msgid "Login"
+msgstr "Login"
+
+#: click_heatmap.log.inc:31
+msgid "Please configure the module first."
+msgstr "Konfigurér venligst modulet først."
+
+#: click_heatmap.log.inc:44
+msgid "Display Settings"
+msgstr "Indstillinger for visning"
+
+#: click_heatmap.log.inc:45
+msgid "Display information that will be used to change the appearance of the heatmaps."
+msgstr "Vis information som bruges til at ændre udseendet af varmekortene."
+
+#: click_heatmap.log.inc:52
+msgid "Heatmap transparency"
+msgstr "Gennemsigtighed af varmekort"
+
+#: click_heatmap.log.inc:53
+msgid "Transparency of the heatmap overlay."
+msgstr "Gennemsigtigheden af varmekortlaget."
+
+#: click_heatmap.log.inc:58
+msgid "Display width"
+msgstr "Bredde"
+
+#: click_heatmap.log.inc:59
+msgid "Width of heatmap to display. Heatmap will be scaled to fit."
+msgstr "Bredden af varmekortet som vises. Varmekortet skaleres så det passer."
+
+#: click_heatmap.log.inc:64
+msgid "Display heatmap"
+msgstr "Vis varmekort"
+
+#: click_heatmap.log.inc:65
+msgid "Display heatmap instead of clicks."
+msgstr "Vis varmekort i stedet for klik."
+
+#: click_heatmap.log.inc:75
+msgid "Selection Information"
+msgstr "Udvalgsinformation"
+
+#: click_heatmap.log.inc:76
+msgid "Selection information that will be used to narrow the results used to generate heatmaps."
+msgstr "Udvalgsinformation som bruges til at begrænse resultaterne som bruges til at generere varmekort."
+
+#: click_heatmap.log.inc:83
+msgid "Browser"
+msgstr "Browser"
+
+#: click_heatmap.log.inc:84
+msgid "Display clicks from users of a specific browser."
+msgstr "Vis klik fra brugere af en bestemt browser."
+
+#: click_heatmap.log.inc:89
+msgid "Date range"
+msgstr "Datointerval"
+
+#: click_heatmap.log.inc:90
+msgid "Select click data from last 7 days."
+msgstr "Vælg klikdata fra seneste 7 dage."
+
+#: click_heatmap.log.inc:100
+msgid "Display clicks from users on a particular page."
+msgstr "Viser klik fra brugere på en bestemt side."
+
+#: click_heatmap.log.inc:111
+msgid "Clear Logs"
+msgstr "Ryd logs"
+
+#: click_heatmap.log.inc:156
+msgid "Failed to generate heatmap."
+msgstr "Kunne ikke generere varmekort."
+
+#: click_heatmap.log.inc:292
+msgid "Failed to delete log: %file."
+msgstr "Kunne ikke slette log: %file."
+
+#: click_heatmap.log.inc:300
+msgid "Failed to delete log directory: %directory."
+msgstr "Kunne ikke slette logmappe: %directory."
+
+#: click_heatmap.log.inc:308
+msgid "Logs cleared."
+msgstr "Logs ryddet."
+
+#: click_heatmap.module:19
+msgid ""
+"<p>The Click Heatmap modules provides integration between Drupal and the ClickHeat library.\n"
+"        The module itself does not record the necessary data or generate the click heatmaps themselves.\n"
+"        Instead this module adds the necessary Javascript to Drupal pages in order to have the click data\n"
+"        sent to the ClickHeat library.</p>\n"
+"        <p>Please make sure that you setup the Click Heatmap settings and read the instructions on that page.</p>"
+msgstr "<p>Click Heatmap-modulet sørger for integration af Drupal og ClickHeat-biblioteket. Selve modulet opsamler ikke de nødvendige data og opretter ikke klik-varmekortene. I stedet tilføjer modulet den nødvendige Javascript til Drupal-sider så klikdata sendes til ClickHeat-biblioteket.</p><p>Du skal sikre dig, at du har indstillet Click Heatmap korrekt og læst instruktionerne på indstillingssiden.</p>"
+
+#: click_heatmap.module:59
+msgid "Click heatmap"
+msgstr "Click Heatmap"
+
+#: click_heatmap.module:60
+msgid "Configure click heatmap."
+msgstr "Konfigurér Click Heatmap"
+
+#: click_heatmap.module:66
+msgid "Click heatmaps"
+msgstr "Click Heatmaps"
+
+#: click_heatmap.module:67
+msgid "View click heatmaps."
+msgstr "Se klik varmekort."
+
+#: click_heatmap.module:72
+msgid "View click heatmap"
+msgstr "Se klik varmekort."
+
+#: click_heatmap.module:166
+msgid "General setup information."
+msgstr "Generel information om opsætning."
+
+#: click_heatmap.module:170
+msgid "ClickHeat library installed"
+msgstr "ClickHeat-bibliotek installeret"
+
+#: click_heatmap.module:171
+msgid "Check this once the ClickHeat library has been installed to activate the module and start collecting data."
+msgstr "Markér dette når ClickHeat-biblioteket er blevet installeret for at aktivere modulet og starte dataindsamlingen."
+
+#: click_heatmap.module:176
+msgid "Scope"
+msgstr "Dækning"
+
+#: click_heatmap.module:177
+msgid "The pages that Click heatmaps will be generated for."
+msgstr "Sider som der genereres klik-varmekort for."
+
+#: click_heatmap.module:180
+msgid "All pages"
+msgstr "Alle sider"
+
+#: click_heatmap.module:181
+msgid "Non-admin pages"
+msgstr "Ikke-administrationssider"
+
+#: click_heatmap.module:182
+msgid "Admin pages"
+msgstr "Administrationssider"
+
+#: click_heatmap.module:183
+msgid "Home page"
+msgstr "Forside"
+
+#: click_heatmap.module:189
+msgid "Login information used for clickheat library administration interface."
+msgstr "Login-information til administrationssiden for ClickHeat-biblioteket."
+
+#: click_heatmap.module:195
+msgid "Administrator Username"
+msgstr "Administrator brugernavn"
+
+#: click_heatmap.module:196
+msgid "Username for administrator."
+msgstr "Brugernavn for administrator"
+
+#: click_heatmap.module:201
+msgid "Administrator Password"
+msgstr "Administrator adgangskode"
+
+#: click_heatmap.module:202
+msgid "Password for administrator."
+msgstr "Adgangskode for administrator."
+
+#: click_heatmap.module:207
+msgid "Change Login Information"
+msgstr "Skift login-information"
+
+#: click_heatmap.module:208
+msgid "Check this to override the current login information with the entered values."
+msgstr "Markér dette for at erstatte den nuværende login-information med de indtastede værdier."
+
+#: click_heatmap.module:220
+msgid "The module cannot be activated untill the ClickHeat library is installed."
+msgstr "Modulet kan ikke aktiveres før ClickHeat-biblioteket er installeret."
+
+#: click_heatmap.module:231
+msgid "Write access is needed for: <i>/click_heatmap/clickheat/config/</i>, <i>/click_heatmap/clickheat/logs/</i>, and <i>/click_heatmap/heatmaps/</i>."
+msgstr "Skriveadgang er nødvendig til: <em>/click_heatmap/clickheat/config/</em>, <em>/click_heatmap/clickheat/logs/</em> og <em>/click_heatmap/heatmaps/</em>."
+
+#: click_heatmap.module:275
+msgid "Configuration file created. Please removed write permissions to <i>/click_heatmap/clickheat/config/</i>."
+msgstr "Konfigurationsfil oprettet. Fjern venligst skriveadgang til <em>/click_heatmap/clickheat/config/</em>."
+
+#: click_heatmap.module:84
+msgid "administer heatmaps"
+msgstr "administrér varmekort"
+
+#: click_heatmap.module:84
+msgid "view heatmaps"
+msgstr "vis varmekort"
+
+#: click_heatmap.module:0
+msgid "click_heatmap"
+msgstr "click_heatmap"
+
+#: click_heatmap.info:0
+msgid "Click Heatmap"
+msgstr "Click Heatmap"
+
+#: click_heatmap.info:0
+msgid "Provides an integration of the ClickHeat utility which creates click heatmaps."
+msgstr "Sørger for integration af ClickHeat-værktøjet, som opretter klik-varmekort."
+

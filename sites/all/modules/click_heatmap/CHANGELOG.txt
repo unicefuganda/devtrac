@@ -1,0 +1,21 @@
+// $Id: CHANGELOG.txt,v 1.1.2.16 2009/09/28 07:59:24 boombatower Exp $
+
+PIFR 6.x-2.6, 2009-09-28
+------------------------
+- Changes
+   * #476802 by wulff: add Danish translation.
+   * #589738: Cleanup README/Help text and provide INSTALL.txt.
+   * #589740: Perform proper install requirements check.
+   * #589766: Cleanup code and settings for to reflect requirements changes.
+   * Correct include statements in hook_install().
+   * Cleanup of javascript injection and ClickHeat library version detection.
+   * #589808: Remove Drupal log integration.
+   * Remove old form argument from log view.
+   * #504504: Hide admin_menu when viewing click heatmaps.
+   * #397424 : Add permission for counting clicks.
+   * #397076: "Non-admin pages" should also exclude /node/edit and /node/add.
+   * Add /clickheat/cache as a writeable directory.
+   * Remove /heatmaps directory.
+   * #288173: Use PHP memory limit
+- Bugs:
+   * #291573 by wulff and univate: Fatal error: Call to undefined function language_initialize().

@@ -1,0 +1,13 @@
+; $Id: click_heatmap.info,v 1.2.4.2 2009/09/28 05:24:57 boombatower Exp $
+name = Click Heatmap
+description = Provides an integration of the ClickHeat utility.
+package = Usability testing
+core = 6.x
+php = 5
+
+; Information added by drupal.org packaging script on 2009-09-28
+version = "6.x-2.6"
+core = "6.x"
+project = "click_heatmap"
+datestamp = "1254125111"
+

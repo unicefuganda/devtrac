@@ -1,0 +1,162 @@
+<?php
+// $Id: click_heatmap.module,v 1.5.4.17 2009/09/28 07:41:29 boombatower Exp $
+/**
+ * @file
+ * Provides an integration of the ClickHeat utility.
+ *
+ * Copyright 2008-2009 by Jimmy Berry ("boombatower", http://drupal.org/user/214218)
+ */
+
+/**
+ * Implementation of hook_menu().
+ */
+function click_heatmap_menu() {
+  $items = array();
+
+  $items['admin/settings/click_heatmap'] = array(
+    'title' => t('Click heatmap'),
+    'description' => t('Configure click heatmap.'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('click_heatmap_admin_settings_form'),
+    'access arguments' => array('administer heatmaps'),
+    'file' => 'click_heatmap.admin.inc',
+  );
+  $items['admin/reports/click_heatmap'] = array(
+    'title' => t('Click heatmap'),
+    'description' => t('View click heatmaps.'),
+    'page callback' => 'click_heatmap_log_view',
+    'access arguments' => array('view heatmaps'),
+  );
+  $items['admin/reports/click_heatmap/view'] = array(
+    'title' => t('View click heatmap'),
+    'page callback' => 'click_heatmap_log_get_image',
+    'access arguments' => array('view heatmaps'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Implementation of hook_perm().
+ */
+function click_heatmap_perm() {
+  return array('administer heatmaps', 'view heatmaps', 'count click_heatmap clicks');
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function click_heatmap_theme() {
+  return array(
+    'click_heatmap_report' => array(
+      'arguments' => array('click_heatmap_library' => NULL),
+      'template' => 'click_heatmap.report',
+    ),
+  );
+}
+
+/**
+ * Implementation of hook_init().
+ */
+function click_heatmap_init() {
+  if (click_heatmap_display()) {
+    $click = url(drupal_get_path('module', 'click_heatmap') . '/clickheat/click.php', array('absolute' => TRUE));
+    $settings = array(
+      'clickHeatSite' => click_heatmap_site_name(),
+      'clickHeatGroup' => click_heatmap_get_url(),
+      'clickHeatServer' => click_heatmap_library_url(),
+    );
+
+    drupal_add_js(drupal_get_path('module', 'click_heatmap') . '/click_heatmap.js', 'module', 'footer');
+    drupal_add_js(drupal_get_path('module', 'click_heatmap') . '/clickheat/js/clickheat.js', 'module', 'footer');
+    $js = '';
+    foreach ($settings as $key => $value) {
+      $js .= "var $key = '$value';\n";
+    }
+    $js .= 'initClickHeat();';
+    drupal_add_js($js, 'inline', 'footer');
+  }
+}
+
+/**
+ * Check to see if the click heatmap javascript should be added to the page.
+ */
+function click_heatmap_display() {
+  if (user_access('count click_heatmap clicks')) {
+    $url = click_heatmap_get_url();
+    switch (variable_get('click_heatmap_scope', 'home')) {
+      case 'all':
+        return TRUE;
+      case 'user':
+        return (strpos(substr($url, 0, 5), 'admin') === FALSE) &&
+               (strpos($url, 'node/edit') === FALSE && strpos($url, 'node/add') === FALSE);
+      case 'admin':
+        return (strpos(substr($url, 0, 5), 'admin') !== FALSE) ||
+               (strpos($url, 'node/edit') !== FALSE || strpos($url, 'node/add') !== FALSE);
+      case 'home':
+        return ($url == 'home');
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Get the site name to use for data storage.
+ *
+ * @return Site name.
+ */
+function click_heatmap_site_name() {
+  return substr(conf_path(), strrpos(conf_path(), '/') + 1);
+}
+
+/**
+ * Get the url to be used with ClickHeat system.
+ */
+function click_heatmap_get_url() {
+  if (isset($_GET['q'])) {
+    return drupal_get_path_alias($_GET['q'] == variable_get('site_frontpage', 'node') ? 'home' : $_GET['q']);
+  }
+  return 'unknown';
+}
+
+/**
+ * Get the ClickHeat library URL for click.php.
+ *
+ * @return string ClickHeat library URL.
+ */
+function click_heatmap_library_url() {
+  $url = url(drupal_get_path('module', 'click_heatmap') . '/clickheat/click.php', array('absolute' => TRUE));
+  if (module_exists('locale') && variable_get('language_count', 1) > 1) {
+    global $language;
+    language_initialize();
+
+    // Remove language prefix chunk from URL. For example:
+    // http://localhost/fr/click.php becomes http://localhost/click.php.
+    if ($language->prefix) {
+      return str_replace('/' . $language->prefix . '/', '/', $url);
+    }
+  }
+  return $url;
+}
+
+/**
+ * Get the ClickHeat library version.
+ *
+ * @return string Library version or FALSE if library not installed.
+ */
+function click_heatmap_library_version() {
+  $version = drupal_get_path('module', 'click_heatmap') . '/clickheat/VERSION';
+  if (file_exists($version)) {
+    return trim(file_get_contents($version));
+  }
+  return FALSE;
+}
+
+/**
+ * Provides an interface for viewing click heatmaps.
+ */
+function click_heatmap_log_view() {
+  $url = url(drupal_get_path('module', 'click_heatmap') . '/clickheat', array('absolute' => TRUE));
+  print theme('click_heatmap_report', $url);
+}

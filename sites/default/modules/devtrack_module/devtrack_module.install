@@ -716,3 +716,160 @@ function devtrack_module_update_6013() {
   $ret = array('success' => TRUE, 'query' => 'enabled quicktabs and openlayers_geosearch modules' );
   return $ret;
 }
+
+/*
+ *  https://www.pivotaltracker.com/story/show/16010611
+ *  Update Department Structure
+ */
+function devtrack_module_update_6014() {
+  // Add Alive to Department Vocab
+  $term = array(
+    'name' => t('Alive'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '26',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add Safe to Department Vocab
+  $term = array(
+    'name' => t('Safe'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '26',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add Learning to Department Vocab
+  $term = array(
+    'name' => t('Learning'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '26',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add Field Operations to Department Vocab
+  $term = array(
+    'name' => t('Field Operations'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => '26',
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 1,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+  $tid = $term['tid'];
+
+  // Add WZO to Department Vocab
+  $term = array(
+    'name' => t('WZO'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $tid,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add GZO to Department Vocab
+  $term = array( 
+    'name' => t('GZO'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $tid,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  // Add MZO to Department Vocab
+  $term = array( 
+    'name' => t('MZO'),
+    'description' => t(''),
+    'parent' => Array(
+      0 => $tid,
+    ),
+    'relations' => Array(
+      0 => '0',
+    ),
+    'synonyms' => '',
+    'depth' => 2,
+    'weight' => 0,
+    'vid' => 4, // Department
+    'op' => t('Save'),
+    'submit' => t('Save'),
+    'destination' => 'admin/content/taxonomy/4/add/term',
+    'form_id' => taxonomy_form_term,
+  );
+  taxonomy_save_term($term);
+
+  $ret[] = array('success' => TRUE, 'query' => 'added new department structure to department vocabulary');
+  return $ret;
+}

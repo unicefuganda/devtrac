@@ -11469,7 +11469,7 @@ return TRUE;',
   $handler->override_option('empty_format', '1');
   $handler->override_option('use_more', 1);
   $handler->override_option('use_more_always', 1);
-  $handler->override_option('use_more_text', 'All my Action Items');
+  $handler->override_option('use_more_text', 'All My Action Items');
   $handler->override_option('link_display', 'page_5');
   $handler->override_option('style_plugin', 'table');
   $handler->override_option('style_options', array(
@@ -13901,7 +13901,6 @@ if (arg(1) == \'me\') {
   $handler->override_option('use_ajax', TRUE);
   $handler->override_option('items_per_page', 0);
   $handler->override_option('use_pager', 'mini');
-  $handler->override_option('use_more_text', 'All My Action Items');
   $handler->override_option('block_description', '');
   $handler->override_option('block_caching', -1);
   $handler = $view->new_display('block', 'Block (Obsolete)', 'block_5');

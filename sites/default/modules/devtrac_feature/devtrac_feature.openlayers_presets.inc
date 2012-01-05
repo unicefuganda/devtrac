@@ -205,8 +205,8 @@ function devtrac_feature_openlayers_presets() {
       'openlayers_behavior_argparser' => array(),
       'openlayers_behavior_popup' => array(
         'layers' => array(
+          'openlayers_searchresult_layer' => 'openlayers_searchresult_layer',
           'findplaces_places_openlayers_1' => 'findplaces_places_openlayers_1',
-          'openlayers_searchresult_layer' => 0,
           'findplaces_districts_openlayers_1' => 0,
         ),
       ),
@@ -222,17 +222,19 @@ function devtrac_feature_openlayers_presets() {
         'zoomtolayer' => 'findplaces_districts_openlayers_1',
         'point_zoom_level' => '',
       ),
-      'openlayers_plus_behavior_blockswitcher' => array(
-        'map' => array(
-          'enabled' => 0,
-          'position' => 'se',
-        ),
-      ),
       'openlayers_behavior_wmsgetfeatureinfo' => array(
         'getfeatureinfo_usevisiblelayers' => 1,
         'getfeatureinfo_layers' => 'uganda_basemap',
         'getfeatureinfo_info_format' => 'application/vnd.ogc.gml',
         'getfeatureinfo_htmlelement' => 'getfeatureinfo',
+      ),
+      'openlayers_plus_behavior_blockswitcher' => array(
+        'map' => array(
+          'enabled' => 0,
+          'open' => 0,
+          'overlay_style' => 'checkbox',
+          'position' => 'se',
+        ),
       ),
     ),
     'default_layer' => 'uganda_basemap',

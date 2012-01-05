@@ -10,7 +10,7 @@ function devtrac_feature_quicktabs_default_quicktabs() {
   $quicktabs->disabled = FALSE; /* Edit this to true to make a default quicktabs disabled initially */
   $quicktabs->api_version = 1;
   $quicktabs->machine_name = 'geosearch';
-  $quicktabs->ajax = 1;
+  $quicktabs->ajax = 0;
   $quicktabs->hide_empty_tabs = 1;
   $quicktabs->default_tab = FALSE;
   $quicktabs->title = 'Geosearch QT';

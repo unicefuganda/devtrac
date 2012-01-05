@@ -79,7 +79,7 @@ function wms_ajax_wmsgetfeatureinfo() {
     }
   }
   else {
-    print 'Something went wrong';
+    print t('Something went wrong');
   }
 }
 
@@ -144,6 +144,9 @@ function wms_theme() {
   return $items;
 }
 
+/**
+ * Theme Preprocess function setting the right variables for theming
+ */
 function template_preprocess_wms_getfeatureinfo(&$variables) {
   $rows = Array();
   $header = Array();

@@ -252,7 +252,7 @@ function openlayers_geosearch_block($op = 'list', $delta = 0, $edit = array()) {
           $block['content'] = drupal_get_form('openlayers_geosearch_searchform');
           break;
         case 1:
-          $block['content'] = '<div id="openlayersgeosearchresults">Here will the results be</>';
+          $block['content'] = '<div id="openlayersgeosearchresults">Here will the results be</div>';
           break;
         case 2:
           $map = openlayers_preset_load(variable_get('openlayers_geosearch_preset', 'default'));

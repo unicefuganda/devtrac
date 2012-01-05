@@ -9,6 +9,7 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
     $options['min'] = array('pointRadius' => 5, 'value' => 0);
     $options['max'] = array('pointRadius' => 20, 'value' => '');
     $options['distinct'] = 5;
+    $options['min_label'] = -1;
     $options['method'] = 'area';
     // @TODO: This sucks. Get a submission/validation handling into the behaviors base class and fix this.
     $options['fields'] = array('count, weight');
@@ -100,6 +101,15 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
       '#type' => 'textfield',
       '#default_value' => $this->options['fields'],
     );
+    $form['min_label'] = array(
+      '#tree' => TRUE,
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#type' => 'textfield',
+      '#title' => t('Minimum weight point to label'),
+      '#default_value' => $this->options['min_label'],
+      '#description' => t('Don\'t show labels below a certain point weight'),
+    );
     return $form;
   }
 
@@ -132,6 +142,9 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
         $pointdiff = number_format($pointdiff, 2);
         foreach ($weights as $weight) {
           $styles[$weight][$key] = $this->options['min'][$key] + ($weight - 1) * $pointdiff;
+          if ($weight <= $this->options['min_label']) {
+            $styles[$weight]['label'] = '';
+          }
         }
         $styles[$this->options['distinct']][$key] = $this->options['max'][$key];
       }
@@ -160,7 +173,9 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
   protected function get_layers($layers) {
     $vector_layers = array();
     foreach ($layers as $key => $layer) {
-      if ($layer['type'] == 'Vector' && !empty($layer['features'])) {
+      // get type == Vector for backwards-compatibility.
+      // TODO: After OpenLayers alpha8 it should be removed
+      if (((isset($layer['vector']) && $layer['vector'] == 1)) && !empty($layer['features'])) {
         $vector_layers[$key] = $layer;
       }
     }
@@ -197,8 +212,12 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
         $count_min = 1000000;
         $count_max = 0;
         if ($get_min || $get_max) {
-          foreach ($layer['features'] as $feature) {
+          foreach ($layer['features'] as $j => $feature) {
             if ($field && isset($feature['attributes'][$field]) && $count = $feature['attributes'][$field]) {
+              // Replace the count attribute with the selected one.
+              if ($field !== 'count') {
+                $map['layers'][$k]['features'][$j]['attributes']['count'] = $count;
+              }
               $max = ($count > $max) && $get_max ? $count : $max;
               $min = ($count < $min) && $get_min ? $count : $min;
               $count_max = ($count > $count_max) ? $count : $count_max;
@@ -215,16 +234,18 @@ class openlayers_plus_behavior_scalepoints extends openlayers_behavior {
 
         foreach ($layer['features'] as $j => $feature) {
           if ($field && isset($feature['attributes'][$field]) && $count = $feature['attributes'][$field]) {
-            foreach ($weights as $percentile => $weight) {
-              // For layers with only a single value always use the smallest weight
-              if ($count_max === $count_min) {
-                $map['layers'][$k]['features'][$j]['attributes']['weight'] = 1;
-                break;
-              }
-              $calculated = $this->process_weight($count/$max, $this->options['method']);
-              if ($calculated <= $percentile) {
-                $map['layers'][$k]['features'][$j]['attributes']['weight'] = $weight;
-                break;
+            // For layers with only a single value always use the smallest weight.
+            if ($count_max === $count_min) {
+              $map['layers'][$k]['features'][$j]['attributes']['weight'] = 1;
+            }
+            // Otherwise iterate through to find the right weight.
+            else {
+              $calculated = $this->process_weight(($count - $min)/($max - $min), $this->options['method']);
+              foreach ($weights as $percentile => $weight) {
+                if ($calculated <= $percentile) {
+                  $map['layers'][$k]['features'][$j]['attributes']['weight'] = $weight;
+                  break;
+                }
               }
             }
           }

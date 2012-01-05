@@ -109,7 +109,9 @@ Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
                });
             }
             else {
-              alert ("No Layer to Query is visible.");
+              if ($('#popup').length == 0) {
+                alert ("No Layer to Query is visible.");
+              }
             }
         }
 

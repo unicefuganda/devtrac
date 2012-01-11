@@ -873,3 +873,14 @@ function devtrack_module_update_6014() {
   $ret[] = array('success' => TRUE, 'query' => 'added new department structure to department vocabulary');
   return $ret;
 }
+
+function devtrack_module_update_6015() {
+  // Declare new modules
+  $new_modules = array(
+    'devtrac_popup',
+  );
+  module_enable($new_modules);
+
+  $ret = array('success' => TRUE, 'query' => 'enabled devtrac_popup module' );
+  return $ret;
+}

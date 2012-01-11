@@ -9,6 +9,9 @@
  * WMSGetFeatureinfo Behavior
  * http://dev.openlayers.org/releases/OpenLayers-2.9/doc/apidocs/files/OpenLayers/Control/WMSGetFeatureInfo-js.html
  */
+//Initialize settings array.
+Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo = {};
+
 Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
   var layer;
   var layers = [];
@@ -121,6 +124,7 @@ Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
 
     data.openlayers.addControl(GetFeatureControl);
     GetFeatureControl.activate();
+    Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.ClickControl = GetFeatureControl;
     
   // This is to update the OpenLayers Plus block switcher feature
 //  Drupal.OpenLayersPlusBlockswitcher.redraw(); 
@@ -128,7 +132,7 @@ Drupal.behaviors.openlayers_behavior_wmsgetfeatureinfo = function(context) {
 };
 
 //Initialize settings array.
-Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo = {};
+//Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo = {};
 
 Drupal.openlayers.openlayers_behavior_wmsgetfeatureinfo.beforegetfeatureinfo = function(layernames) {
   if ((typeof $.colorbox == 'function') && ($('#popup').length == 0)) {

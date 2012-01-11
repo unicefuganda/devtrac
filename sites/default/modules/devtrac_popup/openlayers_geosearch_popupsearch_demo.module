@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @File
+ * Implements wmsgetfeatureinfo search on a link in a popup on the searchlayer on a map.
+ */
+
+function openlayers_geosearch_popupsearch_demo() {
+  drupal_add_js(drupal_get_path('module', 'openlayers_geosearch_popupsearch_demo') . '/openlayers_geosearch_popupsearch_demo.js');
+}

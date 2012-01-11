@@ -1,0 +1,10 @@
+<?php
+
+/**
+ * @File
+ * Implements wmsgetfeatureinfo search on a link in a popup on the searchlayer on a map.
+ */
+
+function devtrac_popup_init() {
+  drupal_add_js(drupal_get_path('module', 'devtrac_popup') . '/devtrac_popup.js');
+}

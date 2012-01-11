@@ -1,0 +1,5 @@
+;$Id$
+name = "Devtrac Popup"
+description = "Provides a WMS Getfeatureinfo search for Devtrac from a popup"
+package = Devtrac
+core = "6.x"

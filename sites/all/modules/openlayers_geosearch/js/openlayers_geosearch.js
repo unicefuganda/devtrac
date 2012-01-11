@@ -52,7 +52,7 @@ Drupal.behaviors.openlayers_geosearch = function (context) {
             'popup',
             feature.geometry.getBounds().getCenterLonLat(),
             null,
-            Drupal.theme('openlayersPopup', feature),
+            Drupal.theme('openlayers_geosearchPopup', feature),
             null,
             true,
             function (evt) {
@@ -138,6 +138,8 @@ Drupal.behaviors.openlayers_geosearch = function (context) {
       id = id.replace(/\./g, '-'); // the . does not go well with css 
       $(this)[0].id = id;
       pointfeature.attributes.name = $(this)[0].innerHTML;
+      var popupid = pointfeature.id + ".popup";
+      popupid = popupid.replace(/\./g, '-'); // the . does not go well with css 
       pointfeature.attributes.description = "";
       
       Drupal.openlayers_geosearch.vectorLayer[0].addFeatures([pointfeature], styleMap.styles['default'].defaultStyle);
@@ -196,3 +198,28 @@ Drupal.openlayers_geosearch.zoomtoresults = function() {
     }
   }
 };
+
+/**
+ * Javascript Drupal Theming function for inside of Popups
+ *
+ * To override
+ *
+ * @param feature
+ *  OpenLayers feature object
+ * @return
+ *  Formatted HTML
+ */
+Drupal.theme.prototype.openlayers_geosearchPopup = function(feature) {
+  if (typeof Drupal.theme.prototype.openlayers_geosearchPopupCustom != 'function') {
+    var output =
+      '<div class="openlayers-geosearch-popup openlayers-geosearch-popup-name">' +
+        feature.attributes.name +
+      '</div>' +
+      '<div class="openlayers-geosearch-popup openlayers-geosearch-popup-description">' +
+        feature.attributes.description +
+      '</div>';
+  } else {
+	var output = Drupal.theme.prototype.openlayers_geosearchPopupCustom(feature);
+  }
+  return output;
+}

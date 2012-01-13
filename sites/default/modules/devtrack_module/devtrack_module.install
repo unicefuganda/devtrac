@@ -683,13 +683,14 @@ function devtrack_module_update_6010() {
 /*
  * Performs the conversion of images to image references
  */
+/*
 function devtrack_module_update_6700() {
   devtrack_module_convert_images_into_image_refs();
 
   $ret[] = array('success' => TRUE, 'query' => 'converted all images to image references');
   return $ret;
 }
-
+ */
 /*
  * Saves all openlayers presets (maps) from features into the database.
  */

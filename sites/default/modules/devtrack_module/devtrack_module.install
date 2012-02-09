@@ -673,7 +673,6 @@ function devtrack_module_update_6010() {
   return $ret;
 }
 
-<<<<<<< HEAD
 
 /*
  * https://www.pivotaltracker.com/story/show/19285329

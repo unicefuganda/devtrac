@@ -1,13 +1,12 @@
 <?php
-// $Id: cdn.fallback.inc,v 1.4 2010/11/18 21:50:17 wimleers Exp $
 
 /**
  * @file
  * Fallback when hook_file_url_alter() is not available (i.e. when the core
- * patch is not installed or when not using Pressflow): use the Parallel
- * module's logic (with some adaptations to be able to use the CDN module's
- * logic (in particular: cdn_file_url_alter()) to alter file URLs via the
- * theme layer.
+ * patch is not installed or when not using a patched Drupal distribution):
+ * use the Parallel module's logic (with some adaptations to be able to use
+ * the CDN module's logic (in particular: cdn_file_url_alter()) to alter file
+ * URLs via the theme layer.
  * Some of the functions are also used when altering rendered nodes so that
  * their images are served from the CDN.
  */
@@ -76,6 +75,18 @@ function cdn_html_alter_js_urls(&$html) {
  */
 function cdn_html_alter_image_urls(&$html) {
   $url_prefix_regex = _cdn_generate_url_prefix_regex();
+
+  // TRICKY: order matters!
+
+  // Image file URLs of <a> tags that wrap <img> tags.
+  $pattern = "#((<a\s+|<a\s+[^>]*\s+)href\s*=\s*[\"|\'])($url_prefix_regex)([^\"|^\']*)";
+  $pattern .= "("; // Capture everything after the path.
+  $pattern .= "([\"|\'][^>]*)>"; // End of opening <a> tag.
+  $pattern .= "((<img\s+|<img\s+[^>]*\s+)src\s*=\s*[\"|\'])([^\"|^\']*)([\"|\'])"; // Wrapped <img> tag.
+  $pattern .= ")#i";
+  _cdn_html_alter_file_url($html, $pattern, 0, 4, 5, 1, '');
+
+  // Image file URLs in <img> tags.
   $pattern = "#((<img\s+|<img\s+[^>]*\s+)src\s*=\s*[\"|\'])($url_prefix_regex)([^\"|^\']*)([\"|\'])#i";
   _cdn_html_alter_file_url($html, $pattern, 0, 4, 5, 1, '');
 }

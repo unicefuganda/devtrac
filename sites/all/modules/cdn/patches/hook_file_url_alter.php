@@ -1,5 +1,4 @@
 <?php
-// $Id: hook_file_url_alter.php,v 1.2 2010/04/20 10:30:44 wimleers Exp $
 
 /**
  * @file

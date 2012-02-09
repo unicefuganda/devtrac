@@ -1,5 +1,4 @@
 <?php
-// $Id: cdn.install,v 1.9 2011/01/19 09:29:04 wimleers Exp $
 
 /**
  * @file
@@ -32,10 +31,12 @@ function cdn_requirements($phase) {
 
   // We can't use module_load_include() when we're in the install phase (i.e.
   // when the module is being installed through an install profile).
-  include_once dirname(__FILE__) . '/cdn.requirements.inc';
+  require_once dirname(__FILE__) . '/cdn.module';
+  require_once dirname(__FILE__) . '/cdn.requirements.inc';
 
   // Detect whether the fallback should be enabled or not. Next, get the
-  // integration that's being used: fallback, PressFlow or core patch.
+  // integration that's being used: fallback, PressFlow, Cocomore or
+  // core patch.
   _cdn_requirements_detect_fallback();
   $integration_method = _cdn_requirements_get_integration_mechanism();
 
@@ -86,10 +87,10 @@ function cdn_requirements($phase) {
 
           $items = array();
 
+          $daemon_pid_file = variable_get(CDN_ADVANCED_PID_FILE_VARIABLE, FALSE);
           $synced_files_db = variable_get(CDN_ADVANCED_SYNCED_FILES_DB_VARIABLE, FALSE);
 
           if ($synced_files_db !== FALSE) {
-            $daemon_pid_file = str_replace(CDN_DAEMON_SYNCED_FILES_DB, CDN_DAEMON_PID_FILE, $synced_files_db);
             $persistent_data_db = str_replace(CDN_DAEMON_SYNCED_FILES_DB, CDN_DAEMON_PERSISTENT_DATA_DB, $synced_files_db);
             $drupal_root_path = variable_get(CDN_DRUPAL_ROOT_VARIABLE, realpath('.'));
 
@@ -177,42 +178,24 @@ function cdn_requirements($phase) {
         case 'pressflow':
           $requirements['cdn']['value'] .= ' — ' . $t('Pressflow');
           break;
+        case 'cocomore':
+          $requirements['cdn']['value'] .= ' — ' . $t('Cocomore');
+          break;
         case 'core patch':
           $requirements['cdn']['value'] .= ' — ' . $t('Core patch');
           break;
       }
     case 'install' :
-      // Only check if the CDN Drupal core patch is properly applied if the
-      // integration methis is *not* 'pressflow'. Show as a warning when the
-      // integration method is 'fallback'.
-      if (!_cdn_requirements_is_pressflow()) {
+      // Only check if the CDN Drupal core patch is properly applied if this
+      // Drupal installation is not a patched Drupal distribution. Show as a
+      // warning when the integration method is 'fallback'.
+      if (_cdn_requirements_is_patched_distribution() === FALSE) {
         _cdn_requirements_generate_requirement_for_patch(
           $requirements,
           'core',
           ($integration_method == 'fallback') ? $t('CDN — Drupal core patch (for complete CDN coverage)') : $t('CDN — Drupal core patch'),
           REQUIREMENT_WARNING
         );
-      }
-
-      // Only check if the CDN ImageCache patch is properly applied if the
-      // integration method is *not* 'fallback' (thus either 'pressflow' or
-      // 'core patch') *and* when the ImageCache module is enabled.
-      if ($integration_method != 'fallback' && module_exists('imagecache')) {
-        // Check if either of the patches is applied, then remove the
-        // requirements for the last one if neither patch is applied.
-        _cdn_requirements_generate_requirement_for_patch(
-          $requirements,
-          'imagecache',
-          $t('CDN — ImageCache patch')
-        );
-        _cdn_requirements_generate_requirement_for_patch(
-          $requirements,
-          'imagecache_6_2',
-          $t('CDN — ImageCache patch')
-        );
-        if ($requirements['cdn_imagecache_patch']['value'] == $requirements['cdn_imagecache_6_2_patch']['value']) {
-          unset($requirements['cdn_imagecache_6_2_patch']);
-        }
       }
   }
 
@@ -288,6 +271,23 @@ function cdn_update_6203() {
 
   $ret[] = update_sql("UPDATE {variable} SET name = 'cdn_exception_file_path_blacklist' WHERE name = 'cdn_exception_path_blacklist'");
   $ret[] = update_sql("UPDATE {variable} SET name = 'cdn_exception_file_path_whitelist' WHERE name = 'cdn_exception_path_whitelist'");
+
+  return $ret;
+}
+
+/**
+ * New: File Conveyor PID file variable.
+ */
+function cdn_update_6210() {
+  $ret = array();
+
+  if (variable_get('cdn_mode', FALSE) == 'advanced') {
+    $synced_files_db = variable_get('cdn_advanced_synced_files_db', FALSE);
+    $daemon_pid_file = str_replace('synced_files.db', 'daemon.pid', $synced_files_db);
+    variable_set('cdn_advanced_pid_file', $daemon_pid_file);
+
+    $ret[] = array('success' => TRUE, 'query' => 'Created File Conveyor PID file variable.');
+  }
 
   return $ret;
 }

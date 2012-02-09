@@ -1,5 +1,4 @@
 <?php
-// $Id: cdn.requirements.inc,v 1.14 2011/01/19 09:29:04 wimleers Exp $
 
 /**
  * @file
@@ -164,24 +163,10 @@ function _cdn_requirements_core_patch_patterns() {
 }
 
 /**
- * Generates the patterns for the ImageCache patch.
+ * Checks if the used Drupal distribution is already patched or not.
+ * (This is the case when either Pressflow or Cocomore is being used).
  */
-function _cdn_requirements_imagecache_patch_patterns() {
-  return _cdn_requirements_generate_patterns_for_patch(dirname(__FILE__) . '/patches/imagecache.patch');
-}
-
-/**
- * Generates the patterns for the ImageCache 6.2 branch patch.
- */
-function _cdn_requirements_imagecache_6_2_patch_patterns() {
-  return _cdn_requirements_generate_patterns_for_patch(dirname(__FILE__) . '/patches/imagecache_6--2.patch');
-}
-
-
-/**
- * Checks if the environment is Pressflow or not.
- */
-function _cdn_requirements_is_pressflow() {
+function _cdn_requirements_is_patched_distribution() {
   $profile = realpath('.') . '/profiles/default/default.profile';
 
   if (!file_exists($profile)) {
@@ -190,7 +175,13 @@ function _cdn_requirements_is_pressflow() {
 
   include_once $profile;
   $default = default_profile_details();
-  return $default['name'] == 'Pressflow';
+  if ($default['name'] == 'Pressflow') {
+    return 'pressflow';
+  }
+  if (stristr($default['name'], 'cocomore')){
+    return 'cocomore';
+  }
+  return FALSE;
 }
 
 /**
@@ -204,7 +195,7 @@ function _cdn_requirements_detect_fallback() {
   // fallback will be (or remain) disabled, if not, then the fallback will be
   // (or remain) enabled.
   $fallback_currently_enabled = variable_get(CDN_THEME_LAYER_FALLBACK_VARIABLE, FALSE);
-  if (!_cdn_requirements_is_pressflow() && count(_cdn_requirements_check_patch_applied(_cdn_requirements_core_patch_patterns())) > 0) {
+  if (_cdn_requirements_is_patched_distribution() === FALSE && count(_cdn_requirements_check_patch_applied(_cdn_requirements_core_patch_patterns())) > 0) {
     if (!$fallback_currently_enabled) {
       variable_set(CDN_THEME_LAYER_FALLBACK_VARIABLE, TRUE);
       drupal_rebuild_theme_registry();
@@ -227,14 +218,14 @@ function _cdn_requirements_detect_fallback() {
  * integration module.
  *
  * @return
- *   One of the following: 'fallback', 'pressflow', 'core patch'.
+ *   One of the following: 'fallback', 'pressflow', 'cocomore', 'core patch'.
  */
 function _cdn_requirements_get_integration_mechanism() {
   if (variable_get(CDN_THEME_LAYER_FALLBACK_VARIABLE, FALSE)) {
     return 'fallback';
   }
-  elseif (_cdn_requirements_is_pressflow()) {
-    return 'pressflow';
+  elseif (($drupal_profile = _cdn_requirements_is_patched_distribution()) !== FALSE) {
+    return $drupal_profile;
   }
   else {
     return 'core patch';

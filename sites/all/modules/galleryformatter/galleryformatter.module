@@ -1,5 +1,4 @@
 <?php
-// $Id: galleryformatter.module,v 1.1.2.7 2010/06/13 19:26:39 manuelgarcia Exp $
 
 include_once dirname(__FILE__) . '/includes/galleryformatter_imagecache.inc';
 
@@ -71,6 +70,28 @@ function galleryformatter_widget_settings_alter(&$settings, $op, $widget) {
           '#default_value' => $widget['link_to_full_preset'],
           '#description' => t('Select the imagecache preset you would like to show when clicked on the thumbnail.<br />If you select none, the the link will point to the original image.'),
         );
+        $options = array();
+        // integration with other modules for jQuery modal windows
+        if (module_exists('colorbox')) {
+          $options['colorbox'] = 'colorbox';
+        }
+        if (module_exists('thickbox')) {
+          $options['thickbox'] = 'thickbox';
+        }
+        if (module_exists('shadowbox')) {
+           $options['shadowbox'] = 'shadowbox';
+        }
+        if (module_exists('lightbox2')) {
+           $options['lightbox2'] = 'lightbox2';
+        }
+        $options['none'] = t('Do not use modal');
+        $settings['galleryformatter']['modal'] = array(
+          '#type' => 'select',
+          '#title' => t('Use jQuery modal for full image link'),
+          '#options' => $options,
+          '#default_value' => $widget['modal'],
+          '#description' => t("Select which jQuery modal module you'd like to display the full link image in, if any."),
+        );
         break;
 
       case 'save':
@@ -79,6 +100,7 @@ function galleryformatter_widget_settings_alter(&$settings, $op, $widget) {
         $settings[] = 'style';
         $settings[] = 'link_to_full';
         $settings[] = 'link_to_full_preset';
+        $settings[] = 'modal';
         break;
     }
   }
@@ -105,7 +127,7 @@ function galleryformatter_field_formatter_info() {
     'galleryformatter_default' => array(
       'label' => t('jQuery Gallery'),
       'field types' => array('filefield'),
-      'multiple values' => CONTENT_HANDLE_MULTIPLE,
+      'multiple values' => CONTENT_HANDLE_MODULE,
       'description' => t('Display multi-value fields as an jQuery Image gallery.'),
     ),
   );
@@ -128,7 +150,7 @@ function galleryformatter_add_css($style) {
   // Add galleryformatter CSS.
   drupal_add_css(drupal_get_path('module', 'galleryformatter') .'/theme/galleryformatter.css');
 
-  if ($style_css != 'nostyle') {
+  if ($style != 'nostyle') {
     $style_css = _galleryformatter_get_style_css($style);
     drupal_add_css($style_css, 'module');
   }

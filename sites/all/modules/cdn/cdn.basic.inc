@@ -1,5 +1,4 @@
 <?php
-// $Id: cdn.basic.inc,v 1.2 2010/11/21 10:26:13 wimleers Exp $
 
 /**
  * @file

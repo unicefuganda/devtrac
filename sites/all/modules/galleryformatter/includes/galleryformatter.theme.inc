@@ -1,5 +1,4 @@
 <?php
-// $Id: galleryformatter.theme.inc,v 1.1.2.19 2010/07/17 13:49:05 manuelgarcia Exp $
 
 /**
  * @file
@@ -66,25 +65,35 @@ function template_preprocess_galleryformatter_formatter_galleryformatter_default
 
         // link the slides to the original image if so configured
         $vars['link_to_full'] = $widget['link_to_full']; // let the tpl know if we are liking or not
+        $vars['gallery_style'] = ''; // initialize the key to avoid further warnings
         if ($widget['link_to_full'] == TRUE) {
           $vars['gallery_style'] = 'galleryformatter-view-full '; // give the gallery a class for themers to play with
           $link_attributes = array(
             'title' => $title,
           );
           // integration with other modules for jQuery modal windows
-          if (module_exists('colorbox')) {
-            $link_attributes['class'] .= ' colorbox';
-            $link_attributes['rel'] = 'gallery-['. $slideset_id .']';
+          switch ($widget['modal']) {
+            case 'none':
+            break;
+
+            case 'colorbox':
+              $link_attributes['class'] .= ' colorbox';
+              $link_attributes['rel'] = 'gallery-['. $slideset_id .']';
+            break;
+
+            case 'thickbox':
+              $link_attributes['class'] .= ' thickbox';
+            break;
+
+            case 'shadowbox':
+              $link_attributes['rel'] = 'shadowbox['.$slideset_id .']';
+            break;
+
+            case 'lightbox2':
+              $link_attributes['rel'] = 'lightbox['. $slideset_id .']';
+            break;
           }
-          if (module_exists('thickbox')) {
-            $link_attributes['class'] .= ' thickbox';
-          }
-          if (module_exists('shadowbox')) {
-            $link_attributes['rel'] = 'shadowbox['.$slideset_id .']';
-          }
-          if (module_exists('lightbox2')) {
-            $link_attributes['rel'] = 'lightbox['. $slideset_id .']';
-          }
+
           $link_url = $widget['link_to_full_preset'] ? imagecache_create_url($widget['link_to_full_preset'], $filepath) : file_create_url($filepath);
           // link the slide image and include the span for the icon
           $slides[$id]['image'] = l('<span class="galleryformatter-view-full" title="'. t('View the full image') .'">'. t('View the full image') .'</span>'. $slides[$id]['image'], $link_url, array('attributes' => $link_attributes, 'html' => TRUE,));

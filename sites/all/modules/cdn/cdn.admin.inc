@@ -1,5 +1,4 @@
 <?php
-// $Id: cdn.admin.inc,v 1.30 2010/11/19 00:03:12 wimleers Exp $
 
 /**
  * @file
@@ -14,16 +13,8 @@
  * Form definition; general settings.
  */
 function cdn_admin_general_settings_form(&$form_state) {
-  ctools_include('dependent');
-  cdn_load_include('requirements');
-
-  // Prevent requirement errors from showing up twice.
-  if (empty($form_state['post'])) {
-    _cdn_admin_check_requirements();
-  }
-
-  $form['#submit'] = array('cdn_admin_settings_submit_show_cache_warning');
-
+  $form = array();
+  _cdn_settings_form_prepare($form, $form_state);
 
   // Check which CDN integration mechanism is being used.
   $integration_method = _cdn_requirements_get_integration_mechanism();
@@ -33,11 +24,17 @@ function cdn_admin_general_settings_form(&$form_state) {
                  file URLs.<br />
                  <u>Note:</u> this mechanism is unable to alter all file URLs.
                  <strong>If you want complete CDN coverage, you should either
-                 apply the included Drupal core patch or switch to
-                 <a href="http://pressflow.org/">Pressflow</a>.</strong>');
+                 apply the included Drupal core patch or switch to a
+                 distribution that already includes the core patch, such as
+                 <a href="http://pressflow.org/">Pressflow</a> or
+                 <a href="http://drupal.cocomore.com/">Cocomore</a>.
+                 </strong>');
       break;
     case 'pressflow':
       $desc = t("This is a Pressflow site — no core patch necessary.");
+      break;
+    case 'cocomore':
+      $desc = t("This is a Cocomore site — no core patch necessary.");
       break;
     case 'core patch':
       $desc = t("Core patch applied!");
@@ -49,6 +46,8 @@ function cdn_admin_general_settings_form(&$form_state) {
     '#value' => $desc,
   );
 
+  $perm_url = url('admin/user/permissions',
+                  array('fragment' => 'module-cdn'));
   $form[CDN_STATUS_VARIABLE] = array(
     '#type' => 'radios',
     '#title' => t('Status'),
@@ -56,8 +55,12 @@ function cdn_admin_general_settings_form(&$form_state) {
       "If you don't want to use the CDN to serve files to your visitors yet,
       but you do want to see if it's working well for your site, then enable
       testing mode.<br />Users will only get the files from the CDN if they
-      have the %cdn-testing-mode-permission permission.",
-      array('%cdn-testing-mode-permission' => 'access files on CDN when in testing mode')
+      have the <a href=\"!perm-url\">%cdn-testing-mode-permission
+      permission</a>.",
+      array(
+        '!perm-url' => $perm_url,
+        '%cdn-testing-mode-permission' => 'access files on CDN when in testing mode',
+      )
     ),
     '#required' => TRUE,
     '#options' => array(
@@ -73,8 +76,11 @@ function cdn_admin_general_settings_form(&$form_state) {
     '#title' => t('Display statistics'),
     '#description' => t(
       'Shows the CDN integration statistics of the current page, to users with
-      the %access-per-page-statistics permission.',
-      array('%access-per-page-statistics' => 'access per-page statistics')
+      the <a href="!perm-url">%access-per-page-statistics permission</a>.',
+      array(
+        '!perm-url' => $perm_url,
+        '%access-per-page-statistics' => 'access per-page statistics',
+      )
     ),
     '#return_value'  => CDN_ENABLED,
     '#default_value' => variable_get(CDN_STATS_VARIABLE, CDN_DISABLED),
@@ -89,36 +95,13 @@ function cdn_admin_general_settings_form(&$form_state) {
  * Form definition; details.
  */
 function cdn_admin_details_form(&$form_state) {
-  ctools_include('dependent');
-
-  // Prevent requirement errors from showing up twice.
-  if (empty($form_state['post'])) {
-    _cdn_admin_check_requirements();
-  }
-
-  $form['#submit'] = array('cdn_admin_settings_submit_show_cache_warning');
+  $form = array();
+  _cdn_settings_form_prepare($form, $form_state);
 
   $form[CDN_MODE_VARIABLE] = array(
     '#type' => 'radios',
     '#title' => t('Mode'),
-    '#description' => t(
-      "It is essential that you understand the <a href=\"!cdn-article-url\">key
-      properties of a CDN</a>, most importantly the differences between an
-      <em>Origin Pull CDN</em> and a <em>Push CDN</em>. If you understand that,
-      continue to make a choice between the two supported modes:
-      !mode-explanation-list", array(
-        '!cdn-article-url' => 'http://wimleers.com/article/key-properties-of-a-cdn',
-        '!mode-explanation-list' => theme('item_list', array(
-          t("<strong>Origin Pull mode</strong> replaces your domain name with
-            the Origin Pull CDN's domain name in the file URL."),
-          t("<strong>File Conveyor mode</strong> uses the <a href=\"http://fileconveyor.org\">File Conveyor</a>
-            daemon to synchronize files and can be used with both Origin Pull
-            and Push CDNs. If you're using an Origin Pull CDN and want to
-            optimize files before they're synced to the CDN, it is also
-            recommended to use this mode.")
-        )),
-      )
-    ),
+    '#description' => _cdn_help('admin-details-mode') . t('Choose a CDN integration mode.'),
     '#required' => TRUE,
     '#options'  => array(
       CDN_MODE_BASIC    => t('Origin Pull'),
@@ -127,63 +110,102 @@ function cdn_admin_details_form(&$form_state) {
     '#default_value' => variable_get(CDN_MODE_VARIABLE, CDN_MODE_BASIC),
   );
 
-
   $form['settings'] = array(
     '#type' => 'fieldset',
     '#title' => t('Mode-specific settings'),
-    '#description' => t('Settings specific to the mode you have currently selected.'),
   );
-
 
   //
-  // Basic mode settings.
+  // Origin Pull mode settings.
   //
 
-  $format_variables = array(
-    '@format-url'        => '<' . t('URL') . '>',
-    '@format-extensions' => '<' . t('extensions') . '>',
-  );
-  $format_explanation_list_items = array(
-    t("<strong>@format-url</strong> is the CDN URL that should be used. E.g.:
-      '<code>http://cdn-a.com</code>'.", $format_variables),
-    t("<strong>@format-extensions</strong> is an <strong>optional</strong>
-      setting to limit which files should be served from a CDN. E.g.:
-      '<code>.css .jpg .jpeg .png</code>'.", $format_variables),
-  );
-  $example_list_items = array(
-    t('This would serve <em>all</em> files from a single CDN:
-      <pre><code>http://cdn-a.com</code></pre>'),
-    t("This would serve CSS and images from CDN A, .zip files from CDN B and
-       everything else from CDN C:
-       <pre><code>http://cdn-a.com|.css .jpg .jpeg .png\nhttp://cdn-b.com|.zip\nhttp://cdn-c.com</code></pre>"),
-  );
   $form['settings'][CDN_BASIC_MAPPING_VARIABLE] = array(
     '#type'          => 'textarea',
     '#title'         => t('CDN mapping'),
-    '#description'   => t("Define which files are mapped to which CDN.<br />
-                           <br />
-                           Enter one mapping per line, in the format <strong>@format-url[|@format-extensions]</strong>:<br />
-                           !format-explanation-list
-                           <br />
-                           Sample mappings:
-                           !example-list", $format_variables + array(
-                             '!format-explanation-list' => theme('item_list', $format_explanation_list_items),
-                             '!example-list' => theme('item_list', $example_list_items),
-                          )),
+    '#description'   => _cdn_help('admin-details-mode-pull-cdn-mapping') . t("Define which files are mapped to which CDN."),
     '#size'          => 35,
     '#default_value' => variable_get(CDN_BASIC_MAPPING_VARIABLE, ''),
     '#process'       => array('ctools_dependent_process'),
     '#dependency'    => array('radio:' . CDN_MODE_VARIABLE => array(CDN_MODE_BASIC)),
   );
 
+  $form['settings'][CDN_BASIC_FARFUTURE_VARIABLE] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Far Future expiration'),
+    '#description' => _cdn_help('admin-details-mode-pull-far-future') . t('Mark all files served from the CDN to expire in the far future — improves client-side cacheability.'),
+    '#default_value' => variable_get(CDN_BASIC_FARFUTURE_VARIABLE, CDN_BASIC_FARFUTURE_DEFAULT),
+    '#process'       => array('ctools_dependent_process'),
+    '#dependency'    => array('radio:' . CDN_MODE_VARIABLE => array(CDN_MODE_BASIC)),
+  );
+
+  $format_variables = array(
+    '@format-directory'                => '<' . t('directory') . '>',
+    '@format-extensions'               => '<' . t('extensions') . '>',
+    '@format-unique-identifier-method' => '<' . t('unique identifier method') . '>',
+  );
+
+  $methods = array();
+  $ufi_info = module_invoke_all('cdn_unique_file_identifier_info');
+  foreach ($ufi_info as $ufi) {
+    $methods[] = $ufi['label']
+                 . ' (<code>' . $ufi['machine_name'] . '</code>): '
+                 . $ufi['description'];
+  }
+  $format_variables['!ufi-methods'] = theme('item_list', $methods);
+
+  $form['settings'][CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_MAPPING_VARIABLE] = array(
+    '#type'          => 'textarea',
+    '#title'         => t('Unique file identifier generation'),
+    '#description'   => _cdn_help('admin-details-mode-pull-ufi') . t('Define how unique file identifiers (UFIs) are generated.'),
+    '#size'          => 35,
+    '#default_value' => variable_get(CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_MAPPING_VARIABLE, CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_MAPPING_DEFAULT),
+    '#process'       => array('ctools_dependent_process'),
+    '#dependency'    => array('edit-cdn-farfuture-status' => array('1'),
+                              'radio:' . CDN_MODE_VARIABLE => array(CDN_MODE_BASIC)),
+    '#dependency_count' => 2,
+  );
+
+  $form['settings']['ufis'] = array(
+    '#type'   => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title'  => t('Available UFI methods'),
+    '#input' => true,
+    '#id'     => 'ufi-fs-id',
+    '#prefix' => '<div id="ufi-fs-id-wrapper">',
+    '#suffix' => '</div>',
+    '#process'=> array('ctools_dependent_process'),
+    '#dependency_count' => 2,
+    '#dependency' => array('radio:' . CDN_MODE_VARIABLE => array(CDN_MODE_BASIC),
+                           'edit-cdn-farfuture-status' => array('1'))
+  );
+
+  $form['settings']['ufis']['content'] = array(
+    '#value' => t('Available UFI methods: !ufi-methods', $format_variables) .
+                '<p>' . t('Note that if no UFI method is specified for a file
+                          (because no rule matches), the CDN module will fall
+                          back to the mtime method.') . '</p>',
+    '#prefix' => '<div>',
+    '#suffix' => '</div>',
+  );
+
   //
-  // Advanced mode settings.
+  // File Conveyor mode settings.
   //
 
+  $form['settings'][CDN_ADVANCED_PID_FILE_VARIABLE] = array(
+    '#type'          => 'textfield',
+    '#title'         => t('PID file'),
+    '#description'   => _cdn_help('admin-details-mode-fc-pid') . t('Full path to File Conveyor\'s PID file.'),
+    '#size'          => 60,
+    '#default_value' => variable_get(CDN_ADVANCED_PID_FILE_VARIABLE, ''),
+    '#process'       => array('ctools_dependent_process'),
+    '#dependency'    => array('radio:' . CDN_MODE_VARIABLE => array(CDN_MODE_ADVANCED)),
+  );
   $form['settings'][CDN_ADVANCED_SYNCED_FILES_DB_VARIABLE] = array(
     '#type'          => 'textfield',
     '#title'         => t('Synced files database'),
-    '#description'   => t('Enter the full path to File Conveyor\'s synced files database file.'),
+    '#description'   => _cdn_help('admin-details-mode-fc-db') . t('Full path to File Conveyor\'s synced files database file.'),
     '#size'          => 60,
     '#default_value' => variable_get(CDN_ADVANCED_SYNCED_FILES_DB_VARIABLE, ''),
     '#process'       => array('ctools_dependent_process'),
@@ -197,12 +219,8 @@ function cdn_admin_details_form(&$form_state) {
  * Form definition; other settings.
  */
 function cdn_admin_other_settings_form(&$form_state) {
-  // Prevent requirement errors from showing up twice.
-  if (empty($form_state['post'])) {
-    _cdn_admin_check_requirements();
-  }
-
-  $form['#submit'] = array('cdn_admin_settings_submit_show_cache_warning');
+  $form = array();
+  _cdn_settings_form_prepare($form, $form_state);
 
   if (variable_get(CDN_MODE_VARIABLE, CDN_MODE_BASIC) == CDN_MODE_ADVANCED) {
     $form[CDN_DRUPAL_ROOT_VARIABLE] = array(
@@ -224,19 +242,12 @@ function cdn_admin_other_settings_form(&$form_state) {
   $form['https'] = array(
     '#type' => 'fieldset',
     '#title' => t('HTTPS'),
-    '#description' => t('When a page is being served via HTTPS and the CDN
-                         does not support HTTPS, then the file will not be
-                         served from the CDN, because it would make the visit
-                         insecure.<br/>
-                         When your CDN <em>does</em> support HTTPS, enable the
-                         corresponding setting below, and your CDN will be
-                         used on HTTPS pages.'),
   );
   $form['https'][CDN_HTTPS_SUPPORT_VARIABLE] = array(
     '#type'          => 'checkbox',
     '#title'         => t('CDN supports HTTPS'),
     '#default_value' => variable_get(CDN_HTTPS_SUPPORT_VARIABLE, FALSE),
-    '#process'       => array('ctools_dependent_process'),
+    '#description'   => _cdn_help('admin-other-https') . t('Enable if you use HTTPS and your CDN supports it too.'),
   );
 
   $path_explanation = t(
@@ -249,7 +260,8 @@ function cdn_admin_other_settings_form(&$form_state) {
   $form['exceptions'] = array(
     '#type' => 'fieldset',
     '#title' => t('Exceptions'),
-    '#description' => t('Which files should be served from a CDN is not as
+    '#description' => _cdn_help('admin-other-exceptions') .
+                      t('Which files should be served from a CDN is not as
                          simple as it seems: there are bound to be exceptions.
                          You can easily define those exceptions here, either
                          by file URL, Drupal path or by Drupal path for
@@ -261,31 +273,35 @@ function cdn_admin_other_settings_form(&$form_state) {
     '#title' => t('File URL'),
     '#description' => t("Files that are marked to not be served from the CDN
     because of a match in the blacklist, can be overridden to be served from
-    the CDN after all, if they have a match in the whitelist.<br />
-    <br />
-    <strong>All JavaScript files are excluded by default. This is necessary
-    to ensure a painless out-of-the-box experience.</strong> For maximum
-    performance, you should only exclude problematic JavaScript files.
-    <br />
-    <strong><u>Full explanation:</u></strong> it's necessary prevent any
-    possible cross-domain AJAX requests, which would violate the <a
-    href=\"http://en.wikipedia.org/wiki/Same_origin_policy\">same origin
-    policy</a> of browsers. Such violations potentially result in broken
-    functionality. Note that <u>even requests to subdomains such as
-    cdn.yourdomain.com count as cross-domain requests!</u><br />
-    You can opt-in to including JavaScript files by default and then exclude
-    problematic ones, but then you should carefully note which JavaScript
-    files perform AJAX requests. You can prevent all potential problems by
-    using <a href=\"http://en.wikipedia.org/wiki/JSON#JSONP\">JSONP</a>,
-    which is a work-around to allow for cross-domain AJAX
-    requests.</strong>"),
+    the CDN after all, if they have a match in the whitelist."),
     '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
   $form['exceptions']['file_path'][CDN_EXCEPTION_FILE_PATH_BLACKLIST_VARIABLE] = array(
     '#type' => 'textarea',
     '#title' => t('Blacklist'),
     '#default_value' => variable_get(CDN_EXCEPTION_FILE_PATH_BLACKLIST_VARIABLE, CDN_EXCEPTION_FILE_PATH_BLACKLIST_DEFAULT),
     '#description' => $path_explanation,
+  );
+  $blacklist_modules = module_implements('cdn_blacklist');
+  $blacklist_modules = array_unique(array_merge($blacklist_modules, module_implements('cdn_blacklist_alter')));
+  $blacklist_modules_string = '';
+  for ($i = 0; $i < count($blacklist_modules); $i++) {
+    $blacklist_modules_string .= '<code>' . $blacklist_modules[$i] . '</code>';
+    if ($i < count($blacklist_modules) - 1) {
+      $blacklist_modules_string .= ', ';
+    }
+  }
+  $form['exceptions']['file_path']['cdn_hook_blacklist'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Blacklist from modules'),
+    '#default_value' => cdn_get_blacklist(TRUE),
+    '#description' => t('Blacklist from <code>hook_cdn_blacklist()</code> and
+                        <code>hook_cdn_blacklist_alter()</code>. Automatically
+                        updated when cron runs. Generated from the following
+                        modules: !module-list.',
+                        array('!module-list' => $blacklist_modules_string)),
+    '#disabled' => TRUE,
   );
   $form['exceptions']['file_path'][CDN_EXCEPTION_FILE_PATH_WHITELIST_VARIABLE] = array(
     '#type' => 'textarea',
@@ -360,19 +376,7 @@ function cdn_admin_other_settings_form(&$form_state) {
     $form['cdn_pick_server'][CDN_PICK_SERVER_PHP_CODE_VARIABLE] = array(
       '#type' => 'textarea',
       '#title' => t('PHP code for cdn_pick_server()'),
-      '#description' => t('The parameter <code>$servers_for_file</code> is
-                           available to you (which is an array of servers),
-                           you should return one of them (or return an empty
-                           array if you do not want any of them to be used).
-                           <br />
-                           Internally, <code>$servers_for_file</code> looks
-                           like this:
-                           <pre><code>$servers_for_file[0] = array(\'url\' => \'http://cdn1.com/image.jpg\', \'server\' => \'cdn1.com\');
-$servers_for_file[1] = array(\'url\' => \'http://cdn2.net/image.jpg\', \'server\' => \'cdn2.net\');</code></pre>
-                           Eventually, you should always end your code with
-                           something like
-                           <pre><code>return $servers_for_file[$some_index];</code></pre>
-                           '),
+      '#description' => _cdn_help('admin-other-cdn-pick-server') . t('PHP code to select the most appropriate CDN server.'),
       '#cols' => 60,
       '#rows' => ($php_code != '') ? count(explode("\n", $php_code)) + 1 : 5,
       '#default_value' => $php_code,
@@ -417,6 +421,9 @@ function cdn_admin_other_settings_form_validate($form, &$form_state) {
       form_error($form['cdn_pick_server'][CDN_PICK_SERVER_PHP_CODE_VARIABLE], t('Your <code>cdn_pick_server()</code> cannot be evaluated. Please correct it or leave it empty.'));
     }
   }
+
+  // Remove the non-variable.
+  unset($form_state['values']['cdn_hook_blacklist']);
 }
 
 /**
@@ -504,4 +511,43 @@ function _cdn_admin_check_requirements() {
   }
 
   return count($errors);
+}
+
+function _cdn_settings_form_prepare(&$form, $form_state) {
+  // Do some checks, but prevent them from showing up twice.
+  if (empty($form_state['post'])) {
+    // Check requirements.
+    cdn_load_include('requirements');
+    _cdn_admin_check_requirements();
+
+    // Advanced help.
+    _cdn_check_advanced_help();
+    $form['#attributes']['class'] = 'cdn-settings';
+    drupal_add_css(drupal_get_path('module', 'cdn') . '/cdn.admin.css');
+  }
+
+  // Form.
+  ctools_include('dependent');
+  $form['#submit'] = array('cdn_admin_settings_submit_show_cache_warning');
+}
+
+function _cdn_check_advanced_help() {
+  if (!module_exists('advanced_help')) {
+    $filename = db_result(db_query("SELECT filename FROM {system} WHERE type = 'module' AND name = 'advanced_help'"));
+    if ($filename && file_exists($filename)) {
+      drupal_set_message(t('If you <a href="@modules">enable the advanced help module</a>, CDN will provide more and better help.', array('@modules' => url('admin/build/modules'))));
+    }
+    else {
+      drupal_set_message(t('If you install the advanced help module from !href, CDN will provide more and better help.', array('!href' => l('http://drupal.org/project/advanced_help', 'http://drupal.org/project/advanced_help'))));
+    }
+  }
+}
+
+function _cdn_help($topic) {
+  if (!module_exists('advanced_help')) {
+    return '';
+  }
+  else {
+    return theme('advanced_help_topic', 'cdn', $topic);
+  }
 }

@@ -1,11 +1,9 @@
 <?php
-// $Id: cdn.module,v 1.76 2010/11/23 14:44:59 wimleers Exp $
 
 /**
  * @file
  * Implementation of the core hooks, defines, public and private functions.
  */
-
 
 define('CDN_DISABLED', 0);
 define('CDN_TESTING', 1);
@@ -29,25 +27,35 @@ define('CDN_PICK_SERVER_PHP_CODE_VARIABLE', 'CDN_PICK_SERVER_PHP_CODE_VARIABLE')
 
 // Variables for exceptions.
 define('CDN_EXCEPTION_FILE_PATH_BLACKLIST_VARIABLE', 'cdn_exception_file_path_blacklist');
-define('CDN_EXCEPTION_FILE_PATH_BLACKLIST_DEFAULT',  "*.js\n*/image_captcha/*");
+define('CDN_EXCEPTION_FILE_PATH_BLACKLIST_DEFAULT',  "");
 define('CDN_EXCEPTION_FILE_PATH_WHITELIST_VARIABLE', 'cdn_exception_file_path_whitelist');
 define('CDN_EXCEPTION_FILE_PATH_WHITELIST_DEFAULT',  "misc/*.js\nmodules/block/block.js\nmodules/color/color.js\nmodules/comment/comment.js\nmodules/openid/openid.js\nmodules/profile/profile.js\nmodules/system/system.js\nmodules/taxonomy/taxonomy.js\nmodules/user/user.js\n*/admin_menu/admin_menu.js");
 define('CDN_EXCEPTION_DRUPAL_PATH_BLACKLIST_VARIABLE', 'cdn_exception_drupal_path_blacklist');
-define('CDN_EXCEPTION_DRUPAL_PATH_BLACKLIST_DEFAULT',  'admin*');
+define('CDN_EXCEPTION_DRUPAL_PATH_BLACKLIST_DEFAULT',  '');
 define('CDN_EXCEPTION_AUTH_USERS_BLACKLIST_VARIABLE', 'cdn_exception_auth_users_blacklist');
-define('CDN_EXCEPTION_AUTH_USERS_BLACKLIST_DEFAULT', '');
+define('CDN_EXCEPTION_AUTH_USERS_BLACKLIST_DEFAULT', "admin*");
 
 // Variables for basic mode.
 define('CDN_BASIC_MAPPING_VARIABLE', 'cdn_basic_mapping');
+define('CDN_BASIC_FARFUTURE_VARIABLE', 'cdn_farfuture_status');
+define('CDN_BASIC_FARFUTURE_DEFAULT', TRUE);
+define('CDN_BASIC_FARFUTURE_EXTENSIONS_VARIABLE', "cdn_farfuture_extensions");
+define('CDN_BASIC_FARFUTURE_EXTENSIONS_DEFAULT', "css\njs\nsvg\nico\ngif\njpg\njpeg\npng\notf\nttf\neot\nwoff\nflv\nswf");
+define('CDN_BASIC_FARFUTURE_GZIP_EXTENSIONS', "css\njs\nico\nsvg\neot\notf\nttf");
+define('CDN_BASIC_FARFUTURE_GZIP_DIRECTORY', "cdn/farfuture/gzip");
+define('CDN_BASIC_FARFUTURE_REMOVE_HEADERS', "Set-Cookie\nETag");
+define('CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_MAPPING_VARIABLE', 'cdn_farfuture_unique_identifier_mapping');
+define('CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_MAPPING_DEFAULT', "misc/*:modules/*:themes/*|drupal_version\nsites/*|mtime\nsites/*|.avi .m4v .mov .mp4 .wmv .flv|perpetual");
+define('CDN_BASIC_FARFUTURE_UNIQUE_IDENTIFIER_DEFAULT', 'mtime');
 
 // Variables for advanced mode.
+define('CDN_ADVANCED_PID_FILE_VARIABLE', 'cdn_advanced_pid_file');
 define('CDN_ADVANCED_SYNCED_FILES_DB_VARIABLE', 'cdn_advanced_synced_files_db');
 
 // Hardcoded settings for accessing the daemon's metadata, to show statistics.
 define('CDN_DAEMON_SYNCED_FILES_DB', 'synced_files.db');
 define('CDN_DAEMON_PERSISTENT_DATA_DB', 'persistent_data.db');
 define('CDN_DAEMON_FSMONITOR_DB', 'fsmonitor.db');
-define('CDN_DAEMON_PID_FILE', 'daemon.pid');
 
 
 //----------------------------------------------------------------------------
@@ -59,6 +67,7 @@ define('CDN_DAEMON_PID_FILE', 'daemon.pid');
 function cdn_file_url_alter(&$path) {
   $status                = variable_get(CDN_STATUS_VARIABLE, CDN_DISABLED);
   $mode                  = variable_get(CDN_MODE_VARIABLE, CDN_MODE_BASIC);
+  $farfuture             = variable_get(CDN_BASIC_FARFUTURE_VARIABLE, CDN_BASIC_FARFUTURE_DEFAULT);
   $stats                 = variable_get(CDN_STATS_VARIABLE, FALSE) && user_access(CDN_PERM_ACCESS_STATS);
   $file_path_blacklist   = variable_get(CDN_EXCEPTION_FILE_PATH_BLACKLIST_VARIABLE, CDN_EXCEPTION_FILE_PATH_BLACKLIST_DEFAULT);
   $file_path_whitelist   = variable_get(CDN_EXCEPTION_FILE_PATH_WHITELIST_VARIABLE, CDN_EXCEPTION_FILE_PATH_WHITELIST_DEFAULT);
@@ -66,6 +75,7 @@ function cdn_file_url_alter(&$path) {
   $auth_users_blacklist  = variable_get(CDN_EXCEPTION_AUTH_USERS_BLACKLIST_VARIABLE, CDN_EXCEPTION_AUTH_USERS_BLACKLIST_DEFAULT);
   $https_support         = variable_get(CDN_HTTPS_SUPPORT_VARIABLE, FALSE);
   $is_https_page         = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https'));
+  $module_blacklist      = cdn_get_blacklist();
   global $user;
 
   if ($status == CDN_ENABLED || ($status == CDN_TESTING && user_access(CDN_PERM_ACCESS_TESTING))) {
@@ -83,14 +93,19 @@ function cdn_file_url_alter(&$path) {
     }
 
     // If the current file path matches one of the blacklisted file paths,
-    // return immediately, except when the current file path also matches one of
-    // the whitelisted file paths.
-    if (drupal_match_path($path, $file_path_blacklist)) {
-      if (!drupal_match_path($path, $file_path_whitelist)) {
+    // return immediately, except when the current file path also matches one
+    // of the whitelisted file paths.
+    if ((
+          drupal_match_path($path, $file_path_blacklist)
+          ||
+          drupal_match_path($path, $module_blacklist)
+        )
+        && !drupal_match_path($path, $file_path_whitelist)
+      )
+    {
         return;
-      }
     }
-  
+
     // If the current Drupal path matches one of the blacklisted Drupal paths,
     // return immediately.
     if (drupal_match_path($_GET['q'], $drupal_path_blacklist)) {
@@ -98,13 +113,31 @@ function cdn_file_url_alter(&$path) {
     }
 
     // If logged in user, apply a secondary blacklist.
-    if ($user->uid > 0 && drupal_match_path($path, $auth_users_blacklist)) {
+    if ($user->uid > 0 && drupal_match_path($_GET['q'], $auth_users_blacklist)) {
       return;
     }
 
     if ($stats) {
       cdn_load_include('stats');
       $start = microtime();
+    }
+
+    // Alter the file path when using Origin Pull mode and using that mode's
+    // Far Future setting.
+    if ($mode == CDN_MODE_BASIC && $farfuture) {
+      $path = urldecode($path);
+      // If the file does not yet exist, perform a normal HTTP request to this
+      // file, to generate it. (E.g. when ImageCache is used, this will
+      // generate the derivative file.)
+      if (!file_exists($path)) {
+        drupal_http_request(url($path, array('absolute' => TRUE)));
+      }
+      // Generate a unique file identifier (UFI).
+      cdn_load_include('basic.farfuture');
+      $ufi = cdn_basic_farfuture_get_identifier($path);
+      // Generate the new path.
+      $path_before_farfuture = $path;
+      $path = "cdn/farfuture/$ufi/$path";
     }
 
     // Load the include file that contains the logic for the mode that's
@@ -146,13 +179,14 @@ function cdn_file_url_alter(&$path) {
     // If the current page is being served via HTTPS, and the CDN supports
     // HTTPS, then use the HTTPS file URL.
     if ($is_https_page && $https_support) {
-      $cdn_url = preg_replace('/^http/', 'https', $cdn_url);
+      $cdn_url = preg_replace('/^http:/', 'https:', $cdn_url);
     }
 
     // If the user can access it, add this to the per-page statistics.
     if ($stats) {
       $end = microtime();
-      _cdn_devel_page_stats($path, $cdn_url, $server, $end - $start);
+      $source_path = ($mode == CDN_MODE_BASIC && $farfuture) ? $path_before_farfuture : $path;
+      _cdn_devel_page_stats($source_path, $cdn_url, $server, $end - $start);
     }
 
     // Override the path with the corresponding CDN URL, *if* the file is
@@ -160,13 +194,79 @@ function cdn_file_url_alter(&$path) {
     if ($cdn_url !== FALSE) {
       $path = $cdn_url;
     }
+    else {
+      // If the file is not available on the CDN and Origin Pull mode's Far
+      // Future setting is enabled, then don't serve it using CDN module's
+      // non-scalable Far Future functionality, but using Drupal's default.
+      if ($mode == CDN_MODE_BASIC && $farfuture) {
+        $path = $path_before_farfuture;
+      }
+    }
   }
+}
+
+/**
+ * Implementation of hook_cdn_unique_file_identifier_info().
+ */
+function cdn_cdn_unique_file_identifier_info() {
+  return array(
+    'md5_hash' => array(
+      'label'        => t('MD5 hash'),
+      'machine_name' => 'md5_hash',
+      'prefix'       => 'md5',
+      'description'  => t('MD5 hash of the file.'),
+      'filesystem'   => TRUE,
+      'callback'     => 'md5_file',
+    ),
+    'mtime' => array(
+      'label'        => t('Last modification time'),
+      'machine_name' => 'mtime',
+      'prefix'       => 'mtime',
+      'description'  => t('Last modification time of the file.'),
+      'filesystem'   => TRUE,
+      'callback'     => 'filemtime',
+    ),
+    'perpetual' => array(
+      'label'        => t('Perpetual'),
+      'machine_name' => 'perpetual',
+      'prefix'       => 'perpetual',
+      'description'  => t('Perpetual files never change (or are never cached
+                          by the browser, e.g. video files).'),
+      'filesystem'   => FALSE,
+      'value'        => 'forever',
+    ),
+    'drupal_version' => array(
+      'label'        => t('Drupal version'),
+      'machine_name' => 'drupal_version',
+      'prefix'       => 'drupal',
+      'description'  => t('Drupal core version — this should only be applied
+                          to files that ship with Drupal core.'),
+      'filesystem'   => FALSE,
+      'value'        => VERSION,
+    ),
+    'deployment_id' => array(
+      'label'        => t('Deployment ID'),
+      'machine_name' => 'deployment_id',
+      'prefix'       => 'deployment',
+      'description'  => t('A developer-defined deployment ID. Can be an
+                          arbitrary string or number, as long as it uniquely
+                          identifies deployments and therefore the affected
+                          files.<br />
+                          Define this deployment ID in any enabled module or
+                          in <code>settings.php</code> as the
+                          <code>CDN_DEPLOYMENT_ID</code>
+                          constant, and it will be picked up instantaneously.'),
+      'filesystem'   => FALSE,
+      'callback'     => '_cdn_ufi_deployment_id',
+    ),
+  );
 }
 
 /**
  * Implementation of hook_menu().
  */
 function cdn_menu() {
+  // Admin UI.
   $items['admin/settings/cdn'] = array(
     'title'            => 'CDN',
     'description'      => 'Configure CDN integration.',
@@ -176,7 +276,6 @@ function cdn_menu() {
     'type'             => MENU_NORMAL_ITEM,
     'file'             => 'cdn.admin.inc',
   );
-
   $items['admin/settings/cdn/general'] = array(
     'title'            => 'General',
     'description'      => 'General settings.',
@@ -205,6 +304,7 @@ function cdn_menu() {
     'file'             => 'cdn.admin.inc',
   );
 
+  // Statistics: file touch support.
   $items['admin/cdn/touch/%'] = array(
     'title'            => 'Touch file',
     'description'      => 'Touch a file to force a resync with File Conveyor.',
@@ -213,6 +313,15 @@ function cdn_menu() {
     'page arguments'   => array('cdn_touch_file_form', 3),
     'type'             => MENU_CALLBACK,
     'file'             => 'cdn.stats.inc',
+  );
+
+  // Origin Pull mode's Far Future expiration support.
+  $items['cdn/farfuture'] = array(
+    'title'            => 'Download a far futured file',
+    'access callback'  => TRUE,
+    'page callback'    => 'cdn_basic_farfuture_download',
+    'type'             => MENU_CALLBACK,
+    'file'             => 'cdn.basic.farfuture.inc',
   );
 
   return $items;
@@ -251,7 +360,6 @@ function cdn_nodeapi(&$node, $op, $a3 = NULL, $a4 = NULL) {
     }
   }
 }
-
 
 /**
  * Implementation of hook_theme().
@@ -342,6 +450,36 @@ function cdn_exit($destination = NULL) {
   }
 }
 
+/**
+ * Implementation of hook_flush_caches().
+ */
+function cdn_flush_caches() {
+  // Force refresh of the blacklist.
+  cdn_get_blacklist(TRUE);
+}
+
+/**
+ * Implementation of hook_cdn_blacklist().
+ */
+function cdn_cdn_blacklist() {
+  $blacklist = array();
+
+  // Blacklist wysiwyg library files.
+  if (module_exists('wysiwyg')) {
+    foreach (wysiwyg_get_all_editors() as $editor) {
+      if (!$editor['installed']) {
+        continue;
+      }
+      $blacklist[] = $editor['library path'] . '/*';
+    }
+  }
+
+  // Blacklist Image CAPTCHA' dynamically generated CAPTCHA images.
+  $blacklist[] = '*image_captcha/*';
+
+  return $blacklist;
+}
+
 
 //----------------------------------------------------------------------------
 // Public functions.
@@ -401,6 +539,49 @@ function cdn_get_domains() {
 }
 
 /**
+ * See if any installed modules need to exclude certain files from being
+ * accessed from the CDN. List gets updated on cron runs.
+ *
+ * Typically, files that are loaded by JS through AJAX violate the same origin
+ * policy browsers have to comply with. Hence the browser refuses to load the
+ * file, causing a broken website. This blacklist allows module developers to
+ * specify which files should not be loaded from the CDN.
+ *
+ * @param $reset
+ *   Whether to force the stored blacklist to be regenerated.
+ * @return string
+ *   Every line is a path pattern (@see drupal_match_path()).
+ */
+function cdn_get_blacklist($reset = FALSE) {
+  static $blacklist = NULL;
+
+  if (is_null($blacklist) || $reset) {
+    $cache = cache_get('cdn_blacklist');
+    if (!isset($cache->data) || $reset) {
+      // Query modules for a list of files to be included into the blacklist.
+      $blacklist = module_invoke_all('cdn_blacklist');
+
+      // Invoke hook_cdn_blacklist_alter.
+      drupal_alter('cdn_blacklist', $blacklist);
+
+      // Remove duplicates.
+      $blacklist = array_unique($blacklist);
+
+      // Convert array to string.
+      $blacklist = implode("\n", $blacklist);
+
+      // Save to the cache.
+      cache_set('cdn_blacklist', $blacklist, 'cache', CACHE_TEMPORARY);
+    }
+    else {
+      $blacklist = $cache->data;
+    }
+  }
+
+  return $blacklist;
+}
+
+/**
  * Helper function to efficiently load include files for this module.
  */
 function cdn_load_include($basename) {
@@ -421,6 +602,16 @@ function cdn_load_include($basename) {
 
 //----------------------------------------------------------------------------
 // Private functions.
+
+/**
+ * Callback for generating a unique file identifier.
+ *
+ * @param $path
+ *   The file path to the file for which to generate a  unique identifier.
+ */
+function _cdn_ufi_deployment_id($path) { 
+  return CDN_DEPLOYMENT_ID;
+}
 
 /**
  * Helper function to evaluate CDN_PICK_SERVER_PHP_CODE_VARIABLE, when that is

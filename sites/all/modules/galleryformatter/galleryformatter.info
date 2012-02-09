@@ -1,4 +1,3 @@
-; $Id: galleryformatter.info,v 1.1 2010/05/10 12:54:57 manuelgarcia Exp $
 
 name = Gallery Formatter
 description = Provides a jquery gallery CCK formatter for imagefield
@@ -9,9 +8,9 @@ dependencies[] = imagecache
 core = 6.x
 package = User interface
 
-; Information added by drupal.org packaging script on 2010-07-18
-version = "6.x-1.0-rc3"
+; Information added by drupal.org packaging script on 2011-09-20
+version = "6.x-1.0-rc4"
 core = "6.x"
 project = "galleryformatter"
-datestamp = "1279494014"
+datestamp = "1316538704"
 

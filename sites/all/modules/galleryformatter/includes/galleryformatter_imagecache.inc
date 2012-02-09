@@ -1,5 +1,4 @@
 <?php
-// $Id: galleryformatter_imagecache.inc,v 1.1 2010/05/10 12:54:58 manuelgarcia Exp $
 
 /**
  * @file

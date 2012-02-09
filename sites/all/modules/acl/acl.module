@@ -1,5 +1,4 @@
 <?php
-// $Id: acl.module,v 1.20.2.6 2011/01/06 20:10:04 salvis Exp $
 
 /**
  * @file
@@ -204,6 +203,21 @@ function acl_user($op, &$edit, &$account, $category = NULL) {
     case 'delete':
       db_query("DELETE FROM {acl_user} WHERE uid = %d", $account->uid);
       break;
+  }
+}
+
+/**
+ * Implementation of hook_form_alter().
+ *
+ * Add a compatibility error message to the module display view if needed.
+ */
+function acl_form_system_modules_alter(&$form, $form_state) {
+  if ((!isset($form['#theme']) || $form['#theme'] != 'confirm_form')) {
+    if (module_exists('authcache')) {
+      module_load_install('acl');
+      $requirements = acl_requirements('runtime');
+      drupal_set_message($requirements['acl']['title'] . ': ' . $requirements['acl']['value'], 'error');
+    }
   }
 }
 

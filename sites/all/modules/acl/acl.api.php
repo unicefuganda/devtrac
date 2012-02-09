@@ -1,5 +1,4 @@
 <?php
-// $Id: acl.api.php,v 1.1.2.2 2010/07/17 02:03:24 salvis Exp $
 
 /**
  * @file

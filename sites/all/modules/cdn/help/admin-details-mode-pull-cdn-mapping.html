@@ -1,0 +1,16 @@
+<h2>Format</h2>
+<p>Enter one mapping per line, in the format <strong>&lt;URL&gt;[|&lt;extensions&gt;]</strong>:</p>
+<ul>
+	<li><strong>&lt;URL&gt;</strong> is the CDN URL that should be used. E.g.:<code>http://cdn-a.com</code></li>
+	<li><strong>&lt;extensions&gt;</strong> is an <strong>optional</strong> setting to limit which files should be served from a CDN. E.g.: <code>.css .jpg .jpeg .png</code></li>
+</ul>
+
+
+<h2>Sample mappings</h2>
+<ul>
+	<li>This would serve <em>all</em> files from a single CDN: <pre>http://cdn-a.com</pre></li>
+	<li>This would serve CSS and images from CDN A, .zip files from CDN B and everything else from CDN C:
+<pre>http://cdn-a.com|.css .jpg .jpeg .png
+http://cdn-b.com|.zip
+http://cdn-c.com</pre></li>
+</ul>

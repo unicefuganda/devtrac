@@ -1,5 +1,4 @@
 <?php
-// $Id: acl.install,v 1.13.2.3 2010/11/24 23:29:28 salvis Exp $
 
 /**
  * @file
@@ -38,8 +37,8 @@ function acl_schema() {
         'type'        => 'int')),
     'primary key'     => array('acl_id'),
     'indexes'         => array(
-      'name'          => array('name'),
-      'number'        => array('number')),
+      'module_name_number' => array(array('module', 64), array('name', 64), 'number'),
+      'module_number' => array(array('module', 64), 'number')),
   );
   $schema['acl_user'] = array(
     'description'     => 'Identifies {users} to which the referenced {acl} entry applies.',
@@ -105,6 +104,23 @@ function acl_schema() {
   return $schema;
 }
 
+/**
+ * Implementation of hook_requirements().
+ */
+function acl_requirements($phase) {
+  $requirements = array();
+  $t = get_t();
+
+  // Check for existence of incompatible Authcache contrib module.
+  if ($phase == 'runtime' && module_exists('authcache')) {
+    $requirements['acl'] = array(
+      'title'    => $t('!ACL compatibility', array('!ACL' => '<a href="http://drupal.org/project/acl">ACL</a>')),
+      'value'    => $t('The design of !Module is incompatible, please disable it!', array('!Module' => '<a href="http://drupal.org/project/authcache">Authcache</a>')),
+      'severity' => REQUIREMENT_ERROR,
+    );
+  }
+  return $requirements;
+}
 
 /*
  * Implementation of hook_uninstall().
@@ -188,6 +204,18 @@ function acl_update_6002() {
   db_add_field($ret, 'acl', 'number', array('type' => 'int', 'description' => "A number for this ACL entry, given by the module that created it; use either 'name' or 'number'."));
   db_add_index($ret, 'acl', 'name', array('name'));
   db_add_index($ret, 'acl', 'number', array('number'));
+  return $ret;
+}
+
+/**
+ * Install better indexes.
+ */
+function acl_update_6003() {
+  $ret = array();
+  db_drop_index($ret, 'acl', 'name');
+  db_drop_index($ret, 'acl', 'number');
+  db_add_index($ret, 'acl', 'module_name_number', array(array('module', 64), array('name', 64), 'number'));
+  db_add_index($ret, 'acl', 'module_number', array(array('module', 64), 'number'));
   return $ret;
 }
 

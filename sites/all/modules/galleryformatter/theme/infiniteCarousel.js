@@ -1,4 +1,3 @@
-// $Id: infiniteCarousel.js,v 1.1.2.1 2010/05/23 11:15:58 manuelgarcia Exp $
 
 /**
  * Plugin written by the great jqueryfordesigners.com

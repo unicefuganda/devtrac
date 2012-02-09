@@ -1,5 +1,4 @@
 <?php
-// $Id: galleryformatter.tpl.php,v 1.1.2.5 2010/05/28 09:58:26 manuelgarcia Exp $
 /**
  * @file
  * Template file for the galleryformatter default formatter
@@ -30,11 +29,11 @@
       <?php foreach ($gallery_slides as $id => $data): ?>
         <li class="gallery-slide" id="<?php print $data['hash_id']; ?>">
           <?php print $data['image']; ?>
-          <?php if ($data['title'] || $data['description']): ?>
+          <?php if ((!empty($data['title'])) || (!empty($data['description']))): ?>
             <div class="panel-overlay">
               <div class="overlay-inner">
-                <?php if ($data['title']): ?><h3><?php print $data['title']; ?></h3><?php endif; ?>
-                <?php if ($data['description']): ?><p><?php print $data['description']; ?></p><?php endif; ?>
+                <?php if (!empty($data['title'])): ?><h3><?php print $data['title']; ?></h3><?php endif; ?>
+                <?php if (!empty($data['description'])): ?><p><?php print $data['description']; ?></p><?php endif; ?>
               </div>
             </div>
           <?php endif; ?>

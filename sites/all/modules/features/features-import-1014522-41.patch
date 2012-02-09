@@ -1,0 +1,216 @@
+diff --git a/features.api.php b/features.api.php
+index 73d73fe..ff8fb24 100644
+--- a/features.api.php
++++ b/features.api.php
+@@ -224,6 +224,18 @@ function hook_features_export_alter(&$export, $module_name) {
+ }
+ 
+ /**
++ * TODO
++ */
++function hook_features_import($data, &$export, $module_name) {
++  // The following is the simplest implementation of a straight object export
++  // with no further export processors called.
++  foreach ($data as $component) {
++    $export['mycomponent'][$component] = $component;
++  }
++  return array();
++}
++
++/**
+  * Alter the pipe array for a given component. This hook should be implemented
+  * with the name of the component type in place of `component` in the function
+  * name, e.g. `features_pipe_views_alter()` will alter the pipe for the Views
+diff --git a/features.drush.inc b/features.drush.inc
+index 262d687..d8906a7 100644
+--- a/features.drush.inc
++++ b/features.drush.inc
+@@ -29,6 +29,16 @@ function features_drush_command() {
+     'drupal dependencies' => array('features'),
+     'aliases' => array('fe'),
+   );
++  $items['features-import'] = array(
++    'description' => "Import a feature to the database.",
++    'drupal dependencies' => array('features'),
++    'aliases' => array('fi'),
++  );
++  $items['features-import-all'] = array(
++    'description' => "Import all features to the database.",
++    'drupal dependencies' => array('features'),
++    'aliases' => array('fia'),
++  );
+   $items['features-update'] = array(
+     'description' => "Update a feature module on your site.",
+     'arguments' => array(
+@@ -88,6 +98,10 @@ function features_drush_help($section) {
+       return dt("List all the available features for your site.");
+     case 'drush:features-export':
+       return dt("Export a feature from your site into a module.");
++    case 'drush:features-import':
++      return dt("Import a feature to the database.");
++    case 'drush:features-import-all':
++    return dt("Import all features to the database.");
+     case 'drush:features-update':
+       return dt("Update a feature module on your site.");
+     case 'drush:features-update-all':
+@@ -170,6 +184,57 @@ function drush_features_export() {
+ }
+ 
+ /**
++ * Import a feature to the database.
++ */
++function drush_features_import() {
++  if ($args = func_get_args()) {
++    foreach ($args as $module) {
++      if (($feature = feature_load($module, TRUE)) && module_exists($module)) {
++        _drush_features_import($feature->info['features'], $module);
++      }
++      else if ($feature) {
++        _features_drush_set_error($module, 'FEATURES_FEATURE_NOT_ENABLED');
++      }
++      else {
++        _features_drush_set_error($module);
++      }
++    }
++  }
++  else {
++    // By default just show contexts that are available.
++    $rows = array(array(dt('Available features')));
++    foreach (features_get_features(NULL, TRUE) as $name => $info) {
++      $rows[] = array($name);
++    }
++    drush_print_table($rows, TRUE);
++  }
++}
++
++/**
++ * Import all features to the database.
++ */
++function drush_features_import_all() {
++  $features_to_import = array();
++  $features_to_exclude = func_get_args();
++
++  $features = features_get_features();
++  foreach ($features as $module) {
++    if ($module->status && !in_array($module->name, $features_to_exclude)) {
++      $features_to_import[] = $module->name;
++    }
++  }
++  drush_print(dt('The following modules will be imported: !modules', array('!modules' => implode(', ', $features_to_import))));
++  if (drush_confirm(dt('Do you really want to continue?'))) {
++    foreach ($features_to_import as $module_name) {
++      drush_do_command_redispatch('features-import ', array($module_name));
++    }
++  }
++  else {
++    drush_die('Aborting.');
++  }
++}
++
++/**
+  * Update an existing feature module.
+  */
+ function drush_features_update() {
+@@ -266,6 +331,16 @@ function _drush_features_export($stub, $dependencies, $module_name = NULL, $dire
+ }
+ 
+ /**
++ * Import a feature to the database.
++ */
++function _drush_features_import($features = array(), $module_name = '') {
++  features_include();
++  foreach ($features as $component => $items) {
++    features_invoke($component, 'features_import', $items, $module_name);
++  }
++}
++
++/**
+  * Revert a feature to it's code definition.
+  */
+ function drush_features_revert() {
+diff --git a/includes/features.context.inc b/includes/features.context.inc
+index ba9d45f..f3bf555 100644
+--- a/includes/features.context.inc
++++ b/includes/features.context.inc
+@@ -229,3 +229,13 @@ function context_features_revert($module = NULL) {
+ function context_features_identifier_2($object) {
+   return isset($object->namespace, $object->attribute, $object->value) ? "{$object->namespace}-{$object->attribute}-{$object->value}" : FALSE;
+ }
++
++/**
++ * Implementation of hook_features_import().
++ */
++function context_features_import($items = array(), $module_name = '') {
++  foreach ($items as $context_name) {
++    $context = context_load($context_name);
++    context_save($context);
++  }
++}
+\ No newline at end of file
+diff --git a/includes/features.imagecache.inc b/includes/features.imagecache.inc
+index daacd6f..0bcca19 100644
+--- a/includes/features.imagecache.inc
++++ b/includes/features.imagecache.inc
+@@ -89,3 +89,23 @@ function _imagecache_features_preset_sanitize(&$preset) {
+     }
+   }
+ }
++
++/**
++ * Implementation of hook_features_import().
++ */
++function imagecache_features_import($items = array(), $module_name = '') {
++  foreach ($items as $preset_name) {
++    $preset = imagecache_preset_by_name($preset_name, TRUE);
++    // Presets
++    if (!is_numeric($preset['presetid'])) {
++      $preset = imagecache_preset_save($preset);
++      // Actions
++      if (is_numeric($preset['presetid'])) {
++        foreach ($preset['actions'] as $action)  {
++          $action['presetid'] = $preset['presetid'];
++          imagecache_action_save($action);
++        }
++      }
++    }
++  }
++}
+\ No newline at end of file
+diff --git a/includes/features.node.inc b/includes/features.node.inc
+index 5aa0b87..b2f4756 100644
+--- a/includes/features.node.inc
++++ b/includes/features.node.inc
+@@ -159,3 +159,13 @@ function node_features_revert($module = NULL) {
+     menu_rebuild();
+   }
+ }
++
++/**
++ * Implementation of hook_features_import().
++ */
++function node_features_import($items = array(), $module_name = '') {
++  // Delegate responsibility to node module
++  foreach ($items as $node_type) {
++    db_query("UPDATE node_type SET module = 'node', modified = 1 WHERE type = '%s' AND module = 'features'", array($node_type));
++  }
++}
+\ No newline at end of file
+diff --git a/includes/features.views.inc b/includes/features.views.inc
+index 7d19be3..790acc0 100644
+--- a/includes/features.views.inc
++++ b/includes/features.views.inc
+@@ -264,3 +264,13 @@ function views_features_revert($module) {
+     menu_rebuild();
+   }
+ }
++
++/**
++ * Implementation of hook_features_import().
++ */
++function views_features_import($items = array(), $module_name = '') {
++  foreach ($items as $view_name) {
++    $view = views_get_view($view_name);
++    $view->save();
++  }
++}
+\ No newline at end of file

@@ -481,7 +481,7 @@ function features_get_info($type = 'module', $name = NULL, $reset = FALSE) {
     $ignored = variable_get('features_ignored_orphans', array());
     $result = db_query("SELECT filename, name, type, status, throttle, schema_version FROM {system} WHERE type = 'module' ORDER BY name ASC");
     while ($row = db_fetch_object($result)) {
-      // If module is no longer enabled, remove itcd sit   from the ignored orphans list.
+      // If module is no longer enabled, remove it from the ignored orphans list.
       if (in_array($row->name, $ignored, TRUE) && !$row->status) {
         $key = array_search($row->name, $ignored, TRUE);
         unset($ignored[$key]);

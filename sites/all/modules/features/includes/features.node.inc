@@ -30,14 +30,16 @@ function node_features_export($data, &$export, $module_name = '') {
   foreach ($data as $type) {
     // Poll node module to determine who provides the node type.
     if ($info = node_get_types('module', $type)) {
-      $export['dependencies'][$info] = $info;
-
+      if ($module_name != $info && module_exists($info)) {
+        $export['dependencies'][$info] = $info;
+      }
+  
       // If this node type is provided by a different module, add it as a dependency
       if (isset($map[$type]) && $map[$type] != $module_name) {
         $export['dependencies'][$map[$type]] = $map[$type];
       }
       // Otherwise export the node type.
-      elseif (in_array($info, array('node', 'features'))) {
+      elseif (in_array($info, array('node', 'features')) || isset($map[$type])) {
         $export['features']['node'][$type] = $type;
       }
 
@@ -155,5 +157,15 @@ function node_features_revert($module = NULL) {
     }
     node_types_rebuild();
     menu_rebuild();
+  }
+}
+
+/**
+ * Implementation of hook_features_import().
+ */
+function node_features_import($items = array(), $module_name = '') {
+  // Delegate responsibility to node module
+  foreach ($items as $node_type) {
+    db_query("UPDATE node_type SET module = 'node', modified = 1 WHERE type = '%s' AND module = 'features'", array($node_type));
   }
 }

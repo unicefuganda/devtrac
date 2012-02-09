@@ -211,7 +211,7 @@ function views_handler_dependencies() {
     foreach (module_implements('views_data') as $module) {
       if ($tables = module_invoke($module, 'views_data')) {
         foreach ($tables as $table => $info) {
-          if (isset($info['table'])) {
+          if (isset($info['table']) && (!isset($map[$table]) || $info['table']['group'])) {
             $map[$table] = $module;
           }
           else if (!isset($map[$table])) {
@@ -262,5 +262,15 @@ function views_features_revert($module) {
     // Flush caches.
     cache_clear_all();
     menu_rebuild();
+  }
+}
+
+/**
+ * Implementation of hook_features_import().
+ */
+function views_features_import($items = array(), $module_name = '') {
+  foreach ($items as $view_name) {
+    $view = views_get_view($view_name);
+    $view->save();
   }
 }

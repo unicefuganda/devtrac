@@ -29,6 +29,16 @@ function features_drush_command() {
     'drupal dependencies' => array('features'),
     'aliases' => array('fe'),
   );
+  $items['features-import'] = array(
+    'description' => "Import a feature to the database.",
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fi'),
+  );
+  $items['features-import-all'] = array(
+    'description' => "Import all features to the database.",
+    'drupal dependencies' => array('features'),
+    'aliases' => array('fia'),
+  );
   $items['features-update'] = array(
     'description' => "Update a feature module on your site.",
     'arguments' => array(
@@ -88,6 +98,10 @@ function features_drush_help($section) {
       return dt("List all the available features for your site.");
     case 'drush:features-export':
       return dt("Export a feature from your site into a module.");
+    case 'drush:features-import':
+      return dt("Import a feature to the database.");
+    case 'drush:features-import-all':
+    return dt("Import all features to the database.");
     case 'drush:features-update':
       return dt("Update a feature module on your site.");
     case 'drush:features-update-all':
@@ -170,6 +184,57 @@ function drush_features_export() {
 }
 
 /**
+ * Import a feature to the database.
+ */
+function drush_features_import() {
+  if ($args = func_get_args()) {
+    foreach ($args as $module) {
+      if (($feature = feature_load($module, TRUE)) && module_exists($module)) {
+        _drush_features_import($feature->info['features'], $module);
+      }
+      else if ($feature) {
+        _features_drush_set_error($module, 'FEATURES_FEATURE_NOT_ENABLED');
+      }
+      else {
+        _features_drush_set_error($module);
+      }
+    }
+  }
+  else {
+    // By default just show contexts that are available.
+    $rows = array(array(dt('Available features')));
+    foreach (features_get_features(NULL, TRUE) as $name => $info) {
+      $rows[] = array($name);
+    }
+    drush_print_table($rows, TRUE);
+  }
+}
+
+/**
+ * Import all features to the database.
+ */
+function drush_features_import_all() {
+  $features_to_import = array();
+  $features_to_exclude = func_get_args();
+
+  $features = features_get_features();
+  foreach ($features as $module) {
+    if ($module->status && !in_array($module->name, $features_to_exclude)) {
+      $features_to_import[] = $module->name;
+    }
+  }
+  drush_print(dt('The following modules will be imported: !modules', array('!modules' => implode(', ', $features_to_import))));
+  if (drush_confirm(dt('Do you really want to continue?'))) {
+    foreach ($features_to_import as $module_name) {
+      drush_do_command_redispatch('features-import ', array($module_name));
+    }
+  }
+  else {
+    drush_die('Aborting.');
+  }
+}
+
+/**
  * Update an existing feature module.
  */
 function drush_features_update() {
@@ -211,7 +276,7 @@ function drush_features_update_all() {
   drush_print(dt('The following modules will be updated: !modules', array('!modules' => implode(', ', $features_to_update))));
   if (drush_confirm(dt('Do you really want to continue?'))) {
     foreach ($features_to_update as $module_name) {
-      drush_backend_invoke('features-update '. $module_name);
+      drush_invoke_process(drush_sitealias_get_record('@self'), 'features-update', array($module_name));
     }
   }
   else {
@@ -262,6 +327,16 @@ function _drush_features_export($stub, $dependencies, $module_name = NULL, $dire
   }
   else {
     drush_die(dt('Couldn\'t locate site root'));
+  }
+}
+
+/**
+ * Import a feature to the database.
+ */
+function _drush_features_import($features = array(), $module_name = '') {
+  features_include();
+  foreach ($features as $component => $items) {
+    features_invoke($component, 'features_import', $items, $module_name);
   }
 }
 
@@ -333,6 +408,7 @@ function drush_features_revert() {
 function drush_features_revert_all() {
   $features_to_revert = array();
   $features_to_exclude = func_get_args();
+  $force = drush_get_option('force');
   foreach (features_get_features() as $module) {
     if ($module->status && !in_array($module->name, $features_to_exclude)) {
       $features_to_revert[] = $module->name;
@@ -341,7 +417,7 @@ function drush_features_revert_all() {
   drush_print(dt('The following modules will be reverted: !modules', array('!modules' => implode(', ', $features_to_revert))));
   if (drush_confirm(dt('Do you really want to continue?'))) {
     foreach ($features_to_revert as $module_name) {
-      drush_backend_invoke('features-revert '. $module_name);
+      drush_invoke_process(drush_sitealias_get_record('@self'), 'features-revert', array($module_name), array('force' => $force, '#integrate' => TRUE));
     }
   }
   else {
@@ -375,11 +451,11 @@ function drush_features_diff() {
     if (drush_confirm(dt('It seems that the Diff module is not available. Would you like to download and enable it?'))) {
       // Download it if it's not already here.
       $project_info = drush_get_projects();
-      if (empty($project_info['diff']) && !drush_backend_invoke('dl diff')) {
+      if (empty($project_info['diff']) && !drush_invoke_process(drush_sitealias_get_record('@self'), 'dl', array('diff'), array('#integrate' => TRUE))) {
         return drush_set_error(dt('Diff module could not be downloaded.'));
       }
 
-      if (!drush_backend_invoke('en diff')) {
+      if (!drush_invoke_process(drush_sitealias_get_record('@self'), 'en', array('diff'), array('#integrate' => TRUE))) {
         return drush_set_error(dt('Diff module could not be enabled.'));
       }
     }

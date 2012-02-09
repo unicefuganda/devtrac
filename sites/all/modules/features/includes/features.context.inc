@@ -229,3 +229,13 @@ function context_features_revert($module = NULL) {
 function context_features_identifier_2($object) {
   return isset($object->namespace, $object->attribute, $object->value) ? "{$object->namespace}-{$object->attribute}-{$object->value}" : FALSE;
 }
+
+/**
+ * Implementation of hook_features_import().
+ */
+function context_features_import($items = array(), $module_name = '') {
+  foreach ($items as $context_name) {
+    $context = context_load($context_name);
+    context_save($context);
+  }
+}

@@ -11,6 +11,12 @@ function devtrack_module_node_info() {
       'has_body' => TRUE,
       'body_label' => 'json',
     ),
+    'image' => array(
+      'name' => t('Image'),
+      'module' => 'devtrack_module',
+      'title_label' => t('Caption'),
+      'body_label' => t('Description'),
+    ),
   );
 }
 
@@ -1087,6 +1093,9 @@ function devtrack_module_ftritem_hide_place_and_fieldtrip_fields(&$form) {
 
   // We're back at creating a new site report
   if ((arg(0) == "node") && (arg(1) == "add") && (arg(2) == "ftritem")) {
+    $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
+    $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
+    $form['taxonomy'][7]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
     // Hide/Show certain fields according to the Type of Site Report we're creating
     $form['field_ftritem_place']['#prefix'] = '<div class="devtrachidefield">';
     $form['taxonomy'][1]['#prefix'] = '<div class="devtrachidefield">'; // Alert: Hardcoded vocabulary id
